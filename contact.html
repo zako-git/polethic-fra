@@ -3,63 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | POLETHIC_FRA</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8fafc;
-            color: #334155;
-        }
-        header {
-            background-color: #1e3a8a;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        nav a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        nav a:hover { text-decoration: underline; }
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        h1 { margin: 0 0 10px 0; font-size: 2rem; }
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-    </style>
+    <title>Qui sommes-nous? | POLETHIC</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
     <header>
-        <h1>POLETHIC_FRA</h1>
-        <nav>
-            <a href="index.html">Accueil</a> | 
-            <a href="contacto.html">Contact</a>
-        </nav>
+        <div class="container header-layout">
+            <div class="logo-title">POLETHIC_FRA</div>
+            <nav>
+                <a href="index.html">Accueil</a>
+                <a href="observatoire.html">L'Observatoire</a>
+                <a href="psicomusee.html">Psicomusée</a>
+                <a href="autodefense.html">Beacon</a>
+                <a href="contact.html">Qui sommes-nous?</a>
+            </nav>
+        </div>
     </header>
 
-    <div class="container">
-        <h2>Contactez-nous</h2>
-        <p>Pour toute question, partenariat o demande d'information, vous pouvez nous écrire à l'adresse suivante :</p>
-        <p><strong>Email :</strong> info@polethic-fra.org</p>
-    </div>
+    <main class="container">
+        <section class="hero-card" style="text-align: left; padding: 40px;">
+            <h2 style="color: #1e3a8a; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px;">Zako | Analyste de Fronts Prédictifs</h2>
+            <p style="margin-top: 20px; font-size: 1.1rem; line-height: 1.7;">
+                Spécialisé en **analyse du comportement, neurosciences et profilage criminel**, je mets mon expertise au service de la protection cognitive collective. Face à la prolifération des faux experts, mon rôle est de cartographier les fronts prédictifs pour désamorcer l'emprise et la manipulation en amont.
+            </p>
+
+            <h3 style="margin-top: 40px; color: #0d9488;">La Vision : Le Centre Européen NEURO-VERUM</h3>
+            <p style="margin-top: 15px; color: #475569;">
+                POLETHIC France constitue la première étape d'une mission humaniste plus vaste : la fondation future du **Centre Européen NEURO-VERUM**, une institution dédiée à la protection de la connaissance, de la rigueur scientifique y de la santé démocratique en Europe.
+            </p>
+        </section>
+
+        <!-- Formulario de Contacto Oficial -->
+        <section style="margin-top: 40px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+            <h3>Contactez-nous</h3>
+            <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 20px;">Pour toute demande d'intervention (Mairies, Établissements scolaires) ou de partenariat institutional :</p>
+            <p><strong>Email officiel :</strong> <a href="mailto:contact@polethic.fr" style="color: #0d9488; text-decoration: none; font-weight: bold;">contact@polethic.fr</a></p>
+        </section>
+    </main>
 
     <footer>
-        <p>&copy; 2026 POLETHIC_FRA. Tous droits réservés.</p>
+        <div class="container">
+            <p>&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+            <p class="legal">
+                <strong>Bouclier de Protection Professionnelle :</strong> POLETHIC France est une association de prévention primaire et de psychoéducation non clinique. Nous ne realizons aucun diagnostic ni thérapie de santé mentale.
+            </p>
+        </div>
     </footer>
 
 </body>
