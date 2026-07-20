@@ -14,6 +14,14 @@
    ========================================================================== */
 body {
   background-color: var(--bg);
+  /* --- Fondo Espacial Mate de Puntitos --- */
+  background-image: 
+    radial-gradient(rgba(63, 215, 242, 0.15) 1px, transparent 1px),
+    radial-gradient(rgba(242, 169, 63, 0.1) 1.5px, transparent 1.5px);
+  background-size: 40px 40px, 60px 60px;
+  background-position: 0 0, 20px 20px;
+  background-attachment: fixed; /* Las estrellas se quedan fijas al hacer scroll */
+  
   color: #ffffff;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   margin: 0;
