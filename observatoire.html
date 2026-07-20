@@ -1,1 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Observatoire | POLETHIC</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .alert-badge {
+            display: inline-block;
+            background-color: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .report-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: left;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .report-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+        .meta-info {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+        .critical-tag {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <div class="container header-layout">
+            <div class="logo-title">POLETHIC_FRA</div>
+            <nav>
+                <a href="index.html">Accueil</a>
+                <a href="observatoire.html">L'Observatoire</a>
+                <a href="psicomusee.html">Psicomusée</a>
+                <a href="autodefense.html">Outils</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <section class="hero-card" style="text-align: center; margin-bottom: 40px;">
+            <h2 style="font-size: 2rem; color: #1e3a8a;">L'Observatoire des Fronts Prédictifs</h2>
+            <p style="margin-top: 15px; color: #475569; max-width: 700px; margin-left: auto; margin-right: auto;">
+                Analyses critiques, rapports d'activité et veilles citoyennes. Nous recensons les dérives sectaires modernes et l'intrusion professionnelle pour protéger l'espace public et la santé démocratique.
+            </p>
+        </section>
+
+        <!-- Listado de Informes / Vacunas Cognitivas -->
+        <div style="max-width: 800px; margin: 0 auto;">
+            
+            <!-- Informe 1: Constelaciones Familiares -->
+            <article class="report-card">
+                <span class="alert-badge">Alerte Dérive</span>
+                <h3>Analyse critique : Le phénomène des Constellations Familiales</h3>
+                <div class="meta-info">
+                    <span>Publié le 20 Juillet 2026</span> | 
+                    <span class="critical-tag">Absence d'Évidence Scientifique</span>
+                </div>
+                <p style="color: #334155; line-height: 1.6;">
+                    Étude détaillée sur les risques liés aux théories des "enredos" (remontées systémiques inconscientes). Face à l'augmentation de l'intrusion professionnelle dans le domaine de la santé mentale, notre observatoire déploie une analyse rigoureuse des dérives de cette pratique non validée par la science.
+                </p>
+                <a href="post/premiere-action.html" class="btn-accent" style="font-size: 0.9rem; padding: 8px 16px; margin-top: 15px;">Lire le rapport complet &rarr;</a>
+            </article>
+
+            <!-- Informe 2: Alerta Intrusismo -->
+            <article class="report-card">
+                <span class="alert-badge" style="background-color: #f59e0b;">Vigilance Loi 2024</span>
+                <h3>Intrusion professionnelle & Santé Démocratique en France</h3>
+                <div class="meta-info">
+                    <span>Publié en Juillet 2026</span> | 
+                    <span class="critical-tag">Prévention Primaire</span>
+                </div>
+                <p style="color: #334155; line-height: 1.6;">
+                    Conformément aux récentes évolutions législatives françaises sur le renforcement de la lutte contre les dérives sectaires, cet article dresse un état des lieux des signalements reçus concernant les faux experts et les promesses de thérapies alternatives miracles.
+                </p>
+                <a href="#" class="btn-accent" style="font-size: 0.9rem; padding: 8px 16px; margin-top: 15px; background-color: #64748b;">En cours de rédaction</a>
+            </article>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+            <p class="legal" style="margin-top: 15px; border-top: 1px solid #334155; padding-top: 15px; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.5; color: #94a3b8;">
+                <strong>Bouclier de Protection Professionnelle :</strong> POLETHIC France se consacre exclusivement à la prévention primaire et à la psychoéducation non clinique. Nous ne réalisons aucun diagnostic, évaluation pathologique ou thérapie de santé mentale.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
