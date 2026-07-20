@@ -1,40 +1,32 @@
-/* Colores Institucionales y Tipografía */
+/* --- Variables de Identidad Visual POLETHIC --- */
 :root {
-    --primary-color: #1e3a8a; /* Azul oscuro institucional */
-    --accent-color: #0d9488;  /* Verde azulado ético */
-    --text-color: #1e293b;    /* Gris muy oscuro para lectura fácil */
-    --light-bg: #f8fafc;      /* Fondo grisáceo claro */
-    --white: #ffffff;
+    --primary-blue: #1e3a8a;    /* Azul Institucional */
+    --accent-green: #0d9488;    /* Verde Ético */
+    --bg-light: #f8fafc;        /* Fondo anti-bruma */
+    --text-main: #334155;       /* Texto suave pero legible */
+    --text-muted: #64748b;     /* Texto secundario */
 }
 
-* {
-    box-sizing: border-box;
+/* --- Base --- */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 0;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--text-color);
-    background-color: var(--light-bg);
+    background-color: var(--bg-light);
+    color: var(--text-main);
     line-height: 1.6;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
 }
 
-/* Contenedor alineado */
 .container {
-    width: 90%;
     max-width: 1000px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Encabezado y Navegación */
+/* --- Header & Menú --- */
 header {
-    background-color: var(--white);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     padding: 20px 0;
 }
 
@@ -42,67 +34,70 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
 }
 
 .logo-title {
     font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    letter-spacing: 0.5px;
+    font-weight: 800;
+    color: var(--primary-blue);
+    letter-spacing: -0.025em;
 }
 
 nav a {
-    color: #64748b;
-    text-decoration: none;
-    font-weight: 600;
+    color: var(--text-muted);
     margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
     transition: color 0.2s ease;
 }
 
 nav a:hover {
-    color: var(--primary-color);
+    color: var(--primary-blue);
 }
 
-/* Cuerpo / Contenido Principal */
-main {
-    flex: 1;
-    padding: 60px 0;
-}
-
+/* --- Tarjeta Principal (Campamento Base) --- */
 .hero-card {
-    background: var(--white);
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 2px 8px rgba(0, 0, 0, 0.02);
+    padding: 50px 40px;
     text-align: center;
+    margin-top: 40px;
 }
 
-.hero-card h2 {
-    color: var(--primary-color);
-    font-size: 2.2rem;
-    margin-bottom: 15px;
+/* --- Botón "Accéder au POLETHIC Beacon" --- */
+.btn-accent {
+    display: inline-block;
+    background-color: var(--primary-blue);
+    color: white !important;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(30, 58, 138, 0.15);
+    transition: all 0.3s ease;
+    margin-top: 20px;
 }
 
-.hero-card p {
-    font-size: 1.2rem;
-    color: #475569;
-    max-width: 700px;
-    margin: 0 auto;
+.btn-accent:hover {
+    background-color: var(--accent-green);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(13, 148, 136, 0.2);
 }
 
-/* Pie de página */
+/* --- Pie de Página (Bouclier Legal) --- */
 footer {
-    background-color: #0f172a;
-    color: #94a3b8;
+    background-color: #1e293b;
+    color: #f1f5f9;
+    padding: 40px 0;
     text-align: center;
-    padding: 30px 0;
     font-size: 0.9rem;
 }
 
 footer .legal {
+    color: #94a3b8;
     font-size: 0.8rem;
-    opacity: 0.7;
-    margin-top: 5px;
+    max-width: 750px;
+    margin: 20px auto 0;
+    line-height: 1.5;
 }
