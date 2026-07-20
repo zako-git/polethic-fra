@@ -11,38 +11,42 @@
 }
 
 /* ==========================================================================
-   2. FONDO ESPACIAL INTEGRADO CON TODAS LAS ESTRELLAS (ESTILO INFOGRAFÍA)
+   2. FONDO ESPACIAL INTEGRADO: ESTRELLAS MINIATURA Y NUMEROSAS (ESTILO FOTO)
    ========================================================================== */
 body {
   background-color: var(--bg-dark);
   
-  /* Fusionamos en un solo mapa: Destellos cian + Estrellas medianas + Polvo estelar + Nebulosa */
+  /* Reducimos los radios al mínimo (de 12px-18px pasamos a 3px-4px) para que sean destellos milimétricos */
   background-image: 
-    /* --- CAPA 1: Estrellas Grandes con Brillo Cian (Idénticas a tu foto) --- */
-    radial-gradient(circle at 15% 20%, #ffffff 0px, var(--cyan) 2px, transparent 15px),
-    radial-gradient(circle at 85% 45%, #ffffff 0px, var(--cyan) 2px, transparent 12px),
-    radial-gradient(circle at 30% 75%, #ffffff 0px, var(--cyan) 3px, transparent 18px),
-    radial-gradient(circle at 75% 80%, #ffffff 0px, var(--cyan) 2px, transparent 15px),
+    /* --- CAPA 1: Destellos Cian Miniatura (Puntos finos con micro-brillo) --- */
+    radial-gradient(circle at 12% 18%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
+    radial-gradient(circle at 88% 42%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
+    radial-gradient(circle at 28% 72%, #ffffff 0px, var(--cyan) 1.5px, transparent 4px),
+    radial-gradient(circle at 72% 85%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
+    radial-gradient(circle at 40% 28%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
+    radial-gradient(circle at 62% 68%, #ffffff 0px, var(--cyan) 1.5px, transparent 4px),
+    radial-gradient(circle at 92% 15%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
 
-    /* --- CAPA 2: Estrellas Medianas Blancas bien Definidas y Brillantes --- */
-    radial-gradient(circle at 45% 15%, #ffffff 0px, #ffffff 2px, transparent 5px),
-    radial-gradient(circle at 90% 15%, #ffffff 0px, #ffffff 2px, transparent 5px),
-    radial-gradient(circle at 10% 60%, #ffffff 0px, #ffffff 2.5px, transparent 6px),
-    radial-gradient(circle at 60% 45%, #ffffff 0px, #ffffff 2px, transparent 5px),
-    radial-gradient(circle at 95% 70%, #ffffff 0px, #ffffff 2.5px, transparent 6px),
-    radial-gradient(circle at 38% 35%, #ffffff 0px, #ffffff 2px, transparent 5px),
-    radial-gradient(circle at 80% 40%, #ffffff 0px, #ffffff 2px, transparent 5px),
+    /* --- CAPA 2: Estrellas Blancas Pequeñas y Abundantes --- */
+    radial-gradient(circle at 45% 12%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 18% 45%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 32% 15%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 52% 78%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 68% 23%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 82% 58%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 94% 88%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 5% 62%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 55% 38%, #ffffff 0.5px, transparent 2px),
+    radial-gradient(circle at 78% 12%, #ffffff 0.5px, transparent 2px),
 
-    /* --- CAPA 3: Micro-estrellas y Polvo Estelar de Fondo --- */
-    radial-gradient(circle at 5% 12%, rgba(255,255,255,0.8) 0px, transparent 3px),
-    radial-gradient(circle at 25% 40%, rgba(255,255,255,0.7) 0px, transparent 3px),
-    radial-gradient(circle at 70% 25%, rgba(255,255,255,0.7) 0px, transparent 3px),
-    radial-gradient(circle at 40% 90%, rgba(255,255,255,0.8) 0px, transparent 3px),
-    radial-gradient(circle at 52% 23%, rgba(255,255,255,0.6) 0px, transparent 3px),
-    radial-gradient(circle at 67% 58%, rgba(255,255,255,0.7) 0px, transparent 3px),
-    radial-gradient(circle at 89% 12%, rgba(255,255,255,0.6) 0px, transparent 3px),
+    /* --- CAPA 3: Micro-Polvo Estelar Sutil (Para dar profundidad mate) --- */
+    radial-gradient(circle at 22% 35%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px),
+    radial-gradient(circle at 60% 18%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
+    radial-gradient(circle at 80% 75%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px),
+    radial-gradient(circle at 10% 85%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
+    radial-gradient(circle at 48% 60%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px),
 
-    /* --- CAPA 4: El Degradado Azul Profundo del Centro (Efecto Nebulosa) --- */
+    /* --- CAPA 4: El Degradado Azul Profundo de Fondo --- */
     radial-gradient(circle at 50% 50%, var(--bg-blue) 0%, var(--bg-dark) 90%);
 
   background-attachment: fixed;
@@ -62,7 +66,7 @@ body {
   margin: 0 auto;
   padding: 0 2rem;
   position: relative;
-  z-index: 10; /* Fuerza a que todo el contenido flote POR ENCIMA de las estrellas */
+  z-index: 10;
 }
 
 /* ==========================================================================
@@ -71,10 +75,10 @@ body {
 header {
   border-bottom: 1px solid var(--line);
   padding: 1.5rem 0;
-  background: rgba(2, 6, 18, 0.85); /* Un poco más opaco para dar contraste */
+  background: rgba(2, 6, 18, 0.85);
   backdrop-filter: blur(12px);
   position: relative;
-  z-index: 20; /* Asegura que el menú siempre responda a los clics */
+  z-index: 20;
 }
 
 .header-layout {
@@ -83,9 +87,8 @@ header {
   align-items: center;
 }
 
-/* Recuperamos el título en color cian neón con su respectivo brillo */
 .logo-title {
-  color: var(--cyan) !important; /* El !important asegura que nada lo pise */
+  color: var(--cyan) !important;
   font-family: 'Oswald', sans-serif;
   font-weight: 700;
   font-size: 2rem;
@@ -94,7 +97,6 @@ header {
   text-shadow: 0 0 15px var(--cyan-glow);
 }
 
-/* Estilo y visibilidad para los botones de navegación */
 nav a {
   color: #ffffff;
   margin-left: 1.5rem;
@@ -113,15 +115,14 @@ nav a:hover {
 }
 
 /* ==========================================================================
-   5. CÁPSULAS Y CONTENIDO (CORREGIDA LA SOMBRA)
+   5. CÁPSULAS Y CONTENIDO
    ========================================================================== */
 .hero-card {
-  background: rgba(13, 21, 38, 0.75); /* Subimos la opacidad para que el texto sea hiperlegible */
+  background: rgba(13, 21, 38, 0.75);
   border: 2px solid rgba(63, 215, 242, 0.5);
   border-radius: 14px;
   padding: 3rem;
   margin-top: 3rem;
-  /* Corregido el error de sintaxis '2*2' que rompía la sombra */
   box-shadow: 
     0 0 25px rgba(2, 6, 18, 0.6),
     inset 0 0 15px rgba(63, 215, 242, 0.15);
