@@ -1,10 +1,44 @@
 /* --- Variables de Identidad Visual POLETHIC --- */
 :root {
-    --primary-blue: #1e3a8a;    /* Azul Institucional */
-    --accent-green: #0d9488;    /* Verde Ético */
-    --bg-light: #f8fafc;        /* Fondo anti-bruma */
-    --text-main: #334155;       /* Texto suave pero legible */
-    --text-muted: #64748b;     /* Texto secundario */
+    --bg-color: #0a0f1d;       /* Fondo oscuro profundo, estilo ciberseguridad */
+    --card-bg: #111827;        /* Fondo de las tarjetas (Gris terminal) */
+    --primary-color: #38bdf8;   /* Azul eléctrico / El Faro */
+    --accent-color: #4ade80;    /* Verde neón / Código Hacker / Alerta Ética */
+    --text-color: #f3f4f6;      /* Texto claro de alta legibilidad */
+    --muted-text: #9ca3af;     /* Texto secundario grisáceo */
+    --border-color: #1f2937;   /* Bordes sutiles de la consola */
+}
+
+/* Cambios globales para la estética Hacker */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Courier New', Courier, monospace; /* Tipografía tipo terminal */
+}
+
+.hero-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid var(--accent-color) !important; /* Línea neón superior */
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.05);
+}
+
+/* Botón estilo terminal ejecutable */
+.btn-accent {
+    background-color: transparent;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 10px 20px;
+    font-family: monospace;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-accent:hover {
+    background-color: var(--accent-color);
+    color: var(--bg-color);
+    box-shadow: 0 0 15px var(--accent-color);
 }
 
 /* --- Base --- */
