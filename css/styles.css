@@ -63,9 +63,12 @@ header {
 }
 
 .logo-title {
-  font-weight: bold;
-  font-size: 1.2rem;
-  letter-spacing: 1px;
+  color: var(--cyan); /* Tu color azul verdoso tecnológico */
+  font-family: 'JetBrains Mono', monospace; /* Tipografía estilo terminal/hacker */
+  font-weight: 800; /* Más grueso y con mayor impacto visual */
+  font-size: 1.6rem; /* Agrandado sustancialmente (antes era 1.2rem) */
+  letter-spacing: 2px; /* Mayor separación entre letras para un aspecto limpio */
+  text-shadow: 0 0 12px rgba(63, 215, 242, 0.3); /* Un sutil resplandor de pantalla de control */
 }
 
 nav a {
