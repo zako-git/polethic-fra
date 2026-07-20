@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Première Action | POLETHIC_FRA</title>
+    <!-- Si notas que no carga el CSS, cambia a "/css/styles.css" -->
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
@@ -20,14 +21,17 @@
     </header>
 
     <main class="container">
-        <article class="hero-card" style="text-align: left;">
-            <span style="color: #64748b; font-size: 0.9rem;">20 Juillet 2026</span>
-            <h2 style="margin-top: 10px; margin-bottom: 20px;">Lancement Officiel de POLETHIC_FRA</h2>
+        <!-- Eliminamos el style inline; añadimos una clase semántica si necesitas resetear el texto -->
+        <article class="hero-card post-content">
+            <time datetime="2026-07-20" class="post-date">20 Juillet 2026</time>
+            <h2>Lancement Officiel de POLETHIC_FRA</h2>
+            
             <p>Nous sommes fiers de vous annoncer la création et le lancement officiel de notre association. Notre mission est de promouvoir des projets éthiques et de soutenir des actions éco-responsables à impact social.</p>
-            <br>
+            
             <p>Ce site web sera notre vitrine pour partager avec vous nos avancées, nos rapports d'activité et nos futurs projets. Merci pour votre soutien !</p>
-            <br>
-            <a href="../actualites.html" style="color: #1e3a8a; font-weight: bold; text-decoration: none;">&larr; Retour aux actualités</a>
+            
+            <!-- Usamos &larr; de forma segura fuera del atributo y manejamos el diseño por CSS -->
+            <a href="../actualites.html" class="back-link">&larr; Retour aux actualités</a>
         </article>
     </main>
 
