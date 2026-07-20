@@ -1,117 +1,37 @@
-/* ==========================================================================
-   ESTILOS INFOGRAFÍA CYBER/HACKER (POLETHIC)
-   ========================================================================== */
-
-/* --- Contenedor de Tarjetas (Grid) --- */
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem 2rem;
-  margin-top: 2rem;
+/* --- Estilos para las Páginas de Posts Individuales --- */
+.post-content {
+  text-align: left;
+  padding: 2.5rem;
 }
 
-/* --- La Cápsula HUD / Hacker --- */
-.card {
-  position: relative;
-  background: rgba(13, 21, 38, 0.7); /* Transparencia base */
-  border: 2px solid rgba(63, 215, 242, 0.4); /* Borde cian suavizado */
-  border-radius: 16px; /* Bordes redondeados tipo cápsula */
-  padding: 1.2rem 1.5rem;
-  display: flex;
-  align-items: center; /* Alineación horizontal de contenido */
-  gap: 1.5rem;
-  backdrop-filter: blur(8px);
-  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
-}
-
-/* Efecto hover con brillo de neón reactivo */
-.card:hover {
-  border-color: var(--cyan);
-  box-shadow: 
-    0 0 20px rgba(63, 215, 242, 0.25),
-    inset 0 0 12px rgba(63, 215, 242, 0.15);
-  transform: translateY(-2px);
-}
-
-/* --- Badge de la Izquierda (Prefijos de Módulos) --- */
-.card .icon {
-  width: 54px; 
-  height: 54px;
-  min-width: 54px;
-  border-radius: 10px;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  background: #060a14; /* Fondo oscuro interno */
-  border: 2px solid rgba(63, 215, 242, 0.6);
-  color: var(--cyan);
+.post-date {
+  color: var(--muted);
+  font-size: 0.9rem;
   font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 0; /* Reseteo del margen del HTML anterior */
-  text-shadow: 0 0 8px var(--cyan);
-  box-shadow: inset 0 0 8px rgba(63, 215, 242, 0.1);
+  display: block;
+  margin-bottom: 0.8rem;
 }
 
-/* --- Textos de las Tarjetas --- */
-.card-content {
-  flex-grow: 1;
-}
-
-.card h3 { 
-  font-size: 1.2rem; 
-  margin-bottom: 0.25rem; 
+.post-content h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
   color: #ffffff;
-  letter-spacing: 0.02em;
 }
 
-.card p { 
-  color: var(--muted); 
-  font-size: 0.92rem; 
-  line-height: 1.4;
+.post-content p {
+  margin-bottom: 1.5rem; /* Reemplaza los <br> del HTML, que es mejor práctica */
+  line-height: 1.6;
 }
 
-/* ==========================================================================
-   ADAPTACIÓN PARA EL BLOQUE DE ESTADÍSTICAS (STAT-BLOCK)
-   ========================================================================== */
-.stat-block {
-  background: rgba(13, 21, 38, 0.5);
-  border: 2px solid rgba(63, 215, 242, 0.3); /* Mismo estilo de marco cyber */
-  border-radius: 16px;
-  padding: 1.8rem;
-  backdrop-filter: blur(8px);
-  box-shadow: inset 0 0 15px rgba(63, 215, 242, 0.03);
+.back-link {
+  color: var(--cyan); /* Usamos tu color de acento principal */
+  font-weight: bold;
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
-.stat-block .row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.9rem 0;
-  border-bottom: 1px solid rgba(28, 42, 66, 0.7); /* Tu --line suavizada */
-}
-
-.stat-block .row:last-child { 
-  border-bottom: none; 
-}
-
-.stat-block .value {
-  text-shadow: 0 0 8px rgba(63, 215, 242, 0.6); /* Brillo en los datos numéricos */
-}
-
-/* --- Media Query para Dispositivos Móviles --- */
-@media (max-width: 780px) {
-  .card-grid { 
-    grid-template-columns: 1fr; 
-  }
-  .card { 
-    padding: 1.25rem; 
-    gap: 1.1rem;
-  }
-  .card .icon {
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
-    font-size: 1rem;
-  }
+.back-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px var(--cyan);
 }
