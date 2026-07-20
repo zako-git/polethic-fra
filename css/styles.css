@@ -1,53 +1,21 @@
-/* --- Variables de Identidad Visual POLETHIC --- */
+/* --- Variables de Identidad Visual POLETHIC (Cybersecurity Mode) --- */
 :root {
     --bg-color: #0a0f1d;       /* Fondo oscuro profundo, estilo ciberseguridad */
     --card-bg: #111827;        /* Fondo de las tarjetas (Gris terminal) */
-    --primary-color: #38bdf8;   /* Azul eléctrico / El Faro */
+    --primary-color: #38bdf8;   /* Azul eléctrico / El Faro / Enlaces activos */
     --accent-color: #4ade80;    /* Verde neón / Código Hacker / Alerta Ética */
     --text-color: #f3f4f6;      /* Texto claro de alta legibilidad */
     --muted-text: #9ca3af;     /* Texto secundario grisáceo */
     --border-color: #1f2937;   /* Bordes sutiles de la consola */
 }
 
-/* Cambios globales para la estética Hacker */
+/* --- Base del Sistema --- */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Courier New', Courier, monospace; /* Tipografía tipo terminal */
-}
-
-.hero-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-top: 4px solid var(--accent-color) !important; /* Línea neón superior */
-    box-shadow: 0 0 15px rgba(74, 222, 128, 0.05);
-}
-
-/* Botón estilo terminal ejecutable */
-.btn-accent {
-    background-color: transparent;
-    color: var(--accent-color);
-    border: 1px solid var(--accent-color);
-    padding: 10px 20px;
-    font-family: monospace;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-accent:hover {
-    background-color: var(--accent-color);
-    color: var(--bg-color);
-    box-shadow: 0 0 15px var(--accent-color);
-}
-
-/* --- Base --- */
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Courier New', Courier, monospace; /* Tipografía tipo terminal unificada */
     margin: 0;
     padding: 0;
-    background-color: var(--bg-light);
-    color: var(--text-main);
     line-height: 1.6;
 }
 
@@ -57,10 +25,10 @@ body {
     padding: 0 20px;
 }
 
-/* --- Header & Menú --- */
+/* --- Header & Menú Táctico --- */
 header {
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background-color: #070a13; /* Un punto más oscuro que el fondo general */
+    border-bottom: 1px solid var(--border-color);
     padding: 20px 0;
 }
 
@@ -73,63 +41,70 @@ header {
 .logo-title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--primary-blue);
+    color: var(--primary-color); /* Cambiado a azul eléctrico hacker */
     letter-spacing: -0.025em;
 }
 
 nav a {
-    color: var(--text-muted);
+    color: var(--muted-text);
     margin-left: 20px;
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 nav a:hover {
-    color: var(--primary-blue);
+    color: var(--accent-color); /* Al pasar el ratón se ilumina en verde neón */
+    text-shadow: 0 0 8px var(--accent-color);
 }
 
-/* --- Tarjeta Principal (Campamento Base) --- */
+/* --- Tarjeta de Enfoque (Terminal de Diagnóstico) --- */
 .hero-card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 2px 8px rgba(0, 0, 0, 0.02);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid var(--accent-color) !important; /* Línea neón superior obligatoria */
+    border-radius: 8px; /* Esquinas ligeramente suavizadas pero estilizadas */
     padding: 50px 40px;
-    text-align: center;
     margin-top: 40px;
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.03);
 }
 
-/* --- Botón "Accéder au POLETHIC Beacon" --- */
+/* --- Botón de Ejecución Código (.exe) --- */
 .btn-accent {
     display: inline-block;
-    background-color: var(--primary-blue);
-    color: white !important;
-    padding: 14px 28px;
-    border-radius: 8px;
+    background-color: transparent;
+    color: var(--accent-color) !important;
+    border: 1px solid var(--accent-color);
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-family: monospace;
+    text-transform: uppercase;
     text-decoration: none;
     font-weight: 600;
-    box-shadow: 0 4px 6px rgba(30, 58, 138, 0.15);
+    cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 20px;
 }
 
 .btn-accent:hover {
-    background-color: var(--accent-green);
+    background-color: var(--accent-color);
+    color: var(--bg-color) !important;
+    box-shadow: 0 0 15px var(--accent-color);
     transform: translateY(-1px);
-    box-shadow: 0 6px 12px rgba(13, 148, 136, 0.2);
 }
 
-/* --- Pie de Página (Bouclier Legal) --- */
+/* --- Pie de Página (Bouclier Legal Consolidado) --- */
 footer {
-    background-color: #1e293b;
-    color: #f1f5f9;
+    background-color: #070a13; /* Consistente con el Header */
+    border-top: 1px solid var(--border-color);
+    color: var(--text-color);
     padding: 40px 0;
     text-align: center;
     font-size: 0.9rem;
 }
 
 footer .legal {
-    color: #94a3b8;
+    color: var(--muted-text);
     font-size: 0.8rem;
     max-width: 750px;
     margin: 20px auto 0;
