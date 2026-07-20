@@ -1,59 +1,71 @@
 /* ==========================================================================
-   1. VARIABLES DE IDENTIDAD Y COLORES POLETHIC
+   1. VARIABLES DE IDENTIDAD (CLONADAS DE LA INFOGRAFÍA)
    ========================================================================== */
 :root {
-  --bg: #060a14;           /* Fondo ultra oscuro cyber */
-  --surface: #0d1526;      /* Fondo de las cápsulas y contenedores */
-  --cyan: #3fd7f2;         /* Color de acento neón / HUD */
-  --muted: #64748b;        /* Textos secundarios y descripciones */
-  --line: rgba(63, 215, 242, 0.15); /* Líneas sutiles de división */
+  --bg-dark: #020612;       /* El negro profundo de las esquinas */
+  --bg-blue: #06152d;       /* El azul noche del centro */
+  --cyan: #3fd7f2;          /* Tu azul verdoso brillante */
+  --cyan-glow: rgba(63, 215, 242, 0.3);
+  --muted: #64748b;         /* Gris azulado para textos secundarios */
+  --line: rgba(63, 215, 242, 0.25);
 }
 
 /* ==========================================================================
-   2. CONFIGURACIÓN GLOBAL DEL SISTEMA
+   2. FONDO ESPACIAL ORGÁNICO Y CONFIGURACIÓN GLOBAL
    ========================================================================== */
 body {
-  background-color: var(--bg);
-  
-  /* --- Capas de Universo de Puntitos Mate --- */
+  /* Fondo con el degradado radial de la imagen (más claro en el centro) */
+  background-color: var(--bg-dark);
   background-image: 
-    /* Capa 1: Puntitos muy finos (1px), espaciado intermedio, tono cian sutil */
-    radial-gradient(rgba(63, 215, 242, 0.12) 1px, transparent 1px),
-    
-    /* Capa 2: Puntos un poco más grandes (2px), espaciado ancho, tono cian MÁS CLARITO */
-    radial-gradient(rgba(180, 242, 255, 0.18) 2px, transparent 2px),
-    
-    /* Capa 3: Micro-polvo estelar de fondo (0.8px), espaciado cerrado, tono neutro apagado */
-    radial-gradient(rgba(255, 255, 255, 0.05) 0.8px, transparent 0.8px);
-
-  /* Tamaños diferentes para cada cuadrícula para que no se pisen entre sí */
-  background-size: 50px 50px, 90px 90px, 30px 30px;
+    /* Capa de destellos grandes difuminados */
+    radial-gradient(circle at 20% 30%, rgba(63, 215, 242, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(63, 215, 242, 0.06) 0%, transparent 35%),
+    /* El degradado azul del fondo general */
+    radial-gradient(circle at center, var(--bg-blue) 0%, var(--bg-dark) 85%);
   
-  /* Desplazamientos para romper la simetría */
-  background-position: 0 0, 40px 40px, 15px 15px;
-  
-  /* Mantiene el fondo estático al hacer scroll */
-  background-attachment: fixed; 
-
+  background-attachment: fixed;
   color: #ffffff;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  position: relative;
+}
+
+/* Generamos las estrellas de diferentes tamaños usando un pseudoelemento */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  /* Microestrellas nítidas de 1px y estrellas medianas desenfocadas distribuidas al azar */
+  box-shadow: 
+    10vw 20vh 1px #fff,  45vw 15vh 0.5px rgba(255,255,255,0.5), 
+    85vw 30vh 2px var(--cyan), 25vw 55vh 1px #fff,
+    70vw 40vh 1.5px rgba(255,255,255,0.7), 15vw 75vh 0.5px #fff,
+    90vw 85vh 2px rgba(63, 215, 242, 0.4), 55vw 60vh 1px #fff,
+    35vw 85vh 1.5px #fff, 65vw 15vh 1px var(--cyan),
+    50vw 45vh 0.5px #fff, 80vw 10vh 1px rgba(255,255,255,0.3);
+  opacity: 0.8;
 }
 
 .container {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 2rem;
+  position: relative;
+  z-index: 1;
 }
 
-/* --- Estilos del Header --- */
+/* ==========================================================================
+   3. FUENTES Y CABECERA ESTILO INFOGRAFÍA
+   ========================================================================== */
 header {
   border-bottom: 1px solid var(--line);
   padding: 1.5rem 0;
-  background: rgba(6, 10, 20, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(2, 6, 18, 0.7);
+  backdrop-filter: blur(12px);
 }
 
 .header-layout {
@@ -62,78 +74,74 @@ header {
   align-items: center;
 }
 
+/* El título emula las letras altas, condensadas y el color exacto */
 .logo-title {
-  color: var(--cyan); /* Tu color azul verdoso tecnológico */
-  font-family: 'JetBrains Mono', monospace; /* Tipografía estilo terminal/hacker */
-  font-weight: 800; /* Más grueso y con mayor impacto visual */
-  font-size: 1.6rem; /* Agrandado sustancialmente (antes era 1.2rem) */
-  letter-spacing: 2px; /* Mayor separación entre letras para un aspecto limpio */
-  text-shadow: 0 0 12px rgba(63, 215, 242, 0.3); /* Un sutil resplandor de pantalla de control */
+  color: var(--cyan);
+  font-family: 'Oswald', sans-serif; /* Letra alta, fuerte y condensada */
+  font-weight: 700;
+  font-size: 2rem; /* Más grande y con presencia */
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 15px var(--cyan-glow);
 }
 
 nav a {
   color: #ffffff;
   margin-left: 1.5rem;
   text-decoration: none;
+  font-family: 'Oswald', sans-serif;
   font-weight: 500;
-  transition: color 0.2s;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.2s, text-shadow 0.2s;
 }
 
 nav a:hover {
   color: var(--cyan);
-  text-shadow: 0 0 8px var(--cyan);
-}
-
-/* --- Estilos del Bloque Principal (Terminal) --- */
-.hero-card {
-  background-color: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 2.5rem;
-  margin-top: 3rem;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-}
-
-/* --- Estilos del Footer --- */
-footer {
-  margin-top: 5rem;
-  padding: 2rem 0;
-  border-top: 1px solid var(--line);
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-footer .legal {
-  font-size: 0.8rem;
-  margin-top: 1rem;
+  text-shadow: 0 0 10px var(--cyan);
 }
 
 /* ==========================================================================
-   3. ESTILOS PARA LAS PÁGINAS DE POSTS INDIVIDUALES
+   4. CÁPSULAS Y CONTENIDO (ESTILO SECCIONES DE LA INFOGRAFÍA)
    ========================================================================== */
-.post-content {
-  text-align: left;
-  padding: 2.5rem;
-}
-
-.post-date {
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-family: 'JetBrains Mono', monospace;
-  display: block;
-  margin-bottom: 0.8rem;
+.hero-card {
+  background: rgba(13, 21, 38, 0.6);
+  /* Doble borde simulado con box-shadow para calcar los contenedores de la imagen */
+  border: 2px solid rgba(63, 215, 242, 0.5);
+  border-radius: 14px;
+  padding: 3rem;
+  margin-top: 3rem;
+  box-shadow: 
+    0 0 25px rgba(2*2, 6, 18, 0.5),
+    inset 0 0 15px rgba(63, 215, 242, 0.1);
+  backdrop-filter: blur(8px);
 }
 
 .post-content h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.2rem;
+  text-transform: uppercase;
   margin-top: 0;
   margin-bottom: 1.5rem;
+  letter-spacing: 0.5px;
   color: #ffffff;
 }
 
+.post-date {
+  color: var(--cyan);
+  font-size: 0.9rem;
+  font-family: 'JetBrains Mono', monospace;
+  display: block;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
 .post-content p {
+  color: #e2e8f0;
+  font-size: 1.05rem;
+  line-height: 1.7;
   margin-bottom: 1.5rem;
-  line-height: 1.6;
 }
 
 .back-link {
@@ -141,10 +149,24 @@ footer .legal {
   font-weight: bold;
   text-decoration: none;
   font-family: 'JetBrains Mono', monospace;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
+  font-size: 0.95rem;
+  transition: color 0.2s, text-shadow 0.2s;
 }
 
 .back-link:hover {
   color: #ffffff;
   text-shadow: 0 0 8px var(--cyan);
+}
+
+/* ==========================================================================
+   5. FOOTER
+   ========================================================================== */
+footer {
+  margin-top: 5rem;
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: rgba(2, 6, 18, 0.4);
 }
