@@ -33,21 +33,43 @@ body {
 }
 
 /* Generamos las estrellas de diferentes tamaños usando un pseudoelemento */
+/* Generamos las estrellas de diferentes tamaños distribuidas de forma orgánica */
 body::before {
   content: "";
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%;
   pointer-events: none;
   z-index: 0;
-  /* Microestrellas nítidas de 1px y estrellas medianas desenfocadas distribuidas al azar */
+  
+  /* Un firmamento masivo de estrellas agrupadas por tamaño y brillo */
   box-shadow: 
-    10vw 20vh 1px #fff,  45vw 15vh 0.5px rgba(255,255,255,0.5), 
-    85vw 30vh 2px var(--cyan), 25vw 55vh 1px #fff,
-    70vw 40vh 1.5px rgba(255,255,255,0.7), 15vw 75vh 0.5px #fff,
-    90vw 85vh 2px rgba(63, 215, 242, 0.4), 55vw 60vh 1px #fff,
-    35vw 85vh 1.5px #fff, 65vw 15vh 1px var(--cyan),
-    50vw 45vh 0.5px #fff, 80vw 10vh 1px rgba(255,255,255,0.3);
-  opacity: 0.8;
+    /* --- Capa 1: Micro-estrellas blancas de fondo (puntos muy finos) --- */
+    5vw 12vh 0.5px #fff,   18vw 45vh 0.5px rgba(255,255,255,0.4), 
+    28vw 15vh 0.5px #fff,  42vw 78vh 0.5px rgba(255,255,255,0.6),
+    52vw 23vh 0.5px #fff,  67vw 58vh 0.5px rgba(255,255,255,0.3),
+    73vw 88vh 0.5px #fff,  89vw 12vh 0.5px rgba(255,255,255,0.5),
+    94vw 48vh 0.5px #fff,  12vw 82vh 0.5px rgba(255,255,255,0.4),
+    34vw 63vh 0.5px #fff,  61vw 19vh 0.5px rgba(255,255,255,0.5),
+
+    /* --- Capa 2: Estrellas medianas nítidas (1px a 1.5px) --- */
+    10vw 25vh 1px #fff,    22vw 68vh 1.5px #fff,
+    38vw 35vh 1px #fff,    49vw 89vh 1px #fff,
+    58vw 52vh 1.5px #fff,  76vw 29vh 1px #fff,
+    85vw 64vh 1px #fff,    92vw 77vh 1.5px #fff,
+    3vw 70vh 1px #fff,     15vw 18vh 1px #fff,
+    65vw 80vh 1.5px #fff,  80vw 42vh 1px #fff,
+
+    /* --- Capa 3: Destellos cian y estrellas con brillo (2px con difuminado) --- */
+    8vw 50vh 2px var(--cyan),    25vw 85vh 2.5px rgba(255,255,255,0.9),
+    45vw 12vh 2px var(--cyan),   60vw 65vh 2px rgba(255,255,255,0.8),
+    72vw 15vh 2px var(--cyan),   88vw 38vh 2.5px var(--cyan),
+    31vw 27vh 2px rgba(63, 215, 242, 0.6), 55vw 40vh 2px #fff,
+    69vw 92vh 2px var(--cyan),   96vw 22vh 2px rgba(255,255,255,0.7);
+
+  opacity: 0.95; /* Subimos un pelín la opacidad general para que se noten más */
 }
 
 .container {
