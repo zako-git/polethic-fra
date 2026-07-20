@@ -1,4 +1,93 @@
-/* --- Estilos para las Páginas de Posts Individuales --- */
+/* ==========================================================================
+   1. VARIABLES DE IDENTIDAD Y COLORES POLETHIC
+   ========================================================================== */
+:root {
+  --bg: #060a14;           /* Fondo ultra oscuro cyber */
+  --surface: #0d1526;      /* Fondo de las cápsulas y contenedores */
+  --cyan: #3fd7f2;         /* Color de acento neón / HUD */
+  --muted: #64748b;        /* Textos secundarios y descripciones */
+  --line: rgba(63, 215, 242, 0.15); /* Líneas sutiles de división */
+}
+
+/* ==========================================================================
+   2. CONFIGURACIÓN GLOBAL DEL SISTEMA
+   ========================================================================== */
+body {
+  background-color: var(--bg);
+  color: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* --- Estilos del Header --- */
+header {
+  border-bottom: 1px solid var(--line);
+  padding: 1.5rem 0;
+  background: rgba(6, 10, 20, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+}
+
+nav a {
+  color: #ffffff;
+  margin-left: 1.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: var(--cyan);
+  text-shadow: 0 0 8px var(--cyan);
+}
+
+/* --- Estilos del Bloque Principal (Terminal) --- */
+.hero-card {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 2.5rem;
+  margin-top: 3rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Estilos del Footer --- */
+footer {
+  margin-top: 5rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+footer .legal {
+  font-size: 0.8rem;
+  margin-top: 1rem;
+}
+
+/* ==========================================================================
+   3. ESTILOS PARA LAS PÁGINAS DE POSTS INDIVIDUALES
+   ========================================================================== */
 .post-content {
   text-align: left;
   padding: 2.5rem;
@@ -19,12 +108,12 @@
 }
 
 .post-content p {
-  margin-bottom: 1.5rem; /* Reemplaza los <br> del HTML, que es mejor práctica */
+  margin-bottom: 1.5rem;
   line-height: 1.6;
 }
 
 .back-link {
-  color: var(--cyan); /* Usamos tu color de acento principal */
+  color: var(--cyan);
   font-weight: bold;
   text-decoration: none;
   font-family: 'JetBrains Mono', monospace;
