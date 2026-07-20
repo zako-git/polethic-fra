@@ -1,189 +1,76 @@
-/* --- Variables Sci-Fi HUD --- */
-:root {
-    --bg-deep: #050b14;       /* Fondo oscuro del espacio cibernético */
-    --neon-cyan: #00f0ff;     /* Cian eléctrico brillante (Luz principal) */
-    --neon-green: #39ff14;    /* Verde neón (Acentos/Éxito) */
-    --hud-blue: #0b2545;      /* Fondo de los bloques tecnológicos */
-    --hud-border: rgba(0, 240, 255, 0.4); /* Bordes cian semitransparentes */
-    --text-glow: #e2f1f7;
+/* Modifica o añade estas clases dentro de tu <style> actual */
+
+/* --- Ajuste de la Cuadrícula para Clonar el Estilo --- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem 2rem; /* Espaciado idéntico al de la infografía */
+  margin-top: 2rem;
 }
 
-/* --- Base --- */
-body {
-    background-color: var(--bg-deep);
-    background-image: 
-        radial-gradient(at 50% 0%, rgba(0, 240, 255, 0.15) 0px, transparent 50%),
-        linear-gradient(rgba(5, 11, 20, 0.5) 50%, rgba(0, 0, 0, 0.8) 50%);
-    background-size: 100% 100%, 100% 4px; /* Simula líneas de escaneo de monitor */
-    color: #ffffff;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+/* --- La Cápsula Cyber Adaptada a POLETHIC --- */
+.card {
+  position: relative;
+  background: rgba(13, 21, 38, 0.7); /* Tu --surface con transparencia de cristal */
+  border: 2px solid rgba(63, 215, 242, 0.4); /* Borde cian suavizado */
+  border-radius: 16px; /* Esquinas redondeadas estilo cápsula */
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center; /* Alineación horizontal perfecta */
+  gap: 1.5rem;
+  backdrop-filter: blur(8px);
+  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
 }
 
-.container {
-    max-width: 1050px;
-    margin: 0 auto;
-    padding: 0 20px;
+/* Efecto de iluminación interactiva */
+.card:hover {
+  border-color: var(--cyan);
+  box-shadow: 
+    0 0 20px rgba(63, 215, 242, 0.25),
+    inset 0 0 12px rgba(63, 215, 242, 0.15);
+  transform: translateY(-2px);
 }
 
-/* --- Header Integrado --- */
-header {
-    background: rgba(5, 11, 20, 0.85);
-    border-bottom: 2px solid var(--neon-cyan);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-    padding: 15px 0;
-    backdrop-filter: blur(5px);
+/* --- El Sub-contenedor de la Izquierda (Badge) --- */
+.card .icon {
+  width: 54px; 
+  height: 54px;
+  min-width: 54px; /* Evita que se deforme */
+  border-radius: 10px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  background: #060a14; /* Tu fondo --bg oscuro interno */
+  border: 2px solid rgba(63, 215, 242, 0.6);
+  color: var(--cyan);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0; /* Eliminamos el margen inferior original para centrarlo */
+  text-shadow: 0 0 8px var(--cyan);
+  box-shadow: inset 0 0 8px rgba(63, 215, 242, 0.1);
 }
 
-.header-layout {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* --- El Bloque de Textos a la Derecha --- */
+.card-content {
+  flex-grow: 1;
 }
 
-.logo-title {
-    font-weight: 900;
-    font-size: 1.6rem;
-    color: #ffffff;
-    text-shadow: 0 0 10px var(--neon-cyan);
-    letter-spacing: 2px;
+.card h3 { 
+  font-size: 1.2rem; 
+  margin-bottom: 0.25rem; 
+  color: #ffffff;
+  letter-spacing: 0.02em;
 }
 
-nav a {
-    color: rgba(255, 255, 255, 0.8);
-    margin-left: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
+.card p { 
+  color: var(--muted); 
+  font-size: 0.92rem; 
+  line-height: 1.4;
 }
 
-nav a:hover {
-    color: var(--neon-cyan);
-    text-shadow: 0 0 8px var(--neon-cyan);
-}
-
-/* --- Panel Central HUD --- */
-.main-hud-panel {
-    background: rgba(11, 37, 69, 0.4);
-    border: 2px solid var(--neon-cyan);
-    box-shadow: 0 0 30px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 240, 255, 0.1);
-    padding: 40px;
-    margin-top: 40px;
-    border-radius: 4px;
-    position: relative;
-}
-
-.main-hud-panel::before {
-    content: "POLETHIC SYSTEM ACTIVE";
-    position: absolute;
-    top: -12px;
-    left: 20px;
-    background: var(--bg-deep);
-    padding: 0 10px;
-    font-size: 0.75rem;
-    color: var(--neon-cyan);
-    letter-spacing: 2px;
-    font-weight: bold;
-}
-
-/* --- Rejilla de Sub-Paneles Ciberseguridad (Estilo Captura) --- */
-.hud-grid {
-    display: table;
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 20px;
-    margin-top: 30px;
-}
-
-.hud-row {
-    display: table-row;
-}
-
-/* Tarjeta angular recortada mediante clip-path */
-.hud-card-cell {
-    display: table-cell;
-    width: 50%;
-    background: rgba(5, 11, 20, 0.8);
-    border: 1px solid var(--neon-cyan);
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
-    padding: 20px;
-    position: relative;
-    vertical-align: middle;
-    /* Recorte de esquinas diagonales exactas al estilo del menú de la captura */
-    clip-path: polygon(15px 0%, 100% 0%, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0% 100%, 0% 15px);
-    transition: all 0.3s ease;
-}
-
-.hud-card-cell:hover {
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-    background: rgba(11, 37, 69, 0.7);
-    transform: translateY(-2px);
-}
-
-/* Caja de Código ID (ej: 01, 02) */
-.hud-id-badge {
-    display: inline-block;
-    color: var(--neon-cyan);
-    font-weight: 900;
-    font-size: 1.2rem;
-    border-right: 2px solid var(--neon-cyan);
-    padding-right: 15px;
-    margin-right: 15px;
-    vertical-align: middle;
-}
-
-.hud-card-content {
-    display: inline-block;
-    vertical-align: middle;
-    width: calc(100% - 60px);
-}
-
-.hud-card-title {
-    color: #ffffff;
-    font-weight: 700;
-    margin: 0 0 5px 0;
-    font-size: 1.1rem;
-    letter-spacing: 0.5px;
-}
-
-.hud-card-desc {
-    color: #a5c4d4;
-    font-size: 0.9rem;
-    margin: 0;
-    line-height: 1.4;
-}
-
-/* --- Botón de Ejecución Cyberpunk --- */
-.btn-cyber {
-    display: inline-block;
-    background: transparent;
-    color: var(--neon-green) !important;
-    border: 2px solid var(--neon-green);
-    padding: 14px 35px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-decoration: none;
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
-    transition: all 0.3s ease;
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-}
-
-.btn-cyber:hover {
-    background: var(--neon-green);
-    color: var(--bg-deep) !important;
-    box-shadow: 0 0 25px var(--neon-green);
-}
-
-/* --- Footer --- */
-footer {
-    margin-top: 60px;
-    border-top: 1px solid rgba(0, 240, 255, 0.2);
-    padding: 30px 0;
-    text-align: center;
-    background: rgba(3, 7, 13, 0.9);
+/* Ajuste responsive para móviles */
+@media (max-width: 780px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .card { padding: 1.25rem; }
 }
