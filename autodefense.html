@@ -1,1 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outils d'Auto-défense | POLETHIC</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Estilos específicos para el Artivismo del Faro y el Cerebro */
+        .beacon-section {
+            background: #0f172a; /* Fondo oscuro simulando la noche/bruma */
+            color: #f8fafc;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .lighthouse-container {
+            margin: 20px auto;
+            width: 100px;
+            height: 150px;
+            position: relative;
+        }
+        /* El cuerpo del faro */
+        .lighthouse {
+            width: 40px;
+            height: 120px;
+            background: linear-gradient(90deg, #e2e8f0 70%, #cbd5e1 100%);
+            margin: 30px auto 0;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            border-bottom: 8px solid #1e293b;
+        }
+        /* La linterna del faro que cambia de luz */
+        .lighthouse-light {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 25px;
+            background: #fdba74; /* Luz naranja de advertencia inicial */
+            border-radius: 4px;
+            box-shadow: 0 0 20px #f59e0b;
+            transition: all 0.5s ease;
+        }
+        /* Animación interactiva: al pasar el ratón, el faro emite luz verde ética */
+        .beacon-section:hover .lighthouse-light {
+            background: #6ee7b7; 
+            box-shadow: 0 0 40px #10b981, 0 0 80px rgba(16, 185, 129, 0.4);
+        }
+        .brain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .brain-part {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0d9488; /* Verde ético */
+            color: #334155;
+            text-align: left;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #0d9488;
+            color: #0d9488;
+            cursor: help;
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <div class="container header-layout">
+            <div class="logo-title">POLETHIC_FRA</div>
+            <nav>
+                <a href="index.html">Accueil</a>
+                <a href="observatoire.html">L'Observatoire</a>
+                <a href="autodefense.html">Outils</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Sección POLETHIC BEACON -->
+        <section class="beacon-section">
+            <span style="color: #38bdf8; font-weight: bold; uppercase; letter-spacing: 0.1em;">DISPOSITIF DE VIGILANCE</span>
+            <h2 style="color: white; margin-top: 10px;">POLETHIC Beacon</h2>
+            <p style="max-width: 600px; margin: 15px auto; color: #94a3b8;">
+                Face aux tempêtes cognitives et aux dynamiques d'influence, le Beacon projette un faisceau de lucidité. Passez votre curseur pour activer la vigilance éthique.
+            </p>
+            
+            <div class="lighthouse-container">
+                <div class="lighthouse">
+                    <div class="lighthouse-light"></div>
+                </div>
+            </div>
+
+            <p style="font-size: 1.1rem; margin-top: 20px;">
+                <strong>Votre cerveau vous ment-il en ce moment ?</strong>
+            </p>
+            <a href="#" class="btn-accent" style="margin-top: 15px;">Lancer le Test Interactif &rarr;</a>
+        </section>
+
+        <!-- Sección ANATOMÍA CEREBRAL & DISCERNIMIENTO -->
+        <section class="hero-card" style="margin-top: 30px;">
+            <h3>L'Architecture du Discernement Analytique</h3>
+            <p style="color: #64748b; margin-top: 10px;">
+                Pour habiter les mots avec rigueur, comprenons comment les biais exploitent notre propre fonctionnement biologique :
+            </p>
+
+            <div class="brain-grid">
+                <div class="brain-part">
+                    <h4>1. Le Circuit de Récompense</h4>
+                    <p style="font-size: 0.9rem; margin-top: 8px; color: #475569;">
+                        Exploité par l'architecture numérique pour générer de la dépendance et figer la conviction au détriment de l'évidence.
+                    </p>
+                </div>
+                <div class="brain-part">
+                    <h4>2. Gestion de l'Énergie (<span class="tooltip">Allostasie</span>)</h4>
+                    <p style="font-size: 0.9rem; margin-top: 8px; color: #475569;">
+                        Le cerveau cherche constamment à économiser son énergie. Face à la complexité, il préfère le confort d'une opinion simple à la rigueur d'un fait prouvé.
+                    </p>
+                </div>
+                <div class="brain-part">
+                    <h4>3. <span class="tooltip">Erreur de prédiction</span></h4>
+                    <p style="font-size: 0.9rem; margin-top: 8px; color: #475569;">
+                        Le mécanisme par lequel notre cerveau ajuste sa vision du monde. Les techniques de manipulation saturent ce système pour créer un "refuge de brume".
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 POLETHIC_FRA. Tous droits réservés.</p>
+            <p class="legal" style="margin-top: 15px; border-top: 1px solid #334155; padding-top: 15px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <strong>Bouclier de Protection Professionnelle :</strong> POLETHIC France se dédie exclusivement à la prévention primaire et à la psychoéducation non clinique. Nous ne réalisons aucun diagnostic, évaluation pathologique ou thérapie de santé mental.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
