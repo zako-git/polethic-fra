@@ -11,31 +11,36 @@
 }
 
 /* ==========================================================================
-   2. FONDO ESPACIAL ORGÁNICO CON ESTRELLAS REALES (ESTILO INFOGRAFÍA)
+   2. FONDO ESPACIAL INTEGRADO CON TODAS LAS ESTRELLAS (ESTILO INFOGRAFÍA)
    ========================================================================== */
 body {
   background-color: var(--bg-dark);
   
-  /* Capas de fondo combinadas: Destellos + Estrellas Reales + Degradado Noche */
+  /* Fusionamos en un solo mapa: Destellos cian + Estrellas medianas + Polvo estelar + Nebulosa */
   background-image: 
-    /* --- CAPA 1: Estrellas Grandes con Brillo Cian (Como en tu foto) --- */
-    radial-gradient(circle at 15% 20%, #ffffff 0px, var(--cyan) 2px, transparent 12px),
-    radial-gradient(circle at 85% 40%, #ffffff 0px, var(--cyan) 2px, transparent 10px),
-    radial-gradient(circle at 30% 75%, #ffffff 0px, var(--cyan) 3px, transparent 15px),
-    radial-gradient(circle at 75% 80%, #ffffff 0px, var(--cyan) 2px, transparent 12px),
+    /* --- CAPA 1: Estrellas Grandes con Brillo Cian (Idénticas a tu foto) --- */
+    radial-gradient(circle at 15% 20%, #ffffff 0px, var(--cyan) 2px, transparent 15px),
+    radial-gradient(circle at 85% 45%, #ffffff 0px, var(--cyan) 2px, transparent 12px),
+    radial-gradient(circle at 30% 75%, #ffffff 0px, var(--cyan) 3px, transparent 18px),
+    radial-gradient(circle at 75% 80%, #ffffff 0px, var(--cyan) 2px, transparent 15px),
 
-    /* --- CAPA 2: Estrellas Medianas Blancas Definidas --- */
-    radial-gradient(circle at 45% 15%, #ffffff 0px, #ffffff 2px, transparent 4px),
-    radial-gradient(circle at 90% 15%, #ffffff 0px, #ffffff 1.5px, transparent 4px),
-    radial-gradient(circle at 10% 60%, #ffffff 0px, #ffffff 2px, transparent 5px),
-    radial-gradient(circle at 60% 45%, #ffffff 0px, #ffffff 1.5px, transparent 4px),
-    radial-gradient(circle at 95% 70%, #ffffff 0px, #ffffff 2px, transparent 5px),
+    /* --- CAPA 2: Estrellas Medianas Blancas bien Definidas y Brillantes --- */
+    radial-gradient(circle at 45% 15%, #ffffff 0px, #ffffff 2px, transparent 5px),
+    radial-gradient(circle at 90% 15%, #ffffff 0px, #ffffff 2px, transparent 5px),
+    radial-gradient(circle at 10% 60%, #ffffff 0px, #ffffff 2.5px, transparent 6px),
+    radial-gradient(circle at 60% 45%, #ffffff 0px, #ffffff 2px, transparent 5px),
+    radial-gradient(circle at 95% 70%, #ffffff 0px, #ffffff 2.5px, transparent 6px),
+    radial-gradient(circle at 38% 35%, #ffffff 0px, #ffffff 2px, transparent 5px),
+    radial-gradient(circle at 80% 40%, #ffffff 0px, #ffffff 2px, transparent 5px),
 
-    /* --- CAPA 3: Polvo Estelar Sutil de Fondo --- */
-    radial-gradient(circle at 25% 40%, rgba(255,255,255,0.6) 0px, transparent 2px),
-    radial-gradient(circle at 70% 25%, rgba(255,255,255,0.5) 0px, transparent 2px),
-    radial-gradient(circle at 40% 90%, rgba(255,255,255,0.6) 0px, transparent 2px),
-    radial-gradient(circle at 50% 65%, rgba(255,255,255,0.4) 0px, transparent 2px),
+    /* --- CAPA 3: Micro-estrellas y Polvo Estelar de Fondo --- */
+    radial-gradient(circle at 5% 12%, rgba(255,255,255,0.8) 0px, transparent 3px),
+    radial-gradient(circle at 25% 40%, rgba(255,255,255,0.7) 0px, transparent 3px),
+    radial-gradient(circle at 70% 25%, rgba(255,255,255,0.7) 0px, transparent 3px),
+    radial-gradient(circle at 40% 90%, rgba(255,255,255,0.8) 0px, transparent 3px),
+    radial-gradient(circle at 52% 23%, rgba(255,255,255,0.6) 0px, transparent 3px),
+    radial-gradient(circle at 67% 58%, rgba(255,255,255,0.7) 0px, transparent 3px),
+    radial-gradient(circle at 89% 12%, rgba(255,255,255,0.6) 0px, transparent 3px),
 
     /* --- CAPA 4: El Degradado Azul Profundo del Centro (Efecto Nebulosa) --- */
     radial-gradient(circle at 50% 50%, var(--bg-blue) 0%, var(--bg-dark) 90%);
@@ -49,165 +54,8 @@ body {
   position: relative;
 }
 
-/* Borra por completo el bloque "body::before" si todavía lo tenías para evitar duplicados */
-
-/* Generamos las estrellas de diferentes tamaños usando un pseudoelemento */
-/* Generamos las estrellas de diferentes tamaños distribuidas de forma orgánica */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  
-  /* Un firmamento masivo de estrellas agrupadas por tamaño y brillo */
-  box-shadow: 
-    /* --- Capa 1: Micro-estrellas blancas de fondo (puntos muy finos) --- */
-    5vw 12vh 0.5px #fff,   18vw 45vh 0.5px rgba(255,255,255,0.4), 
-    28vw 15vh 0.5px #fff,  42vw 78vh 0.5px rgba(255,255,255,0.6),
-    52vw 23vh 0.5px #fff,  67vw 58vh 0.5px rgba(255,255,255,0.3),
-    73vw 88vh 0.5px #fff,  89vw 12vh 0.5px rgba(255,255,255,0.5),
-    94vw 48vh 0.5px #fff,  12vw 82vh 0.5px rgba(255,255,255,0.4),
-    34vw 63vh 0.5px #fff,  61vw 19vh 0.5px rgba(255,255,255,0.5),
-
-    /* --- Capa 2: Estrellas medianas nítidas (1px a 1.5px) --- */
-    10vw 25vh 1px #fff,    22vw 68vh 1.5px #fff,
-    38vw 35vh 1px #fff,    49vw 89vh 1px #fff,
-    58vw 52vh 1.5px #fff,  76vw 29vh 1px #fff,
-    85vw 64vh 1px #fff,    92vw 77vh 1.5px #fff,
-    3vw 70vh 1px #fff,     15vw 18vh 1px #fff,
-    65vw 80vh 1.5px #fff,  80vw 42vh 1px #fff,
-
-    /* --- Capa 3: Destellos cian y estrellas con brillo (2px con difuminado) --- */
-    8vw 50vh 2px var(--cyan),    25vw 85vh 2.5px rgba(255,255,255,0.9),
-    45vw 12vh 2px var(--cyan),   60vw 65vh 2px rgba(255,255,255,0.8),
-    72vw 15vh 2px var(--cyan),   88vw 38vh 2.5px var(--cyan),
-    31vw 27vh 2px rgba(63, 215, 242, 0.6), 55vw 40vh 2px #fff,
-    69vw 92vh 2px var(--cyan),   96vw 22vh 2px rgba(255,255,255,0.7);
-
-  opacity: 0.95; /* Subimos un pelín la opacidad general para que se noten más */
-}
-
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  position: relative;
-  z-index: 1;
-}
-
-/* ==========================================================================
-   3. FUENTES Y CABECERA ESTILO INFOGRAFÍA
-   ========================================================================== */
-header {
-  border-bottom: 1px solid var(--line);
-  padding: 1.5rem 0;
-  background: rgba(2, 6, 18, 0.7);
-  backdrop-filter: blur(12px);
-}
-
-.header-layout {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* El título emula las letras altas, condensadas y el color exacto */
-.logo-title {
-  color: var(--cyan);
-  font-family: 'Oswald', sans-serif; /* Letra alta, fuerte y condensada */
-  font-weight: 700;
-  font-size: 2rem; /* Más grande y con presencia */
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  text-shadow: 0 0 15px var(--cyan-glow);
-}
-
-nav a {
-  color: #ffffff;
-  margin-left: 1.5rem;
-  text-decoration: none;
-  font-family: 'Oswald', sans-serif;
-  font-weight: 500;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: color 0.2s, text-shadow 0.2s;
-}
-
-nav a:hover {
-  color: var(--cyan);
-  text-shadow: 0 0 10px var(--cyan);
-}
-
-/* ==========================================================================
-   4. CÁPSULAS Y CONTENIDO (ESTILO SECCIONES DE LA INFOGRAFÍA)
-   ========================================================================== */
-.hero-card {
-  background: rgba(13, 21, 38, 0.6);
-  /* Doble borde simulado con box-shadow para calcar los contenedores de la imagen */
-  border: 2px solid rgba(63, 215, 242, 0.5);
-  border-radius: 14px;
-  padding: 3rem;
-  margin-top: 3rem;
-  box-shadow: 
-    0 0 25px rgba(2*2, 6, 18, 0.5),
-    inset 0 0 15px rgba(63, 215, 242, 0.1);
-  backdrop-filter: blur(8px);
-}
-
-.post-content h2 {
-  font-family: 'Oswald', sans-serif;
-  font-size: 2.2rem;
-  text-transform: uppercase;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  letter-spacing: 0.5px;
-  color: #ffffff;
-}
-
-.post-date {
-  color: var(--cyan);
-  font-size: 0.9rem;
-  font-family: 'JetBrains Mono', monospace;
-  display: block;
-  margin-bottom: 0.5rem;
-  letter-spacing: 1px;
-}
-
-.post-content p {
-  color: #e2e8f0;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-}
-
-.back-link {
-  color: var(--cyan);
-  font-weight: bold;
-  text-decoration: none;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.95rem;
-  transition: color 0.2s, text-shadow 0.2s;
-}
-
-.back-link:hover {
-  color: #ffffff;
-  text-shadow: 0 0 8px var(--cyan);
-}
-
-/* ==========================================================================
-   5. FOOTER
-   ========================================================================== */
-footer {
-  margin-top: 5rem;
-  padding: 2.5rem 0;
-  border-top: 1px solid var(--line);
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--muted);
-  background: rgba(2, 6, 18, 0.4);
-}
+/* 
+  ¡MUY IMPORTANTE! 
+  Elimina por completo cualquier bloque "body::before" que empiece aquí 
+  para evitar que la pantalla se vuelva opaca o borrosa.
+*/
