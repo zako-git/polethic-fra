@@ -1,35 +1,39 @@
-/* --- Variables de Identidad Visual POLETHIC (Cybersecurity Mode) --- */
+/* --- Variables Sci-Fi HUD --- */
 :root {
-    --bg-color: #0a0f1d;       /* Fondo oscuro profundo, estilo ciberseguridad */
-    --card-bg: #111827;        /* Fondo de las tarjetas (Gris terminal) */
-    --primary-color: #38bdf8;   /* Azul eléctrico / El Faro / Enlaces activos */
-    --accent-color: #4ade80;    /* Verde neón / Código Hacker / Alerta Ética */
-    --text-color: #f3f4f6;      /* Texto claro de alta legibilidad */
-    --muted-text: #9ca3af;     /* Texto secundario grisáceo */
-    --border-color: #1f2937;   /* Bordes sutiles de la consola */
+    --bg-deep: #050b14;       /* Fondo oscuro del espacio cibernético */
+    --neon-cyan: #00f0ff;     /* Cian eléctrico brillante (Luz principal) */
+    --neon-green: #39ff14;    /* Verde neón (Acentos/Éxito) */
+    --hud-blue: #0b2545;      /* Fondo de los bloques tecnológicos */
+    --hud-border: rgba(0, 240, 255, 0.4); /* Bordes cian semitransparentes */
+    --text-glow: #e2f1f7;
 }
 
-/* --- Base del Sistema --- */
+/* --- Base --- */
 body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: 'Courier New', Courier, monospace; /* Tipografía tipo terminal unificada */
+    background-color: var(--bg-deep);
+    background-image: 
+        radial-gradient(at 50% 0%, rgba(0, 240, 255, 0.15) 0px, transparent 50%),
+        linear-gradient(rgba(5, 11, 20, 0.5) 50%, rgba(0, 0, 0, 0.8) 50%);
+    background-size: 100% 100%, 100% 4px; /* Simula líneas de escaneo de monitor */
+    color: #ffffff;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    line-height: 1.6;
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 1050px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* --- Header & Menú Táctico --- */
+/* --- Header Integrado --- */
 header {
-    background-color: #070a13; /* Un punto más oscuro que el fondo general */
-    border-bottom: 1px solid var(--border-color);
-    padding: 20px 0;
+    background: rgba(5, 11, 20, 0.85);
+    border-bottom: 2px solid var(--neon-cyan);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    padding: 15px 0;
+    backdrop-filter: blur(5px);
 }
 
 .header-layout {
@@ -39,74 +43,147 @@ header {
 }
 
 .logo-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--primary-color); /* Cambiado a azul eléctrico hacker */
-    letter-spacing: -0.025em;
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: #ffffff;
+    text-shadow: 0 0 10px var(--neon-cyan);
+    letter-spacing: 2px;
 }
 
 nav a {
-    color: var(--muted-text);
+    color: rgba(255, 255, 255, 0.8);
     margin-left: 20px;
     text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
 }
 
 nav a:hover {
-    color: var(--accent-color); /* Al pasar el ratón se ilumina en verde neón */
-    text-shadow: 0 0 8px var(--accent-color);
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px var(--neon-cyan);
 }
 
-/* --- Tarjeta de Enfoque (Terminal de Diagnóstico) --- */
-.hero-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-top: 4px solid var(--accent-color) !important; /* Línea neón superior obligatoria */
-    border-radius: 8px; /* Esquinas ligeramente suavizadas pero estilizadas */
-    padding: 50px 40px;
+/* --- Panel Central HUD --- */
+.main-hud-panel {
+    background: rgba(11, 37, 69, 0.4);
+    border: 2px solid var(--neon-cyan);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 240, 255, 0.1);
+    padding: 40px;
     margin-top: 40px;
-    box-shadow: 0 0 20px rgba(74, 222, 128, 0.03);
+    border-radius: 4px;
+    position: relative;
 }
 
-/* --- Botón de Ejecución Código (.exe) --- */
-.btn-accent {
+.main-hud-panel::before {
+    content: "POLETHIC SYSTEM ACTIVE";
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--bg-deep);
+    padding: 0 10px;
+    font-size: 0.75rem;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+/* --- Rejilla de Sub-Paneles Ciberseguridad (Estilo Captura) --- */
+.hud-grid {
+    display: table;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 20px;
+    margin-top: 30px;
+}
+
+.hud-row {
+    display: table-row;
+}
+
+/* Tarjeta angular recortada mediante clip-path */
+.hud-card-cell {
+    display: table-cell;
+    width: 50%;
+    background: rgba(5, 11, 20, 0.8);
+    border: 1px solid var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+    padding: 20px;
+    position: relative;
+    vertical-align: middle;
+    /* Recorte de esquinas diagonales exactas al estilo del menú de la captura */
+    clip-path: polygon(15px 0%, 100% 0%, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0% 100%, 0% 15px);
+    transition: all 0.3s ease;
+}
+
+.hud-card-cell:hover {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    background: rgba(11, 37, 69, 0.7);
+    transform: translateY(-2px);
+}
+
+/* Caja de Código ID (ej: 01, 02) */
+.hud-id-badge {
     display: inline-block;
-    background-color: transparent;
-    color: var(--accent-color) !important;
-    border: 1px solid var(--accent-color);
-    padding: 12px 24px;
-    border-radius: 4px;
-    font-family: monospace;
+    color: var(--neon-cyan);
+    font-weight: 900;
+    font-size: 1.2rem;
+    border-right: 2px solid var(--neon-cyan);
+    padding-right: 15px;
+    margin-right: 15px;
+    vertical-align: middle;
+}
+
+.hud-card-content {
+    display: inline-block;
+    vertical-align: middle;
+    width: calc(100% - 60px);
+}
+
+.hud-card-title {
+    color: #ffffff;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.hud-card-desc {
+    color: #a5c4d4;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* --- Botón de Ejecución Cyberpunk --- */
+.btn-cyber {
+    display: inline-block;
+    background: transparent;
+    color: var(--neon-green) !important;
+    border: 2px solid var(--neon-green);
+    padding: 14px 35px;
+    font-weight: 700;
+    letter-spacing: 2px;
     text-transform: uppercase;
     text-decoration: none;
-    font-weight: 600;
-    cursor: pointer;
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
     transition: all 0.3s ease;
-    margin-top: 20px;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
 }
 
-.btn-accent:hover {
-    background-color: var(--accent-color);
-    color: var(--bg-color) !important;
-    box-shadow: 0 0 15px var(--accent-color);
-    transform: translateY(-1px);
+.btn-cyber:hover {
+    background: var(--neon-green);
+    color: var(--bg-deep) !important;
+    box-shadow: 0 0 25px var(--neon-green);
 }
 
-/* --- Pie de Página (Bouclier Legal Consolidado) --- */
+/* --- Footer --- */
 footer {
-    background-color: #070a13; /* Consistente con el Header */
-    border-top: 1px solid var(--border-color);
-    color: var(--text-color);
-    padding: 40px 0;
+    margin-top: 60px;
+    border-top: 1px solid rgba(0, 240, 255, 0.2);
+    padding: 30px 0;
     text-align: center;
-    font-size: 0.9rem;
-}
-
-footer .legal {
-    color: var(--muted-text);
-    font-size: 0.8rem;
-    max-width: 750px;
-    margin: 20px auto 0;
-    line-height: 1.5;
+    background: rgba(3, 7, 13, 0.9);
 }
