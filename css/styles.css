@@ -14,14 +14,27 @@
    ========================================================================== */
 body {
   background-color: var(--bg);
-  /* --- Fondo Espacial Mate de Puntitos --- */
-  background-image: 
-    radial-gradient(rgba(63, 215, 242, 0.15) 1px, transparent 1px),
-    radial-gradient(rgba(242, 169, 63, 0.1) 1.5px, transparent 1.5px);
-  background-size: 40px 40px, 60px 60px;
-  background-position: 0 0, 20px 20px;
-  background-attachment: fixed; /* Las estrellas se quedan fijas al hacer scroll */
   
+  /* --- Capas de Universo de Puntitos Mate --- */
+  background-image: 
+    /* Capa 1: Puntitos muy finos (1px), espaciado intermedio, tono cian sutil */
+    radial-gradient(rgba(63, 215, 242, 0.12) 1px, transparent 1px),
+    
+    /* Capa 2: Puntos un poco más grandes (2px), espaciado ancho, tono cian MÁS CLARITO */
+    radial-gradient(rgba(180, 242, 255, 0.18) 2px, transparent 2px),
+    
+    /* Capa 3: Micro-polvo estelar de fondo (0.8px), espaciado cerrado, tono neutro apagado */
+    radial-gradient(rgba(255, 255, 255, 0.05) 0.8px, transparent 0.8px);
+
+  /* Tamaños diferentes para cada cuadrícula para que no se pisen entre sí */
+  background-size: 50px 50px, 90px 90px, 30px 30px;
+  
+  /* Desplazamientos para romper la simetría */
+  background-position: 0 0, 40px 40px, 15px 15px;
+  
+  /* Mantiene el fondo estático al hacer scroll */
+  background-attachment: fixed; 
+
   color: #ffffff;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   margin: 0;
