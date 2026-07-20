@@ -54,8 +54,129 @@ body {
   position: relative;
 }
 
-/* 
-  ¡MUY IMPORTANTE! 
-  Elimina por completo cualquier bloque "body::before" que empiece aquí 
-  para evitar que la pantalla se vuelva opaca o borrosa.
-*/
+/* ==========================================================================
+   3. ESTRUCTURA Y CAPAS DE CONTENIDO
+   ========================================================================== */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 10; /* Fuerza a que todo el contenido flote POR ENCIMA de las estrellas */
+}
+
+/* ==========================================================================
+   4. FUENTES Y CABECERA (ESTILO INFOGRAFÍA)
+   ========================================================================== */
+header {
+  border-bottom: 1px solid var(--line);
+  padding: 1.5rem 0;
+  background: rgba(2, 6, 18, 0.85); /* Un poco más opaco para dar contraste */
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 20; /* Asegura que el menú siempre responda a los clics */
+}
+
+.header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Recuperamos el título en color cian neón con su respectivo brillo */
+.logo-title {
+  color: var(--cyan) !important; /* El !important asegura que nada lo pise */
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 15px var(--cyan-glow);
+}
+
+/* Estilo y visibilidad para los botones de navegación */
+nav a {
+  color: #ffffff;
+  margin-left: 1.5rem;
+  text-decoration: none;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+nav a:hover {
+  color: var(--cyan);
+  text-shadow: 0 0 10px var(--cyan);
+}
+
+/* ==========================================================================
+   5. CÁPSULAS Y CONTENIDO (CORREGIDA LA SOMBRA)
+   ========================================================================== */
+.hero-card {
+  background: rgba(13, 21, 38, 0.75); /* Subimos la opacidad para que el texto sea hiperlegible */
+  border: 2px solid rgba(63, 215, 242, 0.5);
+  border-radius: 14px;
+  padding: 3rem;
+  margin-top: 3rem;
+  /* Corregido el error de sintaxis '2*2' que rompía la sombra */
+  box-shadow: 
+    0 0 25px rgba(2, 6, 18, 0.6),
+    inset 0 0 15px rgba(63, 215, 242, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.post-content h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.post-date {
+  color: var(--cyan);
+  font-size: 0.9rem;
+  font-family: 'JetBrains Mono', monospace;
+  display: block;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.post-content p {
+  color: #e2e8f0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.back-link {
+  color: var(--cyan);
+  font-weight: bold;
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.back-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px var(--cyan);
+}
+
+/* ==========================================================================
+   6. FOOTER
+   ========================================================================== */
+footer {
+  margin-top: 5rem;
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: rgba(2, 6, 18, 0.6);
+}
