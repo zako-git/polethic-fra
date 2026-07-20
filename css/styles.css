@@ -11,18 +11,35 @@
 }
 
 /* ==========================================================================
-   2. FONDO ESPACIAL ORGÁNICO Y CONFIGURACIÓN GLOBAL
+   2. FONDO ESPACIAL ORGÁNICO CON ESTRELLAS REALES (ESTILO INFOGRAFÍA)
    ========================================================================== */
 body {
-  /* Fondo con el degradado radial de la imagen (más claro en el centro) */
   background-color: var(--bg-dark);
-  background-image: 
-    /* Capa de destellos grandes difuminados */
-    radial-gradient(circle at 20% 30%, rgba(63, 215, 242, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(63, 215, 242, 0.06) 0%, transparent 35%),
-    /* El degradado azul del fondo general */
-    radial-gradient(circle at center, var(--bg-blue) 0%, var(--bg-dark) 85%);
   
+  /* Capas de fondo combinadas: Destellos + Estrellas Reales + Degradado Noche */
+  background-image: 
+    /* --- CAPA 1: Estrellas Grandes con Brillo Cian (Como en tu foto) --- */
+    radial-gradient(circle at 15% 20%, #ffffff 0px, var(--cyan) 2px, transparent 12px),
+    radial-gradient(circle at 85% 40%, #ffffff 0px, var(--cyan) 2px, transparent 10px),
+    radial-gradient(circle at 30% 75%, #ffffff 0px, var(--cyan) 3px, transparent 15px),
+    radial-gradient(circle at 75% 80%, #ffffff 0px, var(--cyan) 2px, transparent 12px),
+
+    /* --- CAPA 2: Estrellas Medianas Blancas Definidas --- */
+    radial-gradient(circle at 45% 15%, #ffffff 0px, #ffffff 2px, transparent 4px),
+    radial-gradient(circle at 90% 15%, #ffffff 0px, #ffffff 1.5px, transparent 4px),
+    radial-gradient(circle at 10% 60%, #ffffff 0px, #ffffff 2px, transparent 5px),
+    radial-gradient(circle at 60% 45%, #ffffff 0px, #ffffff 1.5px, transparent 4px),
+    radial-gradient(circle at 95% 70%, #ffffff 0px, #ffffff 2px, transparent 5px),
+
+    /* --- CAPA 3: Polvo Estelar Sutil de Fondo --- */
+    radial-gradient(circle at 25% 40%, rgba(255,255,255,0.6) 0px, transparent 2px),
+    radial-gradient(circle at 70% 25%, rgba(255,255,255,0.5) 0px, transparent 2px),
+    radial-gradient(circle at 40% 90%, rgba(255,255,255,0.6) 0px, transparent 2px),
+    radial-gradient(circle at 50% 65%, rgba(255,255,255,0.4) 0px, transparent 2px),
+
+    /* --- CAPA 4: El Degradado Azul Profundo del Centro (Efecto Nebulosa) --- */
+    radial-gradient(circle at 50% 50%, var(--bg-blue) 0%, var(--bg-dark) 90%);
+
   background-attachment: fixed;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
@@ -31,6 +48,8 @@ body {
   min-height: 100vh;
   position: relative;
 }
+
+/* Borra por completo el bloque "body::before" si todavía lo tenías para evitar duplicados */
 
 /* Generamos las estrellas de diferentes tamaños usando un pseudoelemento */
 /* Generamos las estrellas de diferentes tamaños distribuidas de forma orgánica */
