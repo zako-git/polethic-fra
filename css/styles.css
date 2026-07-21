@@ -108,7 +108,7 @@ header .container {
   flex-wrap: nowrap; /* NUNCA salta de línea */
 }
 
-/* Botones tácticos pequeños */
+
 .nav-btn {
   color: #ffffff !important;
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
