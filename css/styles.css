@@ -70,16 +70,28 @@ body {
 }
 
 /* ==========================================================================
-   NUEVOS BOTONES DE NAVEGACIÓN (HEADER)
+   4. CABECERA GLOBAL Y LOGO
    ========================================================================== */
-.header-layout {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
+header {
+  border-bottom: 1px solid var(--line);
+  padding: 1.2rem 0;
+  background: rgba(2, 6, 18, 0.85);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
+.logo-title {
+  color: var(--cyan);
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px var(--cyan-glow);
+  line-height: 1;
+}
 .nav-buttons {
   display: flex;
   gap: 0.8rem;
