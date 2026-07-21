@@ -70,27 +70,11 @@ body {
 }
 
 /* ==========================================================================
-   4. CABECERA GLOBAL Y LOGO
+   4. CABECERA GLOBAL Y LOGO (VERSIÓN COMPACTA EN 1 LÍNEA)
    ========================================================================== */
-header .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 3rem;          /* separación real entre el título y el bloque de botones */
-}
-
-.nav-buttons {
-  display: flex;
-  gap: 0.6rem;         /* un poco más juntos entre sí los botones */
-}
-
-.nav-btn {
-  font-size: 0.78rem;  /* antes 0.95rem — más pequeña */
-  padding: 0.45rem 0.85rem; /* un pelín más compactos para que combinen con el texto menor */
-}
 header {
   border-bottom: 1px solid var(--line);
-  padding: 1.2rem 0;
+  padding: 1rem 0;
   background: rgba(2, 6, 18, 0.85);
   backdrop-filter: blur(12px);
   position: sticky;
@@ -98,35 +82,45 @@ header {
   z-index: 100;
 }
 
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
 .logo-title {
   color: var(--cyan);
   font-family: 'Oswald', sans-serif;
   font-weight: 700;
-  font-size: 2.2rem;
+  font-size: 2rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 0 15px var(--cyan-glow);
   line-height: 1;
+  white-space: nowrap;
 }
 
 .nav-buttons {
   display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem; /* Margen estrecho entre botones */
+  flex-wrap: nowrap; /* NUNCA salta de línea */
 }
 
-/* Transformamos los enlaces simples en BOTONES Cyber */
+/* Botones tácticos pequeños */
 .nav-btn {
   color: #ffffff !important;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.78rem; /* Letra pequeña y estilizada */
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-decoration: none;
-
-  /* Aspecto de Botón táctico */
-  padding: 0.5rem 1rem;
+  white-space: nowrap;
+  
+  /* Relleno compacto */
+  padding: 0.4rem 0.65rem;
   background: rgba(6, 21, 45, 0.6);
   border: 1px solid rgba(63, 215, 242, 0.3);
   border-radius: 6px;
@@ -134,16 +128,14 @@ header {
   backdrop-filter: blur(5px);
 }
 
-/* Efecto al pasar el ratón por encima (Hover) */
 .nav-btn:hover {
   color: var(--cyan) !important;
   border-color: var(--cyan);
   background: rgba(63, 215, 242, 0.15);
-  box-shadow: 0 0 12px rgba(63, 215, 242, 0.4);
-  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(63, 215, 242, 0.4);
+  transform: translateY(-1px);
 }
 
-/* Marca el botón activo en la página donde estás */
 .nav-btn.active {
   border-color: var(--cyan);
   background: rgba(63, 215, 242, 0.2);
