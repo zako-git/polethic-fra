@@ -72,6 +72,22 @@ body {
 /* ==========================================================================
    4. CABECERA GLOBAL Y LOGO
    ========================================================================== */
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;          /* separación real entre el título y el bloque de botones */
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 0.6rem;         /* un poco más juntos entre sí los botones */
+}
+
+.nav-btn {
+  font-size: 0.78rem;  /* antes 0.95rem — más pequeña */
+  padding: 0.45rem 0.85rem; /* un pelín más compactos para que combinen con el texto menor */
+}
 header {
   border-bottom: 1px solid var(--line);
   padding: 1.2rem 0;
