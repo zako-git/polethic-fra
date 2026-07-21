@@ -16,9 +16,8 @@
 body {
   background: #060a14;
 
-  /* Reducimos los radios al mínimo (de 12px-18px pasamos a 3px-4px) para que sean destellos milimétricos */
   background-image:
-    /* --- CAPA 1: Destellos Cian Miniatura (Puntos finos con micro-brillo) --- */
+    /* --- CAPA 1: Destellos Cian Miniatura --- */
     radial-gradient(circle at 12% 18%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
     radial-gradient(circle at 88% 42%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
     radial-gradient(circle at 28% 72%, #ffffff 0px, var(--cyan) 1.5px, transparent 4px),
@@ -39,7 +38,7 @@ body {
     radial-gradient(circle at 55% 38%, #ffffff 0.5px, transparent 2px),
     radial-gradient(circle at 78% 12%, #ffffff 0.5px, transparent 2px),
 
-    /* --- CAPA 3: Micro-Polvo Estelar Sutil (Para dar profundidad mate) --- */
+    /* --- CAPA 3: Micro-Polvo Estelar Sutil --- */
     radial-gradient(circle at 22% 35%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px),
     radial-gradient(circle at 60% 18%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
     radial-gradient(circle at 80% 75%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px),
@@ -51,7 +50,7 @@ body {
 
   background-attachment: fixed;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -70,7 +69,7 @@ body {
 }
 
 /* ==========================================================================
-   4. CABECERA GLOBAL Y LOGO (VERSIÓN COMPACTA EN 1 LÍNEA)
+   4. CABECERA GLOBAL Y LOGO (VERSIÓN IDÉNTICA EN TODAS LAS PÁGINAS)
    ========================================================================== */
 header {
   border-bottom: 1px solid var(--line);
@@ -87,39 +86,40 @@ header .container {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  min-height: 60px; /* Asegura misma altura en todo el sitio web */
 }
 
+/* Regla estricta para el logo POLETHIC_FRA */
 .logo-title {
-  color: var(--cyan);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important; /* <--- Cambiado a Inter */
-  font-weight: 700;
-  font-size: 2rem;
+  color: var(--cyan) !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 1.6rem !important;      /* Tamaño unificado */
+  line-height: 1 !important;          /* Evita desalineaciones verticales */
+  letter-spacing: 1.5px !important;  /* Espaciado de letras limpio */
   text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 0 0 15px var(--cyan-glow);
-  line-height: 1;
+  text-shadow: 0 0 12px var(--cyan-glow);
   white-space: nowrap;
+  flex-shrink: 0;                    /* Evita que los botones deformen el logo */
 }
 
 .nav-buttons {
   display: flex;
   align-items: center;
-  gap: 0.35rem; /* Margen estrecho entre botones */
-  flex-wrap: nowrap; /* NUNCA salta de línea */
+  gap: 0.35rem; 
+  flex-wrap: nowrap;
 }
-
 
 .nav-btn {
   color: #ffffff !important;
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-  font-size: 0.78rem; /* Letra pequeña y estilizada */
+  font-size: 0.78rem;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-decoration: none;
   white-space: nowrap;
   
-  /* Relleno compacto */
   padding: 0.4rem 0.65rem;
   background: rgba(6, 21, 45, 0.6);
   border: 1px solid rgba(63, 215, 242, 0.3);
@@ -144,9 +144,10 @@ header .container {
 }
 
 /* ==========================================================================
-   5. CÁPSULAS Y CONTENIDO
+   5. CÁPSULAS Y CONTENIDO (TÍTULOS Y CÁPSULAS UNIFICADAS)
    ========================================================================== */
-.hero-card {
+.hero-card,
+.post-card {
   background: rgba(13, 21, 38, 0.75);
   border: 2px solid rgba(63, 215, 242, 0.5);
   border-radius: 14px;
@@ -158,9 +159,13 @@ header .container {
   backdrop-filter: blur(10px);
 }
 
-.post-content h2 {
-  font-family: 'Oswald', sans-serif;
-  font-size: 2.2rem;
+/* Unificación de todos los h1, h2 y post-titles con la letra Inter */
+.post-title,
+.post-content h2,
+.hero-card h2 {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 2rem;
   text-transform: uppercase;
   margin-top: 0;
   margin-bottom: 1.5rem;
