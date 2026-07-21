@@ -1,1 +1,1 @@
-# polethic-fra
+# POLETHIC-fra
