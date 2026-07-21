@@ -15,10 +15,9 @@
    ========================================================================== */
 body {
   background: #060a14;
-}
-  
+
   /* Reducimos los radios al mínimo (de 12px-18px pasamos a 3px-4px) para que sean destellos milimétricos */
-  background-image: 
+  background-image:
     /* --- CAPA 1: Destellos Cian Miniatura (Puntos finos con micro-brillo) --- */
     radial-gradient(circle at 12% 18%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
     radial-gradient(circle at 88% 42%, #ffffff 0px, var(--cyan) 1px, transparent 3px),
@@ -93,6 +92,7 @@ header {
   text-shadow: 0 0 15px var(--cyan-glow);
   line-height: 1;
 }
+
 .nav-buttons {
   display: flex;
   gap: 0.8rem;
@@ -108,7 +108,7 @@ header {
   text-transform: uppercase;
   letter-spacing: 1px;
   text-decoration: none;
-  
+
   /* Aspecto de Botón táctico */
   padding: 0.5rem 1rem;
   background: rgba(6, 21, 45, 0.6);
@@ -144,7 +144,7 @@ header {
   border-radius: 14px;
   padding: 3rem;
   margin-top: 3rem;
-  box-shadow: 
+  box-shadow:
     0 0 25px rgba(2, 6, 18, 0.6),
     inset 0 0 15px rgba(63, 215, 242, 0.15);
   backdrop-filter: blur(10px);
