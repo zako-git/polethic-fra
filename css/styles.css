@@ -91,16 +91,15 @@ header .container {
 
 /* Regla estricta para el logo POLETHIC_FRA */
 .logo-title {
-  color: var(--cyan) !important;
+  color: var(--cyan);
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
   font-weight: 700 !important;
-  font-size: 1.6rem !important;      /* Tamaño unificado */
-  line-height: 1 !important;          /* Evita desalineaciones verticales */
-  letter-spacing: 1.5px !important;  /* Espaciado de letras limpio */
-  text-transform: uppercase;
-  text-shadow: 0 0 12px var(--cyan-glow);
-  white-space: nowrap;
-  flex-shrink: 0;                    /* Evita que los botones deformen el logo */
+  font-size: 1.8rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  text-shadow: 0 0 15px var(--cyan-glow);
+  line-height: 1 !important;
+  white-space: nowrap !important;
 }
 
 .nav-buttons {
