@@ -481,3 +481,167 @@ footer {
   line-height: 1.4;
   margin: 0;
 }
+
+/* ==========================================================================
+   ESTILOS MANIFIESTO Y NUEVA PÁGINA PRINCIPAL
+   ========================================================================== */
+
+/* Hero Titular Principal */
+.hero-title-main {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-size: 2.2rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  line-height: 1.25;
+  margin-top: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.hero-question-sub {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--cyan, #3fd7f2);
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+/* Banner de Cita Filosofica */
+.quote-banner {
+  background: rgba(63, 215, 242, 0.05);
+  border-left: 3px solid var(--cyan, #3fd7f2);
+  border-radius: 0 8px 8px 0;
+  padding: 1.2rem 1.8rem;
+  margin: 2rem 0;
+}
+
+.quote-banner blockquote {
+  margin: 0;
+  color: #e2e8f0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Tarjeta de Sección Normal */
+.section-card {
+  background: rgba(13, 21, 38, 0.65);
+  border: 1px solid rgba(63, 215, 242, 0.2);
+  border-radius: 12px;
+  padding: 2.2rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(8px);
+}
+
+.section-tag {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--cyan, #3fd7f2);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.5rem;
+}
+
+.section-card h2 {
+  color: #ffffff;
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.section-lead {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+/* Los 5 Pilares Numerados */
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.pillar-item {
+  background: rgba(6, 21, 45, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.2rem;
+  transition: all 0.25s ease;
+}
+
+.pillar-item:hover {
+  border-color: var(--cyan, #3fd7f2);
+  transform: translateY(-3px);
+}
+
+.pillar-num {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--cyan, #3fd7f2);
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.pillar-item h4 {
+  color: #ffffff;
+  margin: 0 0 0.4rem 0;
+  font-size: 1rem;
+}
+
+.pillar-item p {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Listas estilizadas */
+.two-columns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+
+.styled-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+}
+
+.styled-list li {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.styled-list li::before {
+  content: "▹";
+  color: var(--cyan, #3fd7f2);
+  margin-right: 0.6rem;
+  font-weight: bold;
+}
+
+/* Pasos de Participación */
+.participation-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.part-step {
+  background: rgba(63, 215, 242, 0.08);
+  border: 1px dashed rgba(63, 215, 242, 0.3);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
