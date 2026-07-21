@@ -145,17 +145,44 @@ header .container {
 /* ==========================================================================
    5. CÁPSULAS Y CONTENIDO (TÍTULOS Y CÁPSULAS UNIFICADAS)
    ========================================================================== */
-.hero-card,
-.post-card {
-  background: rgba(13, 21, 38, 0.75);
-  border: 2px solid rgba(63, 215, 242, 0.5);
-  border-radius: 14px;
-  padding: 3rem;
-  margin-top: 3rem;
-  box-shadow:
-    0 0 25px rgba(2, 6, 18, 0.6),
-    inset 0 0 15px rgba(63, 215, 242, 0.15);
-  backdrop-filter: blur(10px);
+/* Pregunta más fina y elegante */
+.hero-question {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-size: 1.55rem !important; /* Tamaño más equilibrado */
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  line-height: 1.35;
+  margin-top: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+/* Arreglo de botones/enlaces para contraste cian brillante */
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-hero-action {
+  color: var(--cyan, #3fd7f2) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  letter-spacing: 0.5px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid rgba(63, 215, 242, 0.3);
+  border-radius: 6px;
+  background: rgba(6, 21, 45, 0.5);
+  transition: all 0.25s ease;
+}
+
+.btn-hero-action:hover {
+  background: rgba(63, 215, 242, 0.15);
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px rgba(63, 215, 242, 0.4);
+  transform: translateY(-2px);
 }
 
 /* Unificación de todos los h1, h2 y post-titles con la letra Inter */
