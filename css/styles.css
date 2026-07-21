@@ -91,7 +91,7 @@ header .container {
 
 .logo-title {
   color: var(--cyan);
-  font-family: 'Inter', system-ui, sans-serif !important; /* <--- Cambiado a Inter */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important; /* <--- Cambiado a Inter */
   font-weight: 700;
   font-size: 2rem;
   text-transform: uppercase;
