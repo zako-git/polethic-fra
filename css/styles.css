@@ -289,3 +289,119 @@ header .container {
   font-size: 0.7rem;
   user-select: none;
 }
+
+/* ==========================================================================
+   NUEVO FOOTER CON ESCUDO (TAMAÑO CONTROLADO) Y ENLACES LEGALES
+   ========================================================================== */
+
+footer {
+  margin-top: 5rem;
+  padding: 3rem 0 2rem 0;
+  border-top: 1px solid var(--line);
+  background: rgba(2, 6, 18, 0.85);
+  backdrop-filter: blur(12px);
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Contenedor del escudo y aviso */
+.footer-shield {
+  max-width: 750px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(6, 21, 45, 0.35);
+  border: 1px solid rgba(63, 215, 242, 0.2);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  backdrop-filter: blur(5px);
+}
+
+.shield-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  color: var(--cyan);
+}
+
+/* CONTRÓL ESTRICTO DEL TAMAÑO DEL SVG (18px) */
+.shield-icon {
+  width: 18px !important;
+  height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  min-width: 18px !important;
+  stroke: var(--cyan);
+  filter: drop-shadow(0 0 5px rgba(63, 215, 242, 0.6));
+  flex-shrink: 0 !important;
+}
+
+.shield-title {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.shield-disclaimer {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Divisor horizontal */
+.footer-divider {
+  width: 100%;
+  max-width: 400px;
+  height: 1px;
+  background: radial-gradient(circle, var(--line) 0%, transparent 100%);
+}
+
+/* Enlaces legales y copyright */
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: var(--muted, #64748b);
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--cyan);
+  text-shadow: 0 0 8px rgba(63, 215, 242, 0.4);
+}
+
+.footer-sep {
+  color: rgba(63, 215, 242, 0.25);
+  font-size: 0.7rem;
+}
+
+.copyright {
+  font-size: 0.8rem;
+  color: var(--muted, #64748b);
+  margin: 0;
+}
