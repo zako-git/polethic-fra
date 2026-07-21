@@ -70,48 +70,56 @@ body {
 }
 
 /* ==========================================================================
-   4. FUENTES Y CABECERA (ESTILO INFOGRAFÍA)
+   NUEVOS BOTONES DE NAVEGACIÓN (HEADER)
    ========================================================================== */
-header {
-  border-bottom: 1px solid var(--line);
-  padding: 1.5rem 0;
-  background: rgba(2, 6, 18, 0.85);
-  backdrop-filter: blur(12px);
-  position: relative;
-  z-index: 20;
-}
-
 .header-layout {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.logo-title {
-  color: var(--cyan) !important;
-  font-family: 'Oswald', sans-serif;
-  font-weight: 700;
-  font-size: 2rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  text-shadow: 0 0 15px var(--cyan-glow);
+.nav-buttons {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
 }
 
-nav a {
-  color: #ffffff;
-  margin-left: 1.5rem;
-  text-decoration: none;
+/* Transformamos los enlaces simples en BOTONES Cyber */
+.nav-btn {
+  color: #ffffff !important;
   font-family: 'Oswald', sans-serif;
+  font-size: 0.95rem;
   font-weight: 500;
-  font-size: 1.1rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
+  letter-spacing: 1px;
+  text-decoration: none;
+  
+  /* Aspecto de Botón táctico */
+  padding: 0.5rem 1rem;
+  background: rgba(6, 21, 45, 0.6);
+  border: 1px solid rgba(63, 215, 242, 0.3);
+  border-radius: 6px;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(5px);
 }
 
-nav a:hover {
-  color: var(--cyan);
-  text-shadow: 0 0 10px var(--cyan);
+/* Efecto al pasar el ratón por encima (Hover) */
+.nav-btn:hover {
+  color: var(--cyan) !important;
+  border-color: var(--cyan);
+  background: rgba(63, 215, 242, 0.15);
+  box-shadow: 0 0 12px rgba(63, 215, 242, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Marca el botón activo en la página donde estás */
+.nav-btn.active {
+  border-color: var(--cyan);
+  background: rgba(63, 215, 242, 0.2);
+  color: var(--cyan) !important;
+  box-shadow: inset 0 0 8px rgba(63, 215, 242, 0.3);
 }
 
 /* ==========================================================================
