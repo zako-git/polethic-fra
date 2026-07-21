@@ -1,139 +1,144 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POLETHIC_FRA</title>
-    <!-- Ruta correcta para los archivos de la raíz: sin ../ -->
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POLETHIC France | Camp de Base Cognitif</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <!-- CABECERA GLOBAL DE NAVEGACIÓN -->
-<header>
-  <div class="container header-layout">
-    <div class="logo-title">POLETHIC_FRA</div>
-    <nav class="nav-buttons">
-      <a href="index.html" class="nav-btn">ACCUEIL</a>
-      <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
-      <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
-      <a href="beacon.html" class="nav-btn">BEACON LAB</a>
-      <a href="manifeste.html" class="nav-btn">MANIFESTE</a>
-      <a href="contact.html" class="nav-btn">CONTACT</a>
+  <!-- CABECERA GLOBAL -->
+  <header>
+    <div class="container header-layout">
+      <div class="logo-title">POLETHIC_FRA</div>
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn active">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
+        <a href="beacon.html" class="nav-btn">BEACON LAB</a>
+        <a href="manifeste.html" class="nav-btn">MANIFESTE</a>
+        <a href="contact.html" class="nav-btn">CONTACT</a>
+      </nav>
+    </div>
+  </header>
 
-      <!-- SELECTOR DE IDIOMAS -->
-      <div class="lang-selector">
-        <a href="#" class="lang-btn active">FR</a>
-        <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn">ES</a>
-        <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn">EN</a>
-      </div>
-    </nav>
-  </div>
-</header>
-
-    <main class="container">
-        
-        <!-- Contenedor Principal HUD -->
-        <div class="main-hud-panel">
-            
-            <div style="text-align: center; margin-bottom: 35px;">
-                <h1 style="color: #ffffff; text-shadow: 0 0 15px var(--neon-cyan); margin: 0; font-size: 2rem; letter-spacing: 1px;">
-                    ARCHITECTURE DU DISCERNEMENT
-                </h1>
-                <p style="color: var(--neon-cyan); font-weight: 600; margin-top: 10px; letter-spacing: 3px; font-size: 0.9rem;">
-                    [ SYSTEME DE DEFENSE CONTRE LES DERIVES SECTAIRES ]
-                </p>
-            </div>
-
-            <p style="text-align: center; color: #e2f1f7; max-width: 800px; margin: 0 auto 40px auto; line-height: 1.6; font-size: 1.05rem;">
-                Le cerveau ne réagit pas au monde, il le prédit. Aujourd'hui, de fausses thérapies et des architectures manipulatrices exploitent vos failles de sécurité cognitives. POLETHIC déploie un pare-feu mental.
-            </p>
-
-            <!-- Rejilla de Módulos (Réplica de las tarjetas de tu captura) -->
-            <div class="hud-grid">
-                
-                <!-- Fila 1 -->
-                <div class="hud-row">
-                    <div class="hud-card-cell">
-                        <div class="hud-id-badge">01</div>
-                        <div class="hud-card-content">
-                            <h3 class="hud-card-title">L'Observatoire</h3>
-                            <p class="hud-card-desc">Analyse en temps réel des fronts prédictifs et détection de l'entrisme.</p>
-                        </div>
-                    </div>
-                    <div class="hud-card-cell">
-                        <div class="hud-id-badge">02</div>
-                        <div class="hud-card-content">
-                            <h3 class="hud-card-title">Psicomusée</h3>
-                            <p class="hud-card-desc">4 zones immersives pour démystifier le blindage et les biais cognitifs.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Fila 2 -->
-                <div class="hud-row">
-                    <div class="hud-card-cell">
-                        <div class="hud-id-badge">03</div>
-                        <div class="hud-card-content">
-                            <h3 class="hud-card-title">POLETHIC Beacon</h3>
-                            <p class="hud-card-desc">Outils d'autodéfense intellectuelle et protocoles de décodage.</p>
-                        </div>
-                    </div>
-                    <div class="hud-card-cell">
-                        <div class="hud-id-badge">04</div>
-                        <div class="hud-card-content">
-                            <h3 class="hud-card-title">Immunité Hack</h3>
-                            <p class="hud-card-desc">Entraîner le cortex préfrontal face à l'illusion et l'info-brouillard.</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Botón Central de Ejecución Sci-Fi -->
-            <div style="text-align: center; margin-top: 50px;">
-                <a href="autodefense.html" class="btn-cyber">Exécuter POLETHIC_BEACON.exe</a>
-            </div>
-
-        </div>
-
-    </main>
-
-    <footer>
-  <div class="container footer-content">
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container">
     
-    <!-- ESCUDO Y DESCARGO DE RESPONSABILIDAD PROFESIONAL -->
-    <div class="footer-shield">
-      <div class="shield-badge">
-        <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <path d="M9 12l2 2 4-4"/>
-        </svg>
-        <span class="shield-title">Bouclier de Protection Professionnelle</span>
+    <!-- 1. EL GANCHO INTELECTUAL & FARO (HERO BANNER) -->
+    <section class="hero-card">
+      <div class="hero-badge">CAMP DE BASE COGNITIF</div>
+      
+      <!-- La Gran Pregunta -->
+      <h1 class="hero-question">Comment distinguer entre croire, penser et savoir ?</h1>
+      
+      <p class="hero-description">
+        Face à la surinformation et aux dérives pseudoscolaires, <strong>POLETHIC France</strong> apporte la clarté nécessaire pour traverser le brouillard cognitif. Nous faisons visible l'invisible : le cerveau comme architecte prédictif.
+      </p>
+
+      <!-- Botones de Acción (CTA) -->
+      <div class="hero-actions">
+        <a href="beacon.html" class="btn-primary">⚡ ACTIVER VOTRE RADAR</a>
+        <a href="psicomusee.html" class="btn-secondary">🏛️ EXPLORER LE PSICOMUSÉE</a>
       </div>
-      <p class="shield-disclaimer">
-  Action exclusive de prévention primaire et de psychoéducation non clinique.
-</p>
-<p class="shield-disclaimer">
-  Aucun diagnostic ou thérapie médicale n'est pratiqué.
-</p>
-    </div>
+    </section>
 
-    <div class="footer-divider"></div>
-
-    <!-- ENLACES LEGALES Y COPYRIGHT -->
-    <div class="footer-bottom">
-      <div class="footer-links">
-        <a href="mentions-legales.html">Mentions Légales</a>
-        <span class="footer-sep">•</span>
-        <a href="politique-confidentialite.html">Politique de Confidentialité</a>
-        <span class="footer-sep">•</span>
-        <a href="cookies.html">Gestion des Cookies</a>
+    <!-- 2. GLOSARIO Y CONCEPTOS CLAVE (HABITAR LAS PALABRAS) -->
+    <section class="concepts-banner">
+      <div class="concept-item">
+        <span class="concept-tag">// ALOSTASIS</span>
+        <p>Gestion dynamique de la charge et de l'énergie cérébrale.</p>
       </div>
-      <p class="copyright">© 2026 POLETHIC France. Tous droits réservés.</p>
-    </div>
+      <div class="concept-item">
+        <span class="concept-tag">// ERREUR DE PRÉDICTION</span>
+        <p>Ajustement continu entre nos attentes et la réalité.</p>
+      </div>
+      <div class="concept-item">
+        <span class="concept-tag">// FERMETURE COGNITIVE</span>
+        <p>Restructuration du chaos d'informations en ordre mental.</p>
+      </div>
+    </section>
 
-  </div>
-</footer>
+    <!-- 3. PILARES DE AUTODEFENSA E INVESTIGACIÓN (GRID) -->
+    <section class="features-grid">
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+          </svg>
+        </div>
+        <h3>L'OBSERVATOIRE</h3>
+        <p>Analyses indépendantes et cartographie des dérives psychoscolaires (Constellations Familiales, dérives sectaires et thérapies alternatives).</p>
+        <a href="observatoire.html" class="card-link">Consulter les enquêtes →</a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <h3>PSICOMUSÉE</h3>
+        <p>Parcours immersif et psychoéducatif pour comprendre l'architecture de la pensée et la culture scientifique.</p>
+        <a href="psicomusee.html" class="card-link">Entrer dans le musée →</a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+          </svg>
+        </div>
+        <h3>BEACON LAB</h3>
+        <p>Outillage pratique et méthodologies pour apprendre à cartographier vos propres "tempêtes cognitives".</p>
+        <a href="beacon.html" class="card-link">Accéder au Lab →</a>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- 4. LE BOUCLIER (FOOTER LEGAL Y MARCO ÉTICO) -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer">
+          Action exclusive de prévention primaire et de psychoéducation non clinique.
+        </p>
+        <p class="shield-disclaimer">
+          Aucun diagnostic ou thérapie médicale n'est pratiqué.
+        </p>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">© 2026 POLETHIC France. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
