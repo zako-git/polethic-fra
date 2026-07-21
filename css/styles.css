@@ -14,7 +14,8 @@
    2. FONDO ESPACIAL INTEGRADO: ESTRELLAS MINIATURA Y NUMEROSAS (ESTILO FOTO)
    ========================================================================== */
 body {
-  background-color: var(--bg-dark);
+  background: #060a14;
+}
   
   /* Reducimos los radios al mínimo (de 12px-18px pasamos a 3px-4px) para que sean destellos milimétricos */
   background-image: 
