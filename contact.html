@@ -3,40 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qui sommes-nous? | POLETHIC</title>
+    <title>Contact | POLETHIC_FRA</title>
+
+    <!-- 1. CARGA DE TIPOGRAFÍAS GOOGLE FONTS (Indispensable para el logo y botones) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 2. ENLACE AL CSS PRINCIPAL -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<header>
-  <div class="container header-layout">
-    <div class="logo-title">POLETHIC_FRA</div>
-    <nav class="nav-buttons">
-      <a href="index.html" class="nav-btn">ACCUEIL</a>
-      <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
-      <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
-      <a href="beacon.html" class="nav-btn">BEACON LAB</a>
-      <a href="manifeste.html" class="nav-btn">MANIFESTE</a>
-      <a href="contact.html" class="nav-btn active">CONTACT</a>
-    </nav>
-  </div>
-</header>
-        <!-- Formulario de Contacto Oficial -->
-        <section style="margin-top: 40px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
-            <h3>Contactez-nous</h3>
-            <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 20px;">Pour toute demande d'intervention (Mairies, Établissements scolaires) ou de partenariat institutional :</p>
-            <p><strong>Email officiel :</strong> <a href="mailto:contact@polethic.fr" style="color: #0d9488; text-decoration: none; font-weight: bold;">contact@polethic.fr</a></p>
-        </section>
-    </main>
+  <!-- CABECERA GLOBAL DE NAVEGACIÓN -->
+  <header>
+    <div class="container header-layout">
+      <div class="logo-title">POLETHIC_FRA</div>
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
+        <a href="beacon.html" class="nav-btn">BEACON LAB</a>
+        <a href="manifeste.html" class="nav-btn">MANIFESTE</a>
+        <a href="contact.html" class="nav-btn active">CONTACT</a>
+      </nav>
+    </div>
+  </header>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 POLETHIC France. Tous droits réservés.</p>
-            <p class="legal">
-                <strong>Bouclier de Protection Professionnelle :</strong> POLETHIC France est une association de prévention primaire et de psychoéducation non clinique. Nous ne realizons aucun diagnostic ni thérapie de santé mentale.
-            </p>
+  <!-- CONTENIDO PRINCIPAL ADAPTADO AL ESTILO FUTURISTA -->
+  <main class="container">
+    <article class="hero-card">
+      <header class="post-header">
+        <span class="post-date">// PROTOCOLE DE COMMUNICATION</span>
+        <h1 class="post-title">CONTACTEZ-NOUS</h1>
+      </header>
+
+      <div class="post-content">
+        <p>
+          Pour toute demande d'intervention (Mairies, Établissements scolaires) ou de partenariat institutionnel :
+        </p>
+
+        <!-- Bloque de contacto integrado en el diseño -->
+        <div style="margin-top: 2rem; padding: 2rem; border: 1px dashed var(--line); border-radius: 8px; background: rgba(6, 21, 45, 0.4);">
+          <p style="margin: 0; font-size: 1.1rem;">
+            <strong>Email officiel :</strong> 
+            <a href="mailto:contact@polethic.fr" style="color: var(--cyan); text-decoration: none; font-weight: bold; font-family: 'JetBrains Mono', monospace; margin-left: 0.5rem;">
+              contact@polethic.fr
+            </a>
+          </p>
         </div>
-    </footer>
+      </div>
+    </article>
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    <div class="container">
+      <p>© 2026 POLETHIC France. Tous droits réservés.</p>
+      <p class="legal" style="margin-top: 1rem; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">
+        <strong>Bouclier de Protection Professionnelle :</strong> POLETHIC France est une association de prévention primaire et de psychoéducation non clinique. Nous ne réalisons aucun diagnostic ni thérapie de santé mentale.
+      </p>
+    </div>
+  </footer>
 
 </body>
 </html>
