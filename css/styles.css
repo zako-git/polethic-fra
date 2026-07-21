@@ -215,3 +215,33 @@ footer {
   color: var(--muted);
   background: rgba(2, 6, 18, 0.6);
 }
+
+/* ==========================================================================
+   FIJACIÓN RIGUROSA DE POSICIÓN ENTRE PÁGINAS
+   ========================================================================== */
+
+/* 1. Reserva siempre espacio para el scrollbar (evita saltos horizontales) */
+html {
+  overflow-y: scroll;
+}
+
+/* 2. Congela la altura y relleno del header */
+header {
+  height: 70px !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+header .container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 3. Congela la posición vertical de la tarjeta principal */
+.hero-card,
+.post-card {
+  margin-top: 2.5rem !important;
+}
