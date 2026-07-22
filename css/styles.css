@@ -299,7 +299,7 @@ header {
 .card-link {
   color: var(--yellow-neon);
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   text-decoration: none;
   transition: all 0.2s ease;
 }
