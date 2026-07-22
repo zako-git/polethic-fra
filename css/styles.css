@@ -137,17 +137,19 @@ header {
 
 /* LOGO POLETHIC - VERDE Y MÁS GRANDE */
 .logo-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 900;
-  font-size: 3.1rem; /* <--- Tamaño ampliado */
-  color: #00ff88;    /* <--- Verde neón brillante */
-  letter-spacing: 3px;
-  text-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+  /* Sustituye 'Fira Code' o 'Space Grotesk' por la fuente exacta que uses en index */
+  font-family: 'Fira Code', 'Space Grotesk', monospace, sans-serif; 
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #00ff88;
+  letter-spacing: 2px;
+  text-shadow: 0 0 18px rgba(0, 255, 136, 0.6);
   text-decoration: none;
-  display: inline-block;
-  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+  padding-top: 2px;
 }
-
 .logo-title:hover {
   color: #ffffff;
   text-shadow: 0 0 25px rgba(0, 255, 136, 0.9);
