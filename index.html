@@ -162,3 +162,32 @@
 
 </body>
 </html>
+
+<!-- SCRIPT PARA EL TOOLTIP INTERACTIVO DE CONCEPTOS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const words = document.querySelectorAll('.interactive-word');
+      const tooltip = document.getElementById('concept-tooltip');
+
+      words.forEach(word => {
+        word.addEventListener('mouseenter', (e) => {
+          const definition = word.getAttribute('data-definition');
+          const rect = word.getBoundingClientRect();
+
+          tooltip.innerHTML = `<strong>${word.textContent.toUpperCase()} :</strong> ${definition}`;
+          
+          // Posicionamiento de la ventanita relativo a la pantalla
+          tooltip.style.left = `${rect.left + window.scrollX}px`;
+          tooltip.style.top = `${rect.bottom + window.scrollY + 10}px`;
+          
+          tooltip.classList.add('visible');
+        });
+
+        word.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('visible');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
