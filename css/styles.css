@@ -136,11 +136,11 @@ header {
 }
 
 .logo-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;
-  font-size: 1.6rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 1.4rem;
   color: var(--green-neon);
-  letter-spacing: 2.5px;
+  letter-spacing: 3px;
   text-shadow: 0 0 16px rgba(0, 255, 136, 0.5);
   text-decoration: none;
   display: inline-block;
