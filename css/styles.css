@@ -801,7 +801,7 @@ footer {
   border-top: 1px solid var(--card-border);
   background: rgba(3, 7, 18, 0.95);
   padding: 2.5rem 0;
-  margin-top: auto;
+  margin-top: 5rem;
   position: relative;
   z-index: 1;
 }
