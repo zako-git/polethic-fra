@@ -47,21 +47,29 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container">
     
-    <!-- HERO CARD PRINCIPAL -->
-    <section class="hero-card">
-      <div class="hero-badge">CAMP DE BASE COGNITIF</div>
-      
-      <h1 class="hero-question">Comment distinguer entre croire, penser et savoir ?</h1>
-      
-      <p class="hero-description">
-        Face à la surinformation et aux risques de dérives sectaires ou pseudothérapeutiques, <strong>POLETHIC France</strong> offre un espace de prévention primaire et de psychoéducation. Nous proposons des repères scientifiques et des outils pratiques pour développer l'autonomie mentale et comprendre le fonctionnement du cerveau.
-      </p>
+    <!-- HERO CARD PRINCIPAL CON PREGUNTA INTERACTIVA -->
+<section class="hero-card">
+  <div class="hero-badge">CAMP DE BASE COGNITIF</div>
+  
+  <h1 class="hero-question">
+    <span class="interactive-word" data-definition="Adhésion à une idée sans nécessité de preuve ni de vérification empirique.">Croire</span>, 
+    <span class="interactive-word" data-definition="Jugement personnel ou interprétation subjective qui n'a pas encore été démontrée.">penser</span> ou 
+    <span class="interactive-word" data-definition="Connaissance validée par des faits, la méthode scientifique et la preuve.">savoir</span> :<br>
+    savons-nous vraiment faire la différence ?
+  </h1>
+  
+  <p class="hero-description">
+    Face à la surinformation et aux risques de dérives sectaires ou pseudothérapeutiques, <strong>POLETHIC France</strong> offre un espace de prévention primaire et de psychoéducation. Nous proposons des repères scientifiques et des outils pratiques pour développer l'autonomie mentale.
+  </p>
 
-      <div class="hero-actions">
-        <a href="beacon.html" class="btn-primary">⚡ ACTIVER VOTRE RADAR</a>
-        <a href="notre-cap.html" class="btn-secondary">🧭 DÉCOUVRIR NOTRE CAP</a>
-      </div>
-    </section>
+  <div class="hero-actions">
+    <a href="beacon.html" class="btn-primary">⚡ ACTIVER VOTRE RADAR</a>
+    <a href="notre-cap.html" class="btn-secondary">🧭 DÉCOUVRIR NOTRE CAP</a>
+  </div>
+</section>
+
+<!-- TOOLTIP DINÁMICO (VENTANITA FLOTANTE) -->
+<div id="concept-tooltip" class="concept-tooltip"></div>
 
     <!-- GRID DE 4 PILARES (2x2) -->
     <section class="features-grid">
