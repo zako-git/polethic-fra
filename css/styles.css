@@ -1,8 +1,152 @@
 /* ==========================================================================
-   ILUSTRACIÓN CEREBRO + FARO & DEMO INTERACTIVA
+   POLETHIC FRANCE — STYLES GLOBAUX & LABORATOIRE DE CLARTÉ COGNITIVE
    ========================================================================== */
 
-/* Layout split para el Hero */
+/* 1. VARIABLES GLOBALES & RESET */
+:root {
+  --bg-dark: #020612;
+  --card-bg: rgba(13, 21, 38, 0.75);
+  --card-border: rgba(63, 215, 242, 0.25);
+  --cyan: #3fd7f2;
+  --cyan-glow: rgba(63, 215, 242, 0.4);
+  --line: rgba(63, 215, 242, 0.15);
+  --text-main: #e2e8f0;
+  --muted: #8892b0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* 2. CABECERA GLOBAL & SELECTOR DE IDIOMAS */
+header {
+  background: rgba(2, 6, 18, 0.85);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  padding: 1rem 0;
+}
+
+.header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.logo-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--cyan);
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.7rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover, .nav-btn.active {
+  color: #ffffff;
+  background: rgba(63, 215, 242, 0.1);
+}
+
+.nav-btn.active {
+  color: var(--cyan);
+  border: 1px solid var(--line);
+}
+
+/* Selector de idiomas */
+.lang-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  background: rgba(6, 21, 45, 0.5);
+  border: 1px solid rgba(63, 215, 242, 0.25);
+  border-radius: 6px;
+}
+
+.lang-btn {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 0.75rem !important;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.lang-btn:hover { color: #ffffff; }
+
+.lang-btn.active {
+  color: var(--cyan) !important;
+  font-weight: 700;
+  text-shadow: 0 0 8px var(--cyan-glow);
+}
+
+.lang-separator {
+  color: rgba(63, 215, 242, 0.3);
+  font-size: 0.7rem;
+}
+
+/* 3. HERO & ILUSTRACIÓN FARO / CEREBRO */
+.hero-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.hero-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--cyan);
+  background: rgba(63, 215, 242, 0.08);
+  border: 1px solid var(--line);
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+
 .hero-split {
   display: grid;
   grid-template-columns: 1.3fr 0.7fr;
@@ -11,18 +155,76 @@
 }
 
 @media (max-width: 850px) {
-  .hero-split {
-    grid-template-columns: 1fr;
-  }
+  .hero-split { grid-template-columns: 1fr; }
 }
 
-/* Contenedor de la ilustración Cerebro + Faro */
-.hero-visual-side {
+.hero-title-main {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  line-height: 1.25;
+  margin-bottom: 0.8rem;
+}
+
+.hero-question-sub {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--cyan);
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+  font-style: italic;
+}
+
+.hero-description {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.hero-actions {
   display: flex;
-  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Botones principales */
+.btn-primary, .btn-secondary {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.65rem 1.2rem;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+  display: inline-flex;
   align-items: center;
 }
 
+.btn-primary {
+  background: rgba(63, 215, 242, 0.15);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  box-shadow: 0 0 15px rgba(63, 215, 242, 0.2);
+}
+
+.btn-primary:hover {
+  background: var(--cyan);
+  color: #020612;
+  box-shadow: 0 0 20px var(--cyan);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.03);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-secondary:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* Contenedor del Faro + Cerebro */
 .beacon-brain-container {
   background: rgba(6, 21, 45, 0.6);
   border: 1px solid rgba(63, 215, 242, 0.3);
@@ -36,8 +238,8 @@
 }
 
 .beacon-svg {
-  width: 180px;
-  height: 180px;
+  width: 170px;
+  height: 170px;
   filter: drop-shadow(0 0 10px rgba(63, 215, 242, 0.4));
 }
 
@@ -58,10 +260,22 @@
   letter-spacing: 1px;
 }
 
-/* Demo interactiva del Traduction Métacognitif */
-.interactive-demo {
-  background: rgba(10, 18, 32, 0.85) !important;
-  border-color: rgba(63, 215, 242, 0.3) !important;
+/* 4. DEMO INTERACTIVA DEL TRADUCTOR */
+.section-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-tag {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--cyan);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.4rem;
 }
 
 .demo-grid {
@@ -73,13 +287,8 @@
 }
 
 @media (max-width: 768px) {
-  .demo-grid {
-    grid-template-columns: 1fr;
-  }
-  .demo-arrow {
-    transform: rotate(90deg);
-    text-align: center;
-  }
+  .demo-grid { grid-template-columns: 1fr; }
+  .demo-arrow { transform: rotate(90deg); text-align: center; }
 }
 
 .demo-box {
@@ -131,4 +340,147 @@
   font-size: 1.5rem;
   color: var(--cyan);
   text-shadow: 0 0 10px var(--cyan);
+}
+
+/* 5. TARJETAS DE PILARES (GRID) */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.feature-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.8rem;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--cyan);
+}
+
+.feature-card h3 {
+  color: #ffffff;
+  font-size: 1.1rem;
+  margin: 0.8rem 0 0.5rem 0;
+}
+
+.feature-card p {
+  color: #94a3b8;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.card-link {
+  color: var(--cyan);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.card-link:hover { text-decoration: underline; }
+
+/* 6. LE BOUCLIER (FOOTER LEGAL) */
+footer {
+  margin-top: 4rem;
+  padding: 3rem 0 2rem 0;
+  border-top: 1px solid var(--line);
+  background: rgba(2, 6, 18, 0.85);
+  backdrop-filter: blur(12px);
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer-shield {
+  max-width: 750px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(6, 21, 45, 0.35);
+  border: 1px solid rgba(63, 215, 242, 0.2);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}
+
+.shield-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--cyan);
+}
+
+.shield-icon {
+  stroke: var(--cyan);
+  filter: drop-shadow(0 0 5px var(--cyan-glow));
+}
+
+.shield-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.shield-disclaimer {
+  color: #94a3b8;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin: 0 0 0.3rem 0;
+}
+
+.shield-disclaimer:last-child {
+  margin-bottom: 0;
+}
+
+.footer-divider {
+  width: 100%;
+  max-width: 400px;
+  height: 1px;
+  background: radial-gradient(circle, var(--line) 0%, transparent 100%);
+}
+
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover { color: var(--cyan); }
+
+.footer-sep {
+  color: rgba(63, 215, 242, 0.25);
+  font-size: 0.7rem;
+}
+
+.copyright {
+  font-size: 0.8rem;
+  color: var(--muted);
 }
