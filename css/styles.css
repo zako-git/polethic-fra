@@ -32,7 +32,6 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-x: hidden;
 }
 
 /* ==========================================================================
@@ -55,8 +54,7 @@ body {
     var(--bg-dark);
 }
 
-/* Generador de capas de estrellas mediante sombras multidireccionales 
-   Evita patrones repetitivos ("trozos pegados") */
+/* Generador de capas de estrellas mediante sombras multidireccionales */
 #stars-container::before,
 #stars-container::after {
   content: "";
@@ -139,12 +137,12 @@ header {
 
 .logo-title {
   font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;          /* Más grueso */
-  font-size: 1.6rem;         /* ¡Más grande e imponente! */
-  color: var(--green-neon);  /* Mantener el verde ciber exacto */
-  letter-spacing: 2.5px;     /* Ligero espaciado futurista */
-  text-shadow: 0 0 16px rgba(0, 255, 136, 0.5); /* Resplandor más vivo */
-  text-decoration: none;     /* Para si decides convertirlo en enlace a inicio */
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--green-neon);
+  letter-spacing: 2.5px;
+  text-shadow: 0 0 16px rgba(0, 255, 136, 0.5);
+  text-decoration: none;
   display: inline-block;
 }
 
@@ -204,7 +202,7 @@ header {
 }
 
 .lang-btn.active {
-  color: var(--yellow-neon); /* Amarillo pollito neón */
+  color: var(--yellow-neon);
   text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
 }
 
@@ -242,57 +240,11 @@ header {
   font-size: 1.05rem;
   line-height: 1.65;
   max-width: 920px;
-  margin-bottom: 0; /* Sin espacio inferior al no haber botones */
-}
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-/* Botón Principal (Verde Neón) */
-.btn-primary {
-  padding: 0.75rem 1.4rem;
-  background: var(--green-neon);
-  color: #030712 !important;
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-decoration: none;
-  border-radius: 8px;
-  letter-spacing: 0.5px;
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.35);
-  transition: all 0.25s ease;
-}
-
-.btn-primary:hover {
-  background: #ffffff;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-  transform: translateY(-2px);
-}
-
-/* Botón Secundario (Naranja Neón) */
-.btn-secondary {
-  padding: 0.75rem 1.4rem;
-  background: rgba(255, 107, 0, 0.1);
-  color: var(--orange-neon) !important;
-  border: 1px solid var(--orange-neon);
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.25s ease;
-  box-shadow: 0 0 10px rgba(255, 107, 0, 0.15);
-}
-
-.btn-secondary:hover {
-  background: var(--orange-neon);
-  color: #030712 !important;
-  box-shadow: 0 0 20px rgba(255, 107, 0, 0.4);
-  transform: translateY(-2px);
+  margin-bottom: 0;
 }
 
 /* ==========================================================================
-   FEATURES GRID (TARJETAS CON BORDES Y COLORES DE LA IMAGEN)
+   FEATURES GRID (TARJETAS CON BORDES Y COLORES)
    ========================================================================== */
 
 .features-grid {
@@ -345,7 +297,7 @@ header {
 }
 
 .card-link {
-  color: var(--yellow-neon); /* Amarillo estilo VulnHub */
+  color: var(--yellow-neon);
   font-weight: 700;
   font-size: 0.85rem;
   text-decoration: none;
@@ -447,6 +399,7 @@ footer {
 .copyright {
   color: rgba(148, 163, 184, 0.6);
   font-size: 0.75rem;
+}
 
 /* ==========================================================================
    PALABRAS CLAVE Y TOOLTIP 100% CSS (SIN JAVASCRIPT)
@@ -460,19 +413,19 @@ footer {
 
 /* Estilo base de la palabra en Verde Neón */
 .interactive-word {
-  color: #00ff88;
+  color: var(--green-neon);
   font-weight: 800;
   cursor: pointer;
-  border-bottom: 2px dashed #00ff88;
+  border-bottom: 2px dashed var(--green-neon);
   padding-bottom: 2px;
   transition: all 0.3s ease;
 }
 
 /* Hover en la palabra: cambia a Cian Neón con brillo */
 .word-container:hover .interactive-word {
-  color: #00e5ff;
-  border-bottom-color: #00e5ff;
-  text-shadow: 0 0 12px rgba(0, 229, 255, 0.8), 0 0 20px rgba(0, 229, 255, 0.4);
+  color: var(--cyan-neon);
+  border-bottom-color: var(--cyan-neon);
+  text-shadow: 0 0 12px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4);
 }
 
 /* Ventanita Flotante (Oculta por defecto) */
@@ -485,7 +438,7 @@ footer {
   transform: translateX(-50%) translateY(8px);
   width: 280px;
   background: rgba(3, 7, 18, 0.96);
-  border: 1px solid #00ff88;
+  border: 1px solid var(--green-neon);
   box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
   color: #ffffff;
   padding: 10px 14px;
@@ -494,7 +447,7 @@ footer {
   font-weight: 400;
   line-height: 1.4;
   text-align: left;
-  z-index: 100;
+  z-index: 1000;
   backdrop-filter: blur(10px);
   pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
@@ -509,11 +462,11 @@ footer {
   transform: translateX(-50%);
   border-width: 6px;
   border-style: solid;
-  border-color: #00ff88 transparent transparent transparent;
+  border-color: var(--green-neon) transparent transparent transparent;
 }
 
 .tooltip-box strong {
-  color: #00ff88;
+  color: var(--green-neon);
   display: inline;
 }
 
