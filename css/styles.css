@@ -450,3 +450,71 @@ footer {
 .copyright {
   color: rgba(148, 163, 184, 0.6);
   font-size: 0.75rem;
+
+/* ==========================================================================
+   PALABRAS CLAVE INTERACTIVAS Y TOOLTIP DE DEFINICIÓN
+   ========================================================================== */
+
+/* Estilo base de las 3 palabras */
+.interactive-word {
+  color: var(--cyan-neon);
+  text-decoration: underline dotted var(--cyan-neon);
+  text-underline-offset: 6px;
+  cursor: help;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+}
+
+/* Efecto de encendido al pasar el ratón */
+.interactive-word:hover {
+  color: var(--green-neon);
+  text-shadow: 
+    0 0 8px rgba(0, 255, 136, 0.8),
+    0 0 16px rgba(0, 255, 136, 0.5),
+    0 0 24px rgba(0, 255, 136, 0.3);
+  text-decoration: underline solid var(--green-neon);
+  transform: translateY(-2px);
+}
+
+/* Ventanita flotante (Tooltip) */
+.concept-tooltip {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  background: rgba(3, 7, 18, 0.95);
+  border: 1px solid var(--green-neon);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.25), inset 0 0 10px rgba(0, 255, 136, 0.1);
+  color: var(--text-main);
+  padding: 0.8rem 1.1rem;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  max-width: 280px;
+  pointer-events: none;
+  z-index: 1000;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  transform: translateY(10px);
+  backdrop-filter: blur(12px);
+}
+
+/* Flecha decorativa superior en la ventanita */
+.concept-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 20px;
+  width: 10px;
+  height: 10px;
+  background: rgba(3, 7, 18, 0.95);
+  border-left: 1px solid var(--green-neon);
+  border-top: 1px solid var(--green-neon);
+  transform: rotate(45deg);
+}
+
+/* Estado activo del tooltip */
+.concept-tooltip.visible {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
