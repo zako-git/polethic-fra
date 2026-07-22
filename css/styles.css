@@ -139,11 +139,13 @@ header {
 
 .logo-title {
   font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--green-neon); /* Verde Neón como el de la imagen */
-  letter-spacing: 2px;
-  text-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+  font-weight: 800;          /* Más grueso */
+  font-size: 1.6rem;         /* ¡Más grande e imponente! */
+  color: var(--green-neon);  /* Mantener el verde ciber exacto */
+  letter-spacing: 2.5px;     /* Ligero espaciado futurista */
+  text-shadow: 0 0 16px rgba(0, 255, 136, 0.5); /* Resplandor más vivo */
+  text-decoration: none;     /* Para si decides convertirlo en enlace a inicio */
+  display: inline-block;
 }
 
 .nav-buttons {
