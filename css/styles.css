@@ -139,10 +139,10 @@ header {
 .logo-title {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 900;
-  font-size: 1.8rem; /* <--- Tamaño ampliado */
+  font-size: 3.1rem; /* <--- Tamaño ampliado */
   color: #00ff88;    /* <--- Verde neón brillante */
   letter-spacing: 3px;
-  text-shadow: 0 0 18px rgba(0, 255, 136, 0.6);
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
   text-decoration: none;
   display: inline-block;
   transition: all 0.3s ease;
@@ -150,7 +150,7 @@ header {
 
 .logo-title:hover {
   color: #ffffff;
-  text-shadow: 0 0 22px rgba(0, 255, 136, 0.9);
+  text-shadow: 0 0 25px rgba(0, 255, 136, 0.9);
 }
 
 .nav-buttons {
