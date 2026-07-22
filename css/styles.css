@@ -448,45 +448,78 @@ footer {
   color: rgba(148, 163, 184, 0.6);
   font-size: 0.75rem;
 
-/* --- PALABRAS CLAVE DESTACADAS --- */
+/* ==========================================================================
+   PALABRAS CLAVE Y TOOLTIP 100% CSS (SIN JAVASCRIPT)
+   ========================================================================== */
+
+/* Contenedor relativo para posicionar la ventanita */
+.word-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Estilo base de la palabra en Verde Neón */
 .interactive-word {
-  color: #00ff88; /* Verde neón activo */
+  color: #00ff88;
   font-weight: 800;
   cursor: pointer;
   border-bottom: 2px dashed #00ff88;
   padding-bottom: 2px;
   transition: all 0.3s ease;
-  display: inline-block;
 }
 
-/* Cambio de color y brillo al pasar el ratón */
-.interactive-word:hover {
-  color: #00e5ff; /* Cambia a cian neón al pasar el ratón */
+/* Hover en la palabra: cambia a Cian Neón con brillo */
+.word-container:hover .interactive-word {
+  color: #00e5ff;
   border-bottom-color: #00e5ff;
   text-shadow: 0 0 12px rgba(0, 229, 255, 0.8), 0 0 20px rgba(0, 229, 255, 0.4);
-  transform: translateY(-2px);
 }
 
-/* --- VENTANITA FLOTANTE (TOOLTIP) --- */
-.concept-tooltip {
-  position: absolute;
-  display: none;
+/* Ventanita Flotante (Oculta por defecto) */
+.tooltip-box {
+  visibility: hidden;
   opacity: 0;
-  background: rgba(10, 20, 32, 0.95);
+  position: absolute;
+  bottom: 125%; /* Aparece justo encima de la palabra */
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  width: 280px;
+  background: rgba(3, 7, 18, 0.96);
   border: 1px solid #00ff88;
-  box-shadow: 0 8px 25px rgba(0, 255, 136, 0.25);
+  box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
   color: #ffffff;
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 8px;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
+  font-weight: 400;
   line-height: 1.4;
-  max-width: 320px;
+  text-align: left;
+  z-index: 100;
+  backdrop-filter: blur(10px);
   pointer-events: none;
-  z-index: 9999;
-  backdrop-filter: blur(8px);
-  transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
 }
 
-.concept-tooltip strong {
+/* Flechita inferior de la ventanita */
+.tooltip-box::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #00ff88 transparent transparent transparent;
+}
+
+.tooltip-box strong {
   color: #00ff88;
+  display: inline;
+}
+
+/* MOSTRAR LA VENTANITA AL PASAR EL RATÓN (HOVER) */
+.word-container:hover .tooltip-box {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
