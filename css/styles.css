@@ -402,45 +402,40 @@ footer {
 }
 
 /* ==========================================================================
-   PALABRAS CLAVE Y TOOLTIP 100% CSS (SIN JAVASCRIPT)
+   PALABRAS CLAVE Y TOOLTIPS PERSONALIZADOS
    ========================================================================== */
 
-/* Contenedor relativo para posicionar la ventanita */
+/* Contenedor relativo */
 .word-container {
   position: relative;
   display: inline-block;
 }
 
-/* Estilo base de la palabra en Verde Neón */
+/* Texto sin subrayado y con tono blanco/beige suave */
 .interactive-word {
-  color: var(--green-neon);
-  font-weight: 800;
+  color: #f4f1ea; /* Blanco hueso / beige suave */
+  font-weight: 500;
   cursor: pointer;
-  border-bottom: 2px dashed var(--green-neon);
-  padding-bottom: 2px;
+  border-bottom: none; /* Eliminamos el subrayado */
   transition: all 0.3s ease;
 }
 
-/* Hover en la palabra: cambia a Cian Neón con brillo */
+/* Efecto Hover: Resplandor sutil al pasar el ratón */
 .word-container:hover .interactive-word {
-  color: var(--cyan-neon);
-  border-bottom-color: var(--cyan-neon);
-  text-shadow: 0 0 12px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4);
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(244, 241, 234, 0.6);
 }
 
-/* Ventanita Flotante (Oculta por defecto) */
+/* Estilo Base de las Ventanitas (Tooltips) */
 .tooltip-box {
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  bottom: 125%; /* Aparece justo encima de la palabra */
-  left: 50%;
-  transform: translateX(-50%) translateY(8px);
   width: 280px;
   background: rgba(3, 7, 18, 0.96);
-  border: 1px solid var(--green-neon);
-  box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
-  color: #ffffff;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  color: var(--text-main);
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -453,26 +448,74 @@ footer {
   transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
 }
 
-/* Flechita inferior de la ventanita */
-.tooltip-box::after {
+.tooltip-box strong {
+  color: #f4f1ea;
+}
+
+/* Mostrar tooltip al pasar el ratón */
+.word-container:hover .tooltip-box {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   POSICIONAMIENTO ESPECÍFICO SEGÚN LA PALABRA
+   -------------------------------------------------------------------------- */
+
+/* 1. CROIRE (Desplegado hacia arriba/izquierda) */
+.tooltip-left .tooltip-box {
+  bottom: 125%;
+  left: 0;
+  transform: translateY(8px);
+}
+.word-container.tooltip-left:hover .tooltip-box {
+  transform: translateY(0);
+}
+.tooltip-left .tooltip-box::after {
   content: '';
   position: absolute;
   top: 100%;
+  left: 20px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--card-border) transparent transparent transparent;
+}
+
+/* 2. PENSER (Desplegado hacia ABAJO) */
+.tooltip-bottom .tooltip-box {
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+}
+.word-container.tooltip-bottom:hover .tooltip-box {
+  transform: translateX(-50%) translateY(0);
+}
+.tooltip-bottom .tooltip-box::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
   border-width: 6px;
   border-style: solid;
-  border-color: var(--green-neon) transparent transparent transparent;
+  border-color: transparent transparent var(--card-border) transparent;
 }
 
-.tooltip-box strong {
-  color: var(--green-neon);
-  display: inline;
+/* 3. SAVOIR (Desplegado hacia arriba/derecha) */
+.tooltip-right .tooltip-box {
+  bottom: 125%;
+  right: 0;
+  transform: translateY(8px);
 }
-
-/* MOSTRAR LA VENTANITA AL PASAR EL RATÓN (HOVER) */
-.word-container:hover .tooltip-box {
-  visibility: visible;
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+.word-container.tooltip-right:hover .tooltip-box {
+  transform: translateY(0);
+}
+.tooltip-right .tooltip-box::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--card-border) transparent transparent transparent;
 }
