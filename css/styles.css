@@ -3,18 +3,22 @@
    ========================================================================== */
 
 :root {
-  /* Paleta extraída de la referencia */
+  /* Paleta base */
   --bg-dark: #030712;
   --bg-card: rgba(11, 19, 43, 0.75);
   --card-border: rgba(0, 242, 254, 0.3);
   
+  /* NUEVO: Tonos crema para textos principales en lugar de blanco puro */
+  --text-cream: #f4f1ea;        /* Crema suave muy elegante */
+  --text-cream-bright: #fffdf7; /* Crema más claro para títulos */
+  
   /* Colores de acento */
   --cyan-neon: #00f2fe;
-  --green-neon: #00ff88;   /* Verde neón estilo Hacking/ETHICAL */
-  --orange-neon: #ff6b00;  /* Naranja vibrante */
-  --yellow-neon: #facc15;  /* Amarillo pollito neón */
+  --green-neon: #00ff88;
+  --orange-neon: #ff6b00;
+  --yellow-neon: #facc15;
   
-  --text-main: #f8fafc;
+  --text-main: var(--text-cream); /* Cambiamos el texto principal por el crema */
   --text-muted: #94a3b8;
 }
 
