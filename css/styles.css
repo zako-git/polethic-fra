@@ -221,41 +221,26 @@ header {
   background: var(--bg-card);
   border: 1px solid var(--card-border);
   border-radius: 16px;
-  padding: 2.5rem 2rem;
+  padding: 3rem 2.5rem; /* Un poco más de espacio interno */
   margin: 2rem 0;
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  position: relative;
-}
-
-.hero-badge {
-  display: inline-block;
-  padding: 0.3rem 0.75rem;
-  background: rgba(0, 255, 136, 0.1);
-  border: 1px solid var(--green-neon);
-  border-radius: 20px;
-  color: var(--green-neon);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  margin-bottom: 1rem;
 }
 
 .hero-question {
-  font-size: 1.6rem !important;
+  font-size: 1.8rem !important; /* Un pelín más grande para darle peso de título principal */
   font-weight: 700 !important;
   color: #ffffff !important;
   line-height: 1.35;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
 .hero-description {
   color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1.6;
-  max-width: 850px;
-  margin-bottom: 1.8rem;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  max-width: 900px;
+  margin-bottom: 0; /* Eliminamos el margen inferior que quedaba para los botones */
 }
 
 .hero-description strong {
