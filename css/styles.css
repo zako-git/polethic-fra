@@ -227,7 +227,7 @@ header {
 
 .hero-question {
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-  font-size: 1.85rem !important;
+  font-size: 1.35rem !important;
   font-weight: 700 !important;
   color: #ffffff !important;
   line-height: 1.35;
@@ -414,7 +414,7 @@ footer {
 /* Texto sin subrayado y con tono blanco/beige suave */
 .interactive-word {
   color: #f4f1ea; /* Blanco hueso / beige suave */
-  font-weight: 500;
+  font-weight: 800;
   cursor: pointer;
   border-bottom: none; /* Eliminamos el subrayado */
   transition: all 0.3s ease;
@@ -422,8 +422,9 @@ footer {
 
 /* Efecto Hover: Resplandor sutil al pasar el ratón */
 .word-container:hover .interactive-word {
-  color: #ffffff;
-  text-shadow: 0 0 12px rgba(244, 241, 234, 0.6);
+  color: var(--cyan-neon); /* #00f2fe */
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.8), 
+              0 0 20px rgba(0, 242, 254, 0.5);
 }
 
 /* Estilo Base de las Ventanitas (Tooltips) */
