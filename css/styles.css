@@ -221,17 +221,19 @@ header {
   background: var(--bg-card);
   border: 1px solid var(--card-border);
   border-radius: 16px;
-  padding: 3rem 2.5rem; /* Un poco más de espacio interno */
+  padding: 3rem 2.5rem;
   margin: 2rem 0;
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .hero-question {
-  font-size: 1.8rem !important; /* Un pelín más grande para darle peso de título principal */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-size: 1.85rem !important;
   font-weight: 700 !important;
   color: #ffffff !important;
   line-height: 1.35;
+  margin-top: 0;
   margin-bottom: 1.2rem;
 }
 
@@ -239,14 +241,9 @@ header {
   color: var(--text-muted);
   font-size: 1.05rem;
   line-height: 1.65;
-  max-width: 900px;
-  margin-bottom: 0; /* Eliminamos el margen inferior que quedaba para los botones */
+  max-width: 920px;
+  margin-bottom: 0; /* Sin espacio inferior al no haber botones */
 }
-
-.hero-description strong {
-  color: #ffffff;
-}
-
 .hero-actions {
   display: flex;
   gap: 1rem;
