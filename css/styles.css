@@ -215,38 +215,33 @@ header {
   font-size: 0.7rem;
 }
 
-/* ==========================================================================
-   HERO CARD CON DETALLES NEÓN
-   ========================================================================== */
-
-.hero-card {
-  background: var(--bg-card);
-  border: 1px solid var(--card-border);
-  border-radius: 16px;
-  padding: 3rem 2.5rem;
-  margin: 2rem 0;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
+/* Pregunta principal del Hero */
 .hero-question {
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
   font-size: 1.35rem !important;
   font-weight: 700 !important;
-  color: #ffffff !important;
+  color: var(--text-cream-bright) !important; /* Tono crema brillante */
   line-height: 1.35;
   margin-top: 0;
   margin-bottom: 1.2rem;
 }
 
-.hero-description {
-  color: var(--text-muted);
-  font-size: 1.05rem;
-  line-height: 1.65;
-  max-width: 920px;
-  margin-bottom: 0;
+/* Títulos de las tarjetas (Observatoire, Psicomusée, etc.) */
+.feature-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-cream); /* Tono crema */
+  margin-bottom: 0.6rem;
 }
 
+/* Palabras interactivas (Creer, Pensar, Saber) */
+.interactive-word {
+  color: var(--text-cream); /* Tono crema suave */
+  font-weight: 800;
+  cursor: pointer;
+  border-bottom: none;
+  transition: all 0.3s ease;
+}
 /* ==========================================================================
    FEATURES GRID (TARJETAS CON BORDES Y COLORES)
    ========================================================================== */
