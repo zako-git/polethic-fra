@@ -1,5 +1,5 @@
 /* ==========================================================================
-   POLETHIC FRANCE - STYLES GLOBALS (AZUL NOCHE & CIAN)
+   POLETHIC FRANCE - STYLES GLOBALS (AZUL NOCHE, ESTRELLAS Y CIAN)
    ========================================================================== */
 
 :root {
@@ -20,14 +20,47 @@
 
 body {
   background-color: var(--bg-dark);
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(15, 32, 67, 0.5) 0%, transparent 75%),
-    radial-gradient(circle at 80% 80%, rgba(63, 215, 242, 0.05) 0%, transparent 50%);
   color: var(--text-main);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   EFECTO DE ESTRELLAS DE FONDO (STARFIELD)
+   ========================================================================== */
+
+#stars-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(15, 32, 67, 0.6) 0%, transparent 75%),
+    radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, rgba(63, 215, 242, 0.8), rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 160px 120px, rgba(63, 215, 242, 0.9), rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 230px 190px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 310px 80px, rgba(255, 255, 255, 0.8), rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 370px 150px, rgba(63, 215, 242, 0.6), rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 450px 210px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 500px 300px;
+  opacity: 0.7;
+  animation: starsTwinkle 8s ease-in-out infinite alternate;
+}
+
+@keyframes starsTwinkle {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0.6; }
 }
 
 .container {
@@ -40,17 +73,19 @@ body {
 main {
   flex: 1;
   padding-bottom: 3rem;
+  position: relative;
+  z-index: 1;
 }
 
 /* ==========================================================================
-   HEADER & NAVIGATION
+   HEADER, NAVEGACIÓN Y SELECTOR DE IDIOMAS
    ========================================================================== */
 
 header {
-  padding: 1.5rem 0;
+  padding: 1.2rem 0;
   border-bottom: 1px solid rgba(63, 215, 242, 0.15);
-  background: rgba(2, 6, 18, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(2, 6, 18, 0.85);
+  backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -75,7 +110,7 @@ header {
 
 .nav-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
 }
 
@@ -84,7 +119,7 @@ header {
   text-decoration: none;
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.5rem 0.8rem;
+  padding: 0.45rem 0.75rem;
   border-radius: 6px;
   border: 1px solid transparent;
   transition: all 0.25s ease;
@@ -104,8 +139,42 @@ header {
   box-shadow: 0 0 10px rgba(63, 215, 242, 0.2);
 }
 
+/* Selector de Idiomas */
+.lang-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(6, 21, 45, 0.6);
+  border: 1px solid rgba(63, 215, 242, 0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.lang-btn {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.lang-btn:hover {
+  color: #ffffff;
+}
+
+.lang-btn.active {
+  color: var(--cyan);
+  text-shadow: 0 0 8px rgba(63, 215, 242, 0.6);
+}
+
+.lang-divider {
+  color: rgba(63, 215, 242, 0.3);
+  font-size: 0.7rem;
+}
+
 /* ==========================================================================
-   HERO CARD (CAMP DE BASE COGNITIF)
+   HERO CARD
    ========================================================================== */
 
 .hero-card {
@@ -199,7 +268,7 @@ header {
 }
 
 /* ==========================================================================
-   FEATURES GRID (4 CAJAS 2x2)
+   FEATURES GRID (2x2)
    ========================================================================== */
 
 .features-grid {
@@ -267,7 +336,7 @@ header {
 }
 
 /* ==========================================================================
-   FOOTER GLOBAL & BOUCLIER DE PROTECTION
+   FOOTER GLOBAL
    ========================================================================== */
 
 footer {
@@ -275,6 +344,8 @@ footer {
   background: rgba(2, 6, 18, 0.95);
   padding: 2.5rem 0;
   margin-top: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .footer-content {
