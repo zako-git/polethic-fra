@@ -1,13 +1,19 @@
 /* ==========================================================================
-   POLETHIC FRANCE - STYLES GLOBALS (AZUL NOCHE, ESTRELLAS Y CIAN)
+   POLETHIC FRANCE - STYLES GLOBALS (ESTILO CIBER / ESPACIAL HOMOGÉNEO)
    ========================================================================== */
 
 :root {
-  --bg-dark: #020612;
-  --card-bg: rgba(13, 21, 38, 0.65);
-  --card-border: rgba(63, 215, 242, 0.25);
-  --cyan: #3fd7f2;
-  --cyan-glow: rgba(63, 215, 242, 0.35);
+  /* Paleta extraída de la referencia */
+  --bg-dark: #030712;
+  --bg-card: rgba(11, 19, 43, 0.75);
+  --card-border: rgba(0, 242, 254, 0.3);
+  
+  /* Colores de acento */
+  --cyan-neon: #00f2fe;
+  --green-neon: #00ff88;   /* Verde neón estilo Hacking/ETHICAL */
+  --orange-neon: #ff6b00;  /* Naranja vibrante */
+  --yellow-neon: #facc15;  /* Amarillo pollito neón */
+  
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
 }
@@ -30,7 +36,7 @@ body {
 }
 
 /* ==========================================================================
-   EFECTO DE ESTRELLAS DE FONDO (STARFIELD)
+   FONDO HOMOGÉNEO: NEBULOSAS + CAMPO DE ESTRELLAS SIN CORTE
    ========================================================================== */
 
 #stars-container {
@@ -41,26 +47,58 @@ body {
   height: 100vh;
   z-index: -1;
   pointer-events: none;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(15, 32, 67, 0.6) 0%, transparent 75%),
-    radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 40px 70px, rgba(63, 215, 242, 0.8), rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 160px 120px, rgba(63, 215, 242, 0.9), rgba(0,0,0,0)),
-    radial-gradient(1.5px 1.5px at 230px 190px, #ffffff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 310px 80px, rgba(255, 255, 255, 0.8), rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 370px 150px, rgba(63, 215, 242, 0.6), rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 450px 210px, #ffffff, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 500px 300px;
-  opacity: 0.7;
-  animation: starsTwinkle 8s ease-in-out infinite alternate;
+  /* Fondo base con resplandor central azogado/cian continuo */
+  background: 
+    radial-gradient(circle at 50% 20%, rgba(0, 242, 254, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 10% 60%, rgba(255, 107, 0, 0.06) 0%, transparent 50%),
+    var(--bg-dark);
 }
 
-@keyframes starsTwinkle {
-  0% { opacity: 0.5; }
-  50% { opacity: 0.85; }
-  100% { opacity: 0.6; }
+/* Generador de capas de estrellas mediante sombras multidireccionales 
+   Evita patrones repetitivos ("trozos pegados") */
+#stars-container::before,
+#stars-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+/* Capa 1: Estrellas pequeñas y finas blancas y cian */
+#stars-container::before {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  box-shadow: 
+    5vw 10vh #fff, 15vw 85vh rgba(0, 242, 254, 0.8), 25vw 35vh #fff, 
+    35vw 60vh rgba(250, 204, 21, 0.9), 45vw 15vh #fff, 55vw 90vh rgba(0, 255, 136, 0.8),
+    65vw 40vh #fff, 75vw 75vh rgba(0, 242, 254, 0.8), 85vw 20vh #fff, 95vw 65vh rgba(255, 107, 0, 0.8),
+    10vw 50vh #fff, 20vw 95vh rgba(0, 255, 136, 0.7), 30vw 15vh #fff, 40vw 70vh #fff,
+    50vw 30vh rgba(0, 242, 254, 0.9), 60vw 80vh #fff, 70vw 10vh rgba(250, 204, 21, 0.8),
+    80vw 55vh #fff, 90vw 35vh rgba(0, 255, 136, 0.8), 3vw 80vh #fff;
+  animation: starsGlow 4s ease-in-out infinite alternate;
+}
+
+/* Capa 2: Estrellas medianas con destellos en color neón */
+#stars-container::after {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  box-shadow: 
+    8vw 25vh var(--cyan-neon), 18vw 45vh #fff, 28vw 75vh var(--green-neon),
+    38vw 18vh #fff, 48vw 85vh var(--yellow-neon), 58vw 38vh #fff,
+    68vw 62vh var(--orange-neon), 78vw 12vh #fff, 88vw 82vh var(--cyan-neon),
+    12vw 68vh #fff, 42vw 42vh var(--green-neon), 72vw 92vh #fff;
+  animation: starsGlow 6s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes starsGlow {
+  0% { opacity: 0.4; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1.02); }
 }
 
 .container {
@@ -78,13 +116,13 @@ main {
 }
 
 /* ==========================================================================
-   HEADER, NAVEGACIÓN Y SELECTOR DE IDIOMAS
+   HEADER, NAVEGACIÓN Y BOTONES DE IDIOMA
    ========================================================================== */
 
 header {
   padding: 1.2rem 0;
-  border-bottom: 1px solid rgba(63, 215, 242, 0.15);
-  background: rgba(2, 6, 18, 0.85);
+  border-bottom: 1px solid var(--card-border);
+  background: rgba(3, 7, 18, 0.85);
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
@@ -103,9 +141,9 @@ header {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
   font-size: 1.2rem;
-  color: var(--cyan);
+  color: var(--green-neon); /* Verde Neón como el de la imagen */
   letter-spacing: 2px;
-  text-shadow: 0 0 10px var(--cyan-glow);
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
 }
 
 .nav-buttons {
@@ -127,16 +165,16 @@ header {
 }
 
 .nav-btn:hover {
-  color: var(--cyan);
-  border-color: rgba(63, 215, 242, 0.3);
-  background: rgba(63, 215, 242, 0.05);
+  color: var(--cyan-neon);
+  border-color: rgba(0, 242, 254, 0.4);
+  background: rgba(0, 242, 254, 0.08);
 }
 
 .nav-btn.active {
-  color: var(--cyan);
-  background: rgba(63, 215, 242, 0.12);
-  border-color: var(--cyan);
-  box-shadow: 0 0 10px rgba(63, 215, 242, 0.2);
+  color: var(--cyan-neon);
+  background: rgba(0, 242, 254, 0.12);
+  border-color: var(--cyan-neon);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
 }
 
 /* Selector de Idiomas */
@@ -144,9 +182,9 @@ header {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(6, 21, 45, 0.6);
-  border: 1px solid rgba(63, 215, 242, 0.3);
-  padding: 0.25rem 0.6rem;
+  background: rgba(11, 19, 43, 0.8);
+  border: 1px solid var(--card-border);
+  padding: 0.3rem 0.7rem;
   border-radius: 20px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
@@ -164,37 +202,37 @@ header {
 }
 
 .lang-btn.active {
-  color: var(--cyan);
-  text-shadow: 0 0 8px rgba(63, 215, 242, 0.6);
+  color: var(--yellow-neon); /* Amarillo pollito neón */
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
 }
 
 .lang-divider {
-  color: rgba(63, 215, 242, 0.3);
+  color: rgba(0, 242, 254, 0.3);
   font-size: 0.7rem;
 }
 
 /* ==========================================================================
-   HERO CARD
+   HERO CARD CON DETALLES NEÓN
    ========================================================================== */
 
 .hero-card {
-  background: var(--card-bg);
+  background: var(--bg-card);
   border: 1px solid var(--card-border);
   border-radius: 16px;
   padding: 2.5rem 2rem;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  margin: 2rem 0;
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
 .hero-badge {
   display: inline-block;
   padding: 0.3rem 0.75rem;
-  background: rgba(63, 215, 242, 0.1);
-  border: 1px solid var(--cyan);
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid var(--green-neon);
   border-radius: 20px;
-  color: var(--cyan);
+  color: var(--green-neon);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   font-weight: 700;
@@ -203,9 +241,8 @@ header {
 }
 
 .hero-question {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
   font-size: 1.6rem !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   color: #ffffff !important;
   line-height: 1.35;
   margin-bottom: 1rem;
@@ -229,46 +266,49 @@ header {
   flex-wrap: wrap;
 }
 
+/* Botón Principal (Verde Neón) */
 .btn-primary {
   padding: 0.75rem 1.4rem;
-  background: var(--cyan);
-  color: #020612 !important;
+  background: var(--green-neon);
+  color: #030712 !important;
   font-weight: 700;
   font-size: 0.85rem;
   text-decoration: none;
   border-radius: 8px;
   letter-spacing: 0.5px;
-  box-shadow: 0 0 15px rgba(63, 215, 242, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.35);
   transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
   background: #ffffff;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
   transform: translateY(-2px);
 }
 
+/* Botón Secundario (Naranja Neón) */
 .btn-secondary {
   padding: 0.75rem 1.4rem;
-  background: rgba(6, 21, 45, 0.6);
-  color: #ffffff !important;
-  border: 1px solid rgba(63, 215, 242, 0.4);
-  font-weight: 600;
+  background: rgba(255, 107, 0, 0.1);
+  color: var(--orange-neon) !important;
+  border: 1px solid var(--orange-neon);
+  font-weight: 700;
   font-size: 0.85rem;
   text-decoration: none;
   border-radius: 8px;
   transition: all 0.25s ease;
+  box-shadow: 0 0 10px rgba(255, 107, 0, 0.15);
 }
 
 .btn-secondary:hover {
-  border-color: var(--cyan);
-  color: var(--cyan) !important;
-  background: rgba(63, 215, 242, 0.12);
+  background: var(--orange-neon);
+  color: #030712 !important;
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.4);
   transform: translateY(-2px);
 }
 
 /* ==========================================================================
-   FEATURES GRID (2x2)
+   FEATURES GRID (TARJETAS CON BORDES Y COLORES DE LA IMAGEN)
    ========================================================================== */
 
 .features-grid {
@@ -284,7 +324,7 @@ header {
 }
 
 .feature-card {
-  background: var(--card-bg);
+  background: var(--bg-card);
   border: 1px solid var(--card-border);
   border-radius: 12px;
   padding: 1.8rem;
@@ -295,16 +335,14 @@ header {
 }
 
 .feature-card:hover {
-  border-color: var(--cyan);
-  box-shadow: 0 0 20px rgba(63, 215, 242, 0.2);
+  border-color: var(--cyan-neon);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
   transform: translateY(-3px);
-  background: rgba(13, 21, 38, 0.85);
 }
 
 .feature-icon {
-  color: var(--cyan);
+  color: var(--cyan-neon);
   margin-bottom: 1rem;
-  filter: drop-shadow(0 0 5px rgba(63, 215, 242, 0.4));
 }
 
 .feature-card h3 {
@@ -312,7 +350,6 @@ header {
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 0.6rem;
-  letter-spacing: 0.5px;
 }
 
 .feature-card p {
@@ -324,24 +361,24 @@ header {
 }
 
 .card-link {
-  color: var(--cyan);
-  font-weight: 600;
+  color: var(--yellow-neon); /* Amarillo estilo VulnHub */
+  font-weight: 700;
   font-size: 0.85rem;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
-.feature-card:hover .card-link {
-  text-shadow: 0 0 8px rgba(63, 215, 242, 0.5);
+.card-link:hover {
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
 }
 
 /* ==========================================================================
-   FOOTER GLOBAL
+   FOOTER
    ========================================================================== */
 
 footer {
-  border-top: 1px solid rgba(63, 215, 242, 0.15);
-  background: rgba(2, 6, 18, 0.95);
+  border-top: 1px solid var(--card-border);
+  background: rgba(3, 7, 18, 0.95);
   padding: 2.5rem 0;
   margin-top: auto;
   position: relative;
@@ -356,8 +393,8 @@ footer {
 }
 
 .footer-shield {
-  background: rgba(6, 21, 45, 0.5);
-  border: 1px solid rgba(63, 215, 242, 0.2);
+  background: rgba(11, 19, 43, 0.6);
+  border: 1px solid rgba(0, 242, 254, 0.2);
   border-radius: 12px;
   padding: 1.2rem 1.8rem;
   max-width: 650px;
@@ -369,7 +406,7 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--cyan);
+  color: var(--green-neon);
   margin-bottom: 0.6rem;
 }
 
@@ -377,24 +414,19 @@ footer {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
 .shield-disclaimer {
   color: var(--text-muted);
   font-size: 0.78rem;
   line-height: 1.4;
-  margin: 0 0 0.25rem 0;
-}
-
-.shield-disclaimer:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0.25rem;
 }
 
 .footer-divider {
   width: 100%;
   height: 1px;
-  background: rgba(63, 215, 242, 0.1);
+  background: rgba(0, 242, 254, 0.1);
   margin-bottom: 1.5rem;
 }
 
@@ -421,15 +453,13 @@ footer {
 }
 
 .footer-links a:hover {
-  color: var(--cyan);
+  color: var(--cyan-neon);
 }
 
 .footer-sep {
-  color: rgba(63, 215, 242, 0.3);
-  font-size: 0.8rem;
+  color: rgba(0, 242, 254, 0.3);
 }
 
 .copyright {
   color: rgba(148, 163, 184, 0.6);
   font-size: 0.75rem;
-}
