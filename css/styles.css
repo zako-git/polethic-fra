@@ -3,22 +3,41 @@
    ========================================================================== */
 
 :root {
-  /* Color blanco crudo / hueso / off-white para textos principales */
-  --text-primary: #f1f5f9; /* Opción Slate ultra suave */
-  /* O si prefieres un tono hueso un poco más cálido: #f3f0e6 o #f4f4f0 */
+  /* Paleta base */
+  --bg-dark: #030712;
+  --bg-card: rgba(11, 19, 43, 0.75);
+  --card-border: rgba(0, 242, 254, 0.3);
   
-  --text-muted: #94a3b8;   /* Para textos secundarios */
-  --cyan-neon: #00f0ff;
+  /* Tonos crema para textos principales */
+  --text-cream: #f4f1ea;
+  --text-cream-bright: #fffdf7;
+  
+  /* Colores de acento */
+  --cyan-neon: #00f2fe;
+  --green-neon: #00ff88;
+  --orange-neon: #ff6b00;
+  --yellow-neon: #facc15;
+  --red-neon: #ef4444;
+  
+  --text-main: var(--text-cream);
+  --text-muted: #94a3b8;
 }
 
-/* Aplicar el blanco crudo globalmente */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  color: var(--text-primary);
-}
-
-/* Cambiar los encabezados para que tampoco usen blanco puro brillante */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--text-primary) !important;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden; /* Evita desbordamiento horizontal */
 }
 
 /* ==========================================================================
