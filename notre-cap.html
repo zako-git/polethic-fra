@@ -6,11 +6,13 @@
     <title>Notre Cap | POLETHIC France</title>
     <link rel="stylesheet" href="css/styles.css">
     <style>
-        /* Estilos específicos para la página NOTRE CAP */
         .cap-hero {
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px;
             margin-bottom: 30px;
+            background: rgba(15, 23, 42, 0.6);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 16px;
         }
 
         .section-tag {
@@ -20,90 +22,75 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .beacon-lighthouse-card {
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 16px;
-            padding: 40px 20px;
-            text-align: center;
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        /* Bloques de sección */
+        .cap-section {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(8px);
         }
 
-        /* Efecto Faro */
-        .lighthouse-glow {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background: radial-gradient(circle, rgba(0,255,136,0.8) 0%, rgba(0,240,255,0.2) 50%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-            animation: pulse-light 3s infinite alternate ease-in-out;
+        .cap-section h2 {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 10px;
         }
 
-        @keyframes pulse-light {
-            0% { transform: scale(0.9); opacity: 0.6; }
-            100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 40px rgba(0, 255, 136, 0.8); }
-        }
-
-        /* Grid del Tríptico */
+        /* Tríptico */
         .triptyque-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
         }
 
         .triptyque-card {
             background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 8px;
+            border-top: 3px solid #00f0ff;
+        }
+
+        /* Lista de influencias */
+        .influence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .influence-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 15px;
+            border-radius: 6px;
+            border-left: 2px solid var(--cyan-neon, #00f0ff);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Regla fundamental */
+        .rule-box {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.3);
             border-radius: 12px;
-            padding: 25px;
-            text-align: left;
-            transition: all 0.3s ease;
+            padding: 30px;
+            text-align: center;
+            margin: 40px 0;
         }
 
-        .triptyque-card:hover {
-            border-color: var(--cyan-neon, #00f0ff);
-            transform: translateY(-4px);
-        }
-
-        .triptyque-card.croire { border-top: 4px solid #f59e0b; }
-        .triptyque-card.opiner { border-top: 4px solid #3b82f6; }
-        .triptyque-card.savoir { border-top: 4px solid #00ff88; }
-
-        .triptyque-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        /* Recuadro de Referencias Científicas */
-        .references-box {
+        /* Referencias de autoridad */
+        .ref-box {
             background: rgba(15, 23, 42, 0.9);
-            border: 1px dashed rgba(0, 255, 136, 0.4);
+            border: 1px dashed rgba(0, 240, 255, 0.3);
             border-radius: 12px;
             padding: 25px;
-            margin-top: 40px;
-            text-align: left;
-        }
-
-        .ref-badge {
-            display: inline-block;
-            background: rgba(0, 255, 136, 0.15);
-            color: #00ff88;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            margin-bottom: 12px;
-            text-transform: uppercase;
         }
     </style>
 </head>
@@ -115,10 +102,8 @@
   <!-- CABECERA DE NAVEGACIÓN -->
   <header>
     <div class="container header-layout">
-      <!-- LOGO -->
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
-      <!-- MENÚ -->
       <nav class="nav-buttons">
         <a href="index.html" class="nav-btn">ACCUEIL</a>
         <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
@@ -128,7 +113,6 @@
         <a href="contact.html" class="nav-btn">CONTACT</a>
       </nav>
 
-      <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
         <a href="#" class="lang-btn active">FR</a>
         <span class="lang-separator">|</span>
@@ -141,105 +125,101 @@
 
   <main class="container">
       
-      <!-- HERO PRINCIPAL DE NOTRE CAP -->
-      <section class="hero-card cap-hero">
-          <span class="section-tag">BOUSSOLE DE RÉFÉRENCES</span>
-          <h1 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 15px;">NOTRE CAP : LA BOUSSOLE DU DISCERNEMENT</h1>
-          <p style="font-size: 1.1rem; color: #94a3b8; max-width: 750px; margin: 0 auto; line-height: 1.6;">
-              <strong style="color: #00ff88;">La Science comme Sol Ferme.</strong> Dans un océan d'informations saturées, POLETHIC France s'appuie sur la culture scientifique pour indiquer les ports de savoir sûrs et vérifiés. Notre cap n'est pas dicté par l'opinion, mais par une méthode rigoureuse visant à réduire l'erreur de nos jugements.
+      <!-- HERO NOTRE CAP -->
+      <section class="cap-hero">
+          <span class="section-tag">CULTURE, APPROCHE ET POSITIONNEMENT</span>
+          <h1 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 15px;">Notre Orientation Scientifique et Méthodologique</h1>
+          <p style="font-size: 1.2rem; color: #00ff88; font-weight: 600; margin-bottom: 15px;">
+              « Comprendre avant de juger. Vérifier avant d'affirmer. »
+          </p>
+          <p style="color: #94a3b8; max-width: 750px; margin: 0 auto; line-height: 1.6; font-size: 0.95rem;">
+              POLETHIC est née d'une conviction simple : <strong>croire et savoir ne sont pas la même chose.</strong> Notre mission est d'aider chacun à mieux comprendre l'information, les narratifs et les mécanismes qui influencent nos décisions. Nous travaillons dans une perspective interdisciplinaire associant neurosciences, psychologie, sciences du comportement, esprit critique et cybersécurité.
           </p>
       </section>
 
-      <!-- SECCIÓN EL FARO / CEREBRO PREDICTIVO -->
-      <section class="beacon-lighthouse-card">
-          <div class="lighthouse-glow"></div>
-          <span class="section-tag">1. LE RENVERSEMENT DE PERSPECTIVE</span>
-          <h2 style="font-size: 1.8rem; color: #ffffff; margin-top: 5px;">Le Cerveau Architecte & l'Allostasie</h2>
-          <p style="color: #cbd5e1; max-width: 700px; margin: 15px auto; line-height: 1.6;">
-              Nous nous éloignons du mythe d'un cerveau "spectateur" qui réagirait passivement au monde.
+      <!-- SECCIÓN 1: EXAMINAR LA CIENCIA -->
+      <section class="cap-section">
+          <h2>1. Un Esprit Critique Appliqué à la Science Elle-même</h2>
+          <p style="color: #94a3b8; line-height: 1.6;">
+              Nous ne prétendons pas transformer les neurosciences en une nouvelle autorité incontestable. Au contraire : l'un de nos principes fondamentaux est que la science doit elle-même pouvoir être examinée, discutée et vérifiée.
           </p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; text-align: left; margin-top: 25px;">
-              <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 8px;">
-                  <h4 style="color: #00f0ff; margin-bottom: 8px;">• La Vision Predictive</h4>
-                  <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">
-                      Les neurosciences contemporaines nous apprennent que le cerveau est un directeur visionnaire : il projette son propre film sur la réalité avant même qu'elle ne survienne.
-                  </p>
-              </div>
-              <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 8px;">
-                  <h4 style="color: #00ff88; margin-bottom: 8px;">• L'Allostasie</h4>
-                  <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">
-                      Le but ultime du cerveau n'est pas de penser en abstrait, mais de gérer son budget énergétique. Comprendre ce mécanisme est la première étape pour reprendre le contrôle sur nos décisions.
-                  </p>
-              </div>
+          <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; margin-top: 15px;">
+              <p style="color: #00f0ff; font-weight: 600; margin-bottom: 8px;">C'est pourquoi nous ne demandons pas seulement : <em>« Qui le dit ? »</em></p>
+              <p style="color: #cbd5e1; font-size: 0.9rem;">
+                  Nous demandons aussi : <strong>Quelles preuves existent ? Comment ont-elles été obtenues ? Quelles sont leurs limites ? Quelles autres explications sont possibles ?</strong>
+              </p>
           </div>
       </section>
 
-      <!-- SECCIÓN ÉCONOMIE DU SENS -->
-      <section class="hero-card" style="margin-bottom: 40px;">
-          <span class="section-tag">2. ÉCONOMIE DU SENS & ERREUR DE PRÉDICTION</span>
-          <h3 style="font-size: 1.4rem; color: #ffffff; margin-top: 5px;">« Le métabolisme, c'est le sens »</h3>
-          <p style="color: #94a3b8; margin-top: 10px; line-height: 1.6;">
-              Notre cerveau construit des catégories pour économiser de l'énergie, mais parfois ces modèles deviennent rigides (schémas, dogmas, traumatismes).
+      <!-- SECCIÓN 2: CEREBRO NO ES CÁMARA DE VIGILANCIA -->
+      <section class="cap-section">
+          <h2>2. Le Cerveau n'est pas une Caméra de Surveillance de la Réalité</h2>
+          <p style="color: #94a3b8; line-height: 1.6; margin-bottom: 15px;">
+              Les travaux de <strong>Lisa Feldman Barrett</strong>, notamment sur la construction des émotions, montrent que le cerveau ne se contente pas de enregistrer passivement le monde extérieur. L'organisme interprète constamment l'information disponible, utilisant les expériences passées et les prédictions pour construire une représentation du réel.
           </p>
-          <blockquote style="border-left: 3px solid #00ff88; padding-left: 15px; margin: 20px 0; color: #cbd5e1; font-style: italic;">
-              « Notre Engagement : Nous enseignons au public à valoriser l'erreur de prédiction. C'est ce signal précieux qui nous permet de mettre à jour notre modèle interne et de passer d'une "hallucination contrôlée" à un discernement lucide. »
+          <blockquote style="border-left: 3px solid #00ff88; padding-left: 15px; color: #cbd5e1; font-style: italic; margin: 15px 0;">
+              « Ce que nous ressentons, percevons et croyons peut nous sembler évident sans être nécessairement une description objective de la réalité. »
           </blockquote>
-      </section>
 
-      <!-- SECCIÓN EL TRÍPTICO DE LA PENSÉE -->
-      <section style="margin-bottom: 40px; text-align: center;">
-          <span class="section-tag">3. LA STRUCTURE COGNITIVE</span>
-          <h2 style="font-size: 1.8rem; color: #ffffff; margin-top: 5px;">Le Triptyque de la Pensée</h2>
-          <p style="color: #94a3b8; max-width: 650px; margin: 10px auto;">
-              La source majeure de la désinformation actuelle est la confusion entre les registres de pensée. Notre cap est de maintenir une frontière nette :
+          <p style="color: #94a3b8; margin-top: 15px; font-size: 0.9rem;">
+              Comprendre ce fonctionnement constitue l'un des fondements de notre autodéfense cognitive en apprenant à distinguer :
           </p>
-
+          
           <div class="triptyque-grid">
-              <div class="triptyque-card croire">
-                  <div class="triptyque-title" style="color: #f59e0b;">Croire</div>
-                  <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">
-                      Le domaine de l'intime, de la culture et de l'identité. Une conviction personnelle qui fonctionne "de haut en bas" sans exiger de preuve empirique.
-                  </p>
+              <div class="triptyque-card" style="border-color: #f59e0b;">
+                  <strong style="color: #f59e0b; display: block; margin-bottom: 5px;">Ce que nous ressentons & croyons</strong>
+                  <span style="font-size: 0.85rem; color: #94a3b8;">Le domaine de l'intime et de l'identité.</span>
               </div>
-              <div class="triptyque-card opiner">
-                  <div class="triptyque-title" style="color: #3b82f6;">Donner son avis</div>
-                  <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">
-                      L'interprétation subjective de la réalité. Le jugement personnel sur un fait non démontré.
-                  </p>
+              <div class="triptyque-card" style="border-color: #3b82f6;">
+                  <strong style="color: #3b82f6; display: block; margin-bottom: 5px;">Ce que nous interprétons</strong>
+                  <span style="font-size: 0.85rem; color: #94a3b8;">La lecture subjective des faits.</span>
               </div>
-              <div class="triptyque-card savoir">
-                  <div class="triptyque-title" style="color: #00ff88;">Savoir</div>
-                  <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">
-                      La connaissance fondée sur la preuve, la méthode scientifique et la vérification collective. Ouverte à la correction constante.
-                  </p>
+              <div class="triptyque-card" style="border-color: #00ff88;">
+                  <strong style="color: #00ff88; display: block; margin-bottom: 5px;">Ce que nous savons & prouvons</strong>
+                  <span style="font-size: 0.85rem; color: #94a3b8;">La connaissance fondée sur la preuve collective.</span>
               </div>
           </div>
       </section>
 
-      <!-- SECCIÓN ARTIVISME Y PREVENCIÓN PRIMARIA -->
-      <section class="hero-card" style="margin-bottom: 40px;">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-              <div>
-                  <span class="section-tag">4. L'ARTIVISME</span>
-                  <h3 style="color: #ffffff; font-size: 1.3rem; margin-top: 5px;">Rendre le Savoir Habitable</h3>
-                  <p style="color: #94a3b8; margin-top: 10px; font-size: 0.95rem; line-height: 1.6;">
-                      Pour nous, la science n'est pas un dogme froid. Par l'Artivisme, nous transformons des concepts complexes (comme le circuit de la récompense ou le renforcement intermittent) en expériences tangibles et mémorables. L'art est notre porte d'accès au discernement.
-                  </p>
-              </div>
-             
-              </div>
-          </div>
-      </section>
-
-      <!-- RECUADRO DE REFERENCIAS CIENTÍFICAS (CITAS DE AUTORIDAD) -->
-      <div class="references-box">
-          <span class="ref-badge">Cadre Scientifique & Transparence</span>
-          <h4 style="color: #ffffff; font-size: 1.1rem; margin-bottom: 10px;">Boussole Scientifique & Épistémologique</h4>
-          <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.6; margin-bottom: 12px;">
-              Nos analyses s'appuient notamment sur les récents travaux en neurosciences cognitives et catégorisation cérébrale (notamment les modèles de l'Allostasie et du Cerveau Prédictif de <strong>Lisa Feldman Barrett et Miller</strong>, 2026).
+      <!-- SECCIÓN 3: INFLUENCIA Y AUTONOMÍA -->
+      <section class="cap-section">
+          <h2>3. Comprendre l'Influence pour Protéger l'Autonomie</h2>
+          <p style="color: #94a3b8; line-height: 1.6;">
+              L'influence n'est pas nécessairement une manipulation. Toute communication influe dans une certaine mesure. La question fondamentale est : <strong>La personne conserve-t-elle sa capacité de comprendre, de questionner et de décider librement ?</strong>
           </p>
-          <p style="color: #64748b; font-size: 0.82rem; line-height: 1.5;">
-              <em>Note de transparence :</em> La connaissance scientifique est un processus humain, revisable, falible e historiquement situé. Contrairement aux pseudo-thérapies qui proposent des vérités absolues, POLETHIC France défend une autonomie basée sur la révision constante de nos modèles face aux faits.
+          
+          <p style="color: #cbd5e1; margin-top: 15px; font-size: 0.9rem;">Notre travail analyse les mécanismes qui peuvent affaiblir cette autonomie :</p>
+          
+          <div class="influence-grid">
+              <div class="influence-item">Exploitation de la peur</div>
+              <div class="influence-item">Fausse autorité & titres abusifs</div>
+              <div class="influence-item">Promesses de solutions miracles</div>
+              <div class="influence-item">Création de dépendance</div>
+              <div class="influence-item">Pression sociale & manipulation</div>
+              <div class="influence-item">Jargon pseudo-scientifique</div>
+          </div>
+      </section>
+
+      <!-- SECCIÓN 4: REGLA FUNDAMENTAL -->
+      <div class="rule-box">
+          <span style="color: #00ff88; font-weight: bold; letter-spacing: 2px; font-size: 0.85rem; display: block; margin-bottom: 10px;">NOTRE RÈGLE FONDAMENTALE</span>
+          <p style="color: #ffffff; font-size: 1.15rem; line-height: 1.8; font-weight: 600;">
+              Nous ne confondons pas une affirmation avec une preuve.<br>
+              Nous ne confondons pas une émotion avec une évidence.<br>
+              Nous ne confondons pas une autorité avec la vérité.<br>
+              Nous ne confondons pas une croyance avec une connaissance.
+          </p>
+          <p style="color: #94a3b8; margin-top: 15px; font-size: 0.9rem;">
+              Reconnaître ce que l'on ne sait pas encore n'est pas une faiblesse. C'est le premier acte de la pensée scientifique.
+          </p>
+      </div>
+
+      <!-- RECUADRO DE AUTORES / MARCO CIENTÍFICO VERIFICABLE -->
+      <div class="ref-box">
+          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Cadre Scientifique & Références</span>
+          <h4 style="color: #ffffff; font-size: 1rem; margin: 8px 0;">Une Approche Fondée sur la Recherche Interdisciplinaire</h4>
+          <p style="color: #94a3b8; font-size: 0.85rem; line-height: 1.5;">
+              POLETHIC France s'appuie sur les travaux issus des neurosciences affectives, cognitives et comportementales. Nos analyses intègrent les contributions de chercheurs tels que <strong>Lisa Feldman Barrett</strong>, <strong>Joseph LeDoux</strong>, <strong>Antonio Damasio</strong>, <strong>Jaak Panksepp</strong>, <strong>Kent Berridge</strong>, <strong>Daniel Kahneman</strong> et <strong>Gerd Gigerenzer</strong>.
           </p>
       </div>
 
@@ -256,12 +236,8 @@
           </svg>
           <span class="shield-title">Bouclier de Protection Professionnelle</span>
         </div>
-        <p class="shield-disclaimer">
-          Action exclusive de prévention primaire et de psychoéducation non clinique.
-        </p>
-        <p class="shield-disclaimer">
-          Aucun diagnostic ou thérapie médicale n'est pratiqué.
-        </p>
+        <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
       </div>
 
       <div class="footer-divider"></div>
@@ -279,7 +255,5 @@
     </div>
   </footer>
 
-  <!-- SCRIPT ESTRELLAS -->
-  <script src="js/stars.js"></script>
 </body>
 </html>
