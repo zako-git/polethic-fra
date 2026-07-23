@@ -17,6 +17,7 @@
   --green-neon: #00ff88;
   --orange-neon: #ff6b00;
   --yellow-neon: #facc15;
+  --red-neon: #ef4444;
   
   --text-main: var(--text-cream);
   --text-muted: #94a3b8;
@@ -36,6 +37,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow-x: hidden; /* Evita desbordamiento horizontal */
 }
 
 /* ==========================================================================
@@ -46,8 +48,8 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   z-index: -1;
   pointer-events: none;
   background: 
@@ -135,21 +137,20 @@ header {
   gap: 1rem;
 }
 
-/* LOGO POLETHIC - VERDE Y MÁS GRANDE */
+/* LOGO POLETHIC */
 .logo-title {
-  /* Sustituye 'Fira Code' o 'Space Grotesk' por la fuente exacta que uses en index */
-  font-family: 'Fira Code', 'Space Grotesk', monospace, sans-serif; 
+  font-family: 'JetBrains Mono', 'Fira Code', 'Space Grotesk', monospace; 
   font-weight: 700;
   font-size: 1.8rem;
-  color: #00ff88;
+  color: var(--green-neon);
   letter-spacing: 2px;
   text-shadow: 0 0 18px rgba(0, 255, 136, 0.6);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   line-height: 1.2;
-  padding-top: 2px;
 }
+
 .logo-title:hover {
   color: #ffffff;
   text-shadow: 0 0 25px rgba(0, 255, 136, 0.9);
@@ -234,6 +235,10 @@ header {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
+.hero-card h2 {
+  color: var(--text-cream-bright) !important;
+}
+
 .hero-question {
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
   font-size: 1.35rem !important;
@@ -253,7 +258,7 @@ header {
 }
 
 /* ==========================================================================
-   FEATURES GRID (TARJETAS)
+   FEATURES GRID & TARJETAS DE INFORMES (OBSERVATOIRE)
    ========================================================================== */
 
 .features-grid {
@@ -268,7 +273,7 @@ header {
   }
 }
 
-.feature-card {
+.feature-card, .report-card {
   background: var(--bg-card);
   border: 1px solid var(--card-border);
   border-radius: 12px;
@@ -279,7 +284,7 @@ header {
   flex-direction: column;
 }
 
-.feature-card:hover {
+.feature-card:hover, .report-card:hover {
   border-color: var(--cyan-neon);
   box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
   transform: translateY(-3px);
@@ -290,14 +295,14 @@ header {
   margin-bottom: 1rem;
 }
 
-.feature-card h3 {
+.feature-card h3, .report-card h3 {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-cream);
+  color: var(--text-cream-bright);
   margin-bottom: 0.6rem;
 }
 
-.feature-card p {
+.feature-card p, .report-card p {
   color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.55;
@@ -317,6 +322,54 @@ header {
   text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
 }
 
+/* Estilos de Informes para Observatoire */
+.alert-badge {
+  display: inline-block;
+  background-color: rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--red-neon);
+  color: var(--red-neon);
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+
+.meta-info {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.critical-tag {
+  background-color: rgba(0, 242, 254, 0.1);
+  color: var(--cyan-neon);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.btn-accent {
+  display: inline-block;
+  color: var(--bg-dark);
+  background-color: var(--cyan-neon);
+  font-weight: 700;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+}
+
+.btn-accent:hover {
+  background-color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+  transform: translateY(-1px);
+}
+
 /* ==========================================================================
    FOOTER
    ========================================================================== */
@@ -325,7 +378,7 @@ footer {
   border-top: 1px solid var(--card-border);
   background: rgba(3, 7, 18, 0.95);
   padding: 2.5rem 0;
-  margin-top: 5rem; /* Margen superior para separación */
+  margin-top: 5rem;
   position: relative;
   z-index: 1;
 }
