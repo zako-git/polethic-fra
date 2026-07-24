@@ -63,55 +63,60 @@
             box-shadow: 0 0 12px rgba(0, 255, 136, 0.2);
         }
 
-        <!-- MÓDULO 1: LA FONDATEUR / LE PROFIL -->
-<details class="cyber-details" open>
-    <summary class="cyber-summary">
-        <span><strong style="color: #00f0ff;">//</strong> Direction & Profil Analytique</span>
-    </summary>
-    <div class="cyber-content">
-        <p style="margin-bottom: 8px;">
-            L'initiative POLETHIC France a été fondée par une ancienne athlète de haut niveau, chercheuse en psychologie et neurosciences comportementales (UNED, Espagne) et profilée en analyse du comportement criminel et évaluation du risque.
-        </p>
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0;">
-            Issue d'un parcours alliant rigueur athlétique, observation clinique non thérapeutique et création visuelle, elle développe une approche originale de la prévention primaire : cartographier la manipulation par la donnée et les neurosciences.
-        </p>
-    </div>
-</details>
+        /* Módulos desplegables de "Qui sommes-nous ?" */
+        .cyber-details {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
 
-<!-- MÓDULO 2: EXPERTISES TECHNIQUES -->
-<details class="cyber-details">
-    <summary class="cyber-summary">
-        <span><strong style="color: #00f0ff;">//</strong> Domaines d'Expertise & Méthodologie</span>
-    </summary>
-    <div class="cyber-content">
-        <ul style="padding-left: 15px; font-size: 0.85rem; color: #cbd5e1; margin: 0;">
-            <li style="margin-bottom: 6px;">
-                <strong style="color: #ffffff;">Analyse Comportementale & Emprise :</strong> Évaluation des dynamiques d'influence et de vulnérabilité (outils d'évaluation du risque, victimologie, profils neurodivergents).
-            </li>
-            <li style="margin-bottom: 6px;">
-                <strong style="color: #ffffff;">Investigation Numérique & OSINT :</strong> Détection des leviers de manipulation en ligne, dérives numériques et cartographie des comportements sur sources ouvertes.
-            </li>
-            <li style="margin-bottom: 6px;">
-                <strong style="color: #ffffff;">Cyber & Sciences Cognitives :</strong> Application des fondamentaux de la cybersécurité (CS50 Harvard) et des neurosciences appliquées à la protection de l'autonomie décisionnelle.
-            </li>
-        </ul>
-    </div>
-</details>
+        .cyber-details[open] {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: rgba(15, 23, 42, 0.9);
+        }
 
-<!-- MÓDULO 3: CADRE ÉTHIQUE -->
-<details class="cyber-details">
-    <summary class="cyber-summary">
-        <span><strong style="color: #00ff88;">//</strong> Cadre Interventionnel & Éthique</span>
-    </summary>
-    <div class="cyber-content">
-        <p style="margin-bottom: 8px;">
-            Formation certifiée en <em>Premiers Secours Psychologiques (PFA)</em> et psychologie comportementale non clinique.
-        </p>
-        <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">
-            POLETHIC opère strictement dans le cadre de la <strong>prévention primaire, de la psychoéducation et du renforcement de la vigilance citoyenne</strong>, sans pratiquer aucun diagnostic ni acte thérapeutique.
-        </p>
-    </div>
-</details>
+        .cyber-summary {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .cyber-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .cyber-summary::after {
+            content: '[+]';
+            color: #00f0ff;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .cyber-details[open] .cyber-summary::after {
+            content: '[-]';
+            color: #00ff88;
+        }
+
+        .cyber-content {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
 <body>
 
   <!-- CAPA DE ESTRELLAS -->
@@ -178,33 +183,53 @@
                   02 // Qui Sommes-Nous ?
               </h2>
 
-              <!-- MÓDULO 1: LA INICIATIVA -->
+              <!-- MÓDULO 1: LA FONDATEUR / LE PROFIL -->
               <details class="cyber-details" open>
                   <summary class="cyber-summary">
-                      <span><strong style="color: #00f0ff;">//</strong> Origine & Initiative</span>
+                      <span><strong style="color: #00f0ff;">//</strong> Direction & Profil Analytique</span>
                   </summary>
                   <div class="cyber-content">
-                      <p>POLETHIC France est une initiative indépendante née du constat de la vulnérabilité croissante des citoyens face à la désinformation, au jargon pseudo-scientifique et aux dérives d'emprise mentale.</p>
+                      <p style="margin-bottom: 8px;">
+                          L'initiative POLETHIC France a été fondée par une ancienne athlète de haut niveau, chercheuse en psychologie et neurosciences comportementales (UNED, Espagne) et profilée en analyse du comportement criminel et évaluation du risque.
+                      </p>
+                      <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0;">
+                          Issue d'un parcours alliant rigueur athlétique, observation clinique non thérapeutique et création visuelle, elle développe une approche originale de la prévention primaire : cartographier la manipulation par la donnée et les neurosciences.
+                      </p>
                   </div>
               </details>
 
-              <!-- MÓDULO 2: EL PERFIL/EXPERIENCIA -->
+              <!-- MÓDULO 2: EXPERTISES TECHNIQUES -->
               <details class="cyber-details">
                   <summary class="cyber-summary">
-                      <span><strong style="color: #00f0ff;">//</strong> Profil & Expertise</span>
+                      <span><strong style="color: #00f0ff;">//</strong> Domaines d'Expertise & Méthodologie</span>
                   </summary>
                   <div class="cyber-content">
-                      <p>Notre travail rassemble des compétences transversales à la croisée des <strong>neurosciences cognitives, de la psychologie du comportement et de la prévention des risques informationnels</strong>.</p>
+                      <ul style="padding-left: 15px; font-size: 0.85rem; color: #cbd5e1; margin: 0;">
+                          <li style="margin-bottom: 6px;">
+                              <strong style="color: #ffffff;">Analyse Comportementale & Emprise :</strong> Évaluation des dynamiques d'influence et de vulnérabilité (outils d'évaluation du risque, victimologie, profils neurodivergents).
+                          </li>
+                          <li style="margin-bottom: 6px;">
+                              <strong style="color: #ffffff;">Investigation Numérique & OSINT :</strong> Détection des leviers de manipulation en ligne, dérives numériques et cartographie des comportements sur sources ouvertes.
+                          </li>
+                          <li style="margin-bottom: 6px;">
+                              <strong style="color: #ffffff;">Cyber & Sciences Cognitives :</strong> Application des fondamentaux de la cybersécurité (CS50 Harvard) et des neurosciences appliquées à la protection de l'autonomie décisionnelle.
+                          </li>
+                      </ul>
                   </div>
               </details>
 
-              <!-- MÓDULO 3: MARCO ÉTICO -->
+              <!-- MÓDULO 3: CADRE ÉTHIQUE -->
               <details class="cyber-details">
                   <summary class="cyber-summary">
-                      <span><strong style="color: #00ff88;">//</strong> Cadre Éthique & Neutralité</span>
+                      <span><strong style="color: #00ff88;">//</strong> Cadre Interventionnel & Éthique</span>
                   </summary>
                   <div class="cyber-content">
-                      <p>Nous opérons exclusivement dans le cadre de la <strong>prévention primaire et de la psychoéducation non clinique</strong>. Nous ne réalisons aucun diagnostic médical et garantissons une neutralité absolue.</p>
+                      <p style="margin-bottom: 8px;">
+                          Formation certifiée en <em>Premiers Secours Psychologiques (PFA)</em> et psychologie comportementale non clinique.
+                      </p>
+                      <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">
+                          POLETHIC opère strictement dans le cadre de la <strong>prévention primaire, de la psychoéducation et du renforcement de la vigilance citoyenne</strong>, sans pratiquer aucun diagnostic ni acte thérapeutique.
+                      </p>
                   </div>
               </details>
           </div>
