@@ -544,3 +544,110 @@ footer {
 .word-container.tooltip-right:hover .tooltip-box {
   transform: translateY(0);
 }
+
+/* Tarjeta del Centro Físico */
+.physical-center-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 30, 0.9));
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    border-radius: 16px;
+    padding: 35px 25px;
+    margin: 35px 0;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.08);
+    position: relative;
+}
+
+.center-badge {
+    color: #00f0ff;
+    font-family: monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.physical-center-card h2 {
+    color: #ffffff;
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+}
+
+.center-description {
+    color: #cbd5e1;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    max-width: 800px;
+}
+
+/* Mini Grid de Pilares */
+.pillars-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.mini-pillar {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.pillar-num {
+    color: #00ff88;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.mini-pillar h4 {
+    color: #ffffff;
+    margin: 6px 0;
+    font-size: 0.95rem;
+}
+
+.mini-pillar p {
+    color: #94a3b8;
+    font-size: 0.82rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Call to Action Mécénat */
+.call-to-action-box {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 240, 255, 0.2);
+    text-align: center;
+}
+
+.call-to-action-box h3 {
+    color: #00ff88;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+.call-to-action-box p {
+    color: #94a3b8;
+    font-size: 0.88rem;
+    margin-bottom: 18px;
+}
+
+.btn-soutenir {
+    display: inline-block;
+    background: rgba(0, 255, 136, 0.12);
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-soutenir:hover {
+    background: #00ff88;
+    color: #0f172a;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+    transform: translateY(-2px);
+}
