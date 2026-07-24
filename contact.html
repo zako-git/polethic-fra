@@ -3,26 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | POLETHIC_FRA</title>
-
-    <!-- 1. CARGA DE TIPOGRAFÍAS GOOGLE FONTS (Indispensable para el logo y botones) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
-    <!-- 2. ENLACE AL CSS PRINCIPAL -->
+    <title>Contact | POLETHIC France</title>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Hero de Contacto */
+        .contact-hero {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 25px;
+            background: rgba(15, 23, 42, 0.7);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Grid Principal (Contacto + Información) */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Tarjeta de Contacto / Canal Directo */
+        .contact-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(8px);
+        }
+
+        .contact-card h2 {
+            color: #ffffff;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .email-badge {
+            display: inline-block;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            color: #00f0ff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .email-badge:hover {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 12px rgba(0, 255, 136, 0.2);
+        }
+
+        /* Módulos desplegables de "Qui sommes-nous ?" */
+        .cyber-details {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .cyber-details[open] {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .cyber-summary {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .cyber-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .cyber-summary::after {
+            content: '[+]';
+            color: #00f0ff;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .cyber-details[open] .cyber-summary::after {
+            content: '[-]';
+            color: #00ff88;
+        }
+
+        .cyber-content {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
+
+  <!-- CAPA DE ESTRELLAS -->
   <div id="stars-container"></div>
 
-   <!-- CABECERA DE NAVEGACIÓN -->
+  <!-- CABECERA DE NAVEGACIÓN -->
   <header>
     <div class="container header-layout">
-      <!-- LOGO -->
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
-      <!-- MENÚ -->
       <nav class="nav-buttons">
         <a href="index.html" class="nav-btn">ACCUEIL</a>
         <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
@@ -32,7 +136,6 @@
         <a href="contact.html" class="nav-btn active">CONTACT</a>
       </nav>
 
-      <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
         <a href="#" class="lang-btn active">FR</a>
         <span class="lang-separator">|</span>
@@ -43,66 +146,107 @@
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL ADAPTADO AL ESTILO FUTURISTA -->
   <main class="container">
-    <article class="hero-card">
-      <header class="post-header">
-        <span class="post-date">// PROTOCOLE DE COMMUNICATION</span>
-        <h1 class="post-title">CONTACTEZ-NOUS</h1>
-      </header>
-
-      <div class="post-content">
-        <p>
-          Pour toute demande d'intervention (Mairies, Établissements scolaires) ou de partenariat institutionnel :
-        </p>
-
-        <!-- Bloque de contacto integrado en el diseño -->
-        <div style="margin-top: 2rem; padding: 2rem; border: 1px dashed var(--line); border-radius: 8px; background: rgba(6, 21, 45, 0.4);">
-          <p style="margin: 0; font-size: 1.1rem;">
-            <strong>Email officiel :</strong> 
-            <a href="mailto:contact@polethic.fr" style="color: var(--cyan); text-decoration: none; font-weight: bold; font-family: 'JetBrains Mono', monospace; margin-left: 0.5rem;">
-              contact@polethic.fr
-            </a>
+      
+      <!-- HERO CONTACTO -->
+      <section class="contact-hero">
+          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">[ CANAL DE COMMUNICATION DIRECT ]</span>
+          <h1 style="font-size: 2.2rem; color: #ffffff; margin: 8px 0;">Contact & Interventions</h1>
+          <p style="color: #94a3b8; max-width: 650px; margin: 0 auto; font-size: 0.92rem; line-height: 1.5;">
+              Pour toute demande d'intervention institutionnelle, de conférence ou d'information sur nos programmes de prévention.
           </p>
-        </div>
+      </section>
+
+      <!-- BLOQUE DE CONTACTO + QUIÉNES SOMOS -->
+      <div class="contact-grid">
+
+          <!-- CANAL DE CONTACTO -->
+          <div class="contact-card">
+              <h2>01 // Interventions & Partenariats</h2>
+              <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5;">
+                  Nous intervenons auprès des <strong>Mairies, établissements scolaires, associations et institutions publiques</strong> pour des actions de prévention primaire et d'autodéfense cognitive.
+              </p>
+              
+              <div style="margin-top: 20px;">
+                  <span style="color: #94a3b8; font-size: 0.82rem; display: block;">EMAIL OFFICIEL DE CONTACT :</span>
+                  <a href="mailto:contact@polethic.fr" class="email-badge">contact@polethic.fr</a>
+              </div>
+
+              <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: #64748b;">
+                  ⏱️ <strong>Délai de réponse :</strong> Sous 48h ouvrées. Traitement confidentiel des demandes.
+              </div>
+          </div>
+
+          <!-- SECCIÓN QUIÉNES SOMOS (QUI SOMMES-NOUS) -->
+          <div>
+              <h2 style="color: #ffffff; font-size: 1.25rem; margin-bottom: 15px; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 8px;">
+                  02 // Qui Sommes-Nous ?
+              </h2>
+
+              <!-- MÓDULO 1: LA INICIATIVA -->
+              <details class="cyber-details" open>
+                  <summary class="cyber-summary">
+                      <span><strong style="color: #00f0ff;">//</strong> Origine & Initiative</span>
+                  </summary>
+                  <div class="cyber-content">
+                      <p>POLETHIC France est une initiative indépendante née du constat de la vulnérabilité croissante des citoyens face à la désinformation, au jargon pseudo-scientifique et aux dérives d'emprise mentale.</p>
+                  </div>
+              </details>
+
+              <!-- MÓDULO 2: EL PERFIL/EXPERIENCIA -->
+              <details class="cyber-details">
+                  <summary class="cyber-summary">
+                      <span><strong style="color: #00f0ff;">//</strong> Profil & Expertise</span>
+                  </summary>
+                  <div class="cyber-content">
+                      <p>Notre travail rassemble des compétences transversales à la croisée des <strong>neurosciences cognitives, de la psychologie du comportement et de la prévention des risques informationnels</strong>.</p>
+                  </div>
+              </details>
+
+              <!-- MÓDULO 3: MARCO ÉTICO -->
+              <details class="cyber-details">
+                  <summary class="cyber-summary">
+                      <span><strong style="color: #00ff88;">//</strong> Cadre Éthique & Neutralité</span>
+                  </summary>
+                  <div class="cyber-content">
+                      <p>Nous opérons exclusivement dans le cadre de la <strong>prévention primaire et de la psychoéducation non clinique</strong>. Nous ne réalisons aucun diagnostic médical et garantissons une neutralité absolue.</p>
+                  </div>
+              </details>
+          </div>
+
       </div>
-    </article>
+
   </main>
 
-  <!-- PIE DE PÁGINA -->
- <footer>
-  <div class="container footer-content">
-    
-    <!-- ESCUDO Y DESCARGO DE RESPONSABILIDAD PROFESIONAL -->
-    <div class="footer-shield">
-      <div class="shield-badge">
-        <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <path d="M9 12l2 2 4-4"/>
-        </svg>
-        <span class="shield-title">Bouclier de Protection Professionnelle</span>
+  <!-- FOOTER GLOBAL -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
       </div>
-      <p class="shield-disclaimer">
-  Action exclusive de prévention primaire et de psychoéducation non clinique.
-</p>
-<p class="shield-disclaimer">
-  Aucun diagnostic ou thérapie médicale n'est pratiqué.
-</p>
-    </div>
 
-    <div class="footer-divider"></div>
+      <div class="footer-divider"></div>
 
-    <!-- ENLACES LEGALES Y COPYRIGHT -->
-    <div class="footer-bottom">
-      <div class="footer-links">
-        <a href="mentions-legales.html">Mentions Légales</a>
-        <span class="footer-sep">•</span>
-        <a href="politique-confidentialite.html">Politique de Confidentialité</a>
-        <span class="footer-sep">•</span>
-        <a href="cookies.html">Gestion des Cookies</a>
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
       </div>
-      <p class="copyright">© 2026 POLETHIC France. Tous droits réservés.</p>
     </div>
+  </footer>
 
-  </div>
-</footer>
+</body>
+</html>
