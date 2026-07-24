@@ -3,49 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le Psicomusée Itinérant | POLETHIC</title>
+    <title>Psicomusée | POLETHIC France</title>
     <link rel="stylesheet" href="css/styles.css">
     <style>
-        .zone-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        .zone-card {
-            background: white;
-            padding: 25px;
+        /* Hero Psicomusée */
+        .museum-hero {
+            text-align: center;
+            padding: 45px 20px;
+            margin-bottom: 25px;
+            background: rgba(15, 23, 42, 0.75);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
             border-radius: 12px;
-            border-top: 4px solid #0d9488;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            backdrop-filter: blur(10px);
         }
-        .zone-number {
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #0d9488;
-            text-transform: uppercase;
-        }
-        .impact-box {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 40px;
+
+        /* Banner con la cita del proyecto */
+        .quote-banner {
+            background: rgba(0, 240, 255, 0.05);
+            border-left: 3px solid #00f0ff;
+            padding: 15px 20px;
+            margin: 20px auto 0 auto;
+            max-width: 750px;
             text-align: left;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Grid de Cajitas Interactivas (Estructura Módulos) */
+        .accordion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* Estilo Cyberpunk Acordeón */
+        .cyber-details {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+            padding: 14px 18px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .cyber-details[open] {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+        }
+
+        /* Títulos desplegables */
+        .cyber-summary {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .cyber-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .cyber-summary::after {
+            content: '[+]';
+            color: #00f0ff;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .cyber-details[open] .cyber-summary::after {
+            content: '[-]';
+            color: #00ff88;
+        }
+
+        .cyber-summary:hover {
+            color: #00f0ff;
+        }
+
+        /* Contenido desplegable */
+        .cyber-content {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        /* Destacado final: Ecología del Espíritu */
+        .ecology-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px dashed rgba(0, 255, 136, 0.4);
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Footer Redes Sociales */
+        .social-links-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .social-label {
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        .social-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: #00f0ff;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-icon-btn:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
-  <div id="stars-container"></div>
-  
 
-     <!-- CABECERA DE NAVEGACIÓN -->
+  <!-- CAPA DE ESTRELLAS DE FONDO -->
+  <div id="stars-container"></div>
+
+  <!-- CABECERA DE NAVEGACIÓN -->
   <header>
     <div class="container header-layout">
-      <!-- LOGO -->
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
-      <!-- MENÚ -->
       <nav class="nav-buttons">
         <a href="index.html" class="nav-btn">ACCUEIL</a>
         <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
@@ -55,7 +164,6 @@
         <a href="contact.html" class="nav-btn">CONTACT</a>
       </nav>
 
-      <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
         <a href="#" class="lang-btn active">FR</a>
         <span class="lang-separator">|</span>
@@ -66,81 +174,187 @@
     </div>
   </header>
 
-    <main class="container">
-        <section class="hero-card">
-            <h2>Le Psicomusée Itinérant</h2>
-            <p style="margin-top: 15px; color: #475569;">
-                Un dispositif immersif de prévention primaire pour passer de la réaction automatique à la compréhension consciente.
-            </p>
-        </section>
+  <main class="container">
+      
+      <!-- HERO PSICOMUSÉE -->
+      <section class="museum-hero">
+          <span style="color: #00f0ff; font-family: monospace; font-size: 0.8rem; letter-spacing: 2px;">[ INFRASTRUCTURE CULTURELLE & SCIENTIFIQUE ]</span>
+          <h1 style="font-size: 2.2rem; color: #ffffff; margin: 10px 0;">
+              PSYCHOMUSÉE
+          </h1>
+          <p style="font-size: 1.05rem; color: #00ff88; font-weight: 600; margin-bottom: 10px;">
+              Musée de la Psyché, de la Connaissance Humaine et de l'Esprit Critique
+          </p>
+          
+          <div class="quote-banner">
+              <p style="color: #e2e8f0; font-size: 0.9rem; font-style: italic; margin: 0;">
+                  « Dans un siècle où la technologie avance plus vite que notre biologie pour traiter la réalité, le Psychomusée est l'infrastructure culturelle nécessaire pour protéger la capacité humaine à penser avec rigueur. »
+              </p>
+          </div>
+      </section>
 
-        <!-- Las 4 Zonas -->
-        <h3 style="margin-top: 40px; text-align: center;">Le Parcours des 4 Zones Cognitives</h3>
-        <div class="zone-grid">
-            <div class="zone-card">
-                <span class="zone-number">Zone 1</span>
-                <h4 style="margin: 10px 0; color: #1e3a8a;">Circuit de la Récompense</h4>
-                <p style="font-size: 0.9rem; color: #475569;">La fabrique de dopamine et l'anticipation biologique.</p>
-            </div>
-            <div class="zone-card">
-                <span class="zone-number">Zone 2</span>
-                <h4 style="margin: 10px 0; color: #1e3a8a;">Mythes et Réalités</h4>
-                <p style="font-size: 0.9rem; color: #475569;">Déconstruction des croyances limitantes sur les addictions et la volonté.</p>
-            </div>
-            <div class="zone-card">
-                <span class="zone-number">Zone 3</span>
-                <h4 style="margin: 10px 0; color: #1e3a8a;">Architecture Digitale</h4>
-                <p style="font-size: 0.9rem; color: #475569;">Comment le scroll infini exploite le renforcement intermittent de notre cerveau.</p>
-            </div>
-            <div class="zone-card">
-                <span class="zone-number">Zone 4</span>
-                <h4 style="margin: 10px 0; color: #1e3a8a;">Pause Cognitive</h4>
-                <p style="font-size: 0.9rem; color: #475569;">Entraînement du contrôle exécutif pour récupérer son autonomie mentale.</p>
-            </div>
-        </div>
+      <!-- SECCIÓN PRINCIPAL EN 6 EJES Y DESPLEGABLES -->
+      <div class="accordion-grid">
 
-        <!-- Métricas de Impacto -->
-        <div class="impact-box">
-            <h3 style="color: #166534;">Mesure de l'Impact Scientifique</h3>
-            <p style="color: #1e293b; margin-top: 10px; font-size: 0.95rem;">
-                Pour garantir la rigueur exigée par les institutions publiques, le Psicomusée intègre un **système d'évaluation croisée (quiz initial et final)**. Ce dispositif permet de mesurer précisément l'acquisition de la culture scientifique et l'évolution du discernement chez les participants.
-            </p>
-        </div>
-    </main>
+          <!-- EJE 1 -->
+          <details class="cyber-details" open>
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">01 //</strong> La Raison d'Être : Responsabilité Cognitive</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Notre manière de penser façonne notre monde. Face à l'infobésité et à la confusion entre faits et opinions, le Psychomusée offre un <strong>espace de décélération consciente</strong>. Un lieu pour comprendre non pas <em>quoi penser</em>, mais <em>comment nous pensons</em>.</p>
+              </div>
+          </details>
 
-    <footer>
-  <div class="container footer-content">
-    
-    <!-- ESCUDO Y DESCARGO DE RESPONSABILIDAD PROFESIONAL -->
-    <div class="footer-shield">
-      <div class="shield-badge">
-        <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <path d="M9 12l2 2 4-4"/>
-        </svg>
-        <span class="shield-title">Bouclier de Protection Professionnelle</span>
+          <!-- EJE 2 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">02 //</strong> Un Changement de Paradigme (Processus vs Objets)</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Alors que le musée traditionnel se concentre sur la conservation de l'objet, le Psychomusée <strong>rend visible l'invisible</strong> :</p>
+                  <ul style="padding-left: 15px; margin-top: 6px;">
+                      <li><strong>Focus :</strong> Les processus cognitifs, émotionnels et sociaux[cite: 1].</li>
+                      <li><strong>Action :</strong> Décortiquer les mécanismes de décision et d'influence[cite: 1].</li>
+                      <li><strong>Rôle :</strong> Rendre le visiteur acteur de sa propre réflexion[cite: 1].</li>
+                  </ul>
+              </div>
+          </details>
+
+          <!-- EJE 3 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">03 //</strong> La Triangulation du Savoir</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Le projet brise les silos académiques en articulant 3 langages universels[cite: 1] :</p>
+                  <ul style="padding-left: 15px; margin-top: 6px;">
+                      <li><strong style="color: #00f0ff;">La Science :</strong> La boussole pour cartographier le réel et réduire l'erreur[cite: 1].</li>
+                      <li><strong style="color: #f59e0b;">L'Art :</strong> Le miroir sensible indispensable pour donner du sens à la donnée[cite: 1].</li>
+                      <li><strong style="color: #3b82f6;">La Technologie :</strong> Le levier éthique qui amplifie le savoir sans le déformer[cite: 1].</li>
+                  </ul>
+              </div>
+          </details>
+
+          <!-- EJE 4 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">04 //</strong> Le Triptyque de la Construction Mentale</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Pour lutter contre la désorientation moderne, nous formons les visiteurs à distinguer clairement 3 registres fondamentaux[cite: 1] :</p>
+                  <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-top: 8px;">
+                      <p style="margin: 3px 0;">🔴 <strong>Croire :</strong> Conviction intime et adhésion sans preuve[cite: 1].</p>
+                      <p style="margin: 3px 0;">🟡 <strong>Opiner :</strong> Interprétation et jugement personnel subjectif[cite: 1].</p>
+                      <p style="margin: 3px 0;">🟢 <strong>Savoir :</strong> Connaissance vérifiée, contextualisée et collective[cite: 1].</p>
+                  </div>
+              </div>
+          </details>
+
+          <!-- EJE 5 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">05 //</strong> Analyse des Vulnérabilités Cognitives</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>La désinformation exploite les failles de notre architecture mentale. Nous cartographions 4 leviers majeurs[cite: 1] :</p>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; font-size: 0.82rem;">
+                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">⚠️ Récits Simplifiés</div>
+                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">⚠️ Appels Émotionnels</div>
+                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">⚠️ Biais Cognitifs</div>
+                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">⚠️ Boucles Algorithmiques</div>
+                  </div>
+              </div>
+          </details>
+
+          <!-- EJE 6 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00ff88;">06 //</strong> Garanties Éthiques & Protection</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Le Psychomusée agit sous une charte d'intégrité stricte[cite: 1] :</p>
+                  <ul style="padding-left: 15px; margin-top: 5px; font-size: 0.85rem;">
+                      <li><strong>Zéro collecte de données :</strong> Anonymat total des visiteurs[cite: 1].</li>
+                      <li><strong>Aucun diagnostic médical :</strong> Espace exclusivement psychoéducatif et culturel[cite: 1].</li>
+                      <li><strong>Indépendance totale :</strong> Contenus scientifiques exempts d'intérêts commerciaux[cite: 1].</li>
+                  </ul>
+              </div>
+          </details>
+
       </div>
-      <p class="shield-disclaimer">
-  Action exclusive de prévention primaire et de psychoéducation non clinique.
-</p>
-<p class="shield-disclaimer">
-  Aucun diagnostic ou thérapie médicale n'est pratiqué.
-</p>
-    </div>
 
-    <div class="footer-divider"></div>
-
-    <!-- ENLACES LEGALES Y COPYRIGHT -->
-    <div class="footer-bottom">
-      <div class="footer-links">
-        <a href="mentions-legales.html">Mentions Légales</a>
-        <span class="footer-sep">•</span>
-        <a href="politique-confidentialite.html">Politique de Confidentialité</a>
-        <span class="footer-sep">•</span>
-        <a href="cookies.html">Gestion des Cookies</a>
+      <!-- RECUADRO DESTACADO: ECOLOGÍA DEL ESPÍRITU -->
+      <div class="ecology-box">
+          <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold; font-family: monospace;">[ TRANSVERSALITÉ & HABITABILITÉ ]</span>
+          <h3 style="color: #ffffff; font-size: 1.15rem; margin: 8px 0;">L'Écologie de l'Esprit au Service de la Planète</h3>
+          <p style="color: #cbd5e1; font-size: 0.9rem; max-width: 700px; margin: 0 auto; line-height: 1.5;">
+              « Il est impossible de soigner notre écosystème sans d'abord soigner notre système de pensée. »[cite: 1]<br>
+              Le Psychomusée pose le principe qu'une pensée rigoureuse et lucide est le tout premier outil de préservation de la vie, de la démocratie et de notre avenir commun[cite: 1].
+          </p>
       </div>
-      <p class="copyright">© 2026 POLETHIC France. Tous droits réservés.</p>
-    </div>
 
-  </div>
-</footer>
+  </main>
+
+  <!-- FOOTER CON REDES SOCIALES E INFORMACIÓN LEGAL -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique[cite: 1].</p>
+        <p class="shield-disclaimer">Aucun diagnostic ou thérapie médicale n'est pratiqué[cite: 1].</p>
+      </div>
+
+      <!-- REDES SOCIALES -->
+      <div class="social-links-container">
+          <span class="social-label">// SUIVEZ-NOUS :</span>
+          
+          <!-- INSTAGRAM -->
+          <a href="https://instagram.com/polethic_france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram POLETHIC">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+          </a>
+
+          <!-- FACEBOOK -->
+          <a href="https://facebook.com/polethic.france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook POLETHIC">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+          </a>
+
+          <!-- LINKEDIN PERSONAL -->
+          <a href="https://www.linkedin.com/in/TU-USUARIO-AQUI" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn Professionnel">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                  <rect x="2" y="9" width="4" height="12"></rect>
+                  <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+          </a>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
