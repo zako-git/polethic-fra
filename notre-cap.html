@@ -6,6 +6,7 @@
     <title>Notre Cap | POLETHIC France</title>
     <link rel="stylesheet" href="css/styles.css">
     <style>
+        /* Hero limpio */
         .cap-hero {
             text-align: center;
             padding: 40px 20px;
@@ -16,87 +17,82 @@
             backdrop-filter: blur(10px);
         }
 
-        .section-tag {
-            color: var(--cyan-neon, #00f0ff);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: block;
-            margin-bottom: 10px;
-            font-family: monospace;
-        }
-
-        /* Bloques principales (Las 4 cajitas) */
-        .cap-section {
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            border-radius: 12px;
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .cap-section h2 {
-            color: #ffffff;
-            font-size: 1.35rem;
-            margin-bottom: 12px;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-            padding-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Tríptico */
-        .triptyque-grid {
+        /* Grid de las 6 Cajitas Interactivas */
+        .accordion-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 15px;
-            margin: 15px 0;
+            margin-bottom: 25px;
         }
 
-        .triptyque-card {
-            background: rgba(30, 41, 59, 0.5);
-            padding: 15px;
-            border-radius: 8px;
-            border-top: 3px solid #00f0ff;
+        /* Estilo Cyberpunk para cada cajita */
+        .cyber-details {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+            padding: 14px 18px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
         }
 
-        /* Lista de influencias */
-        .influence-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
+        .cyber-details[open] {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
         }
 
-        .influence-item {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 10px 12px;
-            border-radius: 6px;
-            border-left: 2px solid var(--cyan-neon, #00f0ff);
+        /* Título / Pregunta Clicable */
+        .cyber-summary {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .cyber-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* Indicador Cyber (+ / -) */
+        .cyber-summary::after {
+            content: '[+]';
+            color: #00f0ff;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .cyber-details[open] .cyber-summary::after {
+            content: '[-]';
+            color: #00ff88;
+        }
+
+        .cyber-summary:hover {
+            color: #00f0ff;
+        }
+
+        /* Contenido desplegable */
+        .cyber-content {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             color: #cbd5e1;
             font-size: 0.88rem;
+            line-height: 1.5;
         }
 
-        /* Regla fundamental (Algoritmo) */
-        .rule-box {
-            background: rgba(0, 255, 136, 0.03);
-            border: 1px solid rgba(0, 255, 136, 0.4);
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            margin: 25px 0;
-        }
-
-        /* Referencias de autoridad */
+        /* Recuadro de Autores (Compacto y simplificado) */
         .ref-box {
             background: rgba(15, 23, 42, 0.9);
             border: 1px dashed rgba(0, 240, 255, 0.3);
             border-radius: 12px;
-            padding: 22px;
+            padding: 20px;
+            margin-bottom: 30px;
         }
     </style>
 </head>
@@ -133,109 +129,115 @@
       
       <!-- HERO NOTRE CAP -->
       <section class="cap-hero">
-          <span class="section-tag">[ SYSTEM_POSITIONING // NOTRE CAP ]</span>
-          <h1 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 10px;">Autonomie Cognitive & Protection Informationnelle</h1>
-          <p style="font-size: 1.15rem; color: #00ff88; font-weight: 600; margin-bottom: 10px;">
+          <h1 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 10px;">
+              Autonomie Cognitive & Protection Informationnelle
+          </h1>
+          <p style="font-size: 1.1rem; color: #00ff88; font-weight: 600; margin-bottom: 15px;">
               « Comprendre avant de juger. Vérifier avant d'affirmer. »
           </p>
-          <p style="color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.5; font-size: 0.92rem;">
-              POLETHIC est née d'une ligne d'horizon claire : <strong style="color: #ffffff;">croire et savoir ne sont pas la même chose.</strong> 
-              Notre mission est de fournir des outils de décodage à l'intersection des neurosciences, de la psychologie du comportement, du doute méthodique et de la cybersécurité.
+          <p style="color: #94a3b8; max-width: 650px; margin: 0 auto; font-size: 0.92rem; line-height: 1.5;">
+              Parce que <strong style="color: #ffffff;">croire et savoir ne sont pas la même chose</strong>, POLETHIC fournit des outils de décodage à la croisée des neurosciences, du doute méthodique et de la cybersécurité.
           </p>
       </section>
 
-      <!-- CAJITA 1: EXAMINAR LA CIENCIA -->
-      <section class="cap-section">
-          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">01 // PROTOCOLE DE VÉRIFICATION</span>
-          <h2>Un Esprit Critique Appliqué à la Science Elle-même</h2>
-          <p style="color: #94a3b8; line-height: 1.5; font-size: 0.92rem;">
-              La science n'est pas une nouvelle foi indéboulonnable, c'est une méthode d'examen. Pour éviter tout dogme, nous refusons la simple autorité et appliquons un cuestionnement actif :
-          </p>
-          <div style="background: rgba(255,255,255,0.02); padding: 12px 16px; border-radius: 8px; margin-top: 12px; border-left: 2px solid #00f0ff;">
-              <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">
-                  <strong>Matrice de contrôle :</strong> Quelles preuves existent ? Comment ont-elles été obtenues ? Quelles sont leurs limites ? Quelles explications alternatives persistent ?
-              </p>
-          </div>
-      </section>
+      <!-- LAS 6 CAJITAS INTERACTIVAS DESPLEGABLES -->
+      <div class="accordion-grid">
 
-      <!-- CAJITA 2: CEREBRO NO ES CÁMARA DE VIGILANCIA -->
-      <section class="cap-section">
-          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">02 // ARCHITECTURE NEURONALE</span>
-          <h2>Le Cerveau n'est pas une Caméra de Surveillance</h2>
-          <p style="color: #94a3b8; line-height: 1.5; font-size: 0.92rem; margin-bottom: 12px;">
-              Notre biologie interprète constamment le monde pour économiser de l'énergie. Pour éviter l'illusion d'évidence, notre grille d'autodéfense cognitive sépare trois niveaux :
-          </p>
-          
-          <div class="triptyque-grid">
-              <div class="triptyque-card" style="border-color: #f59e0b;">
-                  <strong style="color: #f59e0b; display: block; margin-bottom: 4px;">1. Ressentir & Croire</strong>
-                  <span style="font-size: 0.85rem; color: #94a3b8;">Sphère intime, émotions et identité.</span>
+          <!-- CAJITA 1 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">01 //</strong> Pourquoi examiner la science elle-même ?</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>La science n'est pas un dogme ni une vérité absolue incontestable. Pour éviter toute dérive autoritaire, nous appliquons un doute méthodique : <em>Quelles sont les preuves ? Comment ont-elles été obtenues ? Quelles sont leurs limites ?</em></p>
               </div>
-              <div class="triptyque-card" style="border-color: #3b82f6;">
-                  <strong style="color: #3b82f6; display: block; margin-bottom: 4px;">2. Interpréter</strong>
-                  <span style="font-size: 0.85rem; color: #94a3b8;">Lecture subjective de la réalité.</span>
-              </div>
-              <div class="triptyque-card" style="border-color: #00ff88;">
-                  <strong style="color: #00ff88; display: block; margin-bottom: 4px;">3. Savoir & Prouver</strong>
-                  <span style="font-size: 0.85rem; color: #94a3b8;">Connaissance fondée sur la preuve.</span>
-              </div>
-          </div>
-      </section>
+          </details>
 
-      <!-- CAJITA 3: INFLUENCIA Y VULNERABILIDADES -->
-      <section class="cap-section">
-          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">03 // VECTEURS D'EMPRISE</span>
-          <h2>Comprendre l'Influence pour Protéger l'Autonomie</h2>
-          <p style="color: #94a3b8; line-height: 1.5; font-size: 0.92rem;">
-              L'influence devient toxique lorsqu'elle verrouille la capacité de questionner. Nous analysons en priorité les vecteurs qui affaiblissent le libre arbitre :
-          </p>
-          
-          <div class="influence-grid">
-              <div class="influence-item">⚠️ Exploitation de la peur</div>
-              <div class="influence-item">⚠️ Fausse autorité & titres usurpés</div>
-              <div class="influence-item">⚠️ Promesses de solutions miracles</div>
-              <div class="influence-item">⚠️ Création de dépendance</div>
-              <div class="influence-item">⚠️ Pression sociale & isolement</div>
-              <div class="influence-item">⚠️ Jargon pseudo-scientifique</div>
-          </div>
-      </section>
+          <!-- CAJITA 2 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">02 //</strong> Le cerveau est-il une caméra de surveillance ?</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Non. Selon les travaux de <strong>Lisa Feldman Barrett</strong> et <strong>Earl K. Miller</strong>, le cerveau filtre et interprète en permanence la réalité pour économiser de l'énergie. Ce que nous percevons comme « évident » n'est souvent qu'une construction biologique.</p>
+              </div>
+          </details>
 
-      <!-- CAJITA 4: REGLA FUNDAMENTAL (ALGORITMO) -->
-      <div class="rule-box">
-          <span style="color: #00ff88; font-weight: bold; letter-spacing: 2px; font-size: 0.8rem; display: block; margin-bottom: 10px; font-family: monospace;">
-              // ALGORITHME DE VIGILANCE (RÈGLE D'OR)
-          </span>
-          <p style="color: #ffffff; font-size: 1.1rem; line-height: 1.8; font-weight: 600; margin: 0;">
-              Une AFFIRMATION n'est pas une PREUVE.<br>
-              Une ÉMOTION n'est pas une ÉVIDENCE.<br>
-              Une AUTORITÉ n'est pas la VÉRITÉ.<br>
-              Une CROYANCE n'est pas une CONNAISSANCE.
-          </p>
-          <p style="color: #94a3b8; margin-top: 12px; font-size: 0.85rem; font-style: italic;">
-              Reconnaître ce qu'on ne sait pas encore est le premier acte de la pensée scientifique.
-          </p>
+          <!-- CAJITA 3 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">03 //</strong> Comment séparer croyance, lecture et preuve ?</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Notre autodéfense cognitive repose sur un triptyque strict :</p>
+                  <ul style="padding-left: 15px; margin-top: 5px;">
+                      <li><strong style="color: #f59e0b;">Ressentir & Croire :</strong> Domaine de l'intime et de l'identité.</li>
+                      <li><strong style="color: #3b82f6;">Interpréter :</strong> Lecture subjective des faits.</li>
+                      <li><strong style="color: #00ff88;">Savoir & Prouver :</strong> Connaissance fondée sur la preuve collective.</li>
+                  </ul>
+              </div>
+          </details>
+
+          <!-- CAJITA 4 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">04 //</strong> Quand l'influence devient-elle toxique ?</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Toute communication influe. L'influence devient dangereuse lorsqu'elle détruit la capacité de questionner et verrouille la liberté de décision de l'individu.</p>
+              </div>
+          </details>
+
+          <!-- CAJITA 5 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00f0ff;">05 //</strong> Quels sont les signaux de manipulation ?</span>
+              </summary>
+              <div class="cyber-content">
+                  <p>Nous cartographions 6 vecteurs d'alerte :</p>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px; font-size: 0.82rem;">
+                      <div>⚠️ Exploitation de la peur</div>
+                      <div>⚠️ Titres & fausses autorités</div>
+                      <div>⚠️ Promesses miracles</div>
+                      <div>⚠️ Dépendance émotionnelle</div>
+                      <div>⚠️ Pression de groupe</div>
+                      <div>⚠️ Jargon pseudo-scientifique</div>
+                  </div>
+              </div>
+          </details>
+
+          <!-- CAJITA 6 -->
+          <details class="cyber-details">
+              <summary class="cyber-summary">
+                  <span><strong style="color: #00ff88;">06 //</strong> Quelle est notre règle d'or (Algorithme) ?</span>
+              </summary>
+              <div class="cyber-content" style="border-top-color: rgba(0, 255, 136, 0.3);">
+                  <p style="color: #ffffff; font-weight: 600; text-align: center; margin: 0; line-height: 1.6;">
+                      Une AFFIRMATION ≠ une PREUVE.<br>
+                      Une ÉMOTION ≠ une ÉVIDENCE.<br>
+                      Une AUTORITÉ ≠ la VÉRITÉ.<br>
+                      Une CROYANCE ≠ une CONNAISSANCE.
+                  </p>
+              </div>
+          </details>
+
       </div>
 
-      <!-- RECUADRO DE AUTORES Y REFERENCIAS (COMPACTO) -->
+      <!-- RECUADRO DE AUTORES (TITULO DEPURADO) -->
       <div class="ref-box">
           <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">[ CORE_REFERENCES ]</span>
-          <h4 style="color: #ffffff; font-size: 1rem; margin: 6px 0 10px;">Cadre Scientifique, Clinique & Références</h4>
           
-          <ul style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.5; padding-left: 18px; margin: 0 0 12px 0;">
+          <ul style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.5; padding-left: 18px; margin: 10px 0 0 0;">
               <li style="margin-bottom: 5px;">
-                  <strong style="color: #ffffff;">Cerveau Prédictif :</strong> Travaux de <em>Lisa Feldman Barrett</em> & <em>Earl K. Miller</em> (catégorisation), <em>Karl Friston</em>, <em>Antonio Damasio</em> et <em>Joseph LeDoux</em>.
+                  <strong style="color: #ffffff;">Cerveau Prédictif :</strong> Travaux de <em>Lisa Feldman Barrett</em>, <em>Earl K. Miller</em>, <em>Karl Friston</em>, <em>Antonio Damasio</em> et <em>Joseph LeDoux</em>.
               </li>
               <li style="margin-bottom: 5px;">
-                  <strong style="color: #ffffff;">Influence & Emprise :</strong> Le modèle BITE de <em>Steven Hassan</em> (contrôle comportemental/énergétique) et l'inoculation cognitive de <em>Sander van der Linden</em>.
+                  <strong style="color: #ffffff;">Influence & Emprise :</strong> Le modèle BITE de <em>Steven Hassan</em> et l'inoculation cognitive de <em>Sander van der Linden</em>.
               </li>
               <li style="margin-bottom: 5px;">
                   <strong style="color: #ffffff;">Neuropsychologie :</strong> Apports de <em>Stéphanie Aubertin</em> sur les fonctions exécutives et vulnérabilités individuelles.
               </li>
           </ul>
-
-          <p style="color: #64748b; font-size: 0.78rem; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin: 0; font-style: italic;">
-              Note : Ces références orientent notre grille d'analyse et de prévention primaire pour renforcer l'autonomie citoyenne.
-          </p>
       </div>
 
   </main>
