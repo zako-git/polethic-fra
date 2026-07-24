@@ -8,39 +8,45 @@
     <style>
         .cap-hero {
             text-align: center;
-            padding: 50px 20px;
-            margin-bottom: 30px;
-            background: rgba(15, 23, 42, 0.6);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 16px;
+            padding: 40px 20px;
+            margin-bottom: 25px;
+            background: rgba(15, 23, 42, 0.7);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
         }
 
         .section-tag {
             color: var(--cyan-neon, #00f0ff);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
             display: block;
             margin-bottom: 10px;
+            font-family: monospace;
         }
 
-        /* Bloques de sección */
+        /* Bloques principales (Las 4 cajitas) */
         .cap-section {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(0, 240, 255, 0.15);
             border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
             backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .cap-section h2 {
             color: #ffffff;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.35rem;
+            margin-bottom: 12px;
             border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         /* Tríptico */
@@ -48,12 +54,12 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 15px;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         .triptyque-card {
             background: rgba(30, 41, 59, 0.5);
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             border-top: 3px solid #00f0ff;
         }
@@ -61,28 +67,28 @@
         /* Lista de influencias */
         .influence-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 10px;
             margin-top: 15px;
         }
 
         .influence-item {
             background: rgba(255, 255, 255, 0.03);
-            padding: 10px 15px;
+            padding: 10px 12px;
             border-radius: 6px;
             border-left: 2px solid var(--cyan-neon, #00f0ff);
-            color: #94a3b8;
-            font-size: 0.9rem;
+            color: #cbd5e1;
+            font-size: 0.88rem;
         }
 
-        /* Regla fundamental */
+        /* Regla fundamental (Algoritmo) */
         .rule-box {
-            background: rgba(0, 255, 136, 0.05);
-            border: 1px solid rgba(0, 255, 136, 0.3);
+            background: rgba(0, 255, 136, 0.03);
+            border: 1px solid rgba(0, 255, 136, 0.4);
             border-radius: 12px;
-            padding: 30px;
+            padding: 25px;
             text-align: center;
-            margin: 40px 0;
+            margin: 25px 0;
         }
 
         /* Referencias de autoridad */
@@ -90,7 +96,7 @@
             background: rgba(15, 23, 42, 0.9);
             border: 1px dashed rgba(0, 240, 255, 0.3);
             border-radius: 12px;
-            padding: 25px;
+            padding: 22px;
         }
     </style>
 </head>
@@ -127,116 +133,108 @@
       
       <!-- HERO NOTRE CAP -->
       <section class="cap-hero">
-          <span class="section-tag">CULTURE, APPROCHE ET POSITIONNEMENT</span>
-          <h1 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 15px;">Notre Orientation Scientifique et Méthodologique</h1>
-          <p style="font-size: 1.2rem; color: #00ff88; font-weight: 600; margin-bottom: 15px;">
+          <span class="section-tag">[ SYSTEM_POSITIONING // NOTRE CAP ]</span>
+          <h1 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 10px;">Autonomie Cognitive & Protection Informationnelle</h1>
+          <p style="font-size: 1.15rem; color: #00ff88; font-weight: 600; margin-bottom: 10px;">
               « Comprendre avant de juger. Vérifier avant d'affirmer. »
           </p>
-          <p style="color: #94a3b8; max-width: 750px; margin: 0 auto; line-height: 1.6; font-size: 0.95rem;">
-              POLETHIC est née d'une conviction simple : <strong style="color: #ffffff;">croire et savoir ne sont pas la même chose.</strong> Notre mission est d'aider chacun à mieux comprendre l'information, les narratifs et les mécanismes qui influencent nos décisions. Nous travaillons dans une perspective interdisciplinaire associant neurosciences, psychologie, sciences du comportement, esprit critique et cybersécurité.
+          <p style="color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.5; font-size: 0.92rem;">
+              POLETHIC est née d'une ligne d'horizon claire : <strong style="color: #ffffff;">croire et savoir ne sont pas la même chose.</strong> 
+              Notre mission est de fournir des outils de décodage à l'intersection des neurosciences, de la psychologie du comportement, du doute méthodique et de la cybersécurité.
           </p>
       </section>
 
-      <!-- SECCIÓN 1: EXAMINAR LA CIENCIA -->
+      <!-- CAJITA 1: EXAMINAR LA CIENCIA -->
       <section class="cap-section">
-          <h2>1. Un Esprit Critique Appliqué à la Science Elle-même</h2>
-          <p style="color: #94a3b8; line-height: 1.6;">
-              Nous ne prétendons pas transformer les neurosciences en une nouvelle autorité incontestable. Au contraire : l'un de nos principes fondamentaux est que la science doit elle-même pouvoir être examinée, discutée et vérifiée.
+          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">01 // PROTOCOLE DE VÉRIFICATION</span>
+          <h2>Un Esprit Critique Appliqué à la Science Elle-même</h2>
+          <p style="color: #94a3b8; line-height: 1.5; font-size: 0.92rem;">
+              La science n'est pas une nouvelle foi indéboulonnable, c'est une méthode d'examen. Pour éviter tout dogme, nous refusons la simple autorité et appliquons un cuestionnement actif :
           </p>
-          <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; margin-top: 15px;">
-              <p style="color: #00f0ff; font-weight: 600; margin-bottom: 8px;">C'est pourquoi nous ne demandons pas seulement : <em>« Qui le dit ? »</em></p>
-              <p style="color: #cbd5e1; font-size: 0.9rem;">
-                  Nous demandons aussi : <strong style="color: #ffffff;">Quelles preuves existent ? Comment ont-elles été obtenues ? Quelles sont leurs limites ? Quelles autres explications sont possibles ?</strong>
+          <div style="background: rgba(255,255,255,0.02); padding: 12px 16px; border-radius: 8px; margin-top: 12px; border-left: 2px solid #00f0ff;">
+              <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">
+                  <strong>Matrice de contrôle :</strong> Quelles preuves existent ? Comment ont-elles été obtenues ? Quelles sont leurs limites ? Quelles explications alternatives persistent ?
               </p>
           </div>
       </section>
 
-      <!-- SECCIÓN 2: CEREBRO NO ES CÁMARA DE VIGILANCIA -->
+      <!-- CAJITA 2: CEREBRO NO ES CÁMARA DE VIGILANCIA -->
       <section class="cap-section">
-          <h2>2. Le Cerveau n'est pas une Caméra de Surveillance de la Réalité</h2>
-          <p style="color: #94a3b8; line-height: 1.6; margin-bottom: 15px;">
-              Les travaux de <strong style="color: #ffffff;">Lisa Feldman Barrett</strong> et <strong style="color: #ffffff;">Earl K. Miller</strong> (2026), notamment sur la catégorisation cérébrale et la construction des émotions, montrent que le cerveau ne se contente pas d'enregistrer passivement le monde extérieur. L'organisme interprète constamment l'information disponible pour construire une représentation du réel.
-          </p>
-          <blockquote style="border-left: 3px solid #00ff88; padding-left: 15px; color: #cbd5e1; font-style: italic; margin: 15px 0;">
-              « Ce que nous ressentons, percevons et croyons peut nous sembler évident sans être nécessairement une description objective de la réalité. »
-          </blockquote>
-
-          <p style="color: #94a3b8; margin-top: 15px; font-size: 0.9rem;">
-              Comprendre ce fonctionnement constitue l'un des fondements de notre autodéfense cognitive en apprenant à distinguer :
+          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">02 // ARCHITECTURE NEURONALE</span>
+          <h2>Le Cerveau n'est pas une Caméra de Surveillance</h2>
+          <p style="color: #94a3b8; line-height: 1.5; font-size: 0.92rem; margin-bottom: 12px;">
+              Notre biologie interprète constamment le monde pour économiser de l'énergie. Pour éviter l'illusion d'évidence, notre grille d'autodéfense cognitive sépare trois niveaux :
           </p>
           
           <div class="triptyque-grid">
               <div class="triptyque-card" style="border-color: #f59e0b;">
-                  <strong style="color: #f59e0b; display: block; margin-bottom: 5px;">Ce que nous ressentons & croyons</strong>
-                  <span style="font-size: 0.85rem; color: #94a3b8;">Le domaine de l'intime et de l'identité.</span>
+                  <strong style="color: #f59e0b; display: block; margin-bottom: 4px;">1. Ressentir & Croire</strong>
+                  <span style="font-size: 0.85rem; color: #94a3b8;">Sphère intime, émotions et identité.</span>
               </div>
               <div class="triptyque-card" style="border-color: #3b82f6;">
-                  <strong style="color: #3b82f6; display: block; margin-bottom: 5px;">Ce que nous interprétons</strong>
-                  <span style="font-size: 0.85rem; color: #94a3b8;">La lecture subjective des faits.</span>
+                  <strong style="color: #3b82f6; display: block; margin-bottom: 4px;">2. Interpréter</strong>
+                  <span style="font-size: 0.85rem; color: #94a3b8;">Lecture subjective de la réalité.</span>
               </div>
               <div class="triptyque-card" style="border-color: #00ff88;">
-                  <strong style="color: #00ff88; display: block; margin-bottom: 5px;">Ce que nous savons & prouvons</strong>
-                  <span style="font-size: 0.85rem; color: #94a3b8;">La connaissance fondée sur la preuve collective.</span>
+                  <strong style="color: #00ff88; display: block; margin-bottom: 4px;">3. Savoir & Prouver</strong>
+                  <span style="font-size: 0.85rem; color: #94a3b8;">Connaissance fondée sur la preuve.</span>
               </div>
           </div>
       </section>
 
-      <!-- SECCIÓN 3: INFLUENCIA Y AUTONOMÍA -->
+      <!-- CAJITA 3: INFLUENCIA Y VULNERABILIDADES -->
       <section class="cap-section">
-          <h2>3. Comprendre l'Influence pour Protéger l'Autonomie</h2>
-          <p style="color: #94a3b8; line-height: 1.6;">
-              L'influence n'est pas nécessairement une manipulation. Toute communication influe dans une certaine mesure. La question fondamentale est : <strong style="color: #ffffff;">La personne conserve-t-elle sa capacité de comprendre, de questionner et de décider librement ?</strong>
+          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">03 // VECTEURS D'EMPRISE</span>
+          <h2>Comprendre l'Influence pour Protéger l'Autonomie</h2>
+          <p style="color: #94a3b8; line-height: 1.5; font-size: 0.92rem;">
+              L'influence devient toxique lorsqu'elle verrouille la capacité de questionner. Nous analysons en priorité les vecteurs qui affaiblissent le libre arbitre :
           </p>
           
-          <p style="color: #cbd5e1; margin-top: 15px; font-size: 0.9rem;">Notre travail analyse les mécanismes qui peuvent affaiblir cette autonomie :</p>
-          
           <div class="influence-grid">
-              <div class="influence-item">Exploitation de la peur</div>
-              <div class="influence-item">Fausse autorité & titres abusifs</div>
-              <div class="influence-item">Promesses de solutions miracles</div>
-              <div class="influence-item">Création de dépendance</div>
-              <div class="influence-item">Pression sociale & manipulation</div>
-              <div class="influence-item">Jargon pseudo-scientifique</div>
+              <div class="influence-item">⚠️ Exploitation de la peur</div>
+              <div class="influence-item">⚠️ Fausse autorité & titres usurpés</div>
+              <div class="influence-item">⚠️ Promesses de solutions miracles</div>
+              <div class="influence-item">⚠️ Création de dépendance</div>
+              <div class="influence-item">⚠️ Pression sociale & isolement</div>
+              <div class="influence-item">⚠️ Jargon pseudo-scientifique</div>
           </div>
       </section>
 
-      <!-- SECCIÓN 4: REGLA FUNDAMENTAL -->
+      <!-- CAJITA 4: REGLA FUNDAMENTAL (ALGORITMO) -->
       <div class="rule-box">
-          <span style="color: #00ff88; font-weight: bold; letter-spacing: 2px; font-size: 0.85rem; display: block; margin-bottom: 10px;">NOTRE RÈGLE FONDAMENTALE</span>
-          <p style="color: #ffffff; font-size: 1.15rem; line-height: 1.8; font-weight: 600;">
-              Nous ne confondons pas une affirmation avec une preuve.<br>
-              Nous ne confondons pas une émotion avec une évidence.<br>
-              Nous ne confondons pas une autorité avec la vérité.<br>
-              Nous ne confondons pas une croyance avec une connaissance.
+          <span style="color: #00ff88; font-weight: bold; letter-spacing: 2px; font-size: 0.8rem; display: block; margin-bottom: 10px; font-family: monospace;">
+              // ALGORITHME DE VIGILANCE (RÈGLE D'OR)
+          </span>
+          <p style="color: #ffffff; font-size: 1.1rem; line-height: 1.8; font-weight: 600; margin: 0;">
+              Une AFFIRMATION n'est pas une PREUVE.<br>
+              Une ÉMOTION n'est pas une ÉVIDENCE.<br>
+              Une AUTORITÉ n'est pas la VÉRITÉ.<br>
+              Une CROYANCE n'est pas une CONNAISSANCE.
           </p>
-          <p style="color: #94a3b8; margin-top: 15px; font-size: 0.9rem;">
-              Reconnaître ce que l'on ne sait pas encore n'est pas une faiblesse. C'est le premier acte de la pensée scientifique.
+          <p style="color: #94a3b8; margin-top: 12px; font-size: 0.85rem; font-style: italic;">
+              Reconnaître ce qu'on ne sait pas encore est le premier acte de la pensée scientifique.
           </p>
       </div>
 
-      <!-- RECUADRO DE AUTORES Y REFERENCIAS -->
+      <!-- RECUADRO DE AUTORES Y REFERENCIAS (COMPACTO) -->
       <div class="ref-box">
-          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; text-text-transform: uppercase; letter-spacing: 1px;">Cadre de Références</span>
-          <h4 style="color: #ffffff; font-size: 1.05rem; margin: 8px 0 12px;">Une Approche Interdisciplinaire Fondée sur la Recherche</h4>
+          <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">[ CORE_REFERENCES ]</span>
+          <h4 style="color: #ffffff; font-size: 1rem; margin: 6px 0 10px;">Cadre Scientifique, Clinique & Références</h4>
           
-          <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.6; margin-bottom: 12px;">
-              POLETHIC France s'appuie sur un cadre conceptuel rigoureux associant les neurosciences cognitives, la neuropsychologie et l'étude des mécanismes de persuasion et de contrôle mental.
-          </p>
-
-          <ul style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.6; padding-left: 20px; margin-bottom: 15px;">
-              <li style="margin-bottom: 6px;">
-                  <strong style="color: #ffffff;">Neurosciences & Cerveau Prédictif :</strong> Travaux de <em>Lisa Feldman Barrett</em> & <em>Earl K. Miller</em> (catégorisation cérébrale), <em>Karl Friston</em>, <em>Antonio Damasio</em> et <em>Joseph LeDoux</em>.
+          <ul style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.5; padding-left: 18px; margin: 0 0 12px 0;">
+              <li style="margin-bottom: 5px;">
+                  <strong style="color: #ffffff;">Cerveau Prédictif :</strong> Travaux de <em>Lisa Feldman Barrett</em> & <em>Earl K. Miller</em> (catégorisation), <em>Karl Friston</em>, <em>Antonio Damasio</em> et <em>Joseph LeDoux</em>.
               </li>
-              <li style="margin-bottom: 6px;">
-                  <strong style="color: #ffffff;">Analyse de l'Influence & Emprise :</strong> Le modèle BITE de <em>Steven Hassan</em> (contrôle du comportement, de l'information, de la pensée et des émotions) et les recherches en inoculation cognitive de <em>Sander van der Linden</em>.
+              <li style="margin-bottom: 5px;">
+                  <strong style="color: #ffffff;">Influence & Emprise :</strong> Le modèle BITE de <em>Steven Hassan</em> (contrôle comportemental/énergétique) et l'inoculation cognitive de <em>Sander van der Linden</em>.
               </li>
-              <li style="margin-bottom: 6px;">
-                  <strong style="color: #ffffff;">Neuropsychologie & Psychoéducation :</strong> Apports de <em>Stéphanie Aubertin</em> sur le fonctionnement exécutif, le développement cognitif et la compréhension des vulnérabilités individuelles.
+              <li style="margin-bottom: 5px;">
+                  <strong style="color: #ffffff;">Neuropsychologie :</strong> Apports de <em>Stéphanie Aubertin</em> sur les fonctions exécutives et vulnérabilités individuelles.
               </li>
           </ul>
 
-          <p style="color: #64748b; font-size: 0.8rem; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; font-style: italic;">
-              Note : Ces références orientent notre grille d'analyse et de prévention primaire. POLETHIC n'est pas un organisme de recherche indépendant, mais un observatoire qui applique ces connaissances pour renforcer l'autonomie citoyenne.
+          <p style="color: #64748b; font-size: 0.78rem; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin: 0; font-style: italic;">
+              Note : Ces références orientent notre grille d'analyse et de prévention primaire pour renforcer l'autonomie citoyenne.
           </p>
       </div>
 
