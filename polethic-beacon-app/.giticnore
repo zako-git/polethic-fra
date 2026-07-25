@@ -1,0 +1,15 @@
+# API credentials and private environment variables
+.env
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# Python compilation artifacts and caches
+__pycache__/
+*.pyc
+
+# System-specific files
+.DS_Store
+Thumbs.db
