@@ -86,7 +86,7 @@
             line-height: 1.5;
         }
 
-        /* Recuadro de Autores (Compacto y simplificado) */
+        /* Recuadro de Autores */
         .ref-box {
             background: rgba(15, 23, 42, 0.9);
             border: 1px dashed rgba(0, 240, 255, 0.3);
@@ -107,20 +107,20 @@
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
       <nav class="nav-buttons">
-        <a href="index.html" class="nav-btn">ACCUEIL</a>
-        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
-        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
-        <a href="beacon.html" class="nav-btn">BEACON LAB</a>
-        <a href="notre-cap.html" class="nav-btn active">NOTRE CAP</a>
-        <a href="contact.html" class="nav-btn">CONTACT</a>
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon.html" class="nav-btn" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn active" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
       </nav>
 
       <div class="lang-selector">
-        <a href="#" class="lang-btn active">FR</a>
+        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
         <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn">ES</a>
+        <a href="#" class="lang-btn" id="btn-es">ES</a>
         <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn">EN</a>
+        <a href="#" class="lang-btn" id="btn-en">EN</a>
       </div>
     </div>
   </header>
@@ -129,14 +129,14 @@
       
       <!-- HERO NOTRE CAP -->
       <section class="cap-hero">
-          <h1 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 10px;">
+          <h1 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 10px;" data-key="cap_hero_title">
               Autonomie Cognitive & Protection Informationnelle
           </h1>
-          <p style="font-size: 1.1rem; color: #00ff88; font-weight: 600; margin-bottom: 15px;">
+          <p style="font-size: 1.1rem; color: #00ff88; font-weight: 600; margin-bottom: 15px;" data-key="cap_hero_quote">
               « Comprendre avant de juger. Vérifier avant d'affirmer. »
           </p>
           <p style="color: #94a3b8; max-width: 650px; margin: 0 auto; font-size: 0.92rem; line-height: 1.5;">
-              Parce que <strong style="color: #ffffff;">croire et savoir ne sont pas la même chose</strong>, POLETHIC fournit des outils de décodage à la croisée des neurosciences, du doute méthodique et de la cybersécurité.
+              <span data-key="cap_hero_desc1">Parce que</span> <strong style="color: #ffffff;" data-key="cap_hero_bold">croire et savoir ne sont pas la même chose</strong><span data-key="cap_hero_desc2">, POLETHIC fournit des outils de décodage à la croisée des neurosciences, du doute méthodique et de la cybersécurité.</span>
           </p>
       </section>
 
@@ -146,34 +146,34 @@
           <!-- CAJITA 1 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">01 //</strong> Pourquoi examiner la science elle-même ?</span>
+                  <span><strong style="color: #00f0ff;">01 //</strong> <span data-key="box1_title">Pourquoi examiner la science elle-même ?</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>La science n'est pas un dogme ni une vérité absolue incontestable. Pour éviter toute dérive autoritaire, nous appliquons un doute méthodique : <em>Quelles sont les preuves ? Comment ont-elles été obtenues ? Quelles sont leurs limites ?</em></p>
+                  <p data-key="box1_desc">La science n'est pas un dogme ni une vérité absolue incontestable. Pour éviter toute dérive autoritaire, nous appliquons un doute méthodique : Quelles sont les preuves ? Comment ont-elles été obtenues ? Quelles sont leurs limites ?</p>
               </div>
           </details>
 
           <!-- CAJITA 2 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">02 //</strong> Le cerveau est-il une caméra de surveillance ?</span>
+                  <span><strong style="color: #00f0ff;">02 //</strong> <span data-key="box2_title">Le cerveau est-il une caméra de surveillance ?</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Non. Selon les travaux de <strong>Lisa Feldman Barrett</strong> et <strong>Earl K. Miller</strong>, le cerveau filtre et interprète en permanence la réalité pour économiser de l'énergie. Ce que nous percevons comme « évident » n'est souvent qu'une construction biologique.</p>
+                  <p data-key="box2_desc">Non. Selon les travaux de Lisa Feldman Barrett et Earl K. Miller, le cerveau filtre et interprète en permanence la réalité pour économiser de l'énergie. Ce que nous percevons comme « évident » n'est souvent qu'une construction biologique.</p>
               </div>
           </details>
 
           <!-- CAJITA 3 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">03 //</strong> Comment séparer croyance, lecture et preuve ?</span>
+                  <span><strong style="color: #00f0ff;">03 //</strong> <span data-key="box3_title">Comment séparer croyance, lecture et preuve ?</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Notre autodéfense cognitive repose sur un triptyque strict :</p>
+                  <p data-key="box3_intro">Notre autodéfense cognitive repose sur un triptyque strict :</p>
                   <ul style="padding-left: 15px; margin-top: 5px;">
-                      <li><strong style="color: #f59e0b;">Ressentir & Croire :</strong> Domaine de l'intime et de l'identité.</li>
-                      <li><strong style="color: #3b82f6;">Interpréter :</strong> Lecture subjective des faits.</li>
-                      <li><strong style="color: #00ff88;">Savoir & Prouver :</strong> Connaissance fondée sur la preuve collective.</li>
+                      <li><strong style="color: #f59e0b;" data-key="box3_li1_b">Ressentir & Croire :</strong> <span data-key="box3_li1_t">Domaine de l'intime et de l'identité.</span></li>
+                      <li><strong style="color: #3b82f6;" data-key="box3_li2_b">Interpréter :</strong> <span data-key="box3_li2_t">Lecture subjective des faits.</span></li>
+                      <li><strong style="color: #00ff88;" data-key="box3_li3_b">Savoir & Prouver :</strong> <span data-key="box3_li3_t">Connaissance fondée sur la preuve collective.</span></li>
                   </ul>
               </div>
           </details>
@@ -181,27 +181,27 @@
           <!-- CAJITA 4 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">04 //</strong> Quand l'influence devient-elle toxique ?</span>
+                  <span><strong style="color: #00f0ff;">04 //</strong> <span data-key="box4_title">Quand l'influence devient-elle toxique ?</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Toute communication influe. L'influence devient dangereuse lorsqu'elle détruit la capacité de questionner et verrouille la liberté de décision de l'individu.</p>
+                  <p data-key="box4_desc">Toute communication influe. L'influence devient dangereuse lorsqu'elle détruit la capacité de questionner et verrouille la liberté de décision de l'individu.</p>
               </div>
           </details>
 
           <!-- CAJITA 5 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">05 //</strong> Quels sont les signaux de manipulation ?</span>
+                  <span><strong style="color: #00f0ff;">05 //</strong> <span data-key="box5_title">Quels sont les signaux de manipulation ?</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Nous cartographions 6 vecteurs d'alerte :</p>
+                  <p data-key="box5_intro">Nous cartographions 6 vecteurs d'alerte :</p>
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px; font-size: 0.82rem;">
-                      <div>⚠️ Exploitation de la peur</div>
-                      <div>⚠️ Titres & fausses autorités</div>
-                      <div>⚠️ Promesses miracles</div>
-                      <div>⚠️ Dépendance émotionnelle</div>
-                      <div>⚠️ Pression de groupe</div>
-                      <div>⚠️ Jargon pseudo-scientifique</div>
+                      <div data-key="box5_v1">⚠️ Exploitation de la peur</div>
+                      <div data-key="box5_v2">⚠️ Titres & fausses autorités</div>
+                      <div data-key="box5_v3">⚠️ Promesses miracles</div>
+                      <div data-key="box5_v4">⚠️ Dépendance émotionnelle</div>
+                      <div data-key="box5_v5">⚠️ Pression de groupe</div>
+                      <div data-key="box5_v6">⚠️ Jargon pseudo-scientifique</div>
                   </div>
               </div>
           </details>
@@ -209,33 +209,33 @@
           <!-- CAJITA 6 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00ff88;">06 //</strong> Quelle est notre règle d'or (Algorithme) ?</span>
+                  <span><strong style="color: #00ff88;">06 //</strong> <span data-key="box6_title">Quelle est notre règle d'or (Algorithme) ?</span></span>
               </summary>
               <div class="cyber-content" style="border-top-color: rgba(0, 255, 136, 0.3);">
                   <p style="color: #ffffff; font-weight: 600; text-align: center; margin: 0; line-height: 1.6;">
-                      Une AFFIRMATION ≠ une PREUVE.<br>
-                      Une ÉMOTION ≠ une ÉVIDENCE.<br>
-                      Une AUTORITÉ ≠ la VÉRITÉ.<br>
-                      Une CROYANCE ≠ une CONNAISSANCE.
+                      <span data-key="box6_l1">Une AFFIRMATION ≠ une PREUVE.</span><br>
+                      <span data-key="box6_l2">Une ÉMOTION ≠ une ÉVIDENCE.</span><br>
+                      <span data-key="box6_l3">Une AUTORITÉ ≠ la VÉRITÉ.</span><br>
+                      <span data-key="box6_l4">Une CROYANCE ≠ une CONNAISSANCE.</span>
                   </p>
               </div>
           </details>
 
       </div>
 
-      <!-- RECUADRO DE AUTORES (TITULO DEPURADO) -->
+      <!-- RECUADRO DE AUTORES -->
       <div class="ref-box">
           <span style="color: #00f0ff; font-size: 0.75rem; font-weight: bold; font-family: monospace;">[ CORE_REFERENCES ]</span>
           
           <ul style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.5; padding-left: 18px; margin: 10px 0 0 0;">
               <li style="margin-bottom: 5px;">
-                  <strong style="color: #ffffff;">Cerveau Prédictif :</strong> Travaux de <em>Lisa Feldman Barrett</em>, <em>Earl K. Miller</em>, <em>Karl Friston</em>, <em>Antonio Damasio</em> et <em>Joseph LeDoux</em>.
+                  <strong style="color: #ffffff;" data-key="ref_1_b">Cerveau Prédictif :</strong> <span data-key="ref_1_t">Travaux de Lisa Feldman Barrett, Earl K. Miller, Karl Friston, Antonio Damasio et Joseph LeDoux.</span>
               </li>
               <li style="margin-bottom: 5px;">
-                  <strong style="color: #ffffff;">Influence & Emprise :</strong> Le modèle BITE de <em>Steven Hassan</em> et l'inoculation cognitive de <em>Sander van der Linden</em>.
+                  <strong style="color: #ffffff;" data-key="ref_2_b">Influence & Emprise :</strong> <span data-key="ref_2_t">Le modèle BITE de Steven Hassan et l'inoculation cognitive de Sander van der Linden.</span>
               </li>
               <li style="margin-bottom: 5px;">
-                  <strong style="color: #ffffff;">Neuropsychologie :</strong> Apports de <em>Stéphanie Aubertin</em> sur les fonctions exécutives et vulnérabilités individuelles.
+                  <strong style="color: #ffffff;" data-key="ref_3_b">Neuropsychologie :</strong> <span data-key="ref_3_t">Apports de Stéphanie Aubertin sur les fonctions exécutives et vulnérabilités individuelles.</span>
               </li>
           </ul>
       </div>
@@ -251,26 +251,239 @@
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             <path d="M9 12l2 2 4-4"/>
           </svg>
-          <span class="shield-title">Bouclier de Protection Professionnelle</span>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
         </div>
-        <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
-        <p class="shield-disclaimer">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
+        <p class="shield-disclaimer" data-key="footer_disc1">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer" data-key="footer_disc2">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
       </div>
 
       <div class="footer-divider"></div>
 
       <div class="footer-bottom">
         <div class="footer-links">
-          <a href="mentions-legales.html">Mentions Légales</a>
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
           <span class="footer-sep">•</span>
-          <a href="politique-confidentialite.html">Politique de Confidentialité</a>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
           <span class="footer-sep">•</span>
-          <a href="cookies.html">Gestion des Cookies</a>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
         </div>
         <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
       </div>
     </div>
   </footer>
+
+  <!-- SCRIPT DE TRADUCCIÓN MULTI-IDIOMA PARA NOTRE CAP -->
+  <script>
+  const translations = {
+      fr: {
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+
+          cap_hero_title: "Autonomie Cognitive & Protection Informationnelle",
+          cap_hero_quote: "« Comprendre avant de juger. Vérifier avant d'affirmer. »",
+          cap_hero_desc1: "Parce que",
+          cap_hero_bold: "croire et savoir ne sont pas la même chose",
+          cap_hero_desc2: ", POLETHIC fournit des outils de décodage à la croisée des neurosciences, du doute méthodique et de la cybersécurité.",
+
+          box1_title: "Pourquoi examiner la science elle-même ?",
+          box1_desc: "La science n'est pas un dogme ni une vérité absolue incontestable. Pour éviter toute dérive autoritaire, nous appliquons un doute méthodique : Quelles sont les preuves ? Comment ont-elles été obtenues ? Quelles sont leurs limites ?",
+
+          box2_title: "Le cerveau est-il une caméra de surveillance ?",
+          box2_desc: "Non. Selon les travaux de Lisa Feldman Barrett et Earl K. Miller, le cerveau filtre et interprète en permanence la réalité pour économiser de l'énergie. Ce que nous percevons comme « évident » n'est souvent qu'une construction biologique.",
+
+          box3_title: "Comment séparer croyance, lecture et preuve ?",
+          box3_intro: "Notre autodéfense cognitive repose sur un triptyque strict :",
+          box3_li1_b: "Ressentir & Croire :",
+          box3_li1_t: "Domaine de l'intime et de l'identité.",
+          box3_li2_b: "Interpréter :",
+          box3_li2_t: "Lecture subjective des faits.",
+          box3_li3_b: "Savoir & Prouver :",
+          box3_li3_t: "Connaissance fondée sur la preuve collective.",
+
+          box4_title: "Quand l'influence devient-elle toxique ?",
+          box4_desc: "Toute communication influe. L'influence devient dangereuse lorsqu'elle détruit la capacité de questionner et verrouille la liberté de décision de l'individu.",
+
+          box5_title: "Quels sont les signaux de manipulation ?",
+          box5_intro: "Nous cartographions 6 vecteurs d'alerte :",
+          box5_v1: "⚠️ Exploitation de la peur",
+          box5_v2: "⚠️ Titres & fausses autorités",
+          box5_v3: "⚠️ Promesses miracles",
+          box5_v4: "⚠️ Dépendance émotionnelle",
+          box5_v5: "⚠️ Pression de groupe",
+          box5_v6: "⚠️ Jargon pseudo-scientifique",
+
+          box6_title: "Quelle est notre règle d'or (Algorithme) ?",
+          box6_l1: "Une AFFIRMATION ≠ une PREUVE.",
+          box6_l2: "Une ÉMOTION ≠ une ÉVIDENCE.",
+          box6_l3: "Une AUTORITÉ ≠ la VÉRITÉ.",
+          box6_l4: "Une CROYANCE ≠ une CONNAISSANCE.",
+
+          ref_1_b: "Cerveau Prédictif :",
+          ref_1_t: "Travaux de Lisa Feldman Barrett, Earl K. Miller, Karl Friston, Antonio Damasio et Joseph LeDoux.",
+          ref_2_b: "Influence & Emprise :",
+          ref_2_t: "Le modèle BITE de Steven Hassan et l'inoculation cognitive de Sander van der Linden.",
+          ref_3_b: "Neuropsychologie :",
+          ref_3_t: "Apports de Stéphanie Aubertin sur les fonctions exécutives et vulnérabilités individuelles.",
+
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies"
+      },
+      es: {
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+
+          cap_hero_title: "Autonomía Cognitiva y Protección Informática",
+          cap_hero_quote: "«Comprender antes de juzgar. Verificar antes de afirmar.»",
+          cap_hero_desc1: "Porque",
+          cap_hero_bold: "creer y saber no son lo mismo",
+          cap_hero_desc2: ", POLETHIC proporciona herramientas de decodificación en la intersección de las neurociencias, la duda metódica y la ciberseguridad.",
+
+          box1_title: "¿Por qué examinar la ciencia misma?",
+          box1_desc: "La ciencia no es un dogma ni una verdad absoluta indiscutible. Para evitar cualquier deriva autoritaria, aplicamos una duda metódica: ¿Cuáles son las pruebas? ¿Cómo se obtuvieron? ¿Cuáles son sus límites?",
+
+          box2_title: "¿Es el cerebro una cámara de vigilancia?",
+          box2_desc: "No. Según los trabajos de Lisa Feldman Barrett y Earl K. Miller, el cerebro filtra e interpreta constantemente la realidad para ahorrar energía. Lo que percibimos como «evidente» suele ser solo una construcción biológica.",
+
+          box3_title: "¿Cómo separar creencia, interpretación y prueba?",
+          box3_intro: "Nuestra autodefensa cognitiva se basa en un tríptico estricto:",
+          box3_li1_b: "Sentir y Creer:",
+          box3_li1_t: "Ámbito de lo íntimo y la identidad.",
+          box3_li2_b: "Interpretar:",
+          box3_li2_t: "Lectura subjetiva de los hechos.",
+          box3_li3_b: "Saber y Probar:",
+          box3_li3_t: "Conocimiento basado en la evidencia colectiva.",
+
+          box4_title: "¿Cuándo la influencia se vuelve tóxica?",
+          box4_desc: "Toda comunicación influye. La influencia se vuelve peligrosa cuando destruye la capacidad de cuestionar y bloquea la libertad de decisión del individuo.",
+
+          box5_title: "¿Cuáles son las señales de manipulación?",
+          box5_intro: "Mapeamos 6 vectores de alerta:",
+          box5_v1: "⚠️ Explotación del miedo",
+          box5_v2: "⚠️ Títulos y falsas autoridades",
+          box5_v3: "⚠️ Promesas milagrosas",
+          box5_v4: "⚠️ Dependencia emocional",
+          box5_v5: "⚠️ Presión de grupo",
+          box5_v6: "⚠️ Jerga pseudo-científica",
+
+          box6_title: "¿Cuál es nuestra regla de oro (Algoritmo)?",
+          box6_l1: "Una AFIRMACIÓN ≠ una PRUEBA.",
+          box6_l2: "Una EMOCIÓN ≠ una EVIDENCIA.",
+          box6_l3: "Una AUTORIDAD ≠ la VERDAD.",
+          box6_l4: "Una CREENCIA ≠ un CONOCIMIENTO.",
+
+          ref_1_b: "Cerebro Predictivo:",
+          ref_1_t: "Trabajos de Lisa Feldman Barrett, Earl K. Miller, Karl Friston, Antonio Damasio y Joseph LeDoux.",
+          ref_2_b: "Influencia y Control:",
+          ref_2_t: "El modelo BITE de Steven Hassan y la inoculación cognitiva de Sander van der Linden.",
+          ref_3_b: "Neuropsicología:",
+          ref_3_t: "Aportes de Stéphanie Aubertin sobre funciones ejecutivas y vulnerabilidades individuales.",
+
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies"
+      },
+      en: {
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
+
+          cap_hero_title: "Cognitive Autonomy & Information Protection",
+          cap_hero_quote: "«Understand before judging. Verify before asserting.»",
+          cap_hero_desc1: "Because",
+          cap_hero_bold: "believing and knowing are not the same thing",
+          cap_hero_desc2: ", POLETHIC provides decoding tools at the intersection of neuroscience, methodical doubt, and cybersecurity.",
+
+          box1_title: "Why examine science itself?",
+          box1_desc: "Science is neither a dogma nor an indisputable absolute truth. To prevent authoritarian drifts, we apply methodical doubt: What is the evidence? How was it obtained? What are its limits?",
+
+          box2_title: "Is the brain a surveillance camera?",
+          box2_desc: "No. According to the work of Lisa Feldman Barrett and Earl K. Miller, the brain constantly filters and interprets reality to save energy. What we perceive as 'obvious' is often just a biological construction.",
+
+          box3_title: "How to separate belief, interpretation, and proof?",
+          box3_intro: "Our cognitive self-defense relies on a strict triptych:",
+          box3_li1_b: "Feeling & Believing:",
+          box3_li1_t: "The realm of intimacy and identity.",
+          box3_li2_b: "Interpreting:",
+          box3_li2_t: "Subjective reading of facts.",
+          box3_li3_b: "Knowing & Proving:",
+          box3_li3_t: "Knowledge based on collective evidence.",
+
+          box4_title: "When does influence become toxic?",
+          box4_desc: "All communication influences. Influence becomes dangerous when it destroys the capacity to question and locks down individual freedom of decision.",
+
+          box5_title: "What are the signals of manipulation?",
+          box5_intro: "We map 6 alert vectors:",
+          box5_v1: "⚠️ Exploitation of fear",
+          box5_v2: "⚠️ Titles & false authorities",
+          box5_v3: "⚠️ Miracle promises",
+          box5_v4: "⚠️ Emotional dependency",
+          box5_v5: "⚠️ Group pressure",
+          box5_v6: "⚠️ Pseudo-scientific jargon",
+
+          box6_title: "What is our golden rule (Algorithm)?",
+          box6_l1: "An ASSERTION ≠ PROOF.",
+          box6_l2: "An EMOTION ≠ EVIDENCE.",
+          box6_l3: "An AUTHORITY ≠ TRUTH.",
+          box6_l4: "A BELIEF ≠ KNOWLEDGE.",
+
+          ref_1_b: "Predictive Brain:",
+          ref_1_t: "Work by Lisa Feldman Barrett, Earl K. Miller, Karl Friston, Antonio Damasio, and Joseph LeDoux.",
+          ref_2_b: "Influence & Control:",
+          ref_2_t: "Steven Hassan's BITE model and Sander van der Linden's cognitive inoculation.",
+          ref_3_b: "Neuropsychology:",
+          ref_3_t: "Contributions by Stéphanie Aubertin on executive functions and individual vulnerabilities.",
+
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management"
+      }
+  };
+
+  function setLanguage(lang) {
+      localStorage.setItem('preferred_lang', lang);
+
+      document.querySelectorAll('[data-key]').forEach(element => {
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.textContent = translations[lang][key];
+          }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
+      setLanguage(savedLang);
+  });
+  </script>
 
 </body>
 </html>
