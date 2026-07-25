@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polethic Beacon — Cognitive Self-Defense</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
+    <header>
+        <h1>POLETHIC BEACON</h1>
+        <p>Cognitive Self-Defense Engine & Metacommunication Analyzer</p>
+    </header>
+
+    <main>
+        <nav class="nav-tabs">
+            <button id="btn-news" class="active" data-module="news">1. FakeNews</button>
+            <button id="btn-myth" data-module="myth">2. Myth-Buster</button>
+            <button id="btn-identity-spoofing" data-module="identity_spoofing">3. Identity Spoofing</button>
+            <button id="btn-coercion" data-module="coercion">4. Coercive Filter</button>
+        </nav>
+
+        <section class="input-section">
+            <div class="textarea-wrapper">
+                <textarea id="user-input" rows="6" placeholder="Paste media text, political articles, or video links to Beacon-ize it..."></textarea>
+
+                <label for="user-file" class="file-upload-label" aria-label="Attach a screenshot (optional, OCR)">
+                    📷
+                </label>
+                <input type="file" id="user-file" name="file" accept="image/*" style="display: none;">
+            </div>
+            <div id="file-name-display" class="file-name-display"></div>
+
+            <div class="button-container" style="margin-top: 15px; margin-bottom: 15px; text-align: center;">
+                <button id="btn-analyze" onclick="analyze()">BEACON-IZE</button>
+            </div>
+
+            <div class="button-group" style="display: flex; gap: 10px; justify-content: center;">
+                <button id="btn-purge" onclick="purgeDashboard()">PURGE SESSION</button>
+                <button id="btn-pdf" onclick="triggerPDFDownload()">EXPORT PDF</button>
+            </div>
+        </section>
+
+        <section id="results-panel" class="results-section">
+            <div class="results-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #21262d; padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 style="margin: 0; font-size: 16px; color: #8b949e;">FORENSIC METRICS REPORT</h3>
+                <div id="ethic-score" style="font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 18px;">
+                    Ethic-Score™: --
+                </div>
+            </div>
+
+            <div id="analysis-report" style="font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.6; color: #c9d1d9; white-space: pre-wrap; background-color: #0d1117; padding: 15px; border-radius: 6px; border: 1px solid #30363d;">
+                System operational. Awaiting linguistic payload submission...
+            </div>
+
+            <div class="local-flags-wrapper" style="margin-top: 15px;">
+                <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px;">Local Taxonomy Matches</h4>
+                <ul id="local-flags" style="margin: 0; padding-left: 20px; font-size: 13px; color: #c9d1d9;">
+                    <li style="color: #8b949e; list-style-type: none; margin-left: -20px;">No diagnostic threat verification executed yet.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
