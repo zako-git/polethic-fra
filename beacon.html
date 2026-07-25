@@ -11,12 +11,100 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <!-- Enlace al CSS principal -->
   <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    /* Estilos específicos para las secciones de Beacon Lab */
+    .lab-section-title {
+      color: #00f0ff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .tool-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 8px;
+      padding: 1.2rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .tool-card h3 {
+      color: #ffffff;
+      font-size: 1rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-card p {
+      color: #cbd5e1;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .score-highlight {
+      border-color: rgba(0, 255, 136, 0.4);
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .score-highlight h3 {
+      color: #00ff88;
+    }
+
+    .exp-card {
+      background: rgba(15, 23, 42, 0.6);
+      border-left: 3px solid #00f0ff;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .exp-card h3 {
+      color: #ffffff;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.05rem;
+    }
+
+    .exp-card ul {
+      color: #cbd5e1;
+      font-size: 0.88rem;
+      padding-left: 1.2rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .exp-card li {
+      margin-bottom: 0.3rem;
+    }
+
+    .exp-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #00ff88;
+      background: rgba(0, 255, 136, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+    }
+  </style>
 </head>
 <body>
   <div id="stars-container"></div>
 
-
-   <!-- CABECERA DE NAVEGACIÓN -->
+  <!-- CABECERA DE NAVEGACIÓN -->
   <header>
     <div class="container header-layout">
       <!-- LOGO -->
@@ -24,21 +112,21 @@
       
       <!-- MENÚ -->
       <nav class="nav-buttons">
-        <a href="index.html" class="nav-btn">ACCUEIL</a>
-        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
-        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
-        <a href="beacon.html" class="nav-btn active">BEACON LAB</a>
-        <a href="notre-cap.html" class="nav-btn">NOTRE CAP</a>
-        <a href="contact.html" class="nav-btn">CONTACT</a>
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon.html" class="nav-btn active" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
       </nav>
 
       <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
-        <a href="#" class="lang-btn active">FR</a>
+        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
         <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn">ES</a>
+        <a href="#" class="lang-btn" id="btn-es">ES</a>
         <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn">EN</a>
+        <a href="#" class="lang-btn" id="btn-en">EN</a>
       </div>
     </div>
   </header>
@@ -48,60 +136,248 @@
     
     <article class="post-card">
       <header class="post-header">
-        <span class="post-date">// MODULE: TRADUCTEUR METACOGNITIF [BEACON_v1.0]</span>
-        <h1 class="post-title">BEACON LAB — DÉCONSTRUCTION DISCURSIVE</h1>
+        <span class="post-date" data-key="beacon_module_tag">// MODULE: TRADUCTEUR METACOGNITIF [BEACON_v1.0]</span>
+        <h1 class="post-title" data-key="beacon_title">BEACON LAB — DÉCONSTRUCTION DISCURSIVE</h1>
       </header>
 
       <div class="post-content">
-        <p>
+        <p data-key="beacon_intro">
           Outil d'analyse tactique et de traduction métacognitive conçu pour démonter les discours, identifier les biais, déconstruire les arguments et révéler les structures sous-jacentes.
         </p>
 
         <!-- Área de trabajo / Interfaz del Programa -->
-        <div style="margin-top: 2rem; padding: 2rem; border: 1px dashed var(--line); border-radius: 8px; text-align: center; background: rgba(6, 21, 45, 0.4);">
-          <p style="color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; margin: 0; letter-spacing: 1px;">
+        <div style="margin-top: 1.5rem; padding: 1.5rem; border: 1px dashed var(--line, #00f0ff); border-radius: 8px; text-align: center; background: rgba(6, 21, 45, 0.4);">
+          <p style="color: var(--cyan, #00f0ff); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; margin: 0; letter-spacing: 1px;" data-key="beacon_status">
             &gt; INTERFACE BEACON READY_
           </p>
         </div>
+
+        <!-- SECCIÓN 1: HERRAMIENTAS Y POLETHIC SCORE -->
+        <h2 class="lab-section-title" data-key="sec1_title">01 // L'OUTIL : BEACONIZAR & POLETHIC SCORE</h2>
+        
+        <div class="tools-grid">
+          <div class="tool-card">
+            <h3 data-key="tool1_title">Traduite Métacognitive (Beaconizar)</h3>
+            <p data-key="tool1_desc">Conversion et décodage automatisé des textes. Décompose la rhétorique, isole les sophismes et traduit la structure logique cachée derrière les discours d'influence.</p>
+          </div>
+
+          <div class="tool-card score-highlight">
+            <h3 data-key="tool2_title">POLETHIC Score</h3>
+            <p data-key="tool2_desc">Indice de rigueur et de fiabilité scientifique. Évalue le niveau de preuve, la présence de biais cognitifs et l'utilisation de jargons pseudo-scientifiques.</p>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 2: POLETHIC EXPÉRIENCES -->
+        <h2 class="lab-section-title" data-key="sec2_title">02 // POLETHIC EXPÉRIENCES (INTERVENTIONS)</h2>
+
+        <div class="exp-card">
+          <h3 data-key="exp1_title">Conférences & Chasse aux Mythes</h3>
+          <p data-key="exp1_desc">Interventions publiques et tables rondes dédiées au démontage des neuromythes et des fausses croyances en psychologie et neurosciences.</p>
+          <ul>
+            <li data-key="exp1_li1">Analyse critique des discours médiatiques et de l'actualité.</li>
+            <li data-key="exp1_li2">Démonstrations en direct des biais cognitifs de perception.</li>
+          </ul>
+          <span class="exp-tag" data-key="exp1_tag">Format: Conférences, Festivals, Universités</span>
+        </div>
+
+        <div class="exp-card">
+          <h3 data-key="exp2_title">Ateliers Pratiques d'Autodéfense Cognitive</h3>
+          <p data-key="exp2_desc">Sessions participatives en petit groupe pour expérimenter les outils du Beacon Lab et apprendre à évaluer la rigueur de l'information.</p>
+          <ul>
+            <li data-key="exp2_li1">Mise en pratique directe du POLETHIC Score sur des cas réels.</li>
+            <li data-key="exp2_li2">Exercices de détection des leviers d'emprise et de manipulation.</li>
+          </ul>
+          <span class="exp-tag" data-key="exp2_tag">Format: Ateliers sur mesure (1h30 à 3h)</span>
+        </div>
+
       </div>
     </article>
 
   </main>
 
   <!-- PIE DE PÁGINA -->
- <footer>
-  <div class="container footer-content">
-    
-    <!-- ESCUDO Y DESCARGO DE RESPONSABILIDAD PROFESIONAL -->
-    <div class="footer-shield">
-      <div class="shield-badge">
-        <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <path d="M9 12l2 2 4-4"/>
-        </svg>
-        <span class="shield-title">Bouclier de Protection Professionnelle</span>
+  <footer>
+    <div class="container footer-content">
+      
+      <!-- ESCUDO Y DESCARGO DE RESPONSABILIDAD PROFESIONAL -->
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer" data-key="footer_disc1">
+          Action exclusive de prévention primaire et de psychoéducation non clinique.
+        </p>
+        <p class="shield-disclaimer" data-key="footer_disc2">
+          Aucun diagnostic ou thérapie médicale n'est pratiqué.
+        </p>
       </div>
-      <p class="shield-disclaimer">
-  Action exclusive de prévention primaire et de psychoéducation non clinique.
-</p>
-<p class="shield-disclaimer">
-  Aucun diagnostic ou thérapie médicale n'est pratiqué.
-</p>
-    </div>
 
-    <div class="footer-divider"></div>
+      <div class="footer-divider"></div>
 
-    <!-- ENLACES LEGALES Y COPYRIGHT -->
-    <div class="footer-bottom">
-      <div class="footer-links">
-        <a href="mentions-legales.html">Mentions Légales</a>
-        <span class="footer-sep">•</span>
-        <a href="politique-confidentialite.html">Politique de Confidentialité</a>
-        <span class="footer-sep">•</span>
-        <a href="cookies.html">Gestion des Cookies</a>
+      <!-- ENLACES LEGALES Y COPYRIGHT -->
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
       </div>
-      <p class="copyright">© 2026 POLETHIC France. Tous droits réservés.</p>
-    </div>
 
-  </div>
-</footer>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DE TRADUCCIÓN MULTI-IDIOMA -->
+  <script>
+  const translations = {
+      fr: {
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+
+          beacon_module_tag: "// MODULE: TRADUCTEUR METACOGNITIF [BEACON_v1.0]",
+          beacon_title: "BEACON LAB — DÉCONSTRUCTION DISCURSIVE",
+          beacon_intro: "Outil d'analyse tactique et de traduction métacognitive conçu pour démonter les discours, identifier les biais, déconstruire les arguments et révéler les structures sous-jacentes.",
+          beacon_status: "> INTERFACE BEACON READY_",
+
+          sec1_title: "01 // L'OUTIL : BEACONIZAR & POLETHIC SCORE",
+          tool1_title: "Traduction Métacognitive (Beaconizar)",
+          tool1_desc: "Conversion et décodage automatisé des textes. Décompose la rhétorique, isole les sophismes et traduit la structure logique cachée derrière les discours d'influence.",
+          tool2_title: "POLETHIC Score",
+          tool2_desc: "Indice de rigueur et de fiabilité scientifique. Évalue le niveau de preuve, la présence de biais cognitifs et l'utilisation de jargons pseudo-scientifiques.",
+
+          sec2_title: "02 // POLETHIC EXPÉRIENCES (INTERVENTIONS)",
+          exp1_title: "Conférences & Chasse aux Mythes",
+          exp1_desc: "Interventions publiques et tables rondes dédiées au démontage des neuromythes et des fausses croyances en psychologie et neurosciences.",
+          exp1_li1: "Analyse critique des discours médiatiques et de l'actualité.",
+          exp1_li2: "Démonstrations en direct des biais cognitifs de perception.",
+          exp1_tag: "Format: Conférences, Festivals, Universités",
+
+          exp2_title: "Ateliers Pratiques d'Autodéfense Cognitive",
+          exp2_desc: "Sessions participatives en petit groupe pour expérimenter les outils du Beacon Lab et apprendre à évaluer la rigueur de l'information.",
+          exp2_li1: "Mise en pratique directe du POLETHIC Score sur des cas réels.",
+          exp2_li2: "Exercices de détection des leviers d'emprise et de manipulation.",
+          exp2_tag: "Format: Ateliers sur mesure (1h30 à 3h)",
+
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies"
+      },
+      es: {
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+
+          beacon_module_tag: "// MÓDULO: TRADUCTOR METACOGNITIVO [BEACON_v1.0]",
+          beacon_title: "BEACON LAB — DECONSTRUCCIÓN DISCURSIVA",
+          beacon_intro: "Herramienta de análisis táctico y traducción metacognitiva diseñada para desmontar discursos, identificar sesgos, deconstruir argumentos y revelar estructuras subyacentes.",
+          beacon_status: "> INTERFAZ BEACON LISTA_",
+
+          sec1_title: "01 // LA HERRAMIENTA: BEACONIZAR Y POLETHIC SCORE",
+          tool1_title: "Traducción Metacognitiva (Beaconizar)",
+          tool1_desc: "Conversión y decodificación automatizada de textos. Descompone la retórica, aisla sofismas y traduce la estructura lógica oculta tras los discursos de influencia.",
+          tool2_title: "POLETHIC Score",
+          tool2_desc: "Índice de rigor y fiabilidad científica. Evalúa el nivel de evidencia, la presencia de sesgos cognitivos y el uso de jergas pseudocientíficas.",
+
+          sec2_title: "02 // POLETHIC EXPÉRIENCES (INTERVENCIONES)",
+          exp1_title: "Conferencias y Caza de Mitos",
+          exp1_desc: "Intervenciones públicas y mesas redondas dedicadas al desmontaje de neuromitos y falsas creencias en psicología y neurociencias.",
+          exp1_li1: "Análisis crítico de discursos mediáticos y de actualidad.",
+          exp1_li2: "Demostraciones en vivo de sesgos cognitivos de percepción.",
+          exp1_tag: "Formato: Conferencias, Festivales, Universidades",
+
+          exp2_title: "Talleres Prácticos de Autodefensa Cognitiva",
+          exp2_desc: "Sesiones participativas en grupos reducidos para experimentar con las herramientas de Beacon Lab y aprender a evaluar el rigor de la información.",
+          exp2_li1: "Aplicación directa del POLETHIC Score en casos reales.",
+          exp2_li2: "Ejercicios de detección de palancas de control y manipulación.",
+          exp2_tag: "Formato: Talleres a medida (1h30 a 3h)",
+
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies"
+      },
+      en: {
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
+
+          beacon_module_tag: "// MODULE: METACOGNITIVE TRANSLATOR [BEACON_v1.0]",
+          beacon_title: "BEACON LAB — DISCURSIVE DECONSTRUCTION",
+          beacon_intro: "Tactical analysis and metacognitive translation tool designed to dismantle speeches, identify biases, deconstruct arguments, and reveal underlying structures.",
+          beacon_status: "> BEACON INTERFACE READY_",
+
+          sec1_title: "01 // THE TOOL: BEACONIZAR & POLETHIC SCORE",
+          tool1_title: "Metacognitive Translation (Beaconizar)",
+          tool1_desc: "Automated conversion and decoding of texts. Deconstructs rhetoric, isolates fallacies, and translates the logical structure behind influential discourse.",
+          tool2_title: "POLETHIC Score",
+          tool2_desc: "Index of scientific rigor and reliability. Evaluates evidence level, presence of cognitive biases, and the use of pseudo-scientific jargon.",
+
+          sec2_title: "02 // POLETHIC EXPÉRIENCES (INTERVENTIONS)",
+          exp1_title: "Conferences & Myth Busting",
+          exp1_desc: "Public speeches and roundtables dedicated to dismantling neuromyths and false beliefs in psychology and neuroscience.",
+          exp1_li1: "Critical analysis of media and current affairs discourse.",
+          exp1_li2: "Live demonstrations of perceptual cognitive biases.",
+          exp1_tag: "Format: Conferences, Festivals, Universities",
+
+          exp2_title: "Practical Cognitive Self-Defense Workshops",
+          exp2_desc: "Participatory small-group sessions to experiment with Beacon Lab tools and learn how to evaluate information rigor.",
+          exp2_li1: "Direct application of the POLETHIC Score on real cases.",
+          exp2_li2: "Exercises to detect levers of control and manipulation.",
+          exp2_tag: "Format: Tailored workshops (1.5h to 3h)",
+
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management"
+      }
+  };
+
+  function setLanguage(lang) {
+      localStorage.setItem('preferred_lang', lang);
+
+      document.querySelectorAll('[data-key]').forEach(element => {
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.textContent = translations[lang][key];
+          }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
+      setLanguage(savedLang);
+  });
+  </script>
+</body>
+</html>
