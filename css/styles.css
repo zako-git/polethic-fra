@@ -651,3 +651,30 @@ footer {
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
     transform: translateY(-2px);
 }
+
+/* SELECTOR DE IDIOMAS */
+.lang-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 15px;
+}
+
+.lang-btn {
+    color: #94a3b8;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.lang-btn:hover, .lang-btn.active {
+    color: #00f0ff;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+}
+
+.lang-separator {
+    color: #334155;
+    font-size: 0.8rem;
+}
