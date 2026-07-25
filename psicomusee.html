@@ -96,6 +96,108 @@
             line-height: 1.5;
         }
 
+        /* Proyecto Centro Físico */
+        .physical-center-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 30px 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .center-badge {
+            color: #00f0ff;
+            font-family: monospace;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .physical-center-card h2 {
+            color: #ffffff;
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+        }
+
+        .center-description {
+            color: #cbd5e1;
+            font-size: 0.93rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .pillars-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .mini-pillar {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .pillar-num {
+            color: #00ff88;
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .mini-pillar h4 {
+            color: #ffffff;
+            margin: 6px 0;
+            font-size: 0.95rem;
+        }
+
+        .mini-pillar p {
+            color: #94a3b8;
+            font-size: 0.83rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .call-to-action-box {
+            text-align: center;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px dashed rgba(0, 240, 255, 0.4);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .call-to-action-box h3 {
+            color: #ffffff;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+
+        .call-to-action-box p {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .btn-soutenir {
+            display: inline-block;
+            background: #00f0ff;
+            color: #0f172a;
+            font-weight: bold;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-soutenir:hover {
+            background: #00ff88;
+            box-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+        }
+
         /* Destacado final: Ecología del Espíritu */
         .ecology-box {
             background: rgba(15, 23, 42, 0.9);
@@ -113,13 +215,6 @@
             justify-content: center;
             gap: 12px;
             margin: 15px 0;
-        }
-
-        .social-label {
-            color: #94a3b8;
-            font-size: 0.78rem;
-            font-family: monospace;
-            letter-spacing: 1px;
         }
 
         .social-icon-btn {
@@ -156,20 +251,20 @@
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
       <nav class="nav-buttons">
-        <a href="index.html" class="nav-btn">ACCUEIL</a>
-        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
-        <a href="psicomusee.html" class="nav-btn active">PSICOMUSÉE</a>
-        <a href="beacon.html" class="nav-btn">BEACON LAB</a>
-        <a href="notre-cap.html" class="nav-btn">NOTRE CAP</a>
-        <a href="contact.html" class="nav-btn">CONTACT</a>
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn active" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon.html" class="nav-btn" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
       </nav>
 
       <div class="lang-selector">
-        <a href="#" class="lang-btn active">FR</a>
+        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
         <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn">ES</a>
+        <a href="#" class="lang-btn" id="btn-es">ES</a>
         <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn">EN</a>
+        <a href="#" class="lang-btn" id="btn-en">EN</a>
       </div>
     </div>
   </header>
@@ -178,16 +273,16 @@
       
       <!-- HERO PSICOMUSÉE -->
       <section class="museum-hero">
-          <span style="color: #00f0ff; font-family: monospace; font-size: 0.8rem; letter-spacing: 2px;">[ INFRASTRUCTURE CULTURELLE & SCIENTIFIQUE ]</span>
-          <h1 style="font-size: 2.2rem; color: #ffffff; margin: 10px 0;">
+          <span style="color: #00f0ff; font-family: monospace; font-size: 0.8rem; letter-spacing: 2px;" data-key="hero_tag">[ INFRASTRUCTURE CULTURELLE & SCIENTIFIQUE ]</span>
+          <h1 style="font-size: 2.2rem; color: #ffffff; margin: 10px 0;" data-key="hero_title">
               PSYCHOMUSÉE
           </h1>
-          <p style="font-size: 1.05rem; color: #00ff88; font-weight: 600; margin-bottom: 10px;">
+          <p style="font-size: 1.05rem; color: #00ff88; font-weight: 600; margin-bottom: 10px;" data-key="hero_subtitle">
               Musée de la Psyché, de la Connaissance Humaine et de l'Esprit Critique
           </p>
           
           <div class="quote-banner">
-              <p style="color: #e2e8f0; font-size: 0.9rem; font-style: italic; margin: 0;">
+              <p style="color: #e2e8f0; font-size: 0.9rem; font-style: italic; margin: 0;" data-key="hero_quote">
                   « Dans un siècle où la technologie avance plus vite que notre biologie pour traiter la réalité, le Psychomusée est l'infrastructure culturelle nécessaire pour protéger la capacité humaine à penser avec rigueur. »
               </p>
           </div>
@@ -199,24 +294,24 @@
           <!-- EJE 1 -->
           <details class="cyber-details" open>
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">01 //</strong> La Raison d'Être : Responsabilité Cognitive</span>
+                  <span><strong style="color: #00f0ff;">01 //</strong> <span data-key="eje1_title">La Raison d'Être : Responsabilité Cognitive</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Notre manière de penser façonne notre monde. Face à l'infobésité et à la confusion entre faits et opinions, le Psychomusée offre un <strong>espace de décélération consciente</strong>. Un lieu pour comprendre non pas <em>quoi penser</em>, mais <em>comment nous pensons</em>.</p>
+                  <p data-key="eje1_desc">Notre manière de penser façonne notre monde. Face à l'infobésité et à la confusion entre faits et opinions, le Psychomusée offre un <strong>espace de décélération consciente</strong>. Un lieu pour comprendre non pas <em>quoi penser</em>, mais <em>comment nous pensons</em>.</p>
               </div>
           </details>
 
           <!-- EJE 2 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">02 //</strong> Un Changement de Paradigme (Processus vs Objets)</span>
+                  <span><strong style="color: #00f0ff;">02 //</strong> <span data-key="eje2_title">Un Changement de Paradigme (Processus vs Objets)</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Alors que le musée traditionnel se concentre sur la conservation de l'objet, le Psychomusée <strong>rend visible l'invisible</strong> :</p>
+                  <p data-key="eje2_intro">Alors que le musée traditionnel se concentre sur la conservation de l'objet, le Psychomusée <strong>rend visible l'invisible</strong> :</p>
                   <ul style="padding-left: 15px; margin-top: 6px;">
-                      <li><strong>Focus :</strong> Les processus cognitifs, émotionnels et sociaux[cite: 1].</li>
-                      <li><strong>Action :</strong> Décortiquer les mécanismes de décision et d'influence[cite: 1].</li>
-                      <li><strong>Rôle :</strong> Rendre le visiteur acteur de sa propre réflexion[cite: 1].</li>
+                      <li><strong data-key="eje2_li1_b">Focus :</strong> <span data-key="eje2_li1_t">Les processus cognitifs, émotionnels et sociaux.</span></li>
+                      <li><strong data-key="eje2_li2_b">Action :</strong> <span data-key="eje2_li2_t">Décortiquer les mécanismes de décision et d'influence.</span></li>
+                      <li><strong data-key="eje2_li3_b">Rôle :</strong> <span data-key="eje2_li3_t">Rendre le visiteur acteur de sa propre réflexion.</span></li>
                   </ul>
               </div>
           </details>
@@ -224,14 +319,14 @@
           <!-- EJE 3 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">03 //</strong> La Triangulation du Savoir</span>
+                  <span><strong style="color: #00f0ff;">03 //</strong> <span data-key="eje3_title">La Triangulation du Savoir</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Le projet brise les silos académiques en articulant 3 langages universels[cite: 1] :</p>
+                  <p data-key="eje3_intro">Le projet brise les silos académiques en articulant 3 langages universels :</p>
                   <ul style="padding-left: 15px; margin-top: 6px;">
-                      <li><strong style="color: #00f0ff;">La Science :</strong> La boussole pour cartographier le réel et réduire l'erreur[cite: 1].</li>
-                      <li><strong style="color: #f59e0b;">L'Art :</strong> Le miroir sensible indispensable pour donner du sens à la donnée[cite: 1].</li>
-                      <li><strong style="color: #3b82f6;">La Technologie :</strong> Le levier éthique qui amplifie le savoir sans le déformer[cite: 1].</li>
+                      <li><strong style="color: #00f0ff;" data-key="eje3_li1_b">La Science :</strong> <span data-key="eje3_li1_t">La boussole pour cartographier le réel et réduire l'erreur.</span></li>
+                      <li><strong style="color: #f59e0b;" data-key="eje3_li2_b">L'Art :</strong> <span data-key="eje3_li2_t">Le miroir sensible indispensable pour donner du sens à la donnée.</span></li>
+                      <li><strong style="color: #3b82f6;" data-key="eje3_li3_b">La Technologie :</strong> <span data-key="eje3_li3_t">Le levier éthique qui amplifie le savoir sans le déformer.</span></li>
                   </ul>
               </div>
           </details>
@@ -239,14 +334,14 @@
           <!-- EJE 4 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">04 //</strong> Le Triptyque de la Construction Mentale</span>
+                  <span><strong style="color: #00f0ff;">04 //</strong> <span data-key="eje4_title">Le Triptyque de la Construction Mentale</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Pour lutter contre la désorientation moderne, nous formons les visiteurs à distinguer clairement 3 registres fondamentaux[cite: 1] :</p>
+                  <p data-key="eje4_intro">Pour lutter contre la désorientation moderne, nous formons les visiteurs à distinguer clairement 3 registres fondamentaux :</p>
                   <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-top: 8px;">
-                      <p style="margin: 3px 0;">🔴 <strong>Croire :</strong> Conviction intime et adhésion sans preuve[cite: 1].</p>
-                      <p style="margin: 3px 0;">🟡 <strong>Opiner :</strong> Interprétation et jugement personnel subjectif[cite: 1].</p>
-                      <p style="margin: 3px 0;">🟢 <strong>Savoir :</strong> Connaissance vérifiée, contextualisée et collective[cite: 1].</p>
+                      <p style="margin: 3px 0;">🔴 <strong data-key="eje4_reg1_b">Croire :</strong> <span data-key="eje4_reg1_t">Conviction intime et adhésion sans preuve.</span></p>
+                      <p style="margin: 3px 0;">🟡 <strong data-key="eje4_reg2_b">Opiner :</strong> <span data-key="eje4_reg2_t">Interprétation et jugement personnel subjectif.</span></p>
+                      <p style="margin: 3px 0;">🟢 <strong data-key="eje4_reg3_b">Savoir :</strong> <span data-key="eje4_reg3_t">Connaissance vérifiée, contextualisée et collective.</span></p>
                   </div>
               </div>
           </details>
@@ -254,15 +349,15 @@
           <!-- EJE 5 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00f0ff;">05 //</strong> Analyse des Vulnérabilités Cognitives</span>
+                  <span><strong style="color: #00f0ff;">05 //</strong> <span data-key="eje5_title">Analyse des Vulnérabilités Cognitives</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>La désinformation exploite les failles de notre architecture mentale. Nous cartographions 4 leviers majeurs[cite: 1] :</p>
+                  <p data-key="eje5_intro">La désinformation exploite les failles de notre architecture mentale. Nous cartographions 4 leviers majeurs :</p>
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; font-size: 0.82rem;">
-                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">⚠️ Récits Simplifiés</div>
-                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">⚠️ Appels Émotionnels</div>
-                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">⚠️ Biais Cognitifs</div>
-                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">⚠️ Boucles Algorithmiques</div>
+                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;" data-key="eje5_v1">⚠️ Récits Simplifiés</div>
+                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;" data-key="eje5_v2">⚠️ Appels Émotionnels</div>
+                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;" data-key="eje5_v3">⚠️ Biais Cognitifs</div>
+                      <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;" data-key="eje5_v4">⚠️ Boucles Algorithmiques</div>
                   </div>
               </div>
           </details>
@@ -270,65 +365,67 @@
           <!-- EJE 6 -->
           <details class="cyber-details">
               <summary class="cyber-summary">
-                  <span><strong style="color: #00ff88;">06 //</strong> Garanties Éthiques & Protection</span>
+                  <span><strong style="color: #00ff88;">06 //</strong> <span data-key="eje6_title">Garanties Éthiques & Protection</span></span>
               </summary>
               <div class="cyber-content">
-                  <p>Le Psychomusée agit sous une charte d'intégrité stricte[cite: 1] :</p>
+                  <p data-key="eje6_intro">Le Psychomusée agit sous une charte d'intégrité stricte :</p>
                   <ul style="padding-left: 15px; margin-top: 5px; font-size: 0.85rem;">
-                      <li><strong>Zéro collecte de données :</strong> Anonymat total des visiteurs[cite: 1].</li>
-                      <li><strong>Aucun diagnostic médical :</strong> Espace exclusivement psychoéducatif et culturel[cite: 1].</li>
-                      <li><strong>Indépendance totale :</strong> Contenus scientifiques exempts d'intérêts commerciaux[cite: 1].</li>
+                      <li><strong data-key="eje6_li1_b">Zéro collecte de données :</strong> <span data-key="eje6_li1_t">Anonymat total des visiteurs.</span></li>
+                      <li><strong data-key="eje6_li2_b">Aucun diagnostic médical :</strong> <span data-key="eje6_li2_t">Espace exclusivement psychoéducatif et culturel.</span></li>
+                      <li><strong data-key="eje6_li3_b">Indépendance totale :</strong> <span data-key="eje6_li3_t">Contenus scientifiques exempts d'intérêts commerciaux.</span></li>
                   </ul>
               </div>
           </details>
 
       </div>
-<!-- BLOQUE DESTACADO: EL PROYECTO DEL CENTRO FÍSICO -->
-<div class="physical-center-card">
-    <div class="center-badge">// PROJET D'INFRASTRUCTURE CULTURELLE</div>
-    <h2>Un Centre Physique pour le Respect du Savoir Humain</h2>
-    
-    <p class="center-description">
-        À l'image des grands musées des sciences et des découvertes, le <strong>PSYCHOMUSÉE</strong> a pour ambition de bâtir un <strong>lieu d'exposition, d'expérience sensorielle et de recherche ouvert à tous</strong>. Un sanctuaire physique dédié à l'exploration de notre esprit, au doute méthodique et à la protection du savoir collectif.
-    </p>
 
-    <div class="pillars-mini-grid">
-        <div class="mini-pillar">
-            <span class="pillar-num">01</span>
-            <h4>Un Espace d'Expérimentation</h4>
-            <p>Rendre visibles nos biais, tester nuestras percepciones y vivir la ciencia en vivo a través de dispositivos interactivos[cite: 1].</p>
-        </div>
-        <div class="mini-pillar">
-            <span class="pillar-num">02</span>
-            <h4>Un Hab pour la Citoyenneté</h4>
-            <p>Un centro neutro de encuentro entre científicos, artistas, escuelas e instituciones para debatir con rigor y serenidad[cite: 1].</p>
-        </div>
-        <div class="mini-pillar">
-            <span class="pillar-num">03</span>
-            <h4>Une Résidence d'Esprit</h4>
-            <p>Un espacio de desaceleración frente al caos digital para reconectarnos con nuestra capacidad de pensar con claridad[cite: 1].</p>
-        </div>
-    </div>
+      <!-- BLOQUE DESTACADO: EL PROYECTO DEL CENTRO FÍSICO -->
+      <div class="physical-center-card">
+          <div class="center-badge" data-key="center_badge">// PROJET D'INFRASTRUCTURE CULTURELLE</div>
+          <h2 data-key="center_title">Un Centre Physique pour le Respect du Savoir Humain</h2>
+          
+          <p class="center-description" data-key="center_desc">
+              À l'image des grands musées des sciences et des découvertes, le <strong>PSYCHOMUSÉE</strong> a pour ambition de bâtir un <strong>lieu d'exposition, d'expérience sensorielle et de recherche ouvert à tous</strong>. Un sanctuaire physique dédié à l'exploration de notre esprit, au doute méthodique et à la protection du savoir collectif.
+          </p>
 
-    <div class="call-to-action-box">
-        <h3>Bâtissons ensemble ce refuge intellectuel</h3>
-        <p>Nous recherchons des mécènes, des partenaires académiques, des institutions publiques et des citoyens visionnaires pour concrétiser ce lieu[cite: 1].</p>
-        <a href="contact.html" class="btn-soutenir">Rejoindre l'Alliance / Mécénat →</a>
-    </div>
-</div>
+          <div class="pillars-mini-grid">
+              <div class="mini-pillar">
+                  <span class="pillar-num">01</span>
+                  <h4 data-key="p1_title">Un Espace d'Expérimentation</h4>
+                  <p data-key="p1_desc">Rendre visibles nos biais, tester nos perceptions et vivre la science en direct à travers des dispositifs interactifs.</p>
+              </div>
+              <div class="mini-pillar">
+                  <span class="pillar-num">02</span>
+                  <h4 data-key="p2_title">Un Hub pour la Citoyenneté</h4>
+                  <p data-key="p2_desc">Un centre neutre de rencontre entre scientifiques, artistes, écoles et institutions pour débattrer avec rigueur et sérénité.</p>
+              </div>
+              <div class="mini-pillar">
+                  <span class="pillar-num">03</span>
+                  <h4 data-key="p3_title">Une Résidence d'Esprit</h4>
+                  <p data-key="p3_desc">Un espace de décélération face au chaos numérique pour nous reconnecter avec notre capacité à penser avec clarté.</p>
+              </div>
+          </div>
+
+          <div class="call-to-action-box">
+              <h3 data-key="cta_title">Bâtissons ensemble ce refuge intellectuel</h3>
+              <p data-key="cta_desc">Nous recherchons des mécènes, des partenaires académiques, des institutions publiques et des citoyens visionnaires pour concrétiser ce lieu.</p>
+              <a href="contact.html" class="btn-soutenir" data-key="cta_btn">Rejoindre l'Alliance / Mécénat &rarr;</a>
+          </div>
+      </div>
+
       <!-- RECUADRO DESTACADO: ECOLOGÍA DEL ESPÍRITU -->
       <div class="ecology-box">
-          <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold; font-family: monospace;">[ TRANSVERSALITÉ & HABITABILITÉ ]</span>
-          <h3 style="color: #ffffff; font-size: 1.15rem; margin: 8px 0;">L'Écologie de l'Esprit au Service de la Planète</h3>
+          <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold; font-family: monospace;" data-key="eco_tag">[ TRANSVERSALITÉ & HABITABILITÉ ]</span>
+          <h3 style="color: #ffffff; font-size: 1.15rem; margin: 8px 0;" data-key="eco_title">L'Écologie de l'Esprit au Service de la Planète</h3>
           <p style="color: #cbd5e1; font-size: 0.9rem; max-width: 700px; margin: 0 auto; line-height: 1.5;">
-              « Il est impossible de soigner notre écosystème sans d'abord soigner notre système de pensée. »[cite: 1]<br>
-              Le Psychomusée pose le principe qu'une pensée rigoureuse et lucide est le tout premier outil de préservation de la vie, de la démocratie et de notre avenir commun[cite: 1].
+              <span data-key="eco_quote">« Il est impossible de soigner notre écosystème sans d'abord soigner notre système de pensée. »</span><br>
+              <span data-key="eco_desc">Le Psychomusée pose le principe qu'une pensée rigoureuse et lucide est le tout premier outil de préservation de la vie, de la démocratie et de notre avenir commun.</span>
           </p>
       </div>
 
   </main>
 
-  <!-- FOOTER CON REDES SOCIALES E INFORMACIÓN LEGAL -->
+  <!-- FOOTER GLOBAL CON REDES SOCIALES -->
   <footer>
     <div class="container footer-content">
       <div class="footer-shield">
@@ -337,16 +434,14 @@
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             <path d="M9 12l2 2 4-4"/>
           </svg>
-          <span class="shield-title">Bouclier de Protection Professionnelle</span>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
         </div>
-        <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique[cite: 1].</p>
-        <p class="shield-disclaimer">Aucun diagnostic ou thérapie médicale n'est pratiqué[cite: 1].</p>
+        <p class="shield-disclaimer" data-key="footer_disc1">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer" data-key="footer_disc2">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
       </div>
 
       <!-- REDES SOCIALES -->
       <div class="social-links-container">
-         
-          
           <!-- INSTAGRAM -->
           <a href="https://instagram.com/polethic_france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram POLETHIC">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -377,16 +472,301 @@
 
       <div class="footer-bottom">
         <div class="footer-links">
-          <a href="mentions-legales.html">Mentions Légales</a>
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
           <span class="footer-sep">•</span>
-          <a href="politique-confidentialite.html">Politique de Confidentialité</a>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
           <span class="footer-sep">•</span>
-          <a href="cookies.html">Gestion des Cookies</a>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
         </div>
         <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
       </div>
     </div>
   </footer>
+
+  <!-- SCRIPT DE ESTRELLAS DE FONDO -->
+  <script src="js/stars.js"></script>
+
+  <!-- SCRIPT DE TRADUCCIÓN MULTI-IDIOMA -->
+  <script>
+  const translations = {
+      fr: {
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+
+          hero_tag: "[ INFRASTRUCTURE CULTURELLE & SCIENTIFIQUE ]",
+          hero_title: "PSYCHOMUSÉE",
+          hero_subtitle: "Musée de la Psyché, de la Connaissance Humaine et de l'Esprit Critique",
+          hero_quote: "« Dans un siècle où la technologie avance plus vite que notre biologie pour traiter la réalité, le Psychomusée est l'infrastructure culturelle nécessaire pour protéger la capacité humaine à penser avec rigueur. »",
+
+          eje1_title: "La Raison d'Être : Responsabilité Cognitive",
+          eje1_desc: "Notre manière de penser façonne notre monde. Face à l'infobésité et à la confusion entre faits et opinions, le Psychomusée offre un espace de décélération consciente. Un lieu pour comprendre non pas quoi penser, mais comment nous pensons.",
+
+          eje2_title: "Un Changement de Paradigme (Processus vs Objets)",
+          eje2_intro: "Alors que le musée traditionnel se concentre sur la conservation de l'objet, le Psychomusée rend visible l'invisible :",
+          eje2_li1_b: "Focus :",
+          eje2_li1_t: "Les processus cognitifs, émotionnels et sociaux.",
+          eje2_li2_b: "Action :",
+          eje2_li2_t: "Décortiquer les mécanismes de décision et d'influence.",
+          eje2_li3_b: "Rôle :",
+          eje2_li3_t: "Rendre le visiteur acteur de sa propre réflexion.",
+
+          eje3_title: "La Triangulation du Savoir",
+          eje3_intro: "Le projet brise les silos académiques en articulant 3 langages universels :",
+          eje3_li1_b: "La Science :",
+          eje3_li1_t: "La boussole pour cartographier le réel et réduire l'erreur.",
+          eje3_li2_b: "L'Art :",
+          eje3_li2_t: "Le miroir sensible indispensable pour donner du sens à la donnée.",
+          eje3_li3_b: "La Technologie :",
+          eje3_li3_t: "Le levier éthique qui amplifie le savoir sans le déformer.",
+
+          eje4_title: "Le Triptyque de la Construction Mentale",
+          eje4_intro: "Pour lutter contre la désorientation moderne, nous formons les visiteurs à distinguer clairement 3 registres fondamentaux :",
+          eje4_reg1_b: "Croire :",
+          eje4_reg1_t: "Conviction intime et adhésion sans preuve.",
+          eje4_reg2_b: "Opiner :",
+          eje4_reg2_t: "Interprétation et jugement personnel subjectif.",
+          eje4_reg3_b: "Savoir :",
+          eje4_reg3_t: "Connaissance vérifiée, contextualisée et collective.",
+
+          eje5_title: "Analyse des Vulnérabilités Cognitives",
+          eje5_intro: "La désinformation exploite les failles de notre architecture mentale. Nous cartographions 4 leviers majeurs :",
+          eje5_v1: "⚠️ Récits Simplifiés",
+          eje5_v2: "⚠️ Appels Émotionnels",
+          eje5_v3: "⚠️ Biais Cognitifs",
+          eje5_v4: "⚠️ Boucles Algorithmiques",
+
+          eje6_title: "Garanties Éthiques & Protection",
+          eje6_intro: "Le Psychomusée agit sous une charte d'intégrité stricte :",
+          eje6_li1_b: "Zéro collecte de données :",
+          eje6_li1_t: "Anonymat total des visiteurs.",
+          eje6_li2_b: "Aucun diagnostic médical :",
+          eje6_li2_t: "Espace exclusivement psychoéducatif et culturel.",
+          eje6_li3_b: "Indépendance totale :",
+          eje6_li3_t: "Contenus scientifiques exempts d'intérêts commerciaux.",
+
+          center_badge: "// PROJET D'INFRASTRUCTURE CULTURELLE",
+          center_title: "Un Centre Physique pour le Respect du Savoir Humain",
+          center_desc: "À l'image des grands musées des sciences et des découvertes, le PSYCHOMUSÉE a pour ambition de bâtir un lieu d'exposition, d'expérience sensorielle et de recherche ouvert à tous. Un sanctuaire physique dédié à l'exploration de notre esprit, au doute méthodique et à la protection du savoir collectif.",
+          p1_title: "Un Espace d'Expérimentation",
+          p1_desc: "Rendre visibles nos biais, tester nos perceptions et vivre la science en direct à travers des dispositifs interactifs.",
+          p2_title: "Un Hub pour la Citoyenneté",
+          p2_desc: "Un centre neutre de rencontre entre scientifiques, artistes, écoles et institutions pour débattre avec rigueur et sérénité.",
+          p3_title: "Une Résidence d'Esprit",
+          p3_desc: "Un espace de décélération face au chaos numérique pour nous reconnecter avec notre capacité à penser avec clarté.",
+          cta_title: "Bâtissons ensemble ce refuge intellectuel",
+          cta_desc: "Nous recherchons des mécènes, des partenaires académiques, des institutions publiques et des citoyens visionnaires pour concrétiser ce lieu.",
+          cta_btn: "Rejoindre l'Alliance / Mécénat →",
+
+          eco_tag: "[ TRANSVERSALITÉ & HABITABILITÉ ]",
+          eco_title: "L'Écologie de l'Esprit au Service de la Planète",
+          eco_quote: "« Il est impossible de soigner notre écosystème sans d'abord soigner notre système de pensée. »",
+          eco_desc: "Le Psychomusée pose le principe qu'une pensée rigoureuse et lucide est le tout premier outil de préservation de la vie, de la démocratie et de notre avenir commun.",
+
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies"
+      },
+      es: {
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+
+          hero_tag: "[ INFRAESTRUCTURA CULTURAL Y CIENTÍFICA ]",
+          hero_title: "PSICOMUSEO",
+          hero_subtitle: "Museo de la Psique, el Conocimiento Humano y el Pensamiento Crítico",
+          hero_quote: "«En un siglo donde la tecnología avanza más rápido que nuestra biología para procesar la realidad, el Psicomuseo es la infraestructura cultural necesaria para proteger la capacidad humana de pensar con rigor.»",
+
+          eje1_title: "La Razón de Ser: Responsabilidad Cognitiva",
+          eje1_desc: "Nuestra forma de pensar moldea nuestro mundo. Frente a la infobesidad y la confusión entre hechos y opiniones, el Psicomuseo ofrece un espacio de desaceleración consciente. Un lugar para comprender no qué pensar, sino cómo pensamos.",
+
+          eje2_title: "Un Cambio de Paradigma (Procesos vs Objetos)",
+          eje2_intro: "Mientras que el museo tradicional se centra en la conservación del objeto, el Psicomuseo hace visible lo invisible:",
+          eje2_li1_b: "Enfoque:",
+          eje2_li1_t: "Los procesos cognitivos, emocionales y sociales.",
+          eje2_li2_b: "Acción:",
+          eje2_li2_t: "Desentrañar los mecanismos de decisión e influencia.",
+          eje2_li3_b: "Rol:",
+          eje2_li3_t: "Hacer del visitante un actor de su propia reflexión.",
+
+          eje3_title: "La Triangulación del Conocimiento",
+          eje3_intro: "El proyecto rompe los aislamientos académicos articulando 3 lenguajes universales:",
+          eje3_li1_b: "La Ciencia:",
+          eje3_li1_t: "La brújula para cartografiar la realidad y reducir el error.",
+          eje3_li2_b: "El Arte:",
+          eje3_li2_t: "El espejo sensible indispensable para dar sentido a los datos.",
+          eje3_li3_b: "La Tecnología:",
+          eje3_li3_t: "La palanca ética que amplifica el saber sin distorsionarlo.",
+
+          eje4_title: "El Tríptico de la Construcción Mental",
+          eje4_intro: "Para luchar contra la desorientación moderna, formamos a los visitantes para distinguir claramente 3 registros fundamentales:",
+          eje4_reg1_b: "Creer:",
+          eje4_reg1_t: "Convicción íntima y adhesión sin prueba.",
+          eje4_reg2_b: "Opinar:",
+          eje4_reg2_t: "Interpretación y juicio personal subjetivo.",
+          eje4_reg3_b: "Saber:",
+          eje4_reg3_t: "Conocimiento verificado, contextualizado y colectivo.",
+
+          eje5_title: "Análisis de Vulnerabilidades Cognitivas",
+          eje5_intro: "La desinformación explota las brechas de nuestra arquitectura mental. Cartografiamos 4 vectores clave:",
+          eje5_v1: "⚠️ Relatos Simplificados",
+          eje5_v2: "⚠️ Apelos Emocionales",
+          eje5_v3: "⚠️ Sesgos Cognitivos",
+          eje5_v4: "⚠️ Bucles Algorítmicos",
+
+          eje6_title: "Garantías Éticas y Protección",
+          eje6_intro: "El Psicomuseo actúa bajo una estricta carta de integridad:",
+          eje6_li1_b: "Cero recolección de datos:",
+          eje6_li1_t: "Anonimato total de los visitantes.",
+          eje6_li2_b: "Ningún diagnóstico médico:",
+          eje6_li2_t: "Espacio exclusivamente psicoeducativo y cultural.",
+          eje6_li3_b: "Independencia total:",
+          eje6_li3_t: "Contenidos científicos exentos de intereses comerciales.",
+
+          center_badge: "// PROYECTO DE INFRAESTRUCTURA CULTURAL",
+          center_title: "Un Centro Físico para el Respeto del Saber Humano",
+          center_desc: "A imagen de los grandes museos de la ciencia y los descubrimientos, el PSICOMUSEO tiene como ambición construir un lugar de exposición, experiencia sensorial e investigación abierto a todos. Un santuario físico dedicado a la exploración de nuestra mente, al duda metódica y a la protección del conocimiento colectivo.",
+          p1_title: "Un Espacio de Experimentación",
+          p1_desc: "Hacer visibles nuestros sesgos, probar nuestras percepciones y vivir la ciencia en directo a través de dispositivos interactivos.",
+          p2_title: "Un Hub para la Ciudadanía",
+          p2_desc: "Un centro neutro de encuentro entre científicos, artistas, escuelas e instituciones para debatir con rigor y serenidad.",
+          p3_title: "Una Residencia de la Mente",
+          p3_desc: "Un espacio de desaceleración frente al caos digital para reconectarnos con nuestra capacidad de pensar con claridad.",
+          cta_title: "Construyamos juntos este refugio intelectual",
+          cta_desc: "Buscamos mecenas, socios académicos, instituciones públicas y ciudadanos visionarios para concretar este lugar.",
+          cta_btn: "Unirse a la Alianza / Mecenazgo →",
+
+          eco_tag: "[ TRANSVERSALIDAD Y HABITABILIDAD ]",
+          eco_title: "La Ecología del Espíritu al Servicio del Planeta",
+          eco_quote: "«Es imposible sanar nuestro ecosistema sin sanar primero nuestro sistema de pensamiento.»",
+          eco_desc: "El Psicomuseo establece el principio de que un pensamiento riguroso y lúcido es la primera herramienta para preservar la vida, la democracia y nuestro futuro común.",
+
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies"
+      },
+      en: {
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
+
+          hero_tag: "[ CULTURAL & SCIENTIFIC INFRASTRUCTURE ]",
+          hero_title: "PSYCHOMUSEUM",
+          hero_subtitle: "Museum of the Psyche, Human Knowledge, and Critical Thinking",
+          hero_quote: "«In a century where technology advances faster than our biology to process reality, the Psychomuseum is the necessary cultural infrastructure to protect human capacity to think with rigor.»",
+
+          eje1_title: "The Purpose: Cognitive Responsibility",
+          eje1_desc: "Our way of thinking shapes our world. Faced with info-obesity and confusion between facts and opinions, the Psychomuseum provides a space of conscious deceleration. A place to understand not what to think, but how we think.",
+
+          eje2_title: "A Paradigm Shift (Processes vs Objects)",
+          eje2_intro: "While the traditional museum focuses on object conservation, the Psychomuseum makes the invisible visible:",
+          eje2_li1_b: "Focus:",
+          eje2_li1_t: "Cognitive, emotional, and social processes.",
+          eje2_li2_b: "Action:",
+          eje2_li2_t: "Deconstructing decision and influence mechanisms.",
+          eje2_li3_b: "Role:",
+          eje2_li3_t: "Empowering the visitor to actively engage in their reflection.",
+
+          eje3_title: "The Triangulation of Knowledge",
+          eje3_intro: "The project bridges academic silos by combining 3 universal languages:",
+          eje3_li1_b: "Science:",
+          eje3_li1_t: "The compass to map reality and reduce error.",
+          eje3_li2_b: "Art:",
+          eje3_li2_t: "The essential sensitive mirror to make sense of data.",
+          eje3_li3_b: "Technology:",
+          eje3_li3_t: "The ethical lever amplifying knowledge without distortion.",
+
+          eje4_title: "The Mental Construction Triptych",
+          eje4_intro: "To fight modern disorientation, we train visitors to clearly distinguish 3 core registers:",
+          eje4_reg1_b: "Believing:",
+          eje4_reg1_t: "Personal conviction and adoption without proof.",
+          eje4_reg2_b: "Opining:",
+          eje4_reg2_t: "Interpretation and subjective personal judgment.",
+          eje4_reg3_b: "Knowing:",
+          eje4_reg3_t: "Verified, contextualized, and collective knowledge.",
+
+          eje5_title: "Cognitive Vulnerabilities Analysis",
+          eje5_intro: "Disinformation exploits flaws in our mental architecture. We map 4 key vectors:",
+          eje5_v1: "⚠️ Simplified Narratives",
+          eje5_v2: "⚠️ Emotional Appeals",
+          eje5_v3: "⚠️ Cognitive Biases",
+          eje5_v4: "⚠️ Algorithmic Loops",
+
+          eje6_title: "Ethical Guarantees & Protection",
+          eje6_intro: "The Psychomuseum operates under a strict integrity charter:",
+          eje6_li1_b: "Zero data collection:",
+          eje6_li1_t: "Total anonymity for visitors.",
+          eje6_li2_b: "No medical diagnosis:",
+          eje6_li2_t: "Exclusively psychoeducational and cultural space.",
+          eje6_li3_b: "Total independence:",
+          eje6_li3_t: "Scientific contents free from commercial interests.",
+
+          center_badge: "// CULTURAL INFRASTRUCTURE PROJECT",
+          center_title: "A Physical Center for the Respect of Human Knowledge",
+          center_desc: "Inspired by great science and discovery museums, the PSYCHOMUSEUM aims to build an exhibition, sensory experience, and research venue open to all. A physical sanctuary dedicated to exploring our mind, methodical doubt, and safeguarding collective knowledge.",
+          p1_title: "An Experimentation Space",
+          p1_desc: "Revealing our biases, testing our perceptions, and experiencing live science through interactive devices.",
+          p2_title: "A Hub for Citizenship",
+          p2_desc: "A neutral meeting space for scientists, artists, schools, and institutions to debate with rigor and composure.",
+          p3_title: "A Mind Sanctuary",
+          p3_desc: "A deceleration area facing digital chaos to reconnect with our capacity to think clearly.",
+          cta_title: "Let's build this intellectual haven together",
+          cta_desc: "We are seeking patrons, academic partners, public institutions, and visionary citizens to bring this location to life.",
+          cta_btn: "Join the Alliance / Sponsorship →",
+
+          eco_tag: "[ TRANSVERSALITY & HABITABILITY ]",
+          eco_title: "Ecology of Mind at the Service of the Planet",
+          eco_quote: "«It is impossible to heal our ecosystem without first healing our thinking system.»",
+          eco_desc: "The Psychomuseum asserts that rigorous and lucid thinking is the primary tool for preserving life, democracy, and our shared future.",
+
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management"
+      }
+  };
+
+  function setLanguage(lang) {
+      localStorage.setItem('preferred_lang', lang);
+
+      document.querySelectorAll('[data-key]').forEach(element => {
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.textContent = translations[lang][key];
+          }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
+      setLanguage(savedLang);
+  });
+  </script>
 
 </body>
 </html>
