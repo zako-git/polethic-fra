@@ -1,3 +1,9 @@
+// Déjalo en "" si Flask sirve el HTML. 
+// Si tu frontend está en otro lugar, pon la URL de Render (ej: "https://polethic-beacon.onrender.com")
+const API_BASE_URL = ""; 
+
+// Y en tus fetch cambias:
+response = await fetch(`${API_BASE_URL}/analyze`, { ... });
 // Current active defense window (default is "news")
 let currentWindow = "news";
 // Tracks the module actually used for the last completed analysis,
