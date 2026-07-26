@@ -4,18 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>POLETHIC_FRA - Beacon Lab</title>
+
   <!-- Tipografías de Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <!-- Enlace al CSS principal -->
   <link rel="stylesheet" href="css/styles.css">
+
   <style>
-    /* ESTILOS GENERALES DE ALTA ELEGANCIA & SÍNTESIS */
+    /* ESTILOS DE ALTA ELEGANCIA & SÍNTESIS */
     .lab-hero {
       text-align: center;
       margin-bottom: 2.5rem;
     }
+
     .lab-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
@@ -24,6 +27,7 @@
       text-transform: uppercase;
       opacity: 0.9;
     }
+
     .lab-title {
       font-size: 2rem;
       font-weight: 700;
@@ -31,6 +35,7 @@
       margin: 0.5rem 0 1rem 0;
       color: #ffffff;
     }
+
     .lab-lead {
       max-width: 680px;
       margin: 0 auto;
@@ -46,6 +51,7 @@
       gap: 1.8rem;
       margin-top: 2rem;
     }
+
     .window-card {
       background: rgba(10, 18, 36, 0.65);
       border: 1px solid rgba(0, 240, 255, 0.15);
@@ -57,15 +63,19 @@
       flex-direction: column;
       justify-content: space-between;
     }
+
     .window-card:hover {
       border-color: rgba(0, 240, 255, 0.4);
       box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.15);
+      transform: translateY(-3px);
     }
+
     .window-header {
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       padding-bottom: 1rem;
       margin-bottom: 1.2rem;
     }
+
     .window-num {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
@@ -73,18 +83,21 @@
       display: block;
       margin-bottom: 0.3rem;
     }
+
     .window-title {
       font-size: 1.3rem;
       font-weight: 600;
       color: #ffffff;
       margin: 0;
     }
+
     .window-body p {
       color: #cbd5e1;
       font-size: 0.92rem;
       line-height: 1.6;
       margin-bottom: 1rem;
     }
+
     .highlight-box {
       background: rgba(0, 240, 255, 0.04);
       border-left: 2px solid var(--cyan, #00f0ff);
@@ -92,22 +105,26 @@
       border-radius: 0 6px 6px 0;
       margin-top: 1rem;
     }
+
     .highlight-box h4 {
       margin: 0 0 0.3rem 0;
       font-size: 0.85rem;
       color: var(--cyan, #00f0ff);
       font-family: 'JetBrains Mono', monospace;
     }
+
     .highlight-box p {
       margin: 0;
       font-size: 0.85rem;
       color: #94a3b8;
     }
+
     .bullet-list {
       list-style: none;
       padding: 0;
       margin: 1rem 0;
     }
+
     .bullet-list li {
       position: relative;
       padding-left: 1.2rem;
@@ -115,6 +132,7 @@
       font-size: 0.88rem;
       margin-bottom: 0.6rem;
     }
+
     .bullet-list li::before {
       content: "›";
       position: absolute;
@@ -122,35 +140,7 @@
       color: var(--cyan, #00f0ff);
       font-weight: bold;
     }
-    .btn-lab-action {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      font-size: 0.9rem;
-    }
-    .btn-cyan {
-      background: rgba(0, 240, 255, 0.1);
-      color: #00f0ff;
-      border: 1px solid rgba(0, 240, 255, 0.4);
-    }
-    .btn-cyan:hover {
-      background: #00f0ff;
-      color: #0b0f19;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-    }
-    .btn-purple {
-      background: rgba(168, 85, 247, 0.1);
-      color: #a855f7;
-      border: 1px solid rgba(168, 85, 247, 0.4);
-    }
-    .btn-purple:hover {
-      background: #a855f7;
-      color: #ffffff;
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
-    }
+
     .status-bar {
       margin-top: 1.5rem;
       padding-top: 1rem;
@@ -162,129 +152,22 @@
       justify-content: space-between;
       align-items: center;
     }
-    .status-active { color: #00ff88; }
 
-    /* ESTILOS DE LA APLICACIÓN BEACON APP */
-    .beacon-app-section {
-      margin-top: 4rem;
-      padding-top: 3rem;
-      border-top: 1px solid rgba(0, 240, 255, 0.2);
+    .status-active {
+      color: #00ff88;
     }
-    .app-card {
-      background: #131b2e;
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-    }
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-    .nav-tab-btn {
-      flex: 1;
-      padding: 12px 8px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      color: #94a3b8;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-    }
-    .nav-tab-btn.active {
-      background: #2563eb;
-      color: #ffffff;
-      border-color: #3b82f6;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    }
-    .window-input-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #cbd5e1;
-      margin-bottom: 12px;
-      display: block;
-    }
-    textarea.beacon-input {
-      width: 100%;
-      height: 120px;
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      color: #f1f5f9;
-      padding: 14px;
-      font-size: 13.5px;
-      line-height: 1.5;
-      resize: vertical;
-      outline: none;
-      margin-bottom: 16px;
-    }
-    textarea.beacon-input:focus { border-color: #3b82f6; }
-    
-    .btn-main {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      background: #16a34a;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      text-align: center;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
-    }
-    .btn-main:hover { background: #15803d; }
-    .btn-main:disabled { background: #334155; cursor: not-allowed; opacity: 0.7; }
-    
-    .btn-group { display: flex; gap: 8px; }
-    .btn-secondary {
-      flex: 1;
-      padding: 11px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      color: #cbd5e1;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-    }
-    .btn-purge { color: #f87171; border-color: #7f1d1d; background: #2a1215; }
-
-    .results-header-table { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .results-title { font-size: 15px; font-weight: 700; color: #f8fafc; text-transform: uppercase; }
-    .ethic-badge { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #00f0ff; }
-
-    .report-box {
-      background: #0f172a;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      padding: 16px;
-      font-size: 13px;
-      line-height: 1.6;
-      color: #cbd5e1;
-      min-height: 100px;
-      margin-bottom: 20px;
-      white-space: pre-wrap;
-    }
-    .file-input-wrapper { margin-bottom: 16px; font-size: 0.85rem; color: #94a3b8; }
   </style>
 </head>
 <body>
   <div id="stars-container"></div>
-  
+
   <!-- CABECERA DE NAVEGACIÓN -->
   <header>
     <div class="container header-layout">
+      <!-- LOGO -->
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      
+      <!-- MENÚ -->
       <nav class="nav-buttons">
         <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
         <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
@@ -293,6 +176,8 @@
         <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
         <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
       </nav>
+
+      <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
         <a href="#" class="lang-btn active" id="btn-fr">FR</a>
         <span class="lang-separator">|</span>
@@ -305,6 +190,8 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container">
+    
+    <!-- ENCABEZADO SIN REPETICIONES Y DIRECTO -->
     <section class="lab-hero">
       <span class="lab-tag" data-key="beacon_module_tag">// MODULE: INNOVATION &amp; TERRAIN</span>
       <h1 class="lab-title" data-key="beacon_title">TRADUCTION METACOGNITIVE &amp; INTERVENTIONS</h1>
@@ -313,105 +200,70 @@
       </p>
     </section>
 
-    <!-- TARJETAS INFORMATIVAS -->
+    <!-- LAS 2 VENTANAS PRINCIPALES -->
     <div class="dual-grid">
+
+      <!-- VENTANA 1: POLETHIC BEACON -->
       <article class="window-card">
         <div>
           <header class="window-header">
             <span class="window-num" data-key="win1_num">01 // L'OUTIL</span>
             <h2 class="window-title" data-key="win1_title">POLETHIC BEACON</h2>
           </header>
+
           <div class="window-body">
             <p data-key="win1_desc">
               Conversion et décodage automatisé des textes. Notre traducteur métacognitif décompose la rhétorique, isole les sophismes et traduit la structure logique cachée derrière les discours d'influence.
             </p>
+
             <div class="highlight-box">
               <h4 data-key="win1_score_title">POLETHIC Score</h4>
               <p data-key="win1_score_desc">Indice de rigueur et de fiabilité scientifique. Évalue le niveau de preuve, la présence de biais cognitifs et le jargon pseudo-scientifique.</p>
             </div>
-            <div style="margin-top: 1.5rem; text-align: center;">
-              <a href="https://https://polethic-beacon-api.onrender.com/" target="_blank" class="btn-lab-action btn-cyan" data-key="win1_btn">
-  ⚡ LANCER LE BÉACONISATEUR
-</a>
-            </div>
           </div>
         </div>
+
         <div class="status-bar">
           <span data-key="win1_status">&gt; BEACON ENGINE READY_</span>
           <span class="status-active">● ONLINE</span>
         </div>
       </article>
 
+      <!-- VENTANA 2: POLETHIC EXPÉRIENCES -->
       <article class="window-card">
         <div>
           <header class="window-header">
             <span class="window-num" data-key="win2_num">02 // LE TERRAIN</span>
             <h2 class="window-title" data-key="win2_title">POLETHIC EXPÉRIENCES</h2>
           </header>
+
           <div class="window-body">
             <p data-key="win2_desc">
-              Dispositifs d'intervention publique, ateliers interactifs et formats d'autodéfense cognitive pour former l'esprit critique.
+              Dispositifs d'intervention publique et formats d'autodéfense cognitive pour former l'esprit critique face aux fausses croyances.
             </p>
+
             <ul class="bullet-list">
               <li data-key="win2_li1"><strong>Conférences &amp; Chasse aux Mythes :</strong> Démontage des neuromythes et analyse critique des discours médiatiques.</li>
               <li data-key="win2_li2"><strong>Ateliers Pratiques :</strong> Mises en pratique directes du POLETHIC Score et détection des leviers d'emprise.</li>
             </ul>
-            <div style="margin-top: 1.5rem; text-align: center;">
-              <a href="experiences.html" class="btn-lab-action btn-purple" data-key="win2_btn">
-                🎨 EXPLORER LES EXPÉRIENCES
-              </a>
-            </div>
           </div>
         </div>
+
         <div class="status-bar">
           <span data-key="win2_status">FORMATS: CONFERENCES &amp; ATELIERS</span>
-          <span class="status-active" style="color: #a855f7;" data-key="win2_tag">SUR-MESURE</span>
+          <span class="status-active" style="color: var(--cyan, #00f0ff);" data-key="win2_tag">SUR-MESURE</span>
         </div>
       </article>
+
     </div>
 
-    <!-- SECCIÓN INTERACTIVA DEL BEACONISATEUR -->
-    <section id="beacon-app" class="beacon-app-section">
-      <div class="nav-tabs">
-        <button class="nav-tab-btn active" data-module="news">1. FakeNews</button>
-        <button class="nav-tab-btn" data-module="myth">2. Myth-Buster</button>
-        <button class="nav-tab-btn" data-module="identity_spoofing">3. Identity Spoofing</button>
-        <button class="nav-tab-btn" data-module="coercion">4. Coercive Filter</button>
-      </div>
-
-      <div class="app-card">
-        <span id="window-title" class="window-input-title">1. FakeNews: Enter the article text or link to evaluate:</span>
-        
-        <textarea id="user-input" class="beacon-input" placeholder="Paste media text, political articles, or video links to Beacon-ize it..."></textarea>
-        
-        <div class="file-input-wrapper">
-          <label for="user-file">📎 Adjuntar captura / imagen (opcional): </label>
-          <input type="file" id="user-file" accept="image/*">
-          <span id="file-name-display"></span>
-        </div>
-
-        <button id="btn-analyze" class="btn-main" onclick="analyze()">BEACON-IZE</button>
-
-        <div class="btn-group">
-          <button class="btn-secondary btn-purge" onclick="purgeDashboard()">PURGE SESSION</button>
-          <button id="btn-pdf" class="btn-secondary" onclick="triggerPDFDownload()">EXPORT PDF</button>
-        </div>
-      </div>
-
-      <div id="results-panel" class="app-card">
-        <div class="results-header-table">
-          <div class="results-title">Forensic Metrics Report</div>
-          <div id="ethic-score" class="ethic-badge">Ethic-Score™: --</div>
-        </div>
-        <div id="analysis-report" class="report-box">Awaiting new pattern audit payload...</div>
-        <ul id="local-flags" class="bullet-list"></ul>
-      </div>
-    </section>
   </main>
 
   <!-- PIE DE PÁGINA -->
   <footer>
     <div class="container footer-content">
+      
+      <!-- ESCUDO Y DESCARGO DE RESPONSABILIDAD PROFESIONAL -->
       <div class="footer-shield">
         <div class="shield-badge">
           <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -420,10 +272,17 @@
           </svg>
           <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
         </div>
-        <p class="shield-disclaimer" data-key="footer_disc1">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
-        <p class="shield-disclaimer" data-key="footer_disc2">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
+        <p class="shield-disclaimer" data-key="footer_disc1">
+          Action exclusive de prévention primaire et de psychoéducation non clinique.
+        </p>
+        <p class="shield-disclaimer" data-key="footer_disc2">
+          Aucun diagnostic ou thérapie médicale n'est pratiqué.
+        </p>
       </div>
+
       <div class="footer-divider"></div>
+
+      <!-- ENLACES LEGALES Y COPYRIGHT -->
       <div class="footer-bottom">
         <div class="footer-links">
           <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
@@ -434,250 +293,140 @@
         </div>
         <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
       </div>
+
     </div>
   </footer>
 
-  <!-- SCRIPT CONECTOR API & TRILINGÜE -->
+  <!-- SCRIPT TRILINGÜE COMPLETO (FR, ES, EN) -->
   <script>
-    // URL Backend en Render
-    const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
-
-    let currentWindow = "news";
-    let lastAnalyzedModule = "news";
-    let lastScore = 0;
-
-    const windowTitles = {
-        "news": "1. FakeNews: Enter the article text or link to evaluate:",
-        "myth": "2. Myth-Buster: Paste the claim, remedy, or pseudoscientific theory:",
-        "identity_spoofing": "3. Identity Spoofing: Paste the profile, credentials, or bio to audit:",
-        "coercion": "4. Coercive Filter: Enter the persuasive text or suspicious discourse:"
-    };
-
-    const windowPlaceholders = {
-        "news": "Paste media text, political articles, or video links to Beacon-ize it...",
-        "myth": "Paste claims regarding alternative medicine or unverified theories to Beacon-ize it...",
-        "identity_spoofing": "Paste suspicious bio data or credentials to audit for structural/professional intrusion...",
-        "coercion": "Paste high-pressure sales pitches to Beacon-ize it..."
-    };
-
-    function setupNavTabs() {
-        document.querySelectorAll(".nav-tabs button").forEach(button => {
-            button.addEventListener("click", () => {
-                const windowType = button.dataset.module;
-                if (!windowType) return;
-
-                document.querySelectorAll(".nav-tabs button").forEach(btn => btn.classList.remove("active"));
-                button.classList.add("active");
-                currentWindow = windowType;
-
-                const titleEl = document.getElementById("window-title");
-                if (titleEl && windowTitles[windowType]) {
-                    titleEl.innerText = windowTitles[windowType];
-                }
-
-                const inputEl = document.getElementById("user-input");
-                if (inputEl && windowPlaceholders[windowType]) {
-                    inputEl.placeholder = windowPlaceholders[windowType];
-                }
-            });
-        });
-    }
-
-    function getEthicLetter(score) {
-        if (score <= 20) return "A";
-        if (score <= 40) return "B";
-        if (score <= 60) return "C";
-        if (score <= 80) return "D";
-        return "E";
-    }
-
-    async function analyze() {
-        const textInput = document.getElementById("user-input").value.trim();
-        const fileInput = document.getElementById("user-file");
-        const file = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : null;
-
-        const scoreDiv = document.getElementById("ethic-score");
-        const resultDiv = document.getElementById("analysis-report");
-        const analyzeButton = document.getElementById("btn-analyze");
-
-        if (!textInput && !file) {
-            if (resultDiv) resultDiv.innerText = "Please introduce some content or attach an image to Beacon-ize.";
-            return;
-        }
-
-        if (analyzeButton) {
-            analyzeButton.innerText = "PROCESSING...";
-            analyzeButton.disabled = true;
-        }
-        if (scoreDiv) scoreDiv.innerText = "Ethic-Score™: --";
-        if (resultDiv) resultDiv.innerText = "Running linguistic pattern analysis... Please wait.";
-
-        try {
-            let response;
-            if (file) {
-                const formData = new FormData();
-                formData.append("text", textInput);
-                formData.append("module", currentWindow);
-                formData.append("file", file);
-
-                response = await fetch(`${API_BASE_URL}/analyze`, {
-                    method: "POST",
-                    body: formData
-                });
-            } else {
-                response = await fetch(`${API_BASE_URL}/analyze`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: textInput, module: currentWindow })
-                });
-            }
-
-            if (!response.ok) throw new Error("Server communication failure");
-
-            const data = await response.json();
-            const parsedScore = parseInt(data.score, 10);
-            const score = Number.isNaN(parsedScore) ? 0 : parsedScore;
-
-            lastAnalyzedModule = currentWindow;
-            lastScore = score;
-
-            if (scoreDiv) scoreDiv.innerText = `Ethic-Score™: [${getEthicLetter(score)}]`;
-            if (resultDiv && data.analysis) resultDiv.innerText = data.analysis;
-
-        } catch (error) {
-            console.error(error);
-            if (scoreDiv) scoreDiv.innerText = "Error: System Offline";
-            if (resultDiv) resultDiv.innerText = "The Beacon core is currently unreachable. Please verify your connection or server status.";
-        } finally {
-            if (analyzeButton) {
-                analyzeButton.innerText = "BEACON-IZE";
-                analyzeButton.disabled = false;
-            }
-        }
-    }
-
-    function triggerPDFDownload() {
-        const analysisElement = document.getElementById("analysis-report");
-        const currentAnalysis = analysisElement ? analysisElement.innerText.trim() : "No analysis target found.";
-        const pdfButton = document.getElementById("btn-pdf");
-
-        if (pdfButton) {
-            pdfButton.innerText = "EXPORTING...";
-            pdfButton.disabled = true;
-        }
-
-        fetch(`${API_BASE_URL}/export_pdf`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                score: lastScore,
-                analysis: currentAnalysis,
-                module: lastAnalyzedModule
-            })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`PDF server route failed`);
-            return response.blob();
-        })
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Polethic_Beacon_Report.pdf';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        })
-        .catch(err => {
-            alert("PDF export failed: " + err.message);
-        })
-        .finally(() => {
-            if (pdfButton) {
-                pdfButton.innerText = "EXPORT PDF";
-                pdfButton.disabled = false;
-            }
-        });
-    }
-
-    function purgeDashboard() {
-        document.getElementById("user-input").value = "";
-        document.getElementById("user-file").value = "";
-        document.getElementById("ethic-score").innerText = "Ethic-Score™: --";
-        document.getElementById("analysis-report").innerText = "System cleared. Awaiting new pattern audit payload...";
-        lastScore = 0;
-    }
-
-    // Traducciones
-    const translations = {
+  const translations = {
       fr: {
-        nav_home: "ACCUEIL", nav_obs: "L'OBSERVATOIRE", nav_museum: "PSICOMUSÉE", nav_beacon: "BEACON LAB", nav_cap: "NOTRE CAP", nav_contact: "CONTACT",
-        beacon_module_tag: "// MODULE: INNOVATION & TERRAIN", beacon_title: "TRADUCTION METACOGNITIVE & INTERVENTIONS",
-        beacon_intro: "Le laboratoire d'outils technologiques pour évaluer la rigueur de l'information et d'expériences interactives pour développer l'esprit critique.",
-        win1_num: "01 // L'OUTIL", win1_title: "POLETHIC BEACON",
-        win1_desc: "Conversion et décodage automatisé des textes. Notre traducteur métacognitif décompose la rhétorique, isole les sophismes et traduit la structure logique cachée derrière les discours d'influence.",
-        win1_score_title: "POLETHIC Score", win1_score_desc: "Indice de rigueur et de fiabilité scientifique. Évalue le niveau de preuve, la présence de biais cognitifs et le jargon pseudo-scientifique.",
-        win1_status: "> BEACON ENGINE READY_", win2_num: "02 // LE TERRAIN", win2_title: "POLETHIC EXPÉRIENCES",
-        win2_desc: "Dispositifs d'intervention publique, ateliers interactifs et formats d'autodéfense cognitive pour former l'esprit critique.",
-        win2_li1: "<strong>Conférences & Chasse aux Mythes :</strong> Démontage des neuromythes et analyse critique des discours médiatiques.",
-        win2_li2: "<strong>Ateliers Pratiques :</strong> Mises en pratique directes du POLETHIC Score et détection des leviers d'emprise.",
-        win2_status: "FORMATS: CONFERENCES & ATELIERS", win2_tag: "SUR-MESURE",
-        footer_shield: "Bouclier de Protection Professionnelle", footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
-        footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.", footer_legal: "Mentions Légales", footer_privacy: "Politique de Confidentialité", footer_cookies: "Gestion des Cookies"
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+
+          beacon_module_tag: "// MODULE: INNOVATION & TERRAIN",
+          beacon_title: "TRADUCTION METACOGNITIVE & INTERVENTIONS",
+          beacon_intro: "Le laboratoire d'outils technologiques pour évaluer la rigueur de l'information et d'expériences interactives pour développer l'esprit critique.",
+
+          win1_num: "01 // L'OUTIL",
+          win1_title: "POLETHIC BEACON",
+          win1_desc: "Conversion et décodage automatisé des textes. Notre traducteur métacognitif décompose la rhétorique, isole les sophismes et traduit la structure logique cachée derrière les discours d'influence.",
+          win1_score_title: "POLETHIC Score",
+          win1_score_desc: "Indice de rigueur et de fiabilité scientifique. Évalue le niveau de preuve, la présence de biais cognitifs et le jargon pseudo-scientifique.",
+          win1_status: "> BEACON ENGINE READY_",
+
+          win2_num: "02 // LE TERRAIN",
+          win2_title: "POLETHIC EXPÉRIENCES",
+          win2_desc: "Dispositifs d'intervention publique et formats d'autodéfense cognitive pour former l'esprit critique face aux fausses croyances.",
+          win2_li1: "<strong>Conférences & Chasse aux Mythes :</strong> Démontage des neuromythes et analyse critique des discours médiatiques.",
+          win2_li2: "<strong>Ateliers Pratiques :</strong> Mises en pratique directes du POLETHIC Score et détection des leviers d'emprise.",
+          win2_status: "FORMATS: CONFERENCES & ATELIERS",
+          win2_tag: "SUR-MESURE",
+
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies"
       },
       es: {
-        nav_home: "INICIO", nav_obs: "OBSERVATORIO", nav_museum: "PSICOMUSEO", nav_beacon: "BEACON LAB", nav_cap: "NUESTRO RUMBO", nav_contact: "CONTACTO",
-        beacon_module_tag: "// MÓDULO: INNOVACIÓN Y TERRENO", beacon_title: "TRADUCCIÓN METACOGNITIVA E INTERVENCIONES",
-        beacon_intro: "El laboratorio de herramientas tecnológicas para evaluar el rigor de la información y experiencias interactivas para desarrollar el pensamiento crítico.",
-        win1_num: "01 // LA HERRAMIENTA", win1_title: "POLETHIC BEACON",
-        win1_desc: "Conversión y decodificación automatizada de textos. Nuestro traductor metacognitivo descompone la retórica, aísla sofismas y traduce la estructura lógica oculta tras los discursos de influencia.",
-        win1_score_title: "POLETHIC Score", win1_score_desc: "Índice de rigor y fiabilidad científica. Evalúa el nivel de evidencia, la presencia de sesgos cognitivos y la jerga pseudocientífica.",
-        win1_status: "> BEACON ENGINE LISTO_", win2_num: "02 // EL TERRENO", win2_title: "POLETHIC EXPÉRIENCES",
-        win2_desc: "Dispositivos de intervención pública, talleres interactivos y formatos de autodefensa cognitiva para entrenar el pensamiento crítico.",
-        win2_li1: "<strong>Conferencias y Caza de Mitos:</strong> Desmontaje de neuromitos y análisis crítico de discursos mediáticos.",
-        win2_li2: "<strong>Talleres Prácticos:</strong> Aplicación directa del POLETHIC Score y detección de palancas de control.",
-        win2_status: "FORMATOS: CONFERENCIAS Y TALLERES", win2_tag: "A MEDIDA",
-        footer_shield: "Escudo de Protección Profesional", footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
-        footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.", footer_legal: "Aviso Legal", footer_privacy: "Política de Privacidad", footer_cookies: "Gestión de Cookies"
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+
+          beacon_module_tag: "// MÓDULO: INNOVACIÓN Y TERRENO",
+          beacon_title: "TRADUCCIÓN METACOGNITIVA E INTERVENCIONES",
+          beacon_intro: "El laboratorio de herramientas tecnológicas para evaluar el rigor de la información y experiencias interactivas para desarrollar el pensamiento crítico.",
+
+          win1_num: "01 // LA HERRAMIENTA",
+          win1_title: "POLETHIC BEACON",
+          win1_desc: "Conversión y decodificación automatizada de textos. Nuestro traductor metacognitivo descompone la retórica, aísla sofismas y traduce la estructura lógica oculta tras los discursos de influencia.",
+          win1_score_title: "POLETHIC Score",
+          win1_score_desc: "Índice de rigor y fiabilidad científica. Evalúa el nivel de evidencia, la presencia de sesgos cognitivos y la jerga pseudocientífica.",
+          win1_status: "> BEACON ENGINE LISTO_",
+
+          win2_num: "02 // EL TERRENO",
+          win2_title: "POLETHIC EXPÉRIENCES",
+          win2_desc: "Dispositivos de intervención pública y formatos de autodefensa cognitiva para entrenar el pensamiento crítico frente a falsas creencias.",
+          win2_li1: "<strong>Conferencias y Caza de Mitos:</strong> Desmontaje de neuromitos y análisis crítico de discursos mediáticos.",
+          win2_li2: "<strong>Talleres Prácticos:</strong> Aplicación directa del POLETHIC Score y detección de palancas de control.",
+          win2_status: "FORMATOS: CONFERENCIAS Y TALLERES",
+          win2_tag: "A MEDIDA",
+
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies"
       },
       en: {
-        nav_home: "HOME", nav_obs: "OBSERVATORY", nav_museum: "PSYCHOMUSEUM", nav_beacon: "BEACON LAB", nav_cap: "OUR COURSE", nav_contact: "CONTACT",
-        beacon_module_tag: "// MODULE: INNOVATION & FIELD", beacon_title: "METACOGNITIVE TRANSLATION & FIELD INTERVENTIONS",
-        beacon_intro: "The laboratory for technological tools to evaluate information rigor and interactive experiences to foster critical thinking.",
-        win1_num: "01 // THE TOOL", win1_title: "POLETHIC BEACON",
-        win1_desc: "Automated conversion and decoding of texts. Our metacognitive translator deconstructs rhetoric, isolates fallacies, and translates the logical structure behind influential discourse.",
-        win1_score_title: "POLETHIC Score", win1_score_desc: "Index of scientific rigor and reliability. Evaluates evidence level, presence of cognitive biases, and pseudo-scientific jargon.",
-        win1_status: "> BEACON ENGINE READY_", win2_num: "02 // THE FIELD", win2_title: "POLETHIC EXPÉRIENCES",
-        win2_desc: "Public intervention tools, interactive workshops, and cognitive self-defense formats to train critical thinking.",
-        win2_li1: "<strong>Conferences & Myth Busting:</strong> Dismantling neuromyths and critical analysis of media discourse.",
-        win2_li2: "<strong>Practical Workshops:</strong> Direct application of the POLETHIC Score and detection of control levers.",
-        win2_status: "FORMATS: CONFERENCES & WORKSHOPS", win2_tag: "TAILOR-MADE",
-        footer_shield: "Professional Protection Shield", footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
-        footer_disc2: "No medical diagnosis or therapy is performed.", footer_legal: "Legal Notice", footer_privacy: "Privacy Policy", footer_cookies: "Cookie Management"
-      }
-    };
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
 
-    function setLanguage(lang) {
+          beacon_module_tag: "// MODULE: INNOVATION & FIELD",
+          beacon_title: "METACOGNITIVE TRANSLATION & FIELD INTERVENTIONS",
+          beacon_intro: "The laboratory for technological tools to evaluate information rigor and interactive experiences to foster critical thinking.",
+
+          win1_num: "01 // THE TOOL",
+          win1_title: "POLETHIC BEACON",
+          win1_desc: "Automated conversion and decoding of texts. Our metacognitive translator deconstructs rhetoric, isolates fallacies, and translates the logical structure behind influential discourse.",
+          win1_score_title: "POLETHIC Score",
+          win1_score_desc: "Index of scientific rigor and reliability. Evaluates evidence level, presence of cognitive biases, and pseudo-scientific jargon.",
+          win1_status: "> BEACON ENGINE READY_",
+
+          win2_num: "02 // THE FIELD",
+          win2_title: "POLETHIC EXPÉRIENCES",
+          win2_desc: "Public intervention tools and cognitive self-defense formats to train critical thinking against false beliefs.",
+          win2_li1: "<strong>Conferences & Myth Busting:</strong> Dismantling neuromyths and critical analysis of media discourse.",
+          win2_li2: "<strong>Practical Workshops:</strong> Direct application of the POLETHIC Score and detection of control levers.",
+          win2_status: "FORMATS: CONFERENCES & WORKSHOPS",
+          win2_tag: "TAILOR-MADE",
+
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management"
+      }
+  };
+
+  function setLanguage(lang) {
       localStorage.setItem('preferred_lang', lang);
+
       document.querySelectorAll('[data-key]').forEach(element => {
-        const key = element.getAttribute('data-key');
-        if (translations[lang] && translations[lang][key]) {
-          element.innerHTML = translations[lang][key];
-        }
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.innerHTML = translations[lang][key];
+          }
       });
+
       document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById(`btn-${lang}`);
       if (activeBtn) activeBtn.classList.add('active');
-    }
+  }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      setupNavTabs();
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  document.addEventListener('DOMContentLoaded', () => {
       const savedLang = localStorage.getItem('preferred_lang') || 'fr';
       setLanguage(savedLang);
-
-      document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
-      document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
-      document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
-    });
+  });
   </script>
 </body>
 </html>
