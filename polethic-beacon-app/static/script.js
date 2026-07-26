@@ -1,7 +1,7 @@
 // Déjalo en "" si Flask sirve el HTML. 
 // Si tu frontend está en otro dominio o servidor, pon la URL de Render (ej: "https://polethic-beacon-app.onrender.com")
-const API_BASE_URL = ""; 
-
+// Cambia esto al inicio de tu script.js:
+const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
 // Current active defense window (default is "news")
 let currentWindow = "news";
 // Tracks the module actually used for the last completed analysis,
