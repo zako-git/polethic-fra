@@ -444,3 +444,23 @@
   </script>
 </body>
 </html>
+
+const API_URL = "https://polethic-beacon-api.onrender.com/api/analyze";
+
+async function analizarTexto(textoUsuario) {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text: textoUsuario })
+    });
+    
+    const data = await response.json();
+    console.log("Respuesta del análisis:", data);
+    return data;
+  } catch (error) {
+    console.error("Error al conectar con el servidor:", error);
+  }
+}
