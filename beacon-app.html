@@ -3,31 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POLETHIC BEACON — Cognitive Self-Defense</title>
+  <title>POLETHIC BEACON — Cognitive Self-Defense Engine</title>
   
-  <!-- Tipografías Cyberpunk/Tech -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-dark: #030712;
+      --bg-dark: #020617;
       --cyan-glow: #00f2fe;
       --cyan-dim: rgba(0, 242, 254, 0.15);
-      --card-bg: rgba(13, 23, 42, 0.75);
-      --card-border: rgba(0, 242, 254, 0.3);
-      --text-main: #f1f5f9;
+      --card-bg: rgba(13, 23, 42, 0.8);
+      --card-border: rgba(0, 242, 254, 0.35);
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --green-action: #10b981;
       --green-glow: rgba(16, 185, 129, 0.4);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--bg-dark);
@@ -40,45 +35,37 @@
       position: relative;
     }
 
-    /* FONDO ESTRELLADO Y MESH CIBERNÉTICO */
+    /* FONDO ESTRELLADO CIBERNÉTICO TURQUESA */
     .cyber-bg {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -2;
       background: 
-        radial-gradient(circle at 50% 20%, rgba(0, 242, 254, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
-        linear-gradient(180deg, #020617 0%, #051329 100%);
+        radial-gradient(circle at 50% 15%, rgba(0, 242, 254, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        linear-gradient(180deg, #020617 0%, #031329 100%);
     }
 
-    /* Estrellas cibernéticas dibujadas con CSS */
     .stars-layer {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       z-index: -1;
       background-image: 
-        radial-gradient(1.5px 1.5px at 20px 30px, #00f2fe, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 150px 180px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 280px 70px, #00f2fe, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 400px 320px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 650px 120px, #00f2fe, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 800px 450px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 950px 180px, #00f2fe, rgba(0,0,0,0));
+        radial-gradient(1.5px 1.5px at 30px 40px, #00f2fe, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 200px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 290px 80px, #00f2fe, rgba(0,0,0,0)),
+        radial-gradient(2.5px 2.5px at 420px 350px, rgba(0,242,254,0.9), rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 680px 140px, #00f2fe, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 820px 480px, #ffffff, rgba(0,0,0,0));
       background-repeat: repeat;
-      background-size: 1000px 600px;
-      opacity: 0.6;
-      animation: twinkle 8s infinite alternate ease-in-out;
+      background-size: 900px 550px;
+      opacity: 0.7;
+      animation: twinkle 6s infinite alternate ease-in-out;
     }
 
     @keyframes twinkle {
-      0% { opacity: 0.4; transform: scale(1); }
-      100% { opacity: 0.8; transform: scale(1.02); }
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 0.9; transform: scale(1.01); }
     }
 
     /* HEADER */
@@ -86,10 +73,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.5rem 3rem;
+      padding: 1.25rem 3rem;
       border-bottom: 1px solid var(--card-border);
-      backdrop-filter: blur(12px);
-      background: rgba(3, 7, 18, 0.6);
+      backdrop-filter: blur(16px);
+      background: rgba(2, 6, 23, 0.7);
     }
 
     .brand-title {
@@ -101,16 +88,10 @@
       text-decoration: none;
     }
 
-    .nav-actions {
-      display: flex;
-      gap: 1.5rem;
-      align-items: center;
-    }
-
     .btn-back {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-family: 'Fira Code', monospace;
       border: 1px solid var(--card-border);
       padding: 0.5rem 1rem;
@@ -121,13 +102,13 @@
     .btn-back:hover {
       color: var(--cyan-glow);
       border-color: var(--cyan-glow);
-      box-shadow: 0 0 10px var(--cyan-dim);
+      box-shadow: 0 0 12px var(--cyan-dim);
     }
 
-    /* MAIN CONTENT AREA */
+    /* CONTENEDOR PRINCIPAL */
     main {
-      max-width: 1000px;
-      margin: 2rem auto;
+      max-width: 950px;
+      margin: 2.5rem auto;
       padding: 0 1.5rem;
       width: 100%;
     }
@@ -141,9 +122,8 @@
       font-family: 'Fira Code', monospace;
       font-size: 2.8rem;
       font-weight: 800;
-      letter-spacing: -1px;
       color: #ffffff;
-      text-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+      text-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
     }
 
     .app-header p {
@@ -152,7 +132,7 @@
       font-size: 1.05rem;
     }
 
-    /* MODULE TABS */
+    /* PESTAÑAS / MÓDULOS */
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -161,7 +141,7 @@
     }
 
     .tab-btn {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.75);
       border: 1px solid var(--card-border);
       color: var(--text-muted);
       padding: 0.85rem 0.5rem;
@@ -170,7 +150,6 @@
       font-size: 0.85rem;
       cursor: pointer;
       transition: all 0.3s ease;
-      text-align: center;
     }
 
     .tab-btn:hover {
@@ -179,37 +158,29 @@
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(16, 185, 129, 0.1));
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.25), rgba(16, 185, 129, 0.15));
       border-color: var(--cyan-glow);
       color: #ffffff;
-      box-shadow: 0 0 15px var(--cyan-dim);
+      box-shadow: 0 0 18px var(--cyan-dim);
       font-weight: 600;
     }
 
-    /* ANALYZER CARD */
+    /* TARJETAS GLASSMORPHISM */
     .glass-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 14px;
       padding: 1.75rem;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
       margin-bottom: 1.5rem;
-      position: relative;
-    }
-
-    .glass-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
     }
 
     textarea {
       width: 100%;
       height: 160px;
-      background: rgba(2, 6, 23, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(2, 6, 23, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       padding: 1rem;
       color: var(--text-main);
@@ -222,10 +193,10 @@
 
     textarea:focus {
       border-color: var(--cyan-glow);
-      box-shadow: 0 0 10px var(--cyan-dim);
+      box-shadow: 0 0 12px var(--cyan-dim);
     }
 
-    /* CONTROLES Y BOTONES */
+    /* BOTONES */
     .action-row {
       display: flex;
       flex-direction: column;
@@ -278,7 +249,7 @@
       color: var(--text-main);
     }
 
-    /* REPORT SECTION */
+    /* REPORTE DE RESULTADOS */
     .report-header {
       display: flex;
       justify-content: space-between;
@@ -292,7 +263,6 @@
       font-family: 'Fira Code', monospace;
       font-size: 0.9rem;
       color: var(--text-muted);
-      letter-spacing: 1px;
     }
 
     .score-badge {
@@ -308,11 +278,12 @@
       font-size: 0.9rem;
       line-height: 1.6;
       color: #cbd5e1;
-      background: rgba(2, 6, 23, 0.5);
+      background: rgba(2, 6, 23, 0.6);
       padding: 1.25rem;
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.05);
       min-height: 100px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -323,9 +294,7 @@
 
   <header>
     <a href="index.html" class="brand-title">POLETHIC_FRA</a>
-    <div class="nav-actions">
-      <a href="index.html" class="btn-back">← BEACON LAB</a>
-    </div>
+    <a href="beacon.html" class="btn-back">← BEACON LAB</a>
   </header>
 
   <main>
@@ -334,15 +303,15 @@
       <p>Cognitive Self-Defense Engine & Metacommunication Analyzer</p>
     </div>
 
-    <!-- SELECTOR DE MÓDULOS -->
+    <!-- PESTAÑAS -->
     <div class="modules-grid">
       <button class="tab-btn active" onclick="selectModule('news', this)">1. FakeNews</button>
       <button class="tab-btn" onclick="selectModule('myth', this)">2. Myth-Buster</button>
-      <button class="tab-btn" onclick="selectModule('identity_spoofing', this)">3. Identity Spoofing</button>
-      <button class="tab-btn" onclick="selectModule('coercion', this)">4. Coercive Filter</button>
+      <button class="tab-btn" onclick="selectModule('identity', this)">3. Identity Spoofing</button>
+      <button class="tab-btn" onclick="selectModule('coercive', this)">4. Coercive Filter</button>
     </div>
 
-    <!-- PANEL PRINCIPAL -->
+    <!-- ÁREA DE ENTRADA -->
     <div class="glass-card">
       <textarea id="userInput" placeholder="Paste media text, political articles, or video links to Beacon-ize it..."></textarea>
       
@@ -355,7 +324,7 @@
       </div>
     </div>
 
-    <!-- PANEL DE RESULTADOS -->
+    <!-- REPORTE -->
     <div class="glass-card">
       <div class="report-header">
         <span class="report-title">FORENSIC METRICS REPORT</span>
@@ -369,8 +338,8 @@
 
   <script>
     let activeModule = "news";
-    // Ajusta aquí la URL de tu API en Render cuando esté desplegado
-    const API_URL = "http://127.0.0.1:5000"; 
+    // Asegúrate de cambiar esto por la URL de tu API pública en Render (ej. https://tu-app.onrender.com)
+    const API_URL = "http://127.0.0.1:5000";
 
     function selectModule(moduleKey, btn) {
       activeModule = moduleKey;
@@ -408,7 +377,7 @@
           scoreBadge.innerText = "Ethic-Score™: ERROR";
         }
       } catch (err) {
-        resultBox.innerText = "Connection error. Make sure the Python Flask server is running.";
+        resultBox.innerText = "Connection error. Make sure your Python Flask/Render server is running.";
         scoreBadge.innerText = "Ethic-Score™: OFFLINE";
       }
     }
