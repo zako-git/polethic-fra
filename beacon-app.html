@@ -1,1 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POLETHIC BEACON — Cognitive Self-Defense</title>
+  
+  <!-- Tipografías Cyberpunk/Tech -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --cyan-glow: #00f2fe;
+      --cyan-dim: rgba(0, 242, 254, 0.15);
+      --card-bg: rgba(13, 23, 42, 0.75);
+      --card-border: rgba(0, 242, 254, 0.3);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --green-action: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* FONDO ESTRELLADO Y MESH CIBERNÉTICO */
+    .cyber-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: 
+        radial-gradient(circle at 50% 20%, rgba(0, 242, 254, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+        linear-gradient(180deg, #020617 0%, #051329 100%);
+    }
+
+    /* Estrellas cibernéticas dibujadas con CSS */
+    .stars-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-image: 
+        radial-gradient(1.5px 1.5px at 20px 30px, #00f2fe, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 150px 180px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 280px 70px, #00f2fe, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 400px 320px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 650px 120px, #00f2fe, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 800px 450px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 950px 180px, #00f2fe, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 1000px 600px;
+      opacity: 0.6;
+      animation: twinkle 8s infinite alternate ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.4; transform: scale(1); }
+      100% { opacity: 0.8; transform: scale(1.02); }
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      background: rgba(3, 7, 18, 0.6);
+    }
+
+    .brand-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cyan-glow);
+      text-shadow: 0 0 12px var(--cyan-glow);
+      text-decoration: none;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .btn-back {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-family: 'Fira Code', monospace;
+      border: 1px solid var(--card-border);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+      color: var(--cyan-glow);
+      border-color: var(--cyan-glow);
+      box-shadow: 0 0 10px var(--cyan-dim);
+    }
+
+    /* MAIN CONTENT AREA */
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    .app-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .app-header h1 {
+      font-family: 'Fira Code', monospace;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+    }
+
+    .app-header p {
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      font-size: 1.05rem;
+    }
+
+    /* MODULE TABS */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.85rem 0.5rem;
+      border-radius: 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--cyan-glow);
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(16, 185, 129, 0.1));
+      border-color: var(--cyan-glow);
+      color: #ffffff;
+      box-shadow: 0 0 15px var(--cyan-dim);
+      font-weight: 600;
+    }
+
+    /* ANALYZER CARD */
+    .glass-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
+    }
+
+    textarea {
+      width: 100%;
+      height: 160px;
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    textarea:focus {
+      border-color: var(--cyan-glow);
+      box-shadow: 0 0 10px var(--cyan-dim);
+    }
+
+    /* CONTROLES Y BOTONES */
+    .action-row {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn-beacon {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      border: none;
+      padding: 1.1rem;
+      border-radius: 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px var(--green-glow);
+    }
+
+    .btn-beacon:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px var(--green-glow);
+      filter: brightness(1.1);
+    }
+
+    .secondary-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-muted);
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--cyan-glow);
+      color: var(--text-main);
+    }
+
+    /* REPORT SECTION */
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+    }
+
+    .report-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    .score-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--cyan-glow);
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .report-content {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      background: rgba(2, 6, 23, 0.5);
+      padding: 1.25rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      min-height: 100px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cyber-bg"></div>
+  <div class="stars-layer"></div>
+
+  <header>
+    <a href="index.html" class="brand-title">POLETHIC_FRA</a>
+    <div class="nav-actions">
+      <a href="index.html" class="btn-back">← BEACON LAB</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="app-header">
+      <h1>POLETHIC BEACON</h1>
+      <p>Cognitive Self-Defense Engine & Metacommunication Analyzer</p>
+    </div>
+
+    <!-- SELECTOR DE MÓDULOS -->
+    <div class="modules-grid">
+      <button class="tab-btn active" onclick="selectModule('news', this)">1. FakeNews</button>
+      <button class="tab-btn" onclick="selectModule('myth', this)">2. Myth-Buster</button>
+      <button class="tab-btn" onclick="selectModule('identity_spoofing', this)">3. Identity Spoofing</button>
+      <button class="tab-btn" onclick="selectModule('coercion', this)">4. Coercive Filter</button>
+    </div>
+
+    <!-- PANEL PRINCIPAL -->
+    <div class="glass-card">
+      <textarea id="userInput" placeholder="Paste media text, political articles, or video links to Beacon-ize it..."></textarea>
+      
+      <div class="action-row">
+        <button class="btn-beacon" onclick="runBeaconAnalysis()">BEACON-IZE</button>
+        <div class="secondary-btns">
+          <button class="btn-secondary" onclick="purgeSession()">PURGE SESSION</button>
+          <button class="btn-secondary" onclick="exportPDF()">EXPORT PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL DE RESULTADOS -->
+    <div class="glass-card">
+      <div class="report-header">
+        <span class="report-title">FORENSIC METRICS REPORT</span>
+        <span class="score-badge" id="scoreDisplay">Ethic-Score™: --</span>
+      </div>
+      <div class="report-content" id="analysisResult">
+        Please introduce some content or attach an image to Beacon-ize.
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let activeModule = "news";
+    // Ajusta aquí la URL de tu API en Render cuando esté desplegado
+    const API_URL = "http://127.0.0.1:5000"; 
+
+    function selectModule(moduleKey, btn) {
+      activeModule = moduleKey;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    async function runBeaconAnalysis() {
+      const textInput = document.getElementById('userInput').value;
+      const resultBox = document.getElementById('analysisResult');
+      const scoreBadge = document.getElementById('scoreDisplay');
+
+      if (!textInput.trim()) {
+        resultBox.innerText = "Please introduce some content to analyze.";
+        return;
+      }
+
+      resultBox.innerText = "Analyzing neural patterns and rhetorical structures...";
+      scoreBadge.innerText = "Ethic-Score™: PROCESSING...";
+
+      try {
+        const response = await fetch(`${API_URL}/analyze`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: textInput, module: activeModule })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          scoreBadge.innerText = `Ethic-Score™: ${data.score}/100`;
+          resultBox.innerText = data.analysis;
+        } else {
+          resultBox.innerText = `Error: ${data.analysis || 'Unable to process audit.'}`;
+          scoreBadge.innerText = "Ethic-Score™: ERROR";
+        }
+      } catch (err) {
+        resultBox.innerText = "Connection error. Make sure the Python Flask server is running.";
+        scoreBadge.innerText = "Ethic-Score™: OFFLINE";
+      }
+    }
+
+    function purgeSession() {
+      document.getElementById('userInput').value = '';
+      document.getElementById('analysisResult').innerText = "Please introduce some content or attach an image to Beacon-ize.";
+      document.getElementById('scoreDisplay').innerText = "Ethic-Score™: --";
+    }
+
+    async function exportPDF() {
+      const scoreText = document.getElementById('scoreDisplay').innerText;
+      const analysisText = document.getElementById('analysisResult').innerText;
+
+      try {
+        const response = await fetch(`${API_URL}/export_pdf`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ score: scoreText, analysis: analysisText, module: activeModule })
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'Polethic_Beacon_Report.pdf';
+          a.click();
+        }
+      } catch (err) {
+        alert("Could not generate PDF report.");
+      }
+    }
+  </script>
+</body>
+</html>
