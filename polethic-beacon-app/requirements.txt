@@ -6,3 +6,4 @@ pillow
 reportlab
 python-dotenv
 gunicorn
+flask-cors
