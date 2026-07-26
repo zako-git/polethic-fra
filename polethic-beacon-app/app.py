@@ -1,12 +1,9 @@
-from flask import Flask, render_template, request, jsonify, send_file
-from flask_cors import CORS # <-- 1. Añadir esto
-
-app = Flask(__name__)
-CORS(app) # <-- 2. Añadir esto justo debajo de app = Flask(__name__)import os
+import os
 import re
 import sqlite3
 import io
 from flask import Flask, render_template, request, jsonify, send_file
+from flask_cors import CORS  # Habilitar CORS
 from huggingface_hub import InferenceClient
 from youtube_transcript_api import YouTubeTranscriptApi
 from PIL import Image
@@ -19,10 +16,11 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
-# Load environment variables from .env (HF_TOKEN must be defined there)
+# Load environment variables from .env
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)  # Permite que tu botón conecte desde cualquier frontend/dominio
 
 DATABASE_NAME = "beacon.db"
 
@@ -195,7 +193,7 @@ def analyze():
     formal_module_name = module_names.get(module, "General Content Audit")
 
     if client:
-        # 1. BASE INSTRUCTIONS (Common to all modules - sets the strict structural format)
+        # 1. BASE INSTRUCTIONS (Common to all modules)
         system_instructions = (
             f"You are POLETHIC BEACON, a cognitive self-defense expert auditing content for the active specialized module: '{formal_module_name}'.\n"
             "Your core task is to critically analyze the provided text and identify actual ethical threats, structural risks, pseudoscience, or manipulation.\n\n"
@@ -226,7 +224,7 @@ def analyze():
             "- CRITICAL: Only assign a penalty (Score C, D, or E) if you detect actual systemic threats or manipulation targeted by the active module.\n"
         )
 
-        # 2. MODULE-SPECIFIC CRITERIA (Injecting unique forensic filters)
+        # 2. MODULE-SPECIFIC CRITERIA
         if module == "news":
             system_instructions += (
                 "\n\nSPECIALIZED FAKENEWS CRITERIA (Polarization & Hype Tracking):\n"
@@ -279,25 +277,18 @@ def analyze():
             )
             raw_text = response.choices[0].message.content
 
-            # 1. Target the score match first as it is highly stable
             score_match = re.search(r"<score>\s*(\d+)\s*</score>", raw_text, re.IGNORECASE)
-
-            # 2. Look for the canonical full tag structure
             analysis_match = re.search(r"<analysis>(.*?)</analysis>", raw_text, re.DOTALL | re.IGNORECASE)
 
             if analysis_match and score_match:
                 llm_score = int(score_match.group(1))
                 final_report = analysis_match.group(1).strip()
             elif score_match:
-                # OPTIMIZED FALLBACK: If the model provided a score but forgot to close </analysis>
                 llm_score = int(score_match.group(1))
-
-                # Strip out raw opening tags and the score block to clean up the user report text
                 report_clean = re.sub(r"<analysis>", "", raw_text, flags=re.IGNORECASE)
                 report_clean = re.sub(r"<score>.*?</score>", "", report_clean, flags=re.DOTALL | re.IGNORECASE)
                 final_report = report_clean.strip()
             else:
-                # Legacy layout fallback
                 fallback_score = re.search(r"SCORE:\s*(\d+)", raw_text, re.IGNORECASE)
                 if fallback_score:
                     llm_score = int(fallback_score.group(1))
@@ -479,4 +470,5 @@ def export_pdf():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000, threaded=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
