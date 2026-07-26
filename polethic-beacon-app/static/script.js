@@ -1,9 +1,7 @@
 // Déjalo en "" si Flask sirve el HTML. 
-// Si tu frontend está en otro lugar, pon la URL de Render (ej: "https://polethic-beacon.onrender.com")
+// Si tu frontend está en otro dominio o servidor, pon la URL de Render (ej: "https://polethic-beacon-app.onrender.com")
 const API_BASE_URL = ""; 
 
-// Y en tus fetch cambias:
-response = await fetch(`${API_BASE_URL}/analyze`, { ... });
 // Current active defense window (default is "news")
 let currentWindow = "news";
 // Tracks the module actually used for the last completed analysis,
@@ -160,12 +158,12 @@ async function analyze() {
             formData.append("module", currentWindow);
             formData.append("file", file);
 
-            response = await fetch("/analyze", {
+            response = await fetch(`${API_BASE_URL}/analyze`, {
                 method: "POST",
                 body: formData
             });
         } else {
-            response = await fetch("/analyze", {
+            response = await fetch(`${API_BASE_URL}/analyze`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text: textInput, module: currentWindow })
@@ -255,7 +253,7 @@ function triggerPDFDownload() {
         pdfButton.disabled = true;
     }
 
-    fetch('/export_pdf', {
+    fetch(`${API_BASE_URL}/export_pdf`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -279,7 +277,6 @@ function triggerPDFDownload() {
     })
     .catch(err => {
         console.error("Error triggering PDF:", err);
-        // Surface the failure to the user instead of failing silently
         alert("PDF export failed: " + err.message);
     })
     .finally(() => {
