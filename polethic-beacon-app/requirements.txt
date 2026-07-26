@@ -1,1 +1,8 @@
-
+Flask
+huggingface_hub
+youtube_transcript_api
+pytesseract
+pillow
+reportlab
+python-dotenv
+gunicorn
