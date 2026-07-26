@@ -1,4 +1,8 @@
-import os
+from flask import Flask, render_template, request, jsonify, send_file
+from flask_cors import CORS # <-- 1. Añadir esto
+
+app = Flask(__name__)
+CORS(app) # <-- 2. Añadir esto justo debajo de app = Flask(__name__)import os
 import re
 import sqlite3
 import io
