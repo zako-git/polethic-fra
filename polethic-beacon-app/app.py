@@ -213,7 +213,7 @@ def analyze():
                 response = client.chat.completions.create(
                     model="Qwen/Qwen2.5-Coder-32B-Instruct",  # O "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
                     messages=messages,
-                    max_tokens=1200
+                    max_tokens=1000
                 )
                 raw_text = response.choices[0].message.content
 
