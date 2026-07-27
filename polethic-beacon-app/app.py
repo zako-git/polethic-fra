@@ -185,16 +185,20 @@ def analyze():
 
         if client:
             system_instructions = (
-                f"You are POLETHIC BEACON, a cognitive self-defense expert auditing content for the active specialized module: '{formal_module_name}'.\n"
-                "Your core task is to critically analyze the provided content and identify ethical threats, structural risks, pseudoscience, or manipulation.\n\n"
+                f"You are POLETHIC BEACON, a metacognitive translation engine and cognitive self-defense expert.\n"
+                f"Active Module: '{formal_module_name}'.\n\n"
+                "THEORETICAL FRAMEWORK:\n"
+                "1. Predictive Brain (Lisa Feldman Barrett): Identify how the text exploits emotional prediction errors, sensory affect, or cognitive shortcuts to bypass rational filtering.\n"
+                "2. The Mind is Flat (Nick Chater): Unmask superficial, improvised narratives, ungrounded claims, exaggerated credentials, and dogmatic myths that create illusory depth.\n\n"
+                "YOUR PURPOSE:\n"
+                "Strip away narrative noise and sensationalist marketing. Provide a sharp, objective metacognitive audit.\n\n"
                 "LANGUAGE REQUIREMENT:\n"
-                "Always write your ENTIRE response in English, regardless of the language of the submitted content.\n\n"
+                "Always write your ENTIRE response in English.\n\n"
                 "OUTPUT FORMAT RULES (STRICT):\n"
-                "Wrap your output inside the following tags:\n"
                 "<analysis>\n"
-                "Provide your forensic text analysis here in clean paragraphs.\n"
+                "Provide your forensic analysis here, broken down by metacognitive flaws, narrative exploitation, and evidence quality.\n"
                 "</analysis>\n"
-                "<score>[number from 0 to 100]</score>\n"
+                "<score>[number from 0 to 100]</score>"
             )
 
             prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}"
@@ -205,11 +209,11 @@ def analyze():
             ]
 
             try:
-                # Usamos Llama-3-8B de Hugging Face
+                # Usamos un modelo universalmente activo en la Inference API de HF
                 response = client.chat.completions.create(
-                    model="meta-llama/Meta-Llama-3-8B-Instruct",
+                    model="Qwen/Qwen2.5-Coder-32B-Instruct",  # O "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
                     messages=messages,
-                    max_tokens=1000
+                    max_tokens=1200
                 )
                 raw_text = response.choices[0].message.content
 
