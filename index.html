@@ -203,19 +203,19 @@
           
           card1_title: "L'OBSERVATOIRE",
           card1_desc: "Notre centre d'investigation : veille critique, décryptage de l'actualité et analyse des dérives sectaires.",
-          card1_link: "Consulter les enquêtes →",
+          card1_link: "Consulter les enquêtes &rarr;",
           
           card2_title: "PSICOMUSÉE",
           card2_desc: "Parcours immersif et pédagogique pour explorer les concepts fondamentaux de la psychologie et de la culture scientifique.",
-          card2_link: "Explorer le Musée →",
+          card2_link: "Explorer le Musée &rarr;",
           
           card3_title: "BEACON LAB",
           card3_desc: "Laboratoire d'expérimentation, outillage pratique et méthodologies de cartographie de la pensée.",
-          card3_link: "Accéder au Lab →",
+          card3_link: "Accéder au Lab &rarr;",
           
           card4_title: "NOTRE CAP",
           card4_desc: "L'orientation éthique, la vision et les engagements scientifiques qui guident l'action de notre association.",
-          card4_link: "Maintenir le cap →",
+          card4_link: "Maintenir le cap &rarr;",
 
           footer_shield: "Bouclier de Protection Professionnelle",
           footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
@@ -239,7 +239,7 @@
           
           word_penser: "pensar",
           tt_penser_title: "PENSAR:",
-          tt_penser_desc: "Juicio personal o interpretación subjetiva no demostrada.",
+          tt_penser_desc: "Juicio personal o interpretación subjective no demostrada.",
           
           word_or: "o",
           
@@ -252,19 +252,19 @@
           
           card1_title: "OBSERVATORIO",
           card1_desc: "Nuestro centro de investigación: vigilancia crítica, análisis de actualidad y detección de derivas sectarias.",
-          card1_link: "Consultar investigaciones →",
+          card1_link: "Consultar investigaciones &rarr;",
           
           card2_title: "PSICOMUSEO",
           card2_desc: "Recorrido inmersivo y pedagógico para explorar los conceptos fundamentales de la psicología y la cultura científica.",
-          card2_link: "Explorar el Museo →",
+          card2_link: "Explorar el Museo &rarr;",
           
           card3_title: "BEACON LAB",
           card3_desc: "Laboratorio de experimentación, herramientas prácticas y metodologías de mapeo del pensamiento.",
-          card3_link: "Acceder al Lab →",
+          card3_link: "Acceder al Lab &rarr;",
           
           card4_title: "NUESTRO RUMBO",
           card4_desc: "La orientación ética, visión y compromisos científicos que guían la acción de nuestra asociación.",
-          card4_link: "Mantener el rumbo →",
+          card4_link: "Mantener el rumbo &rarr;",
 
           footer_shield: "Escudo de Protección Profesional",
           footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
@@ -301,19 +301,19 @@
           
           card1_title: "OBSERVATORY",
           card1_desc: "Our investigation center: critical monitoring, news analysis, and tracking of sectarian drifts.",
-          card1_link: "View investigations →",
+          card1_link: "View investigations &rarr;",
           
           card2_title: "PSYCHOMUSEUM",
           card2_desc: "An immersive and educational journey to explore core concepts of psychology and scientific culture.",
-          card2_link: "Explore the Museum →",
+          card2_link: "Explore the Museum &rarr;",
           
           card3_title: "BEACON LAB",
           card3_desc: "Experimental laboratory, practical toolkit, and thought mapping methodologies.",
-          card3_link: "Access the Lab →",
+          card3_link: "Access the Lab &rarr;",
           
           card4_title: "OUR COURSE",
           card4_desc: "Ethical direction, vision, and scientific commitments guiding our association's actions.",
-          card4_link: "Maintain course →",
+          card4_link: "Maintain course &rarr;",
 
           footer_shield: "Professional Protection Shield",
           footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
@@ -325,12 +325,15 @@
   };
 
   function setLanguage(lang) {
+      if (!translations[lang]) lang = 'fr'; // Fallback a francés por seguridad
+      
       localStorage.setItem('preferred_lang', lang);
+      document.documentElement.lang = lang; // Actualiza el lang="fr/es/en" en la etiqueta <html>
 
       document.querySelectorAll('[data-key]').forEach(element => {
           const key = element.getAttribute('data-key');
           if (translations[lang] && translations[lang][key]) {
-              element.textContent = translations[lang][key];
+              element.innerHTML = translations[lang][key]; // Usamos innerHTML para renderizar entiddades HTML como &rarr;
           }
       });
 
@@ -344,7 +347,11 @@
   document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
 
   document.addEventListener('DOMContentLoaded', () => {
-      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
+      // Prioridad: Parametros URL -> LocalStorage -> Idioma predeterminado (FR)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlLang = urlParams.get('lang');
+      const savedLang = urlLang || localStorage.getItem('preferred_lang') || 'fr';
+      
       setLanguage(savedLang);
   });
   </script>
