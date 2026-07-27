@@ -400,107 +400,126 @@
   </main>
 
   <script>
-    let activeModule = "news";
-    const API_URL = "http://127.0.0.1:5000";
+  let activeModule = "news";
+  
+  // Detección automática del Backend (Local vs Producción)
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  const API_URL = isLocal 
+    ? "http://127.0.0.1:5000" 
+    : "https://TU-APP-EN-RENDER.onrender.com"; // <-- Sustituye esto cuando despliegues en Render
 
-    function selectModule(moduleKey, btn) {
-      activeModule = moduleKey;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  function selectModule(moduleKey, btn) {
+    activeModule = moduleKey;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function handleImageSelected(input) {
+    const statusSpan = document.getElementById('fileStatus');
+    if (input.files && input.files[0]) {
+      statusSpan.innerHTML = `📷 ${input.files[0].name} <span style="cursor:pointer; color:#ef4444; margin-left:8px;" onclick="clearImage(event)">✖</span>`;
+    } else {
+      statusSpan.innerText = "";
+    }
+  }
+
+  function clearImage(e) {
+    if(e) e.stopPropagation();
+    const fileInput = document.getElementById('imageUpload');
+    fileInput.value = '';
+    document.getElementById('fileStatus').innerText = '';
+  }
+
+  async function runBeaconAnalysis() {
+    const textInput = document.getElementById('userInput').value;
+    const resultBox = document.getElementById('analysisResult');
+    const scoreBadge = document.getElementById('scoreDisplay');
+    const fileInput = document.getElementById('imageUpload');
+
+    if (!textInput.trim() && (!fileInput.files || fileInput.files.length === 0)) {
+      resultBox.innerText = "Please introduce some content or attach an image to analyze.";
+      return;
     }
 
-    function handleImageSelected(input) {
-      const statusSpan = document.getElementById('fileStatus');
-      if (input.files && input.files[0]) {
-        statusSpan.innerText = `📷 ${input.files[0].name}`;
+    resultBox.innerText = "Analyzing neural patterns, predictive brain loops, and rhetorical structures...";
+    scoreBadge.innerText = "Ethic-Score™: PROCESSING...";
+
+    try {
+      let response;
+
+      // Envío con Imagen + Texto
+      if (fileInput.files && fileInput.files[0]) {
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]);
+        formData.append('text', textInput);
+        formData.append('module', activeModule);
+
+        response = await fetch(`${API_URL}/analyze_image`, {
+          method: 'POST',
+          body: formData
+        });
       } else {
-        statusSpan.innerText = "";
-      }
-    }
-
-    async function runBeaconAnalysis() {
-      const textInput = document.getElementById('userInput').value;
-      const resultBox = document.getElementById('analysisResult');
-      const scoreBadge = document.getElementById('scoreDisplay');
-      const fileInput = document.getElementById('imageUpload');
-
-      if (!textInput.trim() && (!fileInput.files || fileInput.files.length === 0)) {
-        resultBox.innerText = "Please introduce some content or attach an image to analyze.";
-        return;
-      }
-
-      resultBox.innerText = "Analyzing neural patterns and rhetorical structures...";
-      scoreBadge.innerText = "Ethic-Score™: PROCESSING...";
-
-      try {
-        let response;
-
-        // Si se seleccionó una imagen, enviamos como FormData
-        if (fileInput.files && fileInput.files[0]) {
-          const formData = new FormData();
-          formData.append('image', fileInput.files[0]);
-          formData.append('text', textInput);
-          formData.append('module', activeModule);
-
-          response = await fetch(`${API_URL}/analyze_image`, {
-            method: 'POST',
-            body: formData
-          });
-        } else {
-          // Si solo es texto, enviamos JSON estándar
-          response = await fetch(`${API_URL}/analyze`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: textInput, module: activeModule })
-          });
-        }
-
-        const data = await response.json();
-        
-        if (response.ok) {
-          scoreBadge.innerText = `Ethic-Score™: ${data.score}/100`;
-          resultBox.innerText = data.analysis;
-        } else {
-          resultBox.innerText = `Error: ${data.analysis || 'Unable to process audit.'}`;
-          scoreBadge.innerText = "Ethic-Score™: ERROR";
-        }
-      } catch (err) {
-        resultBox.innerText = "Connection error. Make sure your Python Flask/Render server is running.";
-        scoreBadge.innerText = "Ethic-Score™: OFFLINE";
-      }
-    }
-
-    function purgeSession() {
-      document.getElementById('userInput').value = '';
-      document.getElementById('imageUpload').value = '';
-      document.getElementById('fileStatus').innerText = '';
-      document.getElementById('analysisResult').innerText = "Please introduce some content or attach an image to Beacon-ize.";
-      document.getElementById('scoreDisplay').innerText = "Ethic-Score™: --";
-    }
-
-    async function exportPDF() {
-      const scoreText = document.getElementById('scoreDisplay').innerText;
-      const analysisText = document.getElementById('analysisResult').innerText;
-
-      try {
-        const response = await fetch(`${API_URL}/export_pdf`, {
+        // Envío solo Texto
+        response = await fetch(`${API_URL}/analyze`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ score: scoreText, analysis: analysisText, module: activeModule })
+          body: JSON.stringify({ text: textInput, module: activeModule })
         });
-
-        if (response.ok) {
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'Polethic_Beacon_Report.pdf';
-          a.click();
-        }
-      } catch (err) {
-        alert("Could not generate PDF report.");
       }
+
+      const data = await response.json();
+
+      if (response.ok) {
+        scoreBadge.innerText = `Ethic-Score™: ${data.score}/100`;
+        resultBox.innerText = data.analysis;
+      } else {
+        resultBox.innerText = `Error: ${data.analysis || 'Unable to process forensic audit.'}`;
+        scoreBadge.innerText = "Ethic-Score™: ERROR";
+      }
+    } catch (err) {
+      resultBox.innerText = "Connection error. Make sure your Python Flask/Render server is live and running.";
+      scoreBadge.innerText = "Ethic-Score™: OFFLINE";
     }
-  </script>
+  }
+
+  function purgeSession() {
+    document.getElementById('userInput').value = '';
+    clearImage();
+    document.getElementById('analysisResult').innerText = "Please introduce some content or attach an image to Beacon-ize.";
+    document.getElementById('scoreDisplay').innerText = "Ethic-Score™: --";
+  }
+
+  async function exportPDF() {
+    const scoreText = document.getElementById('scoreDisplay').innerText;
+    const analysisText = document.getElementById('analysisResult').innerText;
+
+    if (scoreText.includes("--") || scoreText.includes("OFFLINE")) {
+      alert("Please run a valid analysis before exporting.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/export_pdf`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score: scoreText, analysis: analysisText, module: activeModule })
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Polethic_Beacon_${activeModule}_Report.pdf`;
+        a.click();
+      } else {
+        throw new Error("Server PDF generation failed");
+      }
+    } catch (err) {
+      // Fallback a impresión nativa del navegador si la API falla o no implementa PDF todavía
+      window.print();
+    }
+  }
+</script>
 </body>
 </html>
