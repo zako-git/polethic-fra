@@ -2,21 +2,21 @@ import os
 import re
 import sqlite3
 import io
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
-from huggingface_hub import InferenceClient
 from youtube_transcript_api import YouTubeTranscriptApi
 from PIL import Image
-import pytesseract
 from dotenv import load_dotenv
 
-# --- Critical reportlab imports for the PDF engine ---
+# Importaciones para el motor de PDF
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 
-# Load environment variables
+# API de Google Gemini (Multimodal nativo)
+from google import genai
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -24,9 +24,9 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 DATABASE_NAME = "beacon.db"
 
-# Secure Token Configuration
-HF_TOKEN = os.environ.get("HF_TOKEN")
-client = InferenceClient(api_key=HF_TOKEN) if HF_TOKEN else None
+# Inicialización de Gemini Client
+gemini_api_key = os.environ.get("GEMINI_API_KEY")
+gemini_client = genai.Client(api_key=gemini_api_key) if gemini_api_key else None
 
 
 def get_db_connection():
@@ -36,7 +36,6 @@ def get_db_connection():
 
 
 def init_db():
-    """Inicializa la base de datos y crea las tablas e índices si no existen."""
     try:
         conn = get_db_connection()
         conn.execute("""
@@ -79,40 +78,13 @@ def extract_transcript(url):
         return None
 
 
-def extract_text_from_image(file_storage):
-    """Runs OCR on an uploaded image file and returns the extracted text."""
-    try:
-        image = Image.open(file_storage.stream)
-        text = pytesseract.image_to_string(image, lang="eng+spa+fra")
-        return text.strip()
-    except Exception as e:
-        print(f"[extract_text_from_image] error: {e}")
-        return None
-
-
 def apply_local_rules(module_key, content):
     flags = []
     penalty_total = 0
-
-    if not content:
+    if not content or not isinstance(content, str):
         return penalty_total, flags
 
     lowered_content = content.lower()
-
-    CONTEXT_GATED_KEYWORDS = {
-        "trauma bond",
-        "shadow work",
-        "trabajo de sombra",
-        "reparent your inner child",
-    }
-
-    COMMERCIAL_CONTEXT_SIGNALS = [
-        "program", "programa", "course", "curso", "buy now", "compra ahora",
-        "sign up", "apúntate", "exclusive method", "método exclusivo",
-        "in just", "en solo", "limited offer", "oferta limitada",
-        "coaching", "bootcamp", "masterclass", "invierte", "invest now"
-    ]
-
     try:
         conn = get_db_connection()
         rules = conn.execute(
@@ -121,24 +93,16 @@ def apply_local_rules(module_key, content):
         ).fetchall()
         conn.close()
 
-        has_commercial_context = any(signal in lowered_content for signal in COMMERCIAL_CONTEXT_SIGNALS)
-
         for rule in rules:
-            keyword_lower = rule["keyword"].lower()
-            if keyword_lower not in lowered_content:
-                continue
-
-            if keyword_lower in CONTEXT_GATED_KEYWORDS and not has_commercial_context:
-                continue
-
-            penalty_total += rule["penalty_points"]
-            flags.append({
-                "keyword": rule["keyword"],
-                "category": rule["risk_category"],
-                "penalty": rule["penalty_points"]
-            })
+            if rule["keyword"].lower() in lowered_content:
+                penalty_total += rule["penalty_points"]
+                flags.append({
+                    "keyword": rule["keyword"],
+                    "category": rule["risk_category"],
+                    "penalty": rule["penalty_points"]
+                })
     except Exception as e:
-        print(f"[apply_local_rules] Warning/Skipped: {e}")
+        print(f"[apply_local_rules] Warning: {e}")
 
     return penalty_total, flags
 
@@ -149,7 +113,7 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
         conn.execute(
             """INSERT INTO audits (module_key, source_type, raw_content, ethic_score, diagnostic_report)
                VALUES (?, ?, ?, ?, ?)""",
-            (module_key, source_type, raw_content, ethic_score, diagnostic_report)
+            (module_key, source_type, str(raw_content), ethic_score, diagnostic_report)
         )
         conn.commit()
         conn.close()
@@ -165,6 +129,7 @@ def index():
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
+        # Petición JSON o FormData
         if request.is_json:
             data = request.get_json() or {}
             user_input = data.get("text", "").strip()
@@ -177,79 +142,69 @@ def analyze():
 
         final_content = user_input
         source_type = "plain_text"
+        image_obj = None
 
+        # Procesar YouTube
         if user_input and ("youtube.com" in user_input or "youtu.be" in user_input):
             transcript = extract_transcript(user_input)
             if transcript:
                 final_content = transcript
                 source_type = "video_transcript"
 
+        # Procesar Imagen con Pillow (Sin necesidad de Tesseract)
         if file:
-            ocr_text = extract_text_from_image(file)
-            if ocr_text:
-                final_content = ocr_text
-                source_type = "image_screenshot"
-            else:
-                return jsonify({
-                    "score": 0,
-                    "analysis": "The image was received, but no readable text could be extracted from it (OCR failed).",
-                    "source_type": "image_screenshot",
-                    "local_flags": []
-                })
+            try:
+                image_obj = Image.open(io.BytesIO(file.read()))
+                source_type = "image_file"
+            except Exception as img_err:
+                print(f"Error procesando imagen: {img_err}")
 
-        if not final_content:
+        if not final_content and not image_obj:
             return jsonify({
                 "score": 0,
-                "analysis": "No content was provided to analyze.",
+                "analysis": "No content or image was provided to analyze.",
                 "source_type": source_type,
                 "local_flags": []
-            })
+            }), 400
 
-        # LAYER 1: Local deterministic rules
-        local_penalty, local_flags = apply_local_rules(module, final_content)
+        # Reglas locales si hay texto
+        local_penalty, local_flags = apply_local_rules(module, final_content if isinstance(final_content, str) else "")
 
-        # LAYER 2: LLM synthesis
-        llm_score = 0
-        final_report = "Error: Analytical engine unable to process request. Check HF_TOKEN configuration."
+        # Análisis con Gemini (Multimodal: Texto + Imagen)
+        llm_score = 30
+        final_report = ""
 
         module_names = {
             "news": "FakeNews (Polarization & Hype Tracking)",
             "myth": "Myth-Buster (Pseudoscience & Dogmatic Verification)",
-            "identity_spoofing": "Identity Spoofing (Inflated Credentials & Professional Intrusion)",
-            "coercion": "Coercive Filter (Information Control & Predatory Rhetoric)"
+            "identity": "Identity Spoofing (Inflated Credentials)",
+            "coercive": "Coercive Filter (Information Control & Predatory Rhetoric)"
         }
         formal_module_name = module_names.get(module, "General Content Audit")
 
-        if client:
-            system_instructions = (
-                f"You are POLETHIC BEACON, a cognitive self-defense expert auditing content for the active specialized module: '{formal_module_name}'.\n"
-                "Your core task is to critically analyze the provided text and identify actual ethical threats, structural risks, pseudoscience, or manipulation.\n\n"
-                "LANGUAGE REQUIREMENT:\n"
-                "Always write your ENTIRE response in English, regardless of the language of the submitted content.\n\n"
+        if gemini_client:
+            prompt_system = (
+                f"You are POLETHIC BEACON, a cognitive self-defense expert auditing content for module: '{formal_module_name}'.\n"
+                "Analyze the provided text and/or image content and identify actual ethical threats, structural risks, pseudoscience, or manipulation.\n\n"
+                "LANGUAGE REQUIREMENT: Always write your ENTIRE response in English.\n\n"
                 "OUTPUT FORMAT RULES (STRICT):\n"
-                "You MUST wrap your analysis inside the following XML-like tags. Do not add any text outside of these tags.\n"
-                "Format your output exactly like this:\n"
-                "<analysis>\n"
-                "Provide your forensic text analysis here in clean paragraphs. Point out specific issues if they exist.\n"
-                "</analysis>\n"
-                "<score>[number]</score>\n\n"
-                "CRITICAL SCORE INSTRUCTIONS:\n"
-                "- Replace '[number]' inside <score></score> with a single integer from 0 to 100.\n"
-                "- Map your score mentally: 0-20 (Safe/A), 21-40 (B), 41-60 (C), 61-80 (D), 81-100 (E/Dangerous).\n"
+                "Wrap your output in XML tags like this:\n"
+                "<analysis>\nWrite your forensic analysis here in clear paragraphs.\n</analysis>\n"
+                "<score>[number from 0 to 100]</score>"
             )
 
-            messages = [
-                {"role": "system", "content": system_instructions},
-                {"role": "user", "content": f"Content to audit:\n{final_content}"}
-            ]
+            contents = [prompt_system]
+            if final_content:
+                contents.append(f"Text content:\n{final_content}")
+            if image_obj:
+                contents.append(image_obj)
 
             try:
-                response = client.chat.completions.create(
-                    model="meta-llama/Meta-Llama-3-8B-Instruct",
-                    messages=messages,
-                    max_tokens=1000
+                response = gemini_client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=contents
                 )
-                raw_text = response.choices[0].message.content
+                raw_text = response.text
 
                 score_match = re.search(r"<score>\s*(\d+)\s*</score>", raw_text, re.IGNORECASE)
                 analysis_match = re.search(r"<analysis>(.*?)</analysis>", raw_text, re.DOTALL | re.IGNORECASE)
@@ -259,25 +214,20 @@ def analyze():
                     final_report = analysis_match.group(1).strip()
                 elif score_match:
                     llm_score = int(score_match.group(1))
-                    report_clean = re.sub(r"<analysis>", "", raw_text, flags=re.IGNORECASE)
-                    report_clean = re.sub(r"<score>.*?</score>", "", report_clean, flags=re.DOTALL | re.IGNORECASE)
-                    final_report = report_clean.strip()
+                    final_report = raw_text
                 else:
                     llm_score = 35
                     final_report = raw_text
 
             except Exception as e:
-                print(f"[HuggingFace API Error]: {e}")
-                final_report = f"Audit Completed (Fallback mode): Analysis processed. Details: {str(e)}"
+                print(f"[Gemini API Error]: {e}")
+                final_report = f"Audit Completed (Fallback mode). Error: {str(e)}"
                 llm_score = 40
         else:
-            final_report = f"[DEMO AUDIT MODE - Set HF_TOKEN in environment]\nAnalyzed input under module '{formal_module_name}'.\nDetected potential structural or rhetorical manipulation."
+            final_report = f"[DEMO AUDIT MODE - Set GEMINI_API_KEY in environment]\nAnalyzed input under module '{formal_module_name}'."
             llm_score = 30
 
-        if llm_score is None:
-            combined_score = 0
-        else:
-            combined_score = max(0, min(100, llm_score + local_penalty))
+        combined_score = max(0, min(100, llm_score + local_penalty))
 
         if local_flags:
             flags_summary = "\n\n---\nLocal Pattern Flags Detected:\n" + "\n".join(
@@ -285,7 +235,7 @@ def analyze():
             )
             final_report += flags_summary
 
-        save_audit(module, source_type, final_content, combined_score, final_report)
+        save_audit(module, source_type, final_content or "Image Uploaded", combined_score, final_report)
 
         return jsonify({
             "score": combined_score,
@@ -319,18 +269,10 @@ def export_pdf():
 
         story = []
         try:
-            numeric_score = int(score)
+            numeric_score = int(re.sub(r"[^\d]", "", str(score)))
         except ValueError:
             numeric_score = 0
 
-        def get_ethic_letter(value):
-            if value <= 20: return "A"
-            if value <= 40: return "B"
-            if value <= 60: return "C"
-            if value <= 80: return "D"
-            return "E"
-
-        ethic_letter = get_ethic_letter(numeric_score)
         accent_color = colors.HexColor("#ff4d6d") if numeric_score >= 81 else (colors.HexColor("#f0883e") if numeric_score >= 41 else colors.HexColor("#2ea44f"))
 
         title_style = ParagraphStyle('DocTitle', fontName='Helvetica-Bold', fontSize=22, leading=26, textColor=colors.HexColor("#1e293b"))
@@ -338,7 +280,7 @@ def export_pdf():
         body_style = ParagraphStyle('ReportBody', fontName='Helvetica', fontSize=10, leading=15, textColor=colors.HexColor("#334155"))
 
         story.append(Paragraph("POLETHIC BEACON — FORENSIC REPORT", title_style))
-        story.append(Paragraph(f"Ethic-Score™: [{ethic_letter}] ({numeric_score}/100)", score_style))
+        story.append(Paragraph(f"Ethic-Score™: {numeric_score}/100", score_style))
         story.append(Spacer(1, 15))
 
         for p_text in analysis.split('\n'):
@@ -359,7 +301,6 @@ def export_pdf():
         return jsonify({"error": str(e)}), 500
 
 
-# Inicializar base de datos al arrancar
 init_db()
 
 if __name__ == "__main__":
