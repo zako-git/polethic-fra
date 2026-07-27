@@ -197,7 +197,7 @@
       box-shadow: 0 0 12px var(--cyan-dim);
     }
 
-    /* BARRA INFERIOR DEL TEXTAREA (DONDE VA EL ICONO) */
+    /* BARRA INFERIOR DEL TEXTAREA */
     .textarea-toolbar {
       display: flex;
       justify-content: space-between;
@@ -402,11 +402,11 @@
   <script>
   let activeModule = "news";
   
-  // Detección automática del Backend (Local vs Producción)
+  // Detección automática del Backend (Local vs Producción en Render)
   const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
   const API_URL = isLocal 
     ? "http://127.0.0.1:5000" 
-    : "https://TU-APP-EN-RENDER.onrender.com"; // <-- Sustituye esto cuando despliegues en Render
+    : "https://polethic-beacon-api.onrender.com";
 
   function selectModule(moduleKey, btn) {
     activeModule = moduleKey;
@@ -445,27 +445,20 @@
     scoreBadge.innerText = "Ethic-Score™: PROCESSING...";
 
     try {
-      let response;
-
-      // Envío con Imagen + Texto
+      const formData = new FormData();
+      
+      // Enviamos el archivo con la clave 'file' que busca app.py
       if (fileInput.files && fileInput.files[0]) {
-        const formData = new FormData();
-        formData.append('image', fileInput.files[0]);
-        formData.append('text', textInput);
-        formData.append('module', activeModule);
-
-        response = await fetch(`${API_URL}/analyze_image`, {
-          method: 'POST',
-          body: formData
-        });
-      } else {
-        // Envío solo Texto
-        response = await fetch(`${API_URL}/analyze`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: textInput, module: activeModule })
-        });
+        formData.append('file', fileInput.files[0]);
       }
+      
+      formData.append('text', textInput);
+      formData.append('module', activeModule);
+
+      const response = await fetch(`${API_URL}/analyze`, {
+        method: 'POST',
+        body: formData
+      });
 
       const data = await response.json();
 
@@ -477,6 +470,7 @@
         scoreBadge.innerText = "Ethic-Score™: ERROR";
       }
     } catch (err) {
+      console.error("Error de conexión:", err);
       resultBox.innerText = "Connection error. Make sure your Python Flask/Render server is live and running.";
       scoreBadge.innerText = "Ethic-Score™: OFFLINE";
     }
@@ -493,7 +487,7 @@
     const scoreText = document.getElementById('scoreDisplay').innerText;
     const analysisText = document.getElementById('analysisResult').innerText;
 
-    if (scoreText.includes("--") || scoreText.includes("OFFLINE")) {
+    if (scoreText.includes("--") || scoreText.includes("OFFLINE") || scoreText.includes("PROCESSING")) {
       alert("Please run a valid analysis before exporting.");
       return;
     }
@@ -516,7 +510,6 @@
         throw new Error("Server PDF generation failed");
       }
     } catch (err) {
-      // Fallback a impresión nativa del navegador si la API falla o no implementa PDF todavía
       window.print();
     }
   }
