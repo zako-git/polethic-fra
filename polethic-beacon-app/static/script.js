@@ -90,15 +90,29 @@ function renderReport(resultDiv, verdictText) {
     });
 }
 
-// 1. Mapeo exacto de letras A -> D
+// 1. Mapeo de puntuación interna a Letra
 function getEthicLetter(score) {
-    if (score <= 25) return "A"; // Verde (0-25)
-    if (score <= 50) return "B"; // Amarillo/Azul (26-50)
-    if (score <= 75) return "C"; // Naranja (51-75)
-    return "D";                 // Rojo / Peligro Máximo (76-100)
+    if (score <= 25) return "A"; // Verde (Riesgo Bajo)
+    if (score <= 50) return "B"; // Amarillo/Azul (Riesgo Moderado)
+    if (score <= 75) return "C"; // Naranja (Riesgo Alto)
+    return "D";                 // Rojo (Peligro Máximo / Coerción / BITE)
 }
 
-// 2. En la función analyze(), dentro de la comprobación de score:
+// 2. Dentro de la función analyze(), en el bloque de procesamiento del score:
+const parsedScore = parseInt(data.score, 10);
+const score = Number.isNaN(parsedScore) ? 0 : parsedScore;
+
+lastAnalyzedModule = currentWindow;
+lastScore = score;
+
+const letter = getEthicLetter(score);
+
+// MOSTRAR SOLO LA LETRA EN EL PANEL (Sin números)
+if (scoreDiv) {
+    scoreDiv.innerText = `Ethic-Score™: ${letter}`;
+}
+
+// APLICAR CLASES DE COLOR AL PANEL
 const resultsSection = document.getElementById("results-panel");
 if (resultsSection) {
     resultsSection.className = 'results-section';
@@ -112,14 +126,6 @@ if (resultsSection) {
     } else {
         resultsSection.classList.add("threat-low");     // Letra A (Verde)
     }
-}
-
-    flags.forEach(flag => {
-        const li = document.createElement("li");
-        // Kept consistent in English: "pts" instead of "pts de riesgo"
-        li.innerText = `"${flag.keyword}" → ${flag.category} (+${flag.penalty} pts)`;
-        flagsList.appendChild(li);
-    });
 }
 
 // 1. BEACON-IZE: The Main Analysis Function
