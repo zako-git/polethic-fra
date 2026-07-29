@@ -298,6 +298,15 @@ def export_pdf():
             if p_text.strip():
                 story.append(Paragraph(p_text.strip(), body_style))
                 story.append(Spacer(1, 6))
+                # En app.py -> ruta /export_pdf
+if numeric_score >= 76:
+    accent_color = colors.HexColor("#ff4d6d") # Rojo (Peligro Alto / Letra D)
+elif numeric_score >= 51:
+    accent_color = colors.HexColor("#f0883e") # Naranja (Letra C)
+elif numeric_score >= 26:
+    accent_color = colors.HexColor("#eab308") # Amarillo / Azul (Letra B)
+else:
+    accent_color = colors.HexColor("#2ea44f") # Verde (Limpio / Letra A)
 
         doc.build(story)
         pdf_buffer.seek(0)
