@@ -20,6 +20,12 @@
       --text-muted: #94a3b8;
       --green-action: #10b981;
       --green-glow: rgba(16, 185, 129, 0.4);
+
+      /* Colores para la amenaza por Letras */
+      --threat-a: #10b981; /* Verde */
+      --threat-b: #38bdf8; /* Azul */
+      --threat-c: #f59e0b; /* Naranja */
+      --threat-d: #ef4444; /* Rojo */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -68,41 +74,75 @@
       100% { opacity: 0.9; transform: scale(1.01); }
     }
 
-    /* HEADER */
+    /* ESTILOS DE LA CABECERA UNIFICADA DE NAVEGACIÓN */
     header {
+      width: 100%;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      background: rgba(2, 6, 23, 0.85);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-layout {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.25rem 3rem;
-      border-bottom: 1px solid var(--card-border);
-      backdrop-filter: blur(16px);
-      background: rgba(2, 6, 23, 0.7);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.25rem 2rem;
     }
 
-    .brand-title {
+    .logo-title {
       font-family: 'Fira Code', monospace;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--cyan-glow);
       text-shadow: 0 0 12px var(--cyan-glow);
       text-decoration: none;
     }
 
-    .btn-back {
+    .nav-buttons {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    .nav-btn {
       color: var(--text-muted);
       text-decoration: none;
       font-size: 0.85rem;
       font-family: 'Fira Code', monospace;
-      border: 1px solid var(--card-border);
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
       transition: all 0.3s ease;
     }
 
-    .btn-back:hover {
+    .nav-btn:hover, .nav-btn.active {
       color: var(--cyan-glow);
-      border-color: var(--cyan-glow);
-      box-shadow: 0 0 12px var(--cyan-dim);
+      text-shadow: 0 0 8px var(--cyan-dim);
+    }
+
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+    }
+
+    .lang-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .lang-btn:hover, .lang-btn.active {
+      color: var(--cyan-glow);
+      font-weight: bold;
+    }
+
+    .lang-separator {
+      color: rgba(255, 255, 255, 0.2);
     }
 
     /* CONTENEDOR PRINCIPAL */
@@ -197,7 +237,6 @@
       box-shadow: 0 0 12px var(--cyan-dim);
     }
 
-    /* BARRA INFERIOR DEL TEXTAREA */
     .textarea-toolbar {
       display: flex;
       justify-content: space-between;
@@ -299,7 +338,7 @@
       color: var(--text-main);
     }
 
-    /* REPORTE DE RESULTADOS */
+    /* REPORTE DE RESULTADOS CON CLASES DE LETRA/AMENAZA */
     .report-header {
       display: flex;
       justify-content: space-between;
@@ -317,11 +356,18 @@
 
     .score-badge {
       font-family: 'Fira Code', monospace;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--cyan-glow);
       text-shadow: 0 0 10px var(--cyan-glow);
+      transition: all 0.3s ease;
     }
+
+    /* Dinámica de colores por Letras (A, B, C, D) */
+    .score-badge.grade-a { color: var(--threat-a); text-shadow: 0 0 12px var(--threat-a); }
+    .score-badge.grade-b { color: var(--threat-b); text-shadow: 0 0 12px var(--threat-b); }
+    .score-badge.grade-c { color: var(--threat-c); text-shadow: 0 0 12px var(--threat-c); }
+    .score-badge.grade-d { color: var(--threat-d); text-shadow: 0 0 12px var(--threat-d); }
 
     .report-content {
       font-family: 'Fira Code', monospace;
@@ -342,15 +388,37 @@
   <div class="cyber-bg"></div>
   <div class="stars-layer"></div>
 
+  <!-- CABECERA DE NAVEGACIÓN COMPLETA Y UNIFICADA -->
   <header>
-    <a href="index.html" class="brand-title">POLETHIC_FRA</a>
-    <a href="beacon.html" class="btn-back">← BEACON LAB</a>
+    <div class="header-layout">
+      <!-- LOGO -->
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      
+      <!-- MENÚ DE NAVEGACIÓN -->
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon-app.html" class="nav-btn active" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
+      </nav>
+
+      <!-- SELECTOR DE IDIOMAS CON SUS IDs -->
+      <div class="lang-selector">
+        <a href="#" class="lang-btn active" id="btn-fr" onclick="changeLang('fr', event)">FR</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-es" onclick="changeLang('es', event)">ES</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-en" onclick="changeLang('en', event)">EN</a>
+      </div>
+    </div>
   </header>
 
   <main>
     <div class="app-header">
       <h1>POLETHIC BEACON</h1>
-      <p>Cognitive Self-Defense Engine & Metacommunication Analyzer</p>
+      <p id="subHeader">Cognitive Self-Defense Engine & Metacommunication Analyzer</p>
     </div>
 
     <!-- PESTAÑAS -->
@@ -363,14 +431,12 @@
 
     <!-- ÁREA DE ENTRADA CON BARRA PARA SUBIR FOTO -->
     <div class="glass-card">
-      <textarea id="userInput" placeholder="Paste media text, political articles, or upload an image to Beacon-ize it..."></textarea>
+      <textarea id="userInput" placeholder="Collez du texte média, des articles politiques ou joignez une image..."></textarea>
       
-      <!-- BARRA DE HERRAMIENTAS INFERIOR -->
       <div class="textarea-toolbar">
         <div class="toolbar-left">
           <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageSelected(this)">
           <button class="btn-icon-upload" type="button" onclick="document.getElementById('imageUpload').click()" title="Téléverser une image / Adjuntar foto">
-            <!-- Icono SVG de Cámara/Foto -->
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
               <circle cx="12" cy="13" r="4"/>
@@ -381,10 +447,10 @@
       </div>
 
       <div class="action-row">
-        <button class="btn-beacon" onclick="runBeaconAnalysis()">BEACON-IZE</button>
+        <button class="btn-beacon" id="btnBeacon" onclick="runBeaconAnalysis()">BEACON-IZE</button>
         <div class="secondary-btns">
-          <button class="btn-secondary" onclick="purgeSession()">PURGE SESSION</button>
-          <button class="btn-secondary" onclick="exportPDF()">EXPORT PDF</button>
+          <button class="btn-secondary" id="btnPurge" onclick="purgeSession()">PURGE SESSION</button>
+          <button class="btn-secondary" id="btnExport" onclick="exportPDF()">EXPORT PDF</button>
         </div>
       </div>
     </div>
@@ -392,127 +458,226 @@
     <!-- REPORTE -->
     <div class="glass-card">
       <div class="report-header">
-        <span class="report-title">FORENSIC METRICS REPORT</span>
+        <span class="report-title" id="reportTitle">FORENSIC METRICS REPORT</span>
         <span class="score-badge" id="scoreDisplay">Ethic-Score™: --</span>
       </div>
-      <div class="report-content" id="analysisResult">Please introduce some content or attach an image to Beacon-ize.</div>
+      <div class="report-content" id="analysisResult">Veuillez introduire du contenu ou joindre une image pour analyser.</div>
     </div>
   </main>
 
   <script>
-  let activeModule = "news";
-  
-  // Detección automática del Backend (Local vs Producción en Render)
-  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-  const API_URL = isLocal 
-    ? "http://127.0.0.1:5000" 
-    : "https://polethic-beacon-api.onrender.com";
+    let activeModule = "news";
+    let currentLang = "fr"; // Idioma por defecto
+    let lastNumericScore = 0; // Puntuación interna en memoria para el exportador de PDF
 
-  function selectModule(moduleKey, btn) {
-    activeModule = moduleKey;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-
-  function handleImageSelected(input) {
-    const statusSpan = document.getElementById('fileStatus');
-    if (input.files && input.files[0]) {
-      statusSpan.innerHTML = `📷 ${input.files[0].name} <span style="cursor:pointer; color:#ef4444; margin-left:8px;" onclick="clearImage(event)">✖</span>`;
-    } else {
-      statusSpan.innerText = "";
-    }
-  }
-
-  function clearImage(e) {
-    if(e) e.stopPropagation();
-    const fileInput = document.getElementById('imageUpload');
-    fileInput.value = '';
-    document.getElementById('fileStatus').innerText = '';
-  }
-
-  async function runBeaconAnalysis() {
-    const textInput = document.getElementById('userInput').value;
-    const resultBox = document.getElementById('analysisResult');
-    const scoreBadge = document.getElementById('scoreDisplay');
-    const fileInput = document.getElementById('imageUpload');
-
-    if (!textInput.trim() && (!fileInput.files || fileInput.files.length === 0)) {
-      resultBox.innerText = "Please introduce some content or attach an image to analyze.";
-      return;
-    }
-
-    resultBox.innerText = "Analyzing neural patterns, predictive brain loops, and rhetorical structures...";
-    scoreBadge.innerText = "Ethic-Score™: PROCESSING...";
-
-    try {
-      const formData = new FormData();
-      
-      // Enviamos el archivo con la clave 'file' que busca app.py
-      if (fileInput.files && fileInput.files[0]) {
-        formData.append('file', fileInput.files[0]);
+    // TRADUCCIONES DE LA INTERFAZ
+    const i18n = {
+      fr: {
+        placeholders: {
+          news: "Collez du texte média, des articles politiques ou des liens vidéo...",
+          myth: "Collez des affirmations sur la médecine alternative ou des théories non vérifiées...",
+          identity: "Collez des données de bio ou des identifiants suspects...",
+          coercive: "Collez des discours de vente à haute pression ou de la manipulation..."
+        },
+        ethicLabel: "Ethic-Score™",
+        empty: "Veuillez introduire du contenu ou joindre une image pour analyser.",
+        processing: "Analyse des motifs linguistiques et des structures rhétoriques...",
+        offline: "Système hors ligne. Vérifiez votre connexion avec le serveur.",
+        error: "Erreur lors de l'audit médico-légal.",
+        btnAnalyze: "BEACON-IZE",
+        btnPurge: "PURGER LA SESSION",
+        btnExport: "EXPORTER EN PDF"
+      },
+      es: {
+        placeholders: {
+          news: "Pega texto de prensa, artículos políticos o enlaces de vídeo...",
+          myth: "Pega afirmaciones sobre medicina alternativa o teorías no verificadas...",
+          identity: "Pega biografías o credenciales sospechosas para analizar...",
+          coercion: "Pega discursos de alta presión, manipulación o ventas agresivas..."
+        },
+        ethicLabel: "Ethic-Score™",
+        empty: "Por favor, introduce algún contenido o adjunta una imagen para analizar.",
+        processing: "Ejecutando análisis de patrones lingüísticos y estructuras retóricas...",
+        offline: "Sistema fuera de línea. Verifica la conexión con el servidor.",
+        error: "Error durante la auditoría forense.",
+        btnAnalyze: "ANALIZAR",
+        btnPurge: "PURGAR SESIÓN",
+        btnExport: "EXPORTAR PDF"
+      },
+      en: {
+        placeholders: {
+          news: "Paste media text, political articles, or video links...",
+          myth: "Paste claims regarding alternative medicine or unverified theories...",
+          identity: "Paste suspicious bio data or credentials to audit...",
+          coercion: "Paste high-pressure sales pitches or manipulation..."
+        },
+        ethicLabel: "Ethic-Score™",
+        empty: "Please introduce some content or attach an image to analyze.",
+        processing: "Analyzing neural patterns, predictive brain loops, and rhetorical structures...",
+        offline: "System offline. Please check your connection to the server.",
+        error: "Error processing forensic audit.",
+        btnAnalyze: "BEACON-IZE",
+        btnPurge: "PURGE SESSION",
+        btnExport: "EXPORT PDF"
       }
-      
-      formData.append('text', textInput);
-      formData.append('module', activeModule);
+    };
 
-      const response = await fetch(`${API_URL}/analyze`, {
-        method: 'POST',
-        body: formData
-      });
+    // Detección automática del Backend
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    const API_URL = isLocal 
+      ? "http://127.0.0.1:5000" 
+      : "https://polethic-beacon-api.onrender.com";
 
-      const data = await response.json();
+    // MAPEO DE NÚMEROS A SOLAMENTE LETRAS (A, B, C, D)
+    function scoreToLetter(score) {
+      if (score >= 80) return { letter: "A", class: "grade-a" }; // Verde
+      if (score >= 60) return { letter: "B", class: "grade-b" }; // Azul
+      if (score >= 40) return { letter: "C", class: "grade-c" }; // Naranja
+      return { letter: "D", class: "grade-d" };                 // Rojo
+    }
 
-      if (response.ok) {
-        scoreBadge.innerText = `Ethic-Score™: ${data.score}/100`;
-        resultBox.innerText = data.analysis;
+    function changeLang(lang, e) {
+      if (e) e.preventDefault();
+      currentLang = lang;
+
+      // Actualizar visualmente la cabecera
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-${lang}`).classList.add('active');
+
+      // Actualizar textos e indicaciones
+      const t = i18n[lang];
+      document.getElementById('userInput').placeholder = t.placeholders[activeModule] || t.placeholders.news;
+      document.getElementById('btnBeacon').innerText = t.btnAnalyze;
+      document.getElementById('btnPurge').innerText = t.btnPurge;
+      document.getElementById('btnExport').innerText = t.btnExport;
+    }
+
+    function selectModule(moduleKey, btn) {
+      activeModule = moduleKey;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const t = i18n[currentLang];
+      document.getElementById('userInput').placeholder = t.placeholders[moduleKey] || t.placeholders.news;
+    }
+
+    function handleImageSelected(input) {
+      const statusSpan = document.getElementById('fileStatus');
+      if (input.files && input.files[0]) {
+        statusSpan.innerHTML = `📷 ${input.files[0].name} <span style="cursor:pointer; color:#ef4444; margin-left:8px;" onclick="clearImage(event)">✖</span>`;
       } else {
-        resultBox.innerText = `Error: ${data.analysis || 'Unable to process forensic audit.'}`;
-        scoreBadge.innerText = "Ethic-Score™: ERROR";
+        statusSpan.innerText = "";
       }
-    } catch (err) {
-      console.error("Error de conexión:", err);
-      resultBox.innerText = "Connection error. Make sure your Python Flask/Render server is live and running.";
-      scoreBadge.innerText = "Ethic-Score™: OFFLINE";
-    }
-  }
-
-  function purgeSession() {
-    document.getElementById('userInput').value = '';
-    clearImage();
-    document.getElementById('analysisResult').innerText = "Please introduce some content or attach an image to Beacon-ize.";
-    document.getElementById('scoreDisplay').innerText = "Ethic-Score™: --";
-  }
-
-  async function exportPDF() {
-    const scoreText = document.getElementById('scoreDisplay').innerText;
-    const analysisText = document.getElementById('analysisResult').innerText;
-
-    if (scoreText.includes("--") || scoreText.includes("OFFLINE") || scoreText.includes("PROCESSING")) {
-      alert("Please run a valid analysis before exporting.");
-      return;
     }
 
-    try {
-      const response = await fetch(`${API_URL}/export_pdf`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score: scoreText, analysis: analysisText, module: activeModule })
-      });
+    function clearImage(e) {
+      if(e) e.stopPropagation();
+      const fileInput = document.getElementById('imageUpload');
+      fileInput.value = '';
+      document.getElementById('fileStatus').innerText = '';
+    }
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Polethic_Beacon_${activeModule}_Report.pdf`;
-        a.click();
-      } else {
-        throw new Error("Server PDF generation failed");
+    async function runBeaconAnalysis() {
+      const textInput = document.getElementById('userInput').value;
+      const resultBox = document.getElementById('analysisResult');
+      const scoreBadge = document.getElementById('scoreDisplay');
+      const fileInput = document.getElementById('imageUpload');
+      const t = i18n[currentLang];
+
+      if (!textInput.trim() && (!fileInput.files || fileInput.files.length === 0)) {
+        resultBox.innerText = t.empty;
+        return;
       }
-    } catch (err) {
-      window.print();
+
+      resultBox.innerText = t.processing;
+      scoreBadge.innerText = `${t.ethicLabel}: ...`;
+      scoreBadge.className = "score-badge";
+
+      try {
+        const formData = new FormData();
+        
+        if (fileInput.files && fileInput.files[0]) {
+          formData.append('file', fileInput.files[0]);
+        }
+        
+        formData.append('text', textInput);
+        formData.append('module', activeModule);
+        formData.append('lang', currentLang); // Le mandamos el idioma actual al backend
+
+        const response = await fetch(`${API_URL}/analyze`, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          lastNumericScore = data.score;
+          const grade = scoreToLetter(data.score);
+
+          // Imprimimos la LETRA con su color dinámico
+          scoreBadge.innerText = `${t.ethicLabel}: ${grade.letter}`;
+          scoreBadge.className = `score-badge ${grade.class}`;
+
+          resultBox.innerText = data.analysis;
+        } else {
+          resultBox.innerText = `Error: ${data.analysis || t.error}`;
+          scoreBadge.innerText = `${t.ethicLabel}: ERROR`;
+        }
+      } catch (err) {
+        console.error("Error de conexión:", err);
+        resultBox.innerText = t.offline;
+        scoreBadge.innerText = `${t.ethicLabel}: OFFLINE`;
+      }
     }
-  }
-</script>
+
+    function purgeSession() {
+      const t = i18n[currentLang];
+      document.getElementById('userInput').value = '';
+      clearImage();
+      document.getElementById('analysisResult').innerText = t.empty;
+      
+      const scoreBadge = document.getElementById('scoreDisplay');
+      scoreBadge.innerText = `${t.ethicLabel}: --`;
+      scoreBadge.className = "score-badge";
+      lastNumericScore = 0;
+    }
+
+    async function exportPDF() {
+      const scoreText = document.getElementById('scoreDisplay').innerText;
+      const analysisText = document.getElementById('analysisResult').innerText;
+
+      if (scoreText.includes("--") || scoreText.includes("OFFLINE") || scoreText.includes("...")) {
+        alert("Veuillez realizar un análisis válido antes de exportar.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/export_pdf`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            score: lastNumericScore, 
+            analysis: analysisText, 
+            module: activeModule,
+            lang: currentLang 
+          })
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Polethic_Beacon_${activeModule}_Report.pdf`;
+          a.click();
+        } else {
+          throw new Error("Server PDF generation failed");
+        }
+      } catch (err) {
+        window.print();
+      }
+    }
+  </script>
 </body>
 </html>
