@@ -1,14 +1,12 @@
 // Déjalo en "" si Flask sirve el HTML. 
-// Si tu frontend está en otro dominio o servidor, pon la URL de Render (ej: "https://polethic-beacon-app.onrender.com")
-// Cambia esto al inicio de tu script.js:
+// Si tu frontend está en otro dominio o servidor, pon la URL de Render
 const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+
 // Current active defense window (default is "news")
 let currentWindow = "news";
-// Tracks the module actually used for the last completed analysis,
-// so PDF export always matches what is on screen (not whichever tab is open now)
+// Tracks the module actually used for the last completed analysis
 let lastAnalyzedModule = "news";
-// Tracks the raw numeric score from the last analysis, so PDF export
-// never has to re-parse it back out of already-formatted display text
+// Tracks the raw numeric score from the last analysis
 let lastScore = 0; // Defaults to 0 (Clean)
 
 const windowTitles = {
@@ -36,9 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupFileInput();
 });
 
-// Uses event delegation on data-module attributes instead of matching each
-// button by a hardcoded id — this avoids silent breakage if a button id and
-// its JS reference ever drift apart (e.g. after renaming a module).
 function setupNavTabs() {
     document.querySelectorAll(".nav-tabs button").forEach(button => {
         button.addEventListener("click", () => {
@@ -49,7 +44,6 @@ function setupNavTabs() {
             button.classList.add("active");
             currentWindow = windowType;
 
-            // window-title is optional: only update it if present in the DOM
             const titleEl = document.getElementById("window-title");
             if (titleEl && windowTitles[windowType]) {
                 titleEl.innerText = windowTitles[windowType];
@@ -77,10 +71,9 @@ function setupFileInput() {
     });
 }
 
-// Renders the report text safely (no innerHTML injection of model/user content)
+// Renders the report text safely
 function renderReport(resultDiv, verdictText) {
     resultDiv.innerHTML = "";
-
     const lines = verdictText.split("\n");
     lines.forEach((line, index) => {
         resultDiv.appendChild(document.createTextNode(line));
@@ -90,45 +83,30 @@ function renderReport(resultDiv, verdictText) {
     });
 }
 
-// 1. Mapeo de puntuación interna a Letra
+// Función auxiliar para renderizar flags locales si existen
+function renderLocalFlags(flags) {
+    const container = document.getElementById("local-flags-container");
+    if (!container) return;
+    container.innerHTML = "";
+    if (flags && flags.length > 0) {
+        flags.forEach(flag => {
+            const badge = document.createElement("span");
+            badge.className = "flag-badge";
+            badge.innerText = flag;
+            container.appendChild(badge);
+        });
+    }
+}
+
+// 1. MAPEO DE PUNTUACIÓN A LETRAS (A, B, C, D)
 function getEthicLetter(score) {
     if (score <= 25) return "A"; // Verde (Riesgo Bajo)
-    if (score <= 50) return "B"; // Amarillo/Azul (Riesgo Moderado)
+    if (score <= 50) return "B"; // Amarillo (Riesgo Moderado)
     if (score <= 75) return "C"; // Naranja (Riesgo Alto)
     return "D";                 // Rojo (Peligro Máximo / Coerción / BITE)
 }
 
-// 2. Dentro de la función analyze(), en el bloque de procesamiento del score:
-const parsedScore = parseInt(data.score, 10);
-const score = Number.isNaN(parsedScore) ? 0 : parsedScore;
-
-lastAnalyzedModule = currentWindow;
-lastScore = score;
-
-const letter = getEthicLetter(score);
-
-// MOSTRAR SOLO LA LETRA EN EL PANEL (Sin números)
-if (scoreDiv) {
-    scoreDiv.innerText = `Ethic-Score™: ${letter}`;
-}
-
-// APLICAR CLASES DE COLOR AL PANEL
-const resultsSection = document.getElementById("results-panel");
-if (resultsSection) {
-    resultsSection.className = 'results-section';
-
-    if (score >= 76) {
-        resultsSection.classList.add("threat-high");    // Letra D (Rojo)
-    } else if (score >= 51) {
-        resultsSection.classList.add("threat-medium");  // Letra C (Naranja)
-    } else if (score >= 26) {
-        resultsSection.classList.add("threat-caution"); // Letra B (Amarillo)
-    } else {
-        resultsSection.classList.add("threat-low");     // Letra A (Verde)
-    }
-}
-
-// 1. BEACON-IZE: The Main Analysis Function
+// 2. BEACON-IZE: Función Principal de Análisis
 async function analyze() {
     const textInput = document.getElementById("user-input").value.trim();
     const fileInput = document.getElementById("user-file");
@@ -181,9 +159,7 @@ async function analyze() {
 
         const data = await response.json();
 
-        // score can be null when the backend could not parse a reliable number
-        // from the LLM response — this must show as an explicit error state,
-        // not silently default to 0 (which would look like "no risk found").
+        // Manejo de error de procesamiento del score
         if (data.score === null || data.score === undefined) {
             lastAnalyzedModule = currentWindow;
             lastScore = 0;
@@ -195,38 +171,34 @@ async function analyze() {
             if (resultDiv && data.analysis) renderReport(resultDiv, data.analysis);
             renderLocalFlags(data.local_flags);
 
-            if (analyzeButton) {
-                analyzeButton.innerText = "BEACON-IZE";
-                analyzeButton.disabled = false;
-            }
             return;
         }
 
         const parsedScore = parseInt(data.score, 10);
-        // Defaults to 0 (no risk) if parsing fails
         const score = Number.isNaN(parsedScore) ? 0 : parsedScore;
 
         lastAnalyzedModule = currentWindow;
         lastScore = score;
 
+        // APLICAR CLASES DE COLOR Y CAMBIO DE PANEL
         const resultsSection = document.getElementById("results-panel");
         if (resultsSection) {
             resultsSection.className = 'results-section';
 
-            // Inverted scale: higher score = more dangerous
-            if (score >= 81) {
-                resultsSection.classList.add("threat-high");    // Letter E (Red)
-            } else if (score >= 41) {
-                resultsSection.classList.add("threat-medium");  // Letters C and D (Yellow/Orange)
+            if (score >= 76) {
+                resultsSection.classList.add("threat-high");    // Letra D (Rojo)
+            } else if (score >= 51) {
+                resultsSection.classList.add("threat-medium");  // Letra C (Naranja)
+            } else if (score >= 26) {
+                resultsSection.classList.add("threat-caution"); // Letra B (Amarillo)
             } else {
-                resultsSection.classList.add("threat-low");     // Letters A and B (Green)
+                resultsSection.classList.add("threat-low");     // Letra A (Verde)
             }
         }
 
+        // MOSTRAR SOLO LA LETRA EN EL PANEL
         if (scoreDiv) {
-            // Only the letter grade is shown to the user; the numeric score
-            // stays internal (DB, PDF color logic) but is never displayed on screen.
-            scoreDiv.innerText = `Ethic-Score™: [${getEthicLetter(score)}]`;
+            scoreDiv.innerText = `Ethic-Score™: ${getEthicLetter(score)}`;
         }
 
         if (resultDiv && data.analysis) {
@@ -247,7 +219,7 @@ async function analyze() {
     }
 }
 
-// 2. EXPORT PDF
+// 3. EXPORT PDF
 function triggerPDFDownload() {
     const analysisElement = document.getElementById("analysis-report");
     const currentAnalysis = analysisElement ? analysisElement.innerText.trim() : "No analysis target found.";
@@ -292,7 +264,7 @@ function triggerPDFDownload() {
     });
 }
 
-// 3. PURGE DASHBOARD: Clean application state reset
+// 4. PURGE DASHBOARD
 function purgeDashboard() {
     const textInput = document.getElementById("user-input");
     if (textInput) textInput.value = "";
@@ -307,7 +279,7 @@ function purgeDashboard() {
     if (scoreElement) {
         scoreElement.innerText = "Ethic-Score™: --";
     }
-    lastScore = 0; // Reset to zero risk
+    lastScore = 0;
 
     const analysisElement = document.getElementById("analysis-report");
     if (analysisElement) analysisElement.innerText = "System cleared. Awaiting new pattern audit payload...";
