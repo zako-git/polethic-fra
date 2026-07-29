@@ -90,30 +90,29 @@ function renderReport(resultDiv, verdictText) {
     });
 }
 
-// Returns just the clean letter grade in English, with no color references
+// 1. Mapeo exacto de letras A -> D
 function getEthicLetter(score) {
-    if (score <= 20) return "A";
-    if (score <= 40) return "B";
-    if (score <= 60) return "C";
-    if (score <= 80) return "D";
-    return "E";
+    if (score <= 25) return "A"; // Verde (0-25)
+    if (score <= 50) return "B"; // Amarillo/Azul (26-50)
+    if (score <= 75) return "C"; // Naranja (51-75)
+    return "D";                 // Rojo / Peligro Máximo (76-100)
 }
 
-function renderLocalFlags(flags) {
-    const flagsList = document.getElementById("local-flags");
-    if (!flagsList) return;
+// 2. En la función analyze(), dentro de la comprobación de score:
+const resultsSection = document.getElementById("results-panel");
+if (resultsSection) {
+    resultsSection.className = 'results-section';
 
-    flagsList.innerHTML = "";
-
-    if (!flags || flags.length === 0) {
-        const li = document.createElement("li");
-        li.style.color = "#8b949e";
-        li.style.listStyleType = "none";
-        li.style.marginLeft = "-20px";
-        li.innerText = "No local pattern flags detected.";
-        flagsList.appendChild(li);
-        return;
+    if (score >= 76) {
+        resultsSection.classList.add("threat-high");    // Letra D (Rojo)
+    } else if (score >= 51) {
+        resultsSection.classList.add("threat-medium");  // Letra C (Naranja)
+    } else if (score >= 26) {
+        resultsSection.classList.add("threat-caution"); // Letra B (Amarillo)
+    } else {
+        resultsSection.classList.add("threat-low");     // Letra A (Verde)
     }
+}
 
     flags.forEach(flag => {
         const li = document.createElement("li");
