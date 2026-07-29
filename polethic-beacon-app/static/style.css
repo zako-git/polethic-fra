@@ -30,7 +30,6 @@ main { width: 100%; max-width: 700px; }
     transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 .nav-tabs button:hover { background-color: #30363d; color: #f0f6fc; }
-/* Pastel blue for the active tab (softer than the previous saturated blue) */
 .nav-tabs button.active { background-color: #8ab4f8; color: #0d1117; border-color: #aecbfa; }
 
 /* Input Components */
@@ -44,7 +43,6 @@ main { width: 100%; max-width: 700px; }
     min-height: 1.2em;
 }
 
-/* Wrapper so the photo button can float inside the textarea's corner */
 .textarea-wrapper {
     position: relative;
 }
@@ -56,7 +54,7 @@ textarea {
     border: 1px solid #30363d;
     border-radius: 6px;
     padding: 12px;
-    padding-bottom: 44px; /* leave room so typed text never sits under the floating photo button */
+    padding-bottom: 44px;
     box-sizing: border-box;
     resize: vertical;
     font-family: inherit;
@@ -68,7 +66,7 @@ textarea::placeholder {
     color: #8b949e;
 }
 
-/* Photo upload button, floating inside the textarea's bottom-left corner */
+/* Photo upload button */
 .file-upload-label {
     position: absolute;
     bottom: 10px;
@@ -123,7 +121,6 @@ textarea::placeholder {
 .button-group button:hover { opacity: 0.95; }
 #btn-purge { background-color: #21262d; border-color: #d73a49; color: #ff7b72; }
 #btn-purge:hover { background-color: rgba(248, 81, 73, 0.15); }
-/* Pastel blue for the Export PDF button, matching the active tab color */
 #btn-pdf { background-color: #8ab4f8; border-color: #aecbfa; color: #0d1117; }
 #btn-pdf:hover { background-color: #aecbfa; }
 
@@ -136,28 +133,35 @@ textarea::placeholder {
     transition: border-color 0.4s ease, background-color 0.4s ease;
 }
 
-/* Ethic-Score color follows the same traffic-light logic as the panel border */
-#ethic-score { color: #f0f6fc; }
-.results-section.threat-high #ethic-score { color: #ff4d6d !important; }
-.results-section.threat-medium #ethic-score { color: #f0883e !important; }
-.results-section.threat-low #ethic-score { color: #2ea44f !important; }
+/* Ethic-Score text color matching the active threat level */
+#ethic-score { color: #f0f6fc; font-weight: bold; font-size: 1.2rem; }
+.results-section.threat-high #ethic-score { color: #ff4d6d !important; }     /* Rojo */
+.results-section.threat-medium #ethic-score { color: #f0883e !important; }   /* Naranja */
+.results-section.threat-caution #ethic-score { color: #eab308 !important; }  /* Amarillo */
+.results-section.threat-low #ethic-score { color: #2ea44f !important; }      /* Verde */
 
-/* 🔴 THREAT HIGH: Critical danger / Coercive structures / High Manipulation (Letter E) */
-.results-section.threat-high {
-    border: 2px solid #ff4d6d !important;
-    background-color: rgba(255, 77, 109, 0.03) !important;
+/* 🟢 LETRA A (0-25 pts): Limpio / Saludable */
+.results-section.threat-low {
+    border: 2px solid #2ea44f !important;
+    background-color: rgba(46, 164, 79, 0.03) !important;
 }
 
-/* 🟡 THREAT MEDIUM: Risk / Pseudoscience / Bias / Moderated Threat (Letters C and D) */
+/* 🟡 LETRA B (26-50 pts): Riesgo Leve / Precaución */
+.results-section.threat-caution {
+    border: 2px solid #eab308 !important;
+    background-color: rgba(234, 179, 8, 0.03) !important;
+}
+
+/* 🟠 LETRA C (51-75 pts): Riesgo Alto / Sesgos / Pseudociencia */
 .results-section.threat-medium {
     border: 2px solid #f0883e !important;
     background-color: rgba(240, 136, 62, 0.03) !important;
 }
 
-/* 🟢 THREAT LOW: Clean document / Safe / High integrity / Low Threat (Letters A and B) */
-.results-section.threat-low {
-    border: 2px solid #2ea44f !important;
-    background-color: rgba(46, 164, 79, 0.03) !important;
+/* 🔴 LETRA D (76-100 pts): Peligro Máximo / Coerción / Modelo BITE */
+.results-section.threat-high {
+    border: 2px solid #ff4d6d !important;
+    background-color: rgba(255, 77, 109, 0.05) !important;
 }
 
 /* Responsive Layout */
