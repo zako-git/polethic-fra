@@ -1,38 +1,117 @@
-// Déjalo en "" si Flask sirve el HTML. 
-// Si tu frontend está en otro dominio o servidor, pon la URL de Render
 const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
 
-// Current active defense window (default is "news")
 let currentWindow = "news";
-// Tracks the module actually used for the last completed analysis
 let lastAnalyzedModule = "news";
-// Tracks the raw numeric score from the last analysis
-let lastScore = 0; // Defaults to 0 (Clean)
+let lastScore = 0; // Se mantiene en memoria como número para el backend/PDF
+let currentLang = "fr"; // Idioma por defecto según la cabecera (FR)
 
-const windowTitles = {
-    "news": "1. FakeNews: Enter the article text or link to evaluate:",
-    "myth": "2. Myth-Buster: Paste the claim, remedy, or pseudoscientific theory:",
-    "identity_spoofing": "3. Identity Spoofing: Paste the profile, credentials, or bio to audit:",
-    "coercion": "4. Coercive Filter: Enter the persuasive text or suspicious discourse:"
-};
-
-const windowPlaceholders = {
-    "news": "Paste media text, political articles, or video links to Beacon-ize it...",
-    "myth": "Paste claims regarding alternative medicine or unverified theories to Beacon-ize it...",
-    "identity_spoofing": "Paste suspicious bio data or credentials to audit for structural/professional intrusion...",
-    "coercion": "Paste high-pressure sales pitches to Beacon-ize it..."
-};
-
-const sourceTypeLabels = {
-    "plain_text": "📝 Source: plain text",
-    "video_transcript": "🎬 Source: YouTube video transcript",
-    "image_screenshot": "🖼️ Source: image (OCR-extracted text)"
+// 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN
+const i18n = {
+    fr: {
+        windowTitles: {
+            "news": "1. FakeNews: Entrez le texte de l'article ou le lien à évaluer :",
+            "myth": "2. Myth-Buster: Collez la déclaration, le remède ou la théorie pseudoscientifique :",
+            "identity_spoofing": "3. Identity Spoofing: Collez le profil, les identifiants ou la bio à auditer :",
+            "coercion": "4. Filtre Coercitif: Entrez le texte persuasif ou le discours suspect :"
+        },
+        windowPlaceholders: {
+            "news": "Collez du texte média, des articles politiques ou des liens vidéo...",
+            "myth": "Collez des affirmations sur la médecine alternative ou des théories non vérifiées...",
+            "identity_spoofing": "Collez des données de bio ou des identifiants suspects...",
+            "coercion": "Collez des discours de vente à haute pression ou de la manipulation..."
+        },
+        ethicLabel: "Ethic-Score™",
+        runningText: "Analyse des motifs linguistiques en cours... Veuillez patienter.",
+        emptyText: "Veuillez introduire du contenu ou joindre une image à analyser.",
+        systemOffline: "Erreur: Système Hors Ligne",
+        offlineReport: "Le cœur de Beacon est actuellement inaccessible. Vérifiez votre connexion ou l'état du serveur.",
+        parsingError: "Indisponible (erreur d'analyse)"
+    },
+    es: {
+        windowTitles: {
+            "news": "1. FakeNews: Introduce el texto o enlace del artículo a evaluar:",
+            "myth": "2. Myth-Buster: Pega la afirmación, remedio o teoría seudocientífica:",
+            "identity_spoofing": "3. Identity Spoofing: Pega el perfil o biografía para auditar:",
+            "coercion": "4. Filtro Coercitivo: Introduce el texto persuasivo o discurso sospechoso:"
+        },
+        windowPlaceholders: {
+            "news": "Pega texto de prensa, artículos políticos o enlaces de vídeo para auditarlo...",
+            "myth": "Pega afirmaciones sobre medicina alternativa o teorías no verificadas...",
+            "identity_spoofing": "Pega biografías o credenciales sospechosas para analizar intrusión profesional...",
+            "coercion": "Pega discursos de alta presión, manipulación o ventas agresivas..."
+        },
+        ethicLabel: "Ethic-Score™",
+        runningText: "Ejecutando análisis de patrones lingüísticos... Por favor, espera.",
+        emptyText: "Por favor, introduce algún contenido o adjunta una imagen para analizar.",
+        systemOffline: "Error: Sistema Fuera de Línea",
+        offlineReport: "El núcleo de Beacon no está localizable. Verifica tu conexión o el servidor.",
+        parsingError: "No disponible (error de análisis)"
+    },
+    en: {
+        windowTitles: {
+            "news": "1. FakeNews: Enter the article text or link to evaluate:",
+            "myth": "2. Myth-Buster: Paste the claim, remedy, or pseudoscientific theory:",
+            "identity_spoofing": "3. Identity Spoofing: Paste the profile, credentials, or bio to audit:",
+            "coercion": "4. Coercive Filter: Enter the persuasive text or suspicious discourse:"
+        },
+        windowPlaceholders: {
+            "news": "Paste media text, political articles, or video links to Beacon-ize it...",
+            "myth": "Paste claims regarding alternative medicine or unverified theories to Beacon-ize it...",
+            "identity_spoofing": "Paste suspicious bio data or credentials to audit for structural/professional intrusion...",
+            "coercion": "Paste high-pressure sales pitches to Beacon-ize it..."
+        },
+        ethicLabel: "Ethic-Score™",
+        runningText: "Running linguistic pattern analysis... Please wait.",
+        emptyText: "Please introduce some content or attach an image to Beacon-ize.",
+        systemOffline: "Error: System Offline",
+        offlineReport: "The Beacon core is currently unreachable. Please verify your connection or server status.",
+        parsingError: "Unavailable (parsing error)"
+    }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
     setupNavTabs();
     setupFileInput();
+    setupLangSelector(); // Conecta los botones #btn-fr, #btn-es, #btn-en
 });
+
+// 2. CONEXIÓN CON EL SELECTOR DE IDIOMAS DE LA CABECERA
+function setupLangSelector() {
+    const btnFr = document.getElementById("btn-fr");
+    const btnEs = document.getElementById("btn-es");
+    const btnEn = document.getElementById("btn-en");
+
+    if (btnFr) btnFr.addEventListener("click", (e) => { e.preventDefault(); switchLanguage("fr"); });
+    if (btnEs) btnEs.addEventListener("click", (e) => { e.preventDefault(); switchLanguage("es"); });
+    if (btnEn) btnEn.addEventListener("click", (e) => { e.preventDefault(); switchLanguage("en"); });
+}
+
+function switchLanguage(lang) {
+    if (!i18n[lang]) return;
+    currentLang = lang;
+
+    // Actualizar clases activas en los botones de idioma
+    document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.remove("active"));
+    const activeBtn = document.getElementById(`btn-${lang}`);
+    if (activeBtn) activeBtn.classList.add("active");
+
+    // Actualizar dinámicamente los textos visibles de los módulos
+    updateModuleTexts();
+}
+
+function updateModuleTexts() {
+    const t = i18n[currentLang];
+    
+    const titleEl = document.getElementById("window-title");
+    if (titleEl && t.windowTitles[currentWindow]) {
+        titleEl.innerText = t.windowTitles[currentWindow];
+    }
+
+    const inputEl = document.getElementById("user-input");
+    if (inputEl && t.windowPlaceholders[currentWindow]) {
+        inputEl.placeholder = t.windowPlaceholders[currentWindow];
+    }
+}
 
 function setupNavTabs() {
     document.querySelectorAll(".nav-tabs button").forEach(button => {
@@ -44,15 +123,7 @@ function setupNavTabs() {
             button.classList.add("active");
             currentWindow = windowType;
 
-            const titleEl = document.getElementById("window-title");
-            if (titleEl && windowTitles[windowType]) {
-                titleEl.innerText = windowTitles[windowType];
-            }
-
-            const inputEl = document.getElementById("user-input");
-            if (inputEl && windowPlaceholders[windowType]) {
-                inputEl.placeholder = windowPlaceholders[windowType];
-            }
+            updateModuleTexts();
         });
     });
 }
@@ -71,7 +142,6 @@ function setupFileInput() {
     });
 }
 
-// Renders the report text safely
 function renderReport(resultDiv, verdictText) {
     resultDiv.innerHTML = "";
     const lines = verdictText.split("\n");
@@ -83,7 +153,6 @@ function renderReport(resultDiv, verdictText) {
     });
 }
 
-// Función auxiliar para renderizar flags locales si existen
 function renderLocalFlags(flags) {
     const container = document.getElementById("local-flags-container");
     if (!container) return;
@@ -98,16 +167,17 @@ function renderLocalFlags(flags) {
     }
 }
 
-// 1. MAPEO DE PUNTUACIÓN A LETRAS (A, B, C, D)
+// 3. MAPEO DE PUNTUACIÓN INTERNA (0-100) A SOLAMENTE LETRAS (A, B, C, D)
 function getEthicLetter(score) {
-    if (score <= 25) return "A"; // Verde (Riesgo Bajo)
-    if (score <= 50) return "B"; // Amarillo (Riesgo Moderado)
-    if (score <= 75) return "C"; // Naranja (Riesgo Alto)
-    return "D";                 // Rojo (Peligro Máximo / Coerción / BITE)
+    if (score <= 25) return "A"; // Sin Riesgo / Integridad Alta
+    if (score <= 50) return "B"; // Riesgo Moderado
+    if (score <= 75) return "C"; // Riesgo Alto
+    return "D";                 // Peligro Máximo / Coerción
 }
 
-// 2. BEACON-IZE: Función Principal de Análisis
+// 4. FUNCIÓN PRINCIPAL DE ANÁLISIS
 async function analyze() {
+    const t = i18n[currentLang];
     const textInput = document.getElementById("user-input").value.trim();
     const fileInput = document.getElementById("user-file");
     const file = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : null;
@@ -117,7 +187,7 @@ async function analyze() {
     const analyzeButton = document.getElementById("btn-analyze");
 
     if (!textInput && !file) {
-        if (resultDiv) resultDiv.innerText = "Please introduce some content or attach an image to Beacon-ize.";
+        if (resultDiv) resultDiv.innerText = t.emptyText;
         return;
     }
 
@@ -126,19 +196,21 @@ async function analyze() {
         analyzeButton.disabled = true;
     }
     if (scoreDiv) {
-        scoreDiv.innerText = "Ethic-Score™: --";
+        scoreDiv.innerText = `${t.ethicLabel}: --`;
     }
     if (resultDiv) {
-        resultDiv.innerText = "Running linguistic pattern analysis... Please wait.";
+        resultDiv.innerText = t.runningText;
     }
 
     try {
         let response;
 
+        // Enviamos el idioma actual en las peticiones al backend
         if (file) {
             const formData = new FormData();
             formData.append("text", textInput);
             formData.append("module", currentWindow);
+            formData.append("lang", currentLang); 
             formData.append("file", file);
 
             response = await fetch(`${API_BASE_URL}/analyze`, {
@@ -149,7 +221,7 @@ async function analyze() {
             response = await fetch(`${API_BASE_URL}/analyze`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: textInput, module: currentWindow })
+                body: JSON.stringify({ text: textInput, module: currentWindow, lang: currentLang })
             });
         }
 
@@ -159,7 +231,6 @@ async function analyze() {
 
         const data = await response.json();
 
-        // Manejo de error de procesamiento del score
         if (data.score === null || data.score === undefined) {
             lastAnalyzedModule = currentWindow;
             lastScore = 0;
@@ -167,7 +238,7 @@ async function analyze() {
             const resultsSection = document.getElementById("results-panel");
             if (resultsSection) resultsSection.className = 'results-section';
 
-            if (scoreDiv) scoreDiv.innerText = "Ethic-Score™: Unavailable (parsing error)";
+            if (scoreDiv) scoreDiv.innerText = `${t.ethicLabel}: ${t.parsingError}`;
             if (resultDiv && data.analysis) renderReport(resultDiv, data.analysis);
             renderLocalFlags(data.local_flags);
 
@@ -180,7 +251,7 @@ async function analyze() {
         lastAnalyzedModule = currentWindow;
         lastScore = score;
 
-        // APLICAR CLASES DE COLOR Y CAMBIO DE PANEL
+        // APLICAR CLASES DE COLOR SEGÚN LA LETRA DE AMENAZA
         const resultsSection = document.getElementById("results-panel");
         if (resultsSection) {
             resultsSection.className = 'results-section';
@@ -196,9 +267,9 @@ async function analyze() {
             }
         }
 
-        // MOSTRAR SOLO LA LETRA EN EL PANEL
+        // IMPRIME EXCLUSIVAMENTE LA LETRA (Sin cifras ni puntuación)
         if (scoreDiv) {
-            scoreDiv.innerText = `Ethic-Score™: ${getEthicLetter(score)}`;
+            scoreDiv.innerText = `${t.ethicLabel}: ${getEthicLetter(score)}`;
         }
 
         if (resultDiv && data.analysis) {
@@ -209,8 +280,8 @@ async function analyze() {
 
     } catch (error) {
         console.error(error);
-        if (scoreDiv) scoreDiv.innerText = "Error: System Offline";
-        if (resultDiv) resultDiv.innerText = "The Beacon core is currently unreachable. Please verify your connection or server status.";
+        if (scoreDiv) scoreDiv.innerText = t.systemOffline;
+        if (resultDiv) resultDiv.innerText = t.offlineReport;
     } finally {
         if (analyzeButton) {
             analyzeButton.innerText = "BEACON-IZE";
@@ -219,7 +290,7 @@ async function analyze() {
     }
 }
 
-// 3. EXPORT PDF
+// 5. EXPORTAR PDF
 function triggerPDFDownload() {
     const analysisElement = document.getElementById("analysis-report");
     const currentAnalysis = analysisElement ? analysisElement.innerText.trim() : "No analysis target found.";
@@ -236,7 +307,8 @@ function triggerPDFDownload() {
         body: JSON.stringify({
             score: lastScore,
             analysis: currentAnalysis,
-            module: lastAnalyzedModule
+            module: lastAnalyzedModule,
+            lang: currentLang
         })
     })
     .then(response => {
@@ -264,7 +336,7 @@ function triggerPDFDownload() {
     });
 }
 
-// 4. PURGE DASHBOARD
+// 6. PURGAR DASHBOARD
 function purgeDashboard() {
     const textInput = document.getElementById("user-input");
     if (textInput) textInput.value = "";
@@ -277,12 +349,12 @@ function purgeDashboard() {
 
     const scoreElement = document.getElementById("ethic-score");
     if (scoreElement) {
-        scoreElement.innerText = "Ethic-Score™: --";
+        scoreElement.innerText = `${i18n[currentLang].ethicLabel}: --`;
     }
     lastScore = 0;
 
     const analysisElement = document.getElementById("analysis-report");
-    if (analysisElement) analysisElement.innerText = "System cleared. Awaiting new pattern audit payload...";
+    if (analysisElement) analysisElement.innerText = "...";
 
     renderLocalFlags([]);
 
@@ -290,5 +362,4 @@ function purgeDashboard() {
     if (resultsSection) {
         resultsSection.className = 'results-section';
     }
-    console.log("Dashboard state successfully purged.");
 }
