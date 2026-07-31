@@ -14,7 +14,7 @@ const i18n = {
         windowTitles: {
             "news": "1. Chasse aux Intox: Collez l'article ou le lien pour révéler le faux :",
             "myth": "2. Déboulonneur de Mythes: Collez le remède miracle ou la pseudo-science :",
-            "identity_spoofing": "3. Détecteur de Posture: Collez le profil ou la bio pour auditer la façade :",
+            "identity_spoofing": "3. Détecteur d'Esbroufe: Collez le profil ou la bio pour auditer la façade :",
             "coercion": "4. Filtre Anti-Blabla: Collez le discours de vente à haute pression ou la manipulation :"
         },
         windowPlaceholders: {
@@ -42,7 +42,7 @@ const i18n = {
         windowTitles: {
             "news": "1. FakeNews Hunter: Paste the article or link to expose the spin:",
             "myth": "2. Myth-Buster: Paste the miracle cure, pseudoscience, or wild theory:",
-            "identity_spoofing": "3. Clout & Posture Audit: Paste the bio or profile to scan for fake credentials:",
+            "identity_spoofing": "3. Identity_spoofing: Paste the bio or profile to scan for fake credentials:",
             "coercion": "4. Hype & Coercion Filter: Paste the high-pressure pitch or manipulative talk:"
         },
         windowPlaceholders: {
