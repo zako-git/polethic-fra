@@ -3,7 +3,10 @@ const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
 let currentWindow = "news";
 let lastAnalyzedModule = "news";
 let lastScore = 0; // Se mantiene en memoria como número para el backend/PDF
-let currentLang = "fr"; // Idioma por defecto según la cabecera (FR)
+
+// Detectar idioma inicial (Prioridad: URL -> localStorage -> por defecto 'fr')
+const urlParams = new URLSearchParams(window.location.search);
+let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang') || "fr";
 
 // 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN
 const i18n = {
@@ -72,7 +75,10 @@ const i18n = {
 document.addEventListener("DOMContentLoaded", () => {
     setupNavTabs();
     setupFileInput();
-    setupLangSelector(); // Conecta los botones #btn-fr, #btn-es, #btn-en
+    setupLangSelector();
+    
+    // Aplicar el idioma guardado previamente tan pronto como la página cargue
+    switchLanguage(currentLang);
 });
 
 // 2. CONEXIÓN CON EL SELECTOR DE IDIOMAS DE LA CABECERA
@@ -87,8 +93,12 @@ function setupLangSelector() {
 }
 
 function switchLanguage(lang) {
-    if (!i18n[lang]) return;
+    if (!i18n[lang]) lang = "fr";
     currentLang = lang;
+
+    // Guardar preferencia global y actualizar atributo lang del documento HTML
+    localStorage.setItem('preferred_lang', lang);
+    document.documentElement.lang = lang;
 
     // Actualizar clases activas en los botones de idioma
     document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.remove("active"));
@@ -172,7 +182,7 @@ function getEthicLetter(score) {
     if (score <= 25) return "A"; // Sin Riesgo / Integridad Alta
     if (score <= 50) return "B"; // Riesgo Moderado
     if (score <= 75) return "C"; // Riesgo Alto
-    return "D";                 // Peligro Máximo / Coerción
+    return "D";                  // Peligro Máximo / Coerción
 }
 
 // 4. FUNCIÓN PRINCIPAL DE ANÁLISIS
