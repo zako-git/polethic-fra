@@ -9,11 +9,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
   <!-- Enlace al CSS principal -->
   <link rel="stylesheet" href="css/styles.css">
 
   <style>
-    /* ESTILOS DE ALTA ELEGANCIA & SÍNTESIS */
+    /* Estilos específicos de las tarjetas e interfaz de Beacon Lab */
     .lab-hero {
       text-align: center;
       margin-bottom: 2.5rem;
@@ -22,7 +23,7 @@
     .lab-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
-      color: var(--cyan, #00f0ff);
+      color: var(--cyan-neon);
       letter-spacing: 2px;
       text-transform: uppercase;
       opacity: 0.9;
@@ -33,7 +34,7 @@
       font-weight: 700;
       letter-spacing: -0.5px;
       margin: 0.5rem 0 1rem 0;
-      color: #ffffff;
+      color: var(--text-cream-bright);
     }
 
     .lab-lead {
@@ -41,10 +42,10 @@
       margin: 0 auto;
       font-size: 0.98rem;
       line-height: 1.6;
-      color: #94a3b8;
+      color: var(--text-muted);
     }
 
-    /* CONTENEDOR DE 2 VENTANAS */
+    /* Grid de las 2 ventanas */
     .dual-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -53,8 +54,8 @@
     }
 
     .window-card {
-      background: rgba(10, 18, 36, 0.65);
-      border: 1px solid rgba(0, 240, 255, 0.15);
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 2rem;
       backdrop-filter: blur(12px);
@@ -66,7 +67,7 @@
 
     .window-card:hover {
       border-color: rgba(0, 240, 255, 0.4);
-      box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.15);
+      box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.2);
       transform: translateY(-3px);
     }
 
@@ -79,7 +80,7 @@
     .window-num {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
-      color: var(--cyan, #00f0ff);
+      color: var(--cyan-neon);
       display: block;
       margin-bottom: 0.3rem;
     }
@@ -87,12 +88,12 @@
     .window-title {
       font-size: 1.3rem;
       font-weight: 600;
-      color: #ffffff;
+      color: var(--text-cream-bright);
       margin: 0;
     }
 
     .window-body p {
-      color: #cbd5e1;
+      color: var(--text-cream);
       font-size: 0.92rem;
       line-height: 1.6;
       margin-bottom: 1rem;
@@ -100,7 +101,7 @@
 
     .highlight-box {
       background: rgba(0, 240, 255, 0.04);
-      border-left: 2px solid var(--cyan, #00f0ff);
+      border-left: 2px solid var(--cyan-neon);
       padding: 0.8rem 1rem;
       border-radius: 0 6px 6px 0;
       margin-top: 1rem;
@@ -109,14 +110,14 @@
     .highlight-box h4 {
       margin: 0 0 0.3rem 0;
       font-size: 0.85rem;
-      color: var(--cyan, #00f0ff);
+      color: var(--cyan-neon);
       font-family: 'JetBrains Mono', monospace;
     }
 
     .highlight-box p {
       margin: 0;
       font-size: 0.85rem;
-      color: #94a3b8;
+      color: var(--text-muted);
     }
 
     .bullet-list {
@@ -128,7 +129,7 @@
     .bullet-list li {
       position: relative;
       padding-left: 1.2rem;
-      color: #cbd5e1;
+      color: var(--text-cream);
       font-size: 0.88rem;
       margin-bottom: 0.6rem;
     }
@@ -137,7 +138,7 @@
       content: "›";
       position: absolute;
       left: 0;
-      color: var(--cyan, #00f0ff);
+      color: var(--cyan-neon);
       font-weight: bold;
     }
 
@@ -147,18 +148,19 @@
       border-top: 1px dashed rgba(255, 255, 255, 0.08);
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.78rem;
-      color: #64748b;
+      color: var(--text-muted);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .status-active {
-      color: #00ff88;
+      color: var(--green-neon);
     }
   </style>
 </head>
 <body>
+  <!-- FONDO CON ESTRELLAS Y NEBULOSAS -->
   <div id="stars-container"></div>
 
   <!-- CABECERA DE NAVEGACIÓN -->
@@ -191,7 +193,7 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container">
     
-    <!-- ENCABEZADO SIN REPETICIONES Y DIRECTO -->
+    <!-- ENCABEZADO PRINCIPAL -->
     <section class="lab-hero">
       <span class="lab-tag" data-key="beacon_module_tag">// MODULE: INNOVATION &amp; TERRAIN</span>
       <h1 class="lab-title" data-key="beacon_title">TRADUCTION METACOGNITIVE &amp; INTERVENTIONS</h1>
@@ -200,10 +202,10 @@
       </p>
     </section>
 
-    <!-- LAS 2 VENTANAS PRINCIPALES CON SUS RESPECTIVOS BOTONES -->
+    <!-- LAS 2 VENTANAS PRINCIPALES -->
     <div class="dual-grid">
 
-      <!-- VENTANA 1: POLETHIC BEACON (CON BOTÓN AL BEACONIZADOR) -->
+      <!-- VENTANA 1: POLETHIC BEACON (MOTEUR) -->
       <article class="window-card">
         <div>
           <header class="window-header">
@@ -221,7 +223,7 @@
               <p data-key="win1_score_desc">Indice de rigueur et de fiabilité scientifique. Évalue le niveau de preuve, la présence de biais cognitifs et le jargon pseudo-scientifique.</p>
             </div>
 
-            <!-- BOTÓN REDIRIGIDO AL ARCHIVO beacon-app.html -->
+            <!-- BOTÓN AL BEACONISATEUR -->
             <div style="margin-top: 1.5rem; text-align: center;">
               <a href="beacon-app.html" id="btn-app-link" class="btn-lab-action btn-cyan" data-key="win1_btn">
                 ⚡ LANCER LE BÉACONISEUR
@@ -236,7 +238,7 @@
         </div>
       </article>
 
-      <!-- VENTANA 2: POLETHIC EXPÉRIENCES (CON BOTÓN A EXPERIENCIAS/TALLERES) -->
+      <!-- VENTANA 2: POLETHIC EXPÉRIENCES (TERRAIN) -->
       <article class="window-card">
         <div>
           <header class="window-header">
@@ -256,7 +258,7 @@
 
             <!-- BOTÓN A LAS EXPERIENCIAS -->
             <div style="margin-top: 1.5rem; text-align: center;">
-              <a href="experiences.html" class="btn-lab-action btn-purple" data-key="win2_btn">
+              <a href="experiences.html" id="btn-exp-link" class="btn-lab-action btn-purple" data-key="win2_btn">
                 🎨 EXPLORER LES EXPÉRIENCES
               </a>
             </div>
@@ -277,7 +279,7 @@
   <footer>
     <div class="container footer-content">
       
-      <!-- ESCUDO Y DESCARGO DE RESPONSABILIDAD PROFESIONAL -->
+      <!-- ESCUDO DE PROTECCIÓN -->
       <div class="footer-shield">
         <div class="shield-badge">
           <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -311,7 +313,7 @@
     </div>
   </footer>
 
-  <!-- SCRIPT TRILINGÜE COMPLETO (FR, ES, EN) -->
+  <!-- SCRIPT TRILINGÜE DE TRADUCCIÓN Y NAVEGACIÓN -->
   <script>
   const translations = {
       fr: {
@@ -427,6 +429,7 @@
   function setLanguage(lang) {
       localStorage.setItem('preferred_lang', lang);
 
+      // Cambiar traducciones con soporte para innerHTML
       document.querySelectorAll('[data-key]').forEach(element => {
           const key = element.getAttribute('data-key');
           if (translations[lang] && translations[lang][key]) {
@@ -434,21 +437,30 @@
           }
       });
 
-      // Actualizar enlace de la app para transferir el idioma
+      // Transferir idioma al Beaconizador (Ventana 1)
       const appLink = document.getElementById('btn-app-link');
       if (appLink) {
           appLink.href = `beacon-app.html?lang=${lang}`;
       }
 
+      // Transferir idioma a Experiencias (Ventana 2)
+      const expLink = document.getElementById('btn-exp-link');
+      if (expLink) {
+          expLink.href = `experiences.html?lang=${lang}`;
+      }
+
+      // Actualizar botón activo de idioma
       document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById(`btn-${lang}`);
       if (activeBtn) activeBtn.classList.add('active');
   }
 
+  // Event Listeners para el selector de idiomas
   document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
   document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
   document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
 
+  // Carga inicial según preferencia o defecto en Francés
   document.addEventListener('DOMContentLoaded', () => {
       const savedLang = localStorage.getItem('preferred_lang') || 'fr';
       setLanguage(savedLang);
