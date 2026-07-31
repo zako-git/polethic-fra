@@ -221,17 +221,17 @@
               <p data-key="win1_score_desc">Indice de rigueur et de fiabilité scientifique. Évalue le niveau de preuve, la présence de biais cognitifs et le jargon pseudo-scientifique.</p>
             </div>
 
-            <!-- BOTÓN REDIRIGIDO CORRECTAMENTE AL ARCHIVO beacon-app.html -->
+            <!-- BOTÓN REDIRIGIDO AL ARCHIVO beacon-app.html -->
             <div style="margin-top: 1.5rem; text-align: center;">
-              <a href="beacon-app.html" class="btn-lab-action btn-cyan" data-key="win1_btn">
-                ⚡ LANCER LE BÉACONISATEUR
+              <a href="beacon-app.html" id="btn-app-link" class="btn-lab-action btn-cyan" data-key="win1_btn">
+                ⚡ LANCER LE BÉACONISEUR
               </a>
             </div>
           </div>
         </div>
 
         <div class="status-bar">
-          <span data-key="win1_status">&gt; BEACON ENGINE READY_</span>
+          <span data-key="win1_status">&gt; MOTEUR BEACON PRÊT_</span>
           <span class="status-active">● ONLINE</span>
         </div>
       </article>
@@ -331,8 +331,8 @@
           win1_desc: "Conversion et décodage automatisé des textes. Notre traducteur métacognitif décompose la rhétorique, isole les sophismes et traduit la structure logique cachée derrière les discours d'influence.",
           win1_score_title: "POLETHIC Score",
           win1_score_desc: "Indice de rigueur et de fiabilité scientifique. Évalue le niveau de preuve, la présence de biais cognitifs et le jargon pseudo-scientifique.",
-          win1_btn: "⚡ LANCER LE BÉACONISATEUR",
-          win1_status: "> BEACON ENGINE READY_",
+          win1_btn: "⚡ LANCER LE BÉACONISEUR",
+          win1_status: "> MOTEUR BEACON PRÊT_",
 
           win2_num: "02 // LE TERRAIN",
           win2_title: "POLETHIC EXPÉRIENCES",
@@ -368,7 +368,7 @@
           win1_score_title: "POLETHIC Score",
           win1_score_desc: "Índice de rigor y fiabilidad científica. Evalúa el nivel de evidencia, la presencia de sesgos cognitivos y la jerga pseudocientífica.",
           win1_btn: "⚡ INICIAR EL BEACONIZADOR",
-          win1_status: "> BEACON ENGINE LISTO_",
+          win1_status: "> MOTOR BEACON LISTO_",
 
           win2_num: "02 // EL TERRENO",
           win2_title: "POLETHIC EXPÉRIENCES",
@@ -433,6 +433,12 @@
               element.innerHTML = translations[lang][key];
           }
       });
+
+      // Actualizar enlace de la app para transferir el idioma
+      const appLink = document.getElementById('btn-app-link');
+      if (appLink) {
+          appLink.href = `beacon-app.html?lang=${lang}`;
+      }
 
       document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById(`btn-${lang}`);
