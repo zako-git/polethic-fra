@@ -493,7 +493,7 @@
           news: "Pega texto de prensa, artículos políticos o enlaces de vídeo...",
           myth: "Pega afirmaciones sobre medicina alternativa o teorías no verificadas...",
           identity: "Pega biografías o credenciales sospechosas para analizar...",
-          coercion: "Pega discursos de alta presión, manipulación o ventas agresivas..."
+          coercive: "Pega discursos de alta presión, manipulación o ventas agresivas..."
         },
         ethicLabel: "Ethic-Score™",
         empty: "Por favor, introduce algún contenido o adjunta una imagen para analizar.",
@@ -509,7 +509,7 @@
           news: "Paste media text, political articles, or video links...",
           myth: "Paste claims regarding alternative medicine or unverified theories...",
           identity: "Paste suspicious bio data or credentials to audit...",
-          coercion: "Paste high-pressure sales pitches or manipulation..."
+          coercive: "Paste high-pressure sales pitches or manipulation..."
         },
         ethicLabel: "Ethic-Score™",
         empty: "Please introduce some content or attach an image to analyze.",
@@ -539,10 +539,12 @@
     function changeLang(lang, e) {
       if (e) e.preventDefault();
       currentLang = lang;
+      localStorage.setItem('preferred_lang', lang);
 
       // Actualizar visualmente la cabecera
       document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(`btn-${lang}`).classList.add('active');
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
 
       // Actualizar textos e indicaciones
       const t = i18n[lang];
@@ -678,6 +680,18 @@
         window.print();
       }
     }
+
+    // ==========================================
+    // DETECCIÓN AUTOMÁTICA DEL IDIOMA DE ENTRADA
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const activeLang = urlParams.get('lang') || localStorage.getItem('preferred_lang') || 'fr';
+
+      if (['fr', 'es', 'en'].includes(activeLang)) {
+        changeLang(activeLang);
+      }
+    });
   </script>
 </body>
 </html>
