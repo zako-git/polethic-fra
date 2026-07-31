@@ -2,16 +2,28 @@ const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
 
 let currentWindow = "news";
 let lastAnalyzedModule = "news";
-let lastScore = 0; // Se mantiene en memoria como número para el backend/PDF
+let lastScore = 0; 
 
 // Detectar idioma inicial (Prioridad: URL -> localStorage -> por defecto 'fr')
 const urlParams = new URLSearchParams(window.location.search);
 let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang') || "fr";
 
-// 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN
+// 1. DICCIONARIO DE TRADUCCIONES COMPLETO (INCLUYE CABECERA Y BOTONES)
 const i18n = {
     fr: {
+        nav_home: "ACCUEIL",
+        nav_obs: "L'OBSERVATOIRE",
+        nav_museum: "PSICOMUSÉE",
+        nav_beacon: "BEACON LAB",
+        nav_cap: "NOTRE CAP",
+        nav_contact: "CONTACT",
+
         tagline: "Moteur d'Autodéfense Cognitive & Analyseur de Métacommunication",
+        tab_fakenews: "1. FakeNews",
+        tab_mythbuster: "2. Chasseur de Mythes",
+        tab_identity: "3. Usurpation d'Identité",
+        tab_coercive: "4. Filtre Coercitif",
+
         windowTitles: {
             "news": "1. Chasse aux Intox: Collez l'article ou le lien pour révéler le faux :",
             "myth": "2. Déboulonneur de Mythes: Collez le remède miracle ou la pseudo-science :",
@@ -24,6 +36,9 @@ const i18n = {
             "identity_spoofing": "Collez des données de bio ou des identifiants de 'gourous' suspects...",
             "coercion": "Collez des discours de vente agressive ou de la manipulation..."
         },
+        btnAnalyze: "ANALYZER",
+        btnPurge: "PURGER SESSION",
+        btnPdf: "EXPORTER PDF",
         ethicLabel: "Ethic-Score™",
         runningText: "Analyse des motifs linguistiques en cours... Veuillez patienter.",
         emptyText: "Veuillez introduire du contenu ou joindre une image à analyser.",
@@ -32,7 +47,19 @@ const i18n = {
         parsingError: "Indisponible (erreur d'analyse)"
     },
     es: {
+        nav_home: "INICIO",
+        nav_obs: "OBSERVATORIO",
+        nav_museum: "PSICOMUSEO",
+        nav_beacon: "BEACON LAB",
+        nav_cap: "NUESTRO RUMBO",
+        nav_contact: "CONTACTO",
+
         tagline: "Motor de Autodefensa Cognitiva y Analizador de Metacomunicación",
+        tab_fakenews: "1. FakeNews / Bulo",
+        tab_mythbuster: "2. Caza-Mitos",
+        tab_identity: "3. Suplantación de Identidad",
+        tab_coercive: "4. Filtro Coercitivo",
+
         windowTitles: {
             "news": "1. Cazador de Bulos: Pega el artículo, titular o enlace para destapar la mentira:",
             "myth": "2. Rompe-Mitos: Pega el remedio mágico, la conspiración o la ciencia de garrafa:",
@@ -45,6 +72,9 @@ const i18n = {
             "identity_spoofing": "Pega biografías de LinkedIn, cargos de fantasía o credenciales sospechosas...",
             "coercion": "Pega discursos de ventas agresivas, manipulación o 'chapas' de alta presión..."
         },
+        btnAnalyze: "ANALIZAR",
+        btnPurge: "PURGAR SESIÓN",
+        btnPdf: "EXPORTAR PDF",
         ethicLabel: "Ethic-Score™",
         runningText: "Ejecutando análisis de patrones lingüísticos... Por favor, espera.",
         emptyText: "Por favor, introduce algún contenido o adjunta una imagen para analizar.",
@@ -53,7 +83,19 @@ const i18n = {
         parsingError: "No disponible (error de análisis)"
     },
     en: {
+        nav_home: "HOME",
+        nav_obs: "OBSERVATORY",
+        nav_museum: "PSYCHOMUSEUM",
+        nav_beacon: "BEACON LAB",
+        nav_cap: "OUR COURSE",
+        nav_contact: "CONTACT",
+
         tagline: "Cognitive Self-Defense Engine & Metacommunication Analyzer",
+        tab_fakenews: "1. FakeNews",
+        tab_mythbuster: "2. Myth-Buster",
+        tab_identity: "3. Identity Spoofing",
+        tab_coercive: "4. Coercive Filter",
+
         windowTitles: {
             "news": "1. FakeNews Hunter: Paste the article or link to expose the spin:",
             "myth": "2. Myth-Buster: Paste the miracle cure, pseudoscience, or wild theory:",
@@ -66,6 +108,9 @@ const i18n = {
             "identity_spoofing": "Paste suspicious bio data, inflated titles, or guru credentials...",
             "coercion": "Paste high-pressure sales pitches, manipulation, or aggressive discourse..."
         },
+        btnAnalyze: "ANALYZE",
+        btnPurge: "PURGE SESSION",
+        btnPdf: "EXPORT PDF",
         ethicLabel: "Ethic-Score™",
         runningText: "Running linguistic pattern analysis... Please wait.",
         emptyText: "Please introduce some content or attach an image to Beacon-ize.",
@@ -80,11 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
     setupFileInput();
     setupLangSelector();
     
-    // Aplicar el idioma guardado previamente tan pronto como la página cargue
+    // Aplicar el idioma guardado previamente
     switchLanguage(currentLang);
 });
 
-// 2. CONEXIÓN CON EL SELECTOR DE IDIOMAS DE LA CABECERA
+// 2. CONEXIÓN CON EL SELECTOR DE IDIOMAS
 function setupLangSelector() {
     const btnFr = document.getElementById("btn-fr");
     const btnEs = document.getElementById("btn-es");
@@ -99,7 +144,7 @@ function switchLanguage(lang) {
     if (!i18n[lang]) lang = "fr";
     currentLang = lang;
 
-    // Guardar preferencia global y actualizar atributo lang del documento HTML
+    // Guardar preferencia global
     localStorage.setItem('preferred_lang', lang);
     document.documentElement.lang = lang;
 
@@ -108,19 +153,37 @@ function switchLanguage(lang) {
     const activeBtn = document.getElementById(`btn-${lang}`);
     if (activeBtn) activeBtn.classList.add("active");
 
-    // Actualizar dinámicamente los textos visibles de los módulos
+    // Mantener parámetro ?lang= en la barra de navegación para evitar discrepancias
+    const newUrl = `${window.location.pathname}?lang=${lang}`;
+    window.history.replaceState({ path: newUrl }, '', newUrl);
+
+    // Mantenimiento de links de la navegación
+    document.querySelectorAll('.nav-buttons a, nav a').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#')) {
+            const cleanHref = href.split('?')[0];
+            link.setAttribute('href', `${cleanHref}?lang=${lang}`);
+        }
+    });
+
+    // Actualizar dinámicamente los textos visibles
     updateModuleTexts();
 }
 
 function updateModuleTexts() {
     const t = i18n[currentLang];
     
-    // Actualizar subtítulo general si existe en el HTML
+    // Traducir Menú Superior mediante atributos data-key o IDs si existen
+    document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (t[key]) el.innerText = t[key];
+    });
+
+    // Subtítulo general
     const taglineEl = document.getElementById("header-tagline");
-    if (taglineEl && t.tagline) {
-        taglineEl.innerText = t.tagline;
-    }
+    if (taglineEl && t.tagline) taglineEl.innerText = t.tagline;
     
+    // Título y placeholder del módulo
     const titleEl = document.getElementById("window-title");
     if (titleEl && t.windowTitles[currentWindow]) {
         titleEl.innerText = t.windowTitles[currentWindow];
@@ -130,6 +193,25 @@ function updateModuleTexts() {
     if (inputEl && t.windowPlaceholders[currentWindow]) {
         inputEl.placeholder = t.windowPlaceholders[currentWindow];
     }
+
+    // Traducir Botones Acción Principal
+    const analyzeBtn = document.getElementById("btn-analyze");
+    if (analyzeBtn && !analyzeBtn.disabled) analyzeBtn.innerText = t.btnAnalyze;
+
+    const purgeBtn = document.getElementById("btn-purge");
+    if (purgeBtn) purgeBtn.innerText = t.btnPurge;
+
+    const pdfBtn = document.getElementById("btn-pdf");
+    if (pdfBtn && !pdfBtn.disabled) pdfBtn.innerText = t.btnPdf;
+
+    // Traducir Pestañas/Módulos si tienen data-module
+    document.querySelectorAll(".nav-tabs button").forEach(btn => {
+        const mod = btn.dataset.module;
+        if (mod === "news" && t.tab_fakenews) btn.innerText = t.tab_fakenews;
+        if (mod === "myth" && t.tab_mythbuster) btn.innerText = t.tab_mythbuster;
+        if (mod === "identity_spoofing" && t.tab_identity) btn.innerText = t.tab_identity;
+        if (mod === "coercion" && t.tab_coercive) btn.innerText = t.tab_coercive;
+    });
 }
 
 function setupNavTabs() {
@@ -186,15 +268,13 @@ function renderLocalFlags(flags) {
     }
 }
 
-// 3. MAPEO DE PUNTUACIÓN INTERNA (0-100) A SOLAMENTE LETRAS (A, B, C, D)
 function getEthicLetter(score) {
-    if (score <= 25) return "A"; // Sin Riesgo / Integridad Alta
-    if (score <= 50) return "B"; // Riesgo Moderado
-    if (score <= 75) return "C"; // Riesgo Alto
-    return "D";                  // Peligro Máximo / Coerción
+    if (score <= 25) return "A";
+    if (score <= 50) return "B";
+    if (score <= 75) return "C";
+    return "D";
 }
 
-// 4. FUNCIÓN PRINCIPAL DE ANÁLISIS
 async function analyze() {
     const t = i18n[currentLang];
     const textInput = document.getElementById("user-input").value.trim();
@@ -224,7 +304,6 @@ async function analyze() {
     try {
         let response;
 
-        // Enviamos el idioma actual en las peticiones al backend
         if (file) {
             const formData = new FormData();
             formData.append("text", textInput);
@@ -270,23 +349,21 @@ async function analyze() {
         lastAnalyzedModule = currentWindow;
         lastScore = score;
 
-        // APLICAR CLASES DE COLOR SEGÚN LA LETRA DE AMENAZA
         const resultsSection = document.getElementById("results-panel");
         if (resultsSection) {
             resultsSection.className = 'results-section';
 
             if (score >= 76) {
-                resultsSection.classList.add("threat-high");    // Letra D (Rojo)
+                resultsSection.classList.add("threat-high");
             } else if (score >= 51) {
-                resultsSection.classList.add("threat-medium");  // Letra C (Naranja)
+                resultsSection.classList.add("threat-medium");
             } else if (score >= 26) {
-                resultsSection.classList.add("threat-caution"); // Letra B (Amarillo)
+                resultsSection.classList.add("threat-caution");
             } else {
-                resultsSection.classList.add("threat-low");     // Letra A (Verde)
+                resultsSection.classList.add("threat-low");
             }
         }
 
-        // IMPRIME EXCLUSIVAMENTE LA LETRA (Sin cifras ni puntuación)
         if (scoreDiv) {
             scoreDiv.innerText = `${t.ethicLabel}: ${getEthicLetter(score)}`;
         }
@@ -303,20 +380,19 @@ async function analyze() {
         if (resultDiv) resultDiv.innerText = t.offlineReport;
     } finally {
         if (analyzeButton) {
-            analyzeButton.innerText = "BEACON-IZE";
+            analyzeButton.innerText = t.btnAnalyze;
             analyzeButton.disabled = false;
         }
     }
 }
 
-// 5. EXPORTAR PDF
 function triggerPDFDownload() {
     const analysisElement = document.getElementById("analysis-report");
     const currentAnalysis = analysisElement ? analysisElement.innerText.trim() : "No analysis target found.";
     const pdfButton = document.getElementById("btn-pdf");
 
     if (pdfButton) {
-        pdfButton.innerText = "EXPORTING...";
+        pdfButton.innerText = "...";
         pdfButton.disabled = true;
     }
 
@@ -349,13 +425,12 @@ function triggerPDFDownload() {
     })
     .finally(() => {
         if (pdfButton) {
-            pdfButton.innerText = "EXPORT PDF";
+            pdfButton.innerText = i18n[currentLang].btnPdf;
             pdfButton.disabled = false;
         }
     });
 }
 
-// 6. PURGAR DASHBOARD
 function purgeDashboard() {
     const textInput = document.getElementById("user-input");
     if (textInput) textInput.value = "";
