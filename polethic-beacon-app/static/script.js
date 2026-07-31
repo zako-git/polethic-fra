@@ -8,10 +8,17 @@ let lastScore = 0; // Se mantiene en memoria como número para el backend/PDF
 const urlParams = new URLSearchParams(window.location.search);
 let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang') || "fr";
 
-// 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN
+// 1. DICCIONARIO DE TRADUCCIONES CON LOS 4 BOTONES Y SUS TRADUCCIONES
 const i18n = {
     fr: {
         tagline: "Moteur d'Autodéfense Cognitive & Analyseur de Métacommunication",
+        
+        // Nombres de los 4 botones/pestañas
+        tab_fakenews: "1. FakeNews",
+        tab_mythbuster: "2. Chasseur de Mythes",
+        tab_identity: "3. Usurpation d'Identité",
+        tab_coercive: "4. Filtre Anti-Blabla",
+
         windowTitles: {
             "news": "1. Chasse aux Intox: Collez l'article ou le lien pour révéler le faux :",
             "myth": "2. Déboulonneur de Mythes: Collez le remède miracle ou la pseudo-science :",
@@ -33,6 +40,13 @@ const i18n = {
     },
     es: {
         tagline: "Motor de Autodefensa Cognitiva y Analizador de Metacomunicación",
+        
+        // Nombres de los 4 botones/pestañas
+        tab_fakenews: "1. Cazador de Bulos",
+        tab_mythbuster: "2. Rompe-Mitos",
+        tab_identity: "3. Detector de Postureo",
+        tab_coercive: "4. Filtro Vendehumos",
+
         windowTitles: {
             "news": "1. Cazador de Bulos: Pega el artículo, titular o enlace para destapar la mentira:",
             "myth": "2. Rompe-Mitos: Pega el remedio mágico, la conspiración o la ciencia de garrafa:",
@@ -54,6 +68,13 @@ const i18n = {
     },
     en: {
         tagline: "Cognitive Self-Defense Engine & Metacommunication Analyzer",
+        
+        // Nombres de los 4 botones/pestañas
+        tab_fakenews: "1. FakeNews",
+        tab_mythbuster: "2. Myth-Buster",
+        tab_identity: "3. Identity Spoofing",
+        tab_coercive: "4. Coercive Filter",
+
         windowTitles: {
             "news": "1. FakeNews Hunter: Paste the article or link to expose the spin:",
             "myth": "2. Myth-Buster: Paste the miracle cure, pseudoscience, or wild theory:",
@@ -108,7 +129,7 @@ function switchLanguage(lang) {
     const activeBtn = document.getElementById(`btn-${lang}`);
     if (activeBtn) activeBtn.classList.add("active");
 
-    // Mantener sincronizada la URL ?lang=XX sin modificar ningún texto del HTML
+    // Mantener la URL con ?lang=XX sin alterar tu flujo
     const newUrl = `${window.location.pathname}?lang=${lang}`;
     window.history.replaceState({ path: newUrl }, '', newUrl);
 
@@ -119,12 +140,13 @@ function switchLanguage(lang) {
 function updateModuleTexts() {
     const t = i18n[currentLang];
     
-    // Actualizar subtítulo general si existe en el HTML
+    // Subtítulo general
     const taglineEl = document.getElementById("header-tagline");
     if (taglineEl && t.tagline) {
         taglineEl.innerText = t.tagline;
     }
     
+    // Título y placeholder del módulo activo
     const titleEl = document.getElementById("window-title");
     if (titleEl && t.windowTitles[currentWindow]) {
         titleEl.innerText = t.windowTitles[currentWindow];
@@ -134,15 +156,24 @@ function updateModuleTexts() {
     if (inputEl && t.windowPlaceholders[currentWindow]) {
         inputEl.placeholder = t.windowPlaceholders[currentWindow];
     }
+
+    // Traducir los 4 botones/pestañas superiores del módulo
+    document.querySelectorAll(".nav-tabs button, .tabs-container button").forEach(btn => {
+        const mod = btn.dataset.module;
+        if (mod === "news" && t.tab_fakenews) btn.innerText = t.tab_fakenews;
+        if (mod === "myth" && t.tab_mythbuster) btn.innerText = t.tab_mythbuster;
+        if (mod === "identity_spoofing" && t.tab_identity) btn.innerText = t.tab_identity;
+        if (mod === "coercion" && t.tab_coercive) btn.innerText = t.tab_coercive;
+    });
 }
 
 function setupNavTabs() {
-    document.querySelectorAll(".nav-tabs button").forEach(button => {
+    document.querySelectorAll(".nav-tabs button, .tabs-container button").forEach(button => {
         button.addEventListener("click", () => {
             const windowType = button.dataset.module;
             if (!windowType) return;
 
-            document.querySelectorAll(".nav-tabs button").forEach(btn => btn.classList.remove("active"));
+            document.querySelectorAll(".nav-tabs button, .tabs-container button").forEach(btn => btn.classList.remove("active"));
             button.classList.add("active");
             currentWindow = windowType;
 
@@ -190,7 +221,7 @@ function renderLocalFlags(flags) {
     }
 }
 
-// 3. MAPEO DE PUNTUACIÓN INTERNA (0-100) A SOLAMENTE LETRAS (A, B, C, D)
+// MAPEO DE PUNTUACIÓN INTERNA (0-100) A SOLAMENTE LETRAS (A, B, C, D)
 function getEthicLetter(score) {
     if (score <= 25) return "A"; // Sin Riesgo / Integridad Alta
     if (score <= 50) return "B"; // Riesgo Moderado
@@ -198,7 +229,7 @@ function getEthicLetter(score) {
     return "D";                  // Peligro Máximo / Coerción
 }
 
-// 4. FUNCIÓN PRINCIPAL DE ANÁLISIS
+// FUNCIÓN PRINCIPAL DE ANÁLISIS
 async function analyze() {
     const t = i18n[currentLang];
     const textInput = document.getElementById("user-input").value.trim();
@@ -228,7 +259,6 @@ async function analyze() {
     try {
         let response;
 
-        // Enviamos el idioma actual en las peticiones al backend
         if (file) {
             const formData = new FormData();
             formData.append("text", textInput);
@@ -274,7 +304,6 @@ async function analyze() {
         lastAnalyzedModule = currentWindow;
         lastScore = score;
 
-        // APLICAR CLASES DE COLOR SEGÚN LA LETRA DE AMENAZA
         const resultsSection = document.getElementById("results-panel");
         if (resultsSection) {
             resultsSection.className = 'results-section';
@@ -290,7 +319,6 @@ async function analyze() {
             }
         }
 
-        // IMPRIME EXCLUSIVAMENTE LA LETRA (Sin cifras ni puntuación)
         if (scoreDiv) {
             scoreDiv.innerText = `${t.ethicLabel}: ${getEthicLetter(score)}`;
         }
@@ -313,7 +341,7 @@ async function analyze() {
     }
 }
 
-// 5. EXPORTAR PDF
+// EXPORTAR PDF
 function triggerPDFDownload() {
     const analysisElement = document.getElementById("analysis-report");
     const currentAnalysis = analysisElement ? analysisElement.innerText.trim() : "No analysis target found.";
@@ -359,7 +387,7 @@ function triggerPDFDownload() {
     });
 }
 
-// 6. PURGAR DASHBOARD
+// PURGAR DASHBOARD
 function purgeDashboard() {
     const textInput = document.getElementById("user-input");
     if (textInput) textInput.value = "";
