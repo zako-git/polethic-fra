@@ -11,10 +11,11 @@ let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang'
 // 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN
 const i18n = {
     fr: {
+        tagline: "Moteur d'Autodéfense Cognitive & Analyseur de Métacommunication",
         windowTitles: {
             "news": "1. Chasse aux Intox: Collez l'article ou le lien pour révéler le faux :",
             "myth": "2. Déboulonneur de Mythes: Collez le remède miracle ou la pseudo-science :",
-            "identity_spoofing": "3. Détecteur d'Esbroufe: Collez le profil ou la bio pour auditer la façade :",
+            "identity_spoofing": "3. Détecteur de Bluff & d'Esbroufe: Collez le profil ou la bio pour auditer la façade :",
             "coercion": "4. Filtre Anti-Blabla: Collez le discours de vente à haute pression ou la manipulation :"
         },
         windowPlaceholders: {
@@ -22,9 +23,16 @@ const i18n = {
             "myth": "Collez des affirmations sur la médecine alternative ou des théories non vérifiées...",
             "identity_spoofing": "Collez des données de bio ou des identifiants de 'gourous' suspects...",
             "coercion": "Collez des discours de vente agressive ou de la manipulation..."
-        }
+        },
+        ethicLabel: "Ethic-Score™",
+        runningText: "Analyse des motifs linguistiques en cours... Veuillez patienter.",
+        emptyText: "Veuillez introduire du contenu ou joindre une image à analyser.",
+        systemOffline: "Erreur: Système Hors Ligne",
+        offlineReport: "Le cœur de Beacon est actuellement inaccessible. Vérifiez votre connexion ou l'état du serveur.",
+        parsingError: "Indisponible (erreur d'analyse)"
     },
     es: {
+        tagline: "Motor de Autodefensa Cognitiva y Analizador de Metacomunicación",
         windowTitles: {
             "news": "1. Cazador de Bulos: Pega el artículo, titular o enlace para destapar la mentira:",
             "myth": "2. Rompe-Mitos: Pega el remedio mágico, la conspiración o la ciencia de garrafa:",
@@ -36,21 +44,34 @@ const i18n = {
             "myth": "Pega afirmaciones sobre medicina alternativa, brebajes o teorías de conspiración...",
             "identity_spoofing": "Pega biografías de LinkedIn, cargos de fantasía o credenciales sospechosas...",
             "coercion": "Pega discursos de ventas agresivas, manipulación o 'chapas' de alta presión..."
-        }
+        },
+        ethicLabel: "Ethic-Score™",
+        runningText: "Ejecutando análisis de patrones lingüísticos... Por favor, espera.",
+        emptyText: "Por favor, introduce algún contenido o adjunta una imagen para analizar.",
+        systemOffline: "Error: Sistema Fuera de Línea",
+        offlineReport: "El núcleo de Beacon no está localizable. Verifica tu conexión o el servidor.",
+        parsingError: "No disponible (error de análisis)"
     },
     en: {
+        tagline: "Cognitive Self-Defense Engine & Metacommunication Analyzer",
         windowTitles: {
             "news": "1. FakeNews Hunter: Paste the article or link to expose the spin:",
             "myth": "2. Myth-Buster: Paste the miracle cure, pseudoscience, or wild theory:",
-            "identity_spoofing": "3. Identity_spoofing: Paste the bio or profile to scan for fake credentials:",
-            "coercion": "4. Hype & Coercion Filter: Paste the high-pressure pitch or manipulative talk:"
+            "identity_spoofing": "3. Fake Expert & Bio-Hype Audit: Paste the bio or profile to scan for fake credentials:",
+            "coercion": "4. Coercion & Hype Filter: Paste high-pressure pitches or manipulative copy:"
         },
         windowPlaceholders: {
             "news": "Paste media text, political spin, or video links to audit...",
             "myth": "Paste claims regarding alternative remedies or unverified theories...",
             "identity_spoofing": "Paste suspicious bio data, inflated titles, or guru credentials...",
             "coercion": "Paste high-pressure sales pitches, manipulation, or aggressive discourse..."
-        }
+        },
+        ethicLabel: "Ethic-Score™",
+        runningText: "Running linguistic pattern analysis... Please wait.",
+        emptyText: "Please introduce some content or attach an image to Beacon-ize.",
+        systemOffline: "Error: System Offline",
+        offlineReport: "The Beacon core is currently unreachable. Please verify your connection or server status.",
+        parsingError: "Unavailable (parsing error)"
     }
 };
 
@@ -93,6 +114,12 @@ function switchLanguage(lang) {
 
 function updateModuleTexts() {
     const t = i18n[currentLang];
+    
+    // Actualizar subtítulo general si existe en el HTML
+    const taglineEl = document.getElementById("header-tagline");
+    if (taglineEl && t.tagline) {
+        taglineEl.innerText = t.tagline;
+    }
     
     const titleEl = document.getElementById("window-title");
     if (titleEl && t.windowTitles[currentWindow]) {
