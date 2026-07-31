@@ -12,63 +12,45 @@ let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang'
 const i18n = {
     fr: {
         windowTitles: {
-            "news": "1. FakeNews: Entrez le texte de l'article ou le lien à évaluer :",
-            "myth": "2. Myth-Buster: Collez la déclaration, le remède ou la théorie pseudoscientifique :",
-            "identity_spoofing": "3. Identity Spoofing: Collez le profil, les identifiants ou la bio à auditer :",
-            "coercion": "4. Filtre Coercitif: Entrez le texte persuasif ou le discours suspect :"
+            "news": "1. Chasse aux Intox: Collez l'article ou le lien pour révéler le faux :",
+            "myth": "2. Déboulonneur de Mythes: Collez le remède miracle ou la pseudo-science :",
+            "identity_spoofing": "3. Détecteur de Posture: Collez le profil ou la bio pour auditer la façade :",
+            "coercion": "4. Filtre Anti-Blabla: Collez le discours de vente à haute pression ou la manipulation :"
         },
         windowPlaceholders: {
             "news": "Collez du texte média, des articles politiques ou des liens vidéo...",
             "myth": "Collez des affirmations sur la médecine alternative ou des théories non vérifiées...",
-            "identity_spoofing": "Collez des données de bio ou des identifiants suspects...",
-            "coercion": "Collez des discours de vente à haute pression ou de la manipulation..."
-        },
-        ethicLabel: "Ethic-Score™",
-        runningText: "Analyse des motifs linguistiques en cours... Veuillez patienter.",
-        emptyText: "Veuillez introduire du contenu ou joindre une image à analyser.",
-        systemOffline: "Erreur: Système Hors Ligne",
-        offlineReport: "Le cœur de Beacon est actuellement inaccessible. Vérifiez votre connexion ou l'état du serveur.",
-        parsingError: "Indisponible (erreur d'analyse)"
+            "identity_spoofing": "Collez des données de bio ou des identifiants de 'gourous' suspects...",
+            "coercion": "Collez des discours de vente agressive ou de la manipulation..."
+        }
     },
     es: {
         windowTitles: {
-            "news": "1. FakeNews: Introduce el texto o enlace del artículo a evaluar:",
-            "myth": "2. Myth-Buster: Pega la afirmación, remedio o teoría seudocientífica:",
-            "identity_spoofing": "3. Identity Spoofing: Pega el perfil o biografía para auditar:",
-            "coercion": "4. Filtro Coercitivo: Introduce el texto persuasivo o discurso sospechoso:"
+            "news": "1. Cazador de Bulos: Pega el artículo, titular o enlace para destapar la mentira:",
+            "myth": "2. Rompe-Mitos: Pega el remedio mágico, la conspiración o la ciencia de garrafa:",
+            "identity_spoofing": "3. Detector de Postureo: Pega el perfil o bio del gurú para auditar la fachada:",
+            "coercion": "4. Filtro Vendehumos: Pega la chapa persuasiva o el discurso de alta presión:"
         },
         windowPlaceholders: {
-            "news": "Pega texto de prensa, artículos políticos o enlaces de vídeo para auditarlo...",
-            "myth": "Pega afirmaciones sobre medicina alternativa o teorías no verificadas...",
-            "identity_spoofing": "Pega biografías o credenciales sospechosas para analizar intrusión profesional...",
-            "coercion": "Pega discursos de alta presión, manipulación o ventas agresivas..."
-        },
-        ethicLabel: "Ethic-Score™",
-        runningText: "Ejecutando análisis de patrones lingüísticos... Por favor, espera.",
-        emptyText: "Por favor, introduce algún contenido o adjunta una imagen para analizar.",
-        systemOffline: "Error: Sistema Fuera de Línea",
-        offlineReport: "El núcleo de Beacon no está localizable. Verifica tu conexión o el servidor.",
-        parsingError: "No disponible (error de análisis)"
+            "news": "Pega texto de prensa, titulares dudosos o enlaces de vídeo para auditarlos...",
+            "myth": "Pega afirmaciones sobre medicina alternativa, brebajes o teorías de conspiración...",
+            "identity_spoofing": "Pega biografías de LinkedIn, cargos de fantasía o credenciales sospechosas...",
+            "coercion": "Pega discursos de ventas agresivas, manipulación o 'chapas' de alta presión..."
+        }
     },
     en: {
         windowTitles: {
-            "news": "1. FakeNews: Enter the article text or link to evaluate:",
-            "myth": "2. Myth-Buster: Paste the claim, remedy, or pseudoscientific theory:",
-            "identity_spoofing": "3. Identity Spoofing: Paste the profile, credentials, or bio to audit:",
-            "coercion": "4. Coercive Filter: Enter the persuasive text or suspicious discourse:"
+            "news": "1. FakeNews Hunter: Paste the article or link to expose the spin:",
+            "myth": "2. Myth-Buster: Paste the miracle cure, pseudoscience, or wild theory:",
+            "identity_spoofing": "3. Clout & Posture Audit: Paste the bio or profile to scan for fake credentials:",
+            "coercion": "4. Hype & Coercion Filter: Paste the high-pressure pitch or manipulative talk:"
         },
         windowPlaceholders: {
-            "news": "Paste media text, political articles, or video links to Beacon-ize it...",
-            "myth": "Paste claims regarding alternative medicine or unverified theories to Beacon-ize it...",
-            "identity_spoofing": "Paste suspicious bio data or credentials to audit for structural/professional intrusion...",
-            "coercion": "Paste high-pressure sales pitches to Beacon-ize it..."
-        },
-        ethicLabel: "Ethic-Score™",
-        runningText: "Running linguistic pattern analysis... Please wait.",
-        emptyText: "Please introduce some content or attach an image to Beacon-ize.",
-        systemOffline: "Error: System Offline",
-        offlineReport: "The Beacon core is currently unreachable. Please verify your connection or server status.",
-        parsingError: "Unavailable (parsing error)"
+            "news": "Paste media text, political spin, or video links to audit...",
+            "myth": "Paste claims regarding alternative remedies or unverified theories...",
+            "identity_spoofing": "Paste suspicious bio data, inflated titles, or guru credentials...",
+            "coercion": "Paste high-pressure sales pitches, manipulation, or aggressive discourse..."
+        }
     }
 };
 
