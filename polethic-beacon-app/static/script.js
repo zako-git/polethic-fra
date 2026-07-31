@@ -11,12 +11,6 @@ let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang'
 // 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN
 const i18n = {
     fr: {
-        nav_home: "ACCUEIL",
-        nav_obs: "L'OBSERVATOIRE",
-        nav_museum: "PSICOMUSÉE",
-        nav_beacon: "BEACON LAB",
-        nav_cap: "NOTRE CAP",
-        nav_contact: "CONTACT",
         tagline: "Moteur d'Autodéfense Cognitive & Analyseur de Métacommunication",
         windowTitles: {
             "news": "1. Chasse aux Intox: Collez l'article ou le lien pour révéler le faux :",
@@ -38,12 +32,6 @@ const i18n = {
         parsingError: "Indisponible (erreur d'analyse)"
     },
     es: {
-        nav_home: "INICIO",
-        nav_obs: "OBSERVATORIO",
-        nav_museum: "PSICOMUSEO",
-        nav_beacon: "BEACON LAB",
-        nav_cap: "NUESTRO RUMBO",
-        nav_contact: "CONTACTO",
         tagline: "Motor de Autodefensa Cognitiva y Analizador de Metacomunicación",
         windowTitles: {
             "news": "1. Cazador de Bulos: Pega el artículo, titular o enlace para destapar la mentira:",
@@ -65,12 +53,6 @@ const i18n = {
         parsingError: "No disponible (error de análisis)"
     },
     en: {
-        nav_home: "HOME",
-        nav_obs: "OBSERVATORY",
-        nav_museum: "PSYCHOMUSEUM",
-        nav_beacon: "BEACON LAB",
-        nav_cap: "OUR COURSE",
-        nav_contact: "CONTACT",
         tagline: "Cognitive Self-Defense Engine & Metacommunication Analyzer",
         windowTitles: {
             "news": "1. FakeNews Hunter: Paste the article or link to expose the spin:",
@@ -126,18 +108,9 @@ function switchLanguage(lang) {
     const activeBtn = document.getElementById(`btn-${lang}`);
     if (activeBtn) activeBtn.classList.add("active");
 
-    // Sincronizar la URL para que refleje el idioma actual sin recargar la página
+    // Mantener sincronizada la URL ?lang=XX sin modificar ningún texto del HTML
     const newUrl = `${window.location.pathname}?lang=${lang}`;
     window.history.replaceState({ path: newUrl }, '', newUrl);
-
-    // Mantener sincronizado el parámetro de idioma en los enlaces del menú superior
-    document.querySelectorAll('.nav-buttons a, nav a').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && !href.startsWith('#')) {
-            const cleanHref = href.split('?')[0];
-            link.setAttribute('href', `${cleanHref}?lang=${lang}`);
-        }
-    });
 
     // Actualizar dinámicamente los textos visibles de los módulos
     updateModuleTexts();
@@ -145,12 +118,6 @@ function switchLanguage(lang) {
 
 function updateModuleTexts() {
     const t = i18n[currentLang];
-    
-    // Traducir menú superior si usa atributos data-key
-    document.querySelectorAll('[data-key]').forEach(el => {
-        const key = el.getAttribute('data-key');
-        if (t[key]) el.innerText = t[key];
-    });
     
     // Actualizar subtítulo general si existe en el HTML
     const taglineEl = document.getElementById("header-tagline");
