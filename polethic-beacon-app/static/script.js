@@ -8,7 +8,7 @@ let lastScore = 0; // Se mantiene en memoria como número para el backend/PDF
 const urlParams = new URLSearchParams(window.location.search);
 let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang') || "fr";
 
-// 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN (TU VERSIÓN ORIGINAL EXPOSICIÓN)
+// 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN
 const i18n = {
     fr: {
         windowTitles: {
@@ -73,15 +73,44 @@ const i18n = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Inicializar listeners de interacción y navegación
     setupNavTabs();
     setupFileInput();
-    setupLangSelector(); // Conecta los botones #btn-fr, #btn-es, #btn-en
+    setupLangSelector();
+    setupActionButtons(); // Conecta BEACON-IZE, EXPORT PDF y PURGE
     
-    // Carga inicial de idioma respetando URL o almacenamiento
+    // Carga inicial de idioma respetando URL o almacenamiento local
     switchLanguage(currentLang);
 });
 
-// 2. CONEXIÓN CON EL SELECTOR DE IDIOMAS DE LA CABECERA
+// 2. CONEXIÓN DE LOS BOTONES DE ACCIÓN (BEACON-IZE, PDF, PURGAR)
+function setupActionButtons() {
+    const btnAnalyze = document.getElementById("btn-analyze");
+    if (btnAnalyze) {
+        btnAnalyze.addEventListener("click", (e) => {
+            e.preventDefault();
+            analyze();
+        });
+    }
+
+    const btnPdf = document.getElementById("btn-pdf");
+    if (btnPdf) {
+        btnPdf.addEventListener("click", (e) => {
+            e.preventDefault();
+            triggerPDFDownload();
+        });
+    }
+
+    const btnPurge = document.getElementById("btn-purge");
+    if (btnPurge) {
+        btnPurge.addEventListener("click", (e) => {
+            e.preventDefault();
+            purgeDashboard();
+        });
+    }
+}
+
+// 3. CONEXIÓN CON EL SELECTOR DE IDIOMAS Y SINCRONIZACIÓN DE URL
 function setupLangSelector() {
     const btnFr = document.getElementById("btn-fr");
     const btnEs = document.getElementById("btn-es");
@@ -96,20 +125,17 @@ function switchLanguage(lang) {
     if (!i18n[lang]) return;
     currentLang = lang;
 
-    // Guardar preferencia global y actualizar atributo lang del documento HTML
     localStorage.setItem('preferred_lang', lang);
     document.documentElement.lang = lang;
 
-    // Actualizar clases activas en los botones de idioma
     document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.remove("active"));
     const activeBtn = document.getElementById(`btn-${lang}`);
     if (activeBtn) activeBtn.classList.add("active");
 
-    // Sincronizar la URL actual con ?lang=XX sin recargar la página ni tocar textos HTML
+    // Sincronizar URL ?lang=xx sin refrescar la página
     const newUrl = `${window.location.pathname}?lang=${lang}`;
     window.history.replaceState({ path: newUrl }, '', newUrl);
 
-    // Actualizar dinámicamente los textos de los inputs y títulos
     updateModuleTexts();
 }
 
@@ -127,13 +153,15 @@ function updateModuleTexts() {
     }
 }
 
+// 4. NAVEGACIÓN ENTRE LOS 4 BOTONES / MÓDULOS
 function setupNavTabs() {
-    document.querySelectorAll(".nav-tabs button").forEach(button => {
+    const buttons = document.querySelectorAll(".nav-tabs button");
+    buttons.forEach(button => {
         button.addEventListener("click", () => {
             const windowType = button.dataset.module;
             if (!windowType) return;
 
-            document.querySelectorAll(".nav-tabs button").forEach(btn => btn.classList.remove("active"));
+            buttons.forEach(btn => btn.classList.remove("active"));
             button.classList.add("active");
             currentWindow = windowType;
 
@@ -142,6 +170,7 @@ function setupNavTabs() {
     });
 }
 
+// 5. GESTIÓN DEL INPUT DE IMAGEN/CÁMARA A LA IZQUIERDA
 function setupFileInput() {
     const fileInput = document.getElementById("user-file");
     const fileNameDisplay = document.getElementById("file-name-display");
@@ -181,7 +210,7 @@ function renderLocalFlags(flags) {
     }
 }
 
-// 3. MAPEO DE PUNTUACIÓN INTERNA (0-100) A SOLAMENTE LETRAS (A, B, C, D)
+// 6. MAPEO DE PUNTUACIÓN INTERNA A SOLAMENTE LETRAS (A, B, C, D)
 function getEthicLetter(score) {
     if (score <= 25) return "A"; // Sin Riesgo / Integridad Alta
     if (score <= 50) return "B"; // Riesgo Moderado
@@ -189,7 +218,7 @@ function getEthicLetter(score) {
     return "D";                  // Peligro Máximo / Coerción
 }
 
-// 4. FUNCIÓN PRINCIPAL DE ANÁLISIS
+// 7. FUNCIÓN PRINCIPAL DE ANÁLISIS (BEACON-IZE)
 async function analyze() {
     const t = i18n[currentLang];
     const textInput = document.getElementById("user-input").value.trim();
@@ -219,7 +248,6 @@ async function analyze() {
     try {
         let response;
 
-        // Enviamos el idioma actual en las peticiones al backend
         if (file) {
             const formData = new FormData();
             formData.append("text", textInput);
@@ -265,23 +293,21 @@ async function analyze() {
         lastAnalyzedModule = currentWindow;
         lastScore = score;
 
-        // APLICAR CLASES DE COLOR SEGÚN LA LETRA DE AMENAZA
         const resultsSection = document.getElementById("results-panel");
         if (resultsSection) {
             resultsSection.className = 'results-section';
 
             if (score >= 76) {
-                resultsSection.classList.add("threat-high");    // Letra D (Rojo)
+                resultsSection.classList.add("threat-high");    // D (Rojo)
             } else if (score >= 51) {
-                resultsSection.classList.add("threat-medium");  // Letra C (Naranja)
+                resultsSection.classList.add("threat-medium");  // C (Naranja)
             } else if (score >= 26) {
-                resultsSection.classList.add("threat-caution"); // Letra B (Amarillo)
+                resultsSection.classList.add("threat-caution"); // B (Amarillo)
             } else {
-                resultsSection.classList.add("threat-low");     // Letra A (Verde)
+                resultsSection.classList.add("threat-low");     // A (Verde)
             }
         }
 
-        // IMPRIME EXCLUSIVAMENTE LA LETRA (Sin cifras ni puntuación)
         if (scoreDiv) {
             scoreDiv.innerText = `${t.ethicLabel}: ${getEthicLetter(score)}`;
         }
@@ -304,7 +330,7 @@ async function analyze() {
     }
 }
 
-// 5. EXPORTAR PDF
+// 8. EXPORTAR A PDF
 function triggerPDFDownload() {
     const analysisElement = document.getElementById("analysis-report");
     const currentAnalysis = analysisElement ? analysisElement.innerText.trim() : "No analysis target found.";
@@ -350,7 +376,7 @@ function triggerPDFDownload() {
     });
 }
 
-// 6. PURGAR DASHBOARD
+// 9. REINICIAR Y PURGAR EL DASHBOARD
 function purgeDashboard() {
     const textInput = document.getElementById("user-input");
     if (textInput) textInput.value = "";
