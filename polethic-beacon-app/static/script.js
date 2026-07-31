@@ -8,28 +8,20 @@ let lastScore = 0; // Se mantiene en memoria como número para el backend/PDF
 const urlParams = new URLSearchParams(window.location.search);
 let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang') || "fr";
 
-// 1. DICCIONARIO DE TRADUCCIONES CON LOS 4 BOTONES Y SUS TRADUCCIONES
+// 1. DICCIONARIO DE TRADUCCIONES PARA EL DASHBOARD Y NAVEGACIÓN (TU VERSIÓN ORIGINAL EXPOSICIÓN)
 const i18n = {
     fr: {
-        tagline: "Moteur d'Autodéfense Cognitive & Analyseur de Métacommunication",
-        
-        // Nombres de los 4 botones/pestañas
-        tab_fakenews: "1. FakeNews",
-        tab_mythbuster: "2. Chasseur de Mythes",
-        tab_identity: "3. Usurpation d'Identité",
-        tab_coercive: "4. Filtre Anti-Blabla",
-
         windowTitles: {
-            "news": "1. Chasse aux Intox: Collez l'article ou le lien pour révéler le faux :",
-            "myth": "2. Déboulonneur de Mythes: Collez le remède miracle ou la pseudo-science :",
-            "identity_spoofing": "3. Détecteur de Bluff & d'Esbroufe: Collez le profil ou la bio pour auditer la façade :",
-            "coercion": "4. Filtre Anti-Blabla: Collez le discours de vente à haute pression ou la manipulation :"
+            "news": "1. FakeNews: Entrez le texte de l'article ou le lien à évaluer :",
+            "myth": "2. Myth-Buster: Collez la déclaration, le remède ou la théorie pseudoscientifique :",
+            "identity_spoofing": "3. Identity Spoofing: Collez le profil, les identifiants ou la bio à auditer :",
+            "coercion": "4. Filtre Coercitif: Entrez le texte persuasif ou le discours suspect :"
         },
         windowPlaceholders: {
             "news": "Collez du texte média, des articles politiques ou des liens vidéo...",
             "myth": "Collez des affirmations sur la médecine alternative ou des théories non vérifiées...",
-            "identity_spoofing": "Collez des données de bio ou des identifiants de 'gourous' suspects...",
-            "coercion": "Collez des discours de vente agressive ou de la manipulation..."
+            "identity_spoofing": "Collez des données de bio ou des identifiants suspects...",
+            "coercion": "Collez des discours de vente à haute pression ou de la manipulation..."
         },
         ethicLabel: "Ethic-Score™",
         runningText: "Analyse des motifs linguistiques en cours... Veuillez patienter.",
@@ -39,25 +31,17 @@ const i18n = {
         parsingError: "Indisponible (erreur d'analyse)"
     },
     es: {
-        tagline: "Motor de Autodefensa Cognitiva y Analizador de Metacomunicación",
-        
-        // Nombres de los 4 botones/pestañas
-        tab_fakenews: "1. Cazador de Bulos",
-        tab_mythbuster: "2. Rompe-Mitos",
-        tab_identity: "3. Detector de Postureo",
-        tab_coercive: "4. Filtro Vendehumos",
-
         windowTitles: {
-            "news": "1. Cazador de Bulos: Pega el artículo, titular o enlace para destapar la mentira:",
-            "myth": "2. Rompe-Mitos: Pega el remedio mágico, la conspiración o la ciencia de garrafa:",
-            "identity_spoofing": "3. Detector de Postureo: Pega el perfil o bio del gurú para auditar la fachada:",
-            "coercion": "4. Filtro Vendehumos: Pega la chapa persuasiva o el discurso de alta presión:"
+            "news": "1. FakeNews: Introduce el texto o enlace del artículo a evaluar:",
+            "myth": "2. Myth-Buster: Pega la afirmación, remedio o teoría seudocientífica:",
+            "identity_spoofing": "3. Identity Spoofing: Pega el perfil o biografía para auditar:",
+            "coercion": "4. Filtro Coercitivo: Introduce el texto persuasivo o discurso sospechoso:"
         },
         windowPlaceholders: {
-            "news": "Pega texto de prensa, titulares dudosos o enlaces de vídeo para auditarlos...",
-            "myth": "Pega afirmaciones sobre medicina alternativa, brebajes o teorías de conspiración...",
-            "identity_spoofing": "Pega biografías de LinkedIn, cargos de fantasía o credenciales sospechosas...",
-            "coercion": "Pega discursos de ventas agresivas, manipulación o 'chapas' de alta presión..."
+            "news": "Pega texto de prensa, artículos políticos o enlaces de vídeo para auditarlo...",
+            "myth": "Pega afirmaciones sobre medicina alternativa o teorías no verificadas...",
+            "identity_spoofing": "Pega biografías o credenciales sospechosas para analizar intrusión profesional...",
+            "coercion": "Pega discursos de alta presión, manipulación o ventas agresivas..."
         },
         ethicLabel: "Ethic-Score™",
         runningText: "Ejecutando análisis de patrones lingüísticos... Por favor, espera.",
@@ -67,25 +51,17 @@ const i18n = {
         parsingError: "No disponible (error de análisis)"
     },
     en: {
-        tagline: "Cognitive Self-Defense Engine & Metacommunication Analyzer",
-        
-        // Nombres de los 4 botones/pestañas
-        tab_fakenews: "1. FakeNews",
-        tab_mythbuster: "2. Myth-Buster",
-        tab_identity: "3. Identity Spoofing",
-        tab_coercive: "4. Coercive Filter",
-
         windowTitles: {
-            "news": "1. FakeNews Hunter: Paste the article or link to expose the spin:",
-            "myth": "2. Myth-Buster: Paste the miracle cure, pseudoscience, or wild theory:",
-            "identity_spoofing": "3. Fake Expert & Bio-Hype Audit: Paste the bio or profile to scan for fake credentials:",
-            "coercion": "4. Coercion & Hype Filter: Paste high-pressure pitches or manipulative copy:"
+            "news": "1. FakeNews: Enter the article text or link to evaluate:",
+            "myth": "2. Myth-Buster: Paste the claim, remedy, or pseudoscientific theory:",
+            "identity_spoofing": "3. Identity Spoofing: Paste the profile, credentials, or bio to audit:",
+            "coercion": "4. Coercive Filter: Enter the persuasive text or suspicious discourse:"
         },
         windowPlaceholders: {
-            "news": "Paste media text, political spin, or video links to audit...",
-            "myth": "Paste claims regarding alternative remedies or unverified theories...",
-            "identity_spoofing": "Paste suspicious bio data, inflated titles, or guru credentials...",
-            "coercion": "Paste high-pressure sales pitches, manipulation, or aggressive discourse..."
+            "news": "Paste media text, political articles, or video links to Beacon-ize it...",
+            "myth": "Paste claims regarding alternative medicine or unverified theories to Beacon-ize it...",
+            "identity_spoofing": "Paste suspicious bio data or credentials to audit for structural/professional intrusion...",
+            "coercion": "Paste high-pressure sales pitches to Beacon-ize it..."
         },
         ethicLabel: "Ethic-Score™",
         runningText: "Running linguistic pattern analysis... Please wait.",
@@ -99,9 +75,9 @@ const i18n = {
 document.addEventListener("DOMContentLoaded", () => {
     setupNavTabs();
     setupFileInput();
-    setupLangSelector();
+    setupLangSelector(); // Conecta los botones #btn-fr, #btn-es, #btn-en
     
-    // Aplicar el idioma guardado previamente tan pronto como la página cargue
+    // Carga inicial de idioma respetando URL o almacenamiento
     switchLanguage(currentLang);
 });
 
@@ -117,7 +93,7 @@ function setupLangSelector() {
 }
 
 function switchLanguage(lang) {
-    if (!i18n[lang]) lang = "fr";
+    if (!i18n[lang]) return;
     currentLang = lang;
 
     // Guardar preferencia global y actualizar atributo lang del documento HTML
@@ -129,24 +105,17 @@ function switchLanguage(lang) {
     const activeBtn = document.getElementById(`btn-${lang}`);
     if (activeBtn) activeBtn.classList.add("active");
 
-    // Mantener la URL con ?lang=XX sin alterar tu flujo
+    // Sincronizar la URL actual con ?lang=XX sin recargar la página ni tocar textos HTML
     const newUrl = `${window.location.pathname}?lang=${lang}`;
     window.history.replaceState({ path: newUrl }, '', newUrl);
 
-    // Actualizar dinámicamente los textos visibles de los módulos
+    // Actualizar dinámicamente los textos de los inputs y títulos
     updateModuleTexts();
 }
 
 function updateModuleTexts() {
     const t = i18n[currentLang];
     
-    // Subtítulo general
-    const taglineEl = document.getElementById("header-tagline");
-    if (taglineEl && t.tagline) {
-        taglineEl.innerText = t.tagline;
-    }
-    
-    // Título y placeholder del módulo activo
     const titleEl = document.getElementById("window-title");
     if (titleEl && t.windowTitles[currentWindow]) {
         titleEl.innerText = t.windowTitles[currentWindow];
@@ -156,24 +125,15 @@ function updateModuleTexts() {
     if (inputEl && t.windowPlaceholders[currentWindow]) {
         inputEl.placeholder = t.windowPlaceholders[currentWindow];
     }
-
-    // Traducir los 4 botones/pestañas superiores del módulo
-    document.querySelectorAll(".nav-tabs button, .tabs-container button").forEach(btn => {
-        const mod = btn.dataset.module;
-        if (mod === "news" && t.tab_fakenews) btn.innerText = t.tab_fakenews;
-        if (mod === "myth" && t.tab_mythbuster) btn.innerText = t.tab_mythbuster;
-        if (mod === "identity_spoofing" && t.tab_identity) btn.innerText = t.tab_identity;
-        if (mod === "coercion" && t.tab_coercive) btn.innerText = t.tab_coercive;
-    });
 }
 
 function setupNavTabs() {
-    document.querySelectorAll(".nav-tabs button, .tabs-container button").forEach(button => {
+    document.querySelectorAll(".nav-tabs button").forEach(button => {
         button.addEventListener("click", () => {
             const windowType = button.dataset.module;
             if (!windowType) return;
 
-            document.querySelectorAll(".nav-tabs button, .tabs-container button").forEach(btn => btn.classList.remove("active"));
+            document.querySelectorAll(".nav-tabs button").forEach(btn => btn.classList.remove("active"));
             button.classList.add("active");
             currentWindow = windowType;
 
@@ -221,7 +181,7 @@ function renderLocalFlags(flags) {
     }
 }
 
-// MAPEO DE PUNTUACIÓN INTERNA (0-100) A SOLAMENTE LETRAS (A, B, C, D)
+// 3. MAPEO DE PUNTUACIÓN INTERNA (0-100) A SOLAMENTE LETRAS (A, B, C, D)
 function getEthicLetter(score) {
     if (score <= 25) return "A"; // Sin Riesgo / Integridad Alta
     if (score <= 50) return "B"; // Riesgo Moderado
@@ -229,7 +189,7 @@ function getEthicLetter(score) {
     return "D";                  // Peligro Máximo / Coerción
 }
 
-// FUNCIÓN PRINCIPAL DE ANÁLISIS
+// 4. FUNCIÓN PRINCIPAL DE ANÁLISIS
 async function analyze() {
     const t = i18n[currentLang];
     const textInput = document.getElementById("user-input").value.trim();
@@ -259,6 +219,7 @@ async function analyze() {
     try {
         let response;
 
+        // Enviamos el idioma actual en las peticiones al backend
         if (file) {
             const formData = new FormData();
             formData.append("text", textInput);
@@ -304,6 +265,7 @@ async function analyze() {
         lastAnalyzedModule = currentWindow;
         lastScore = score;
 
+        // APLICAR CLASES DE COLOR SEGÚN LA LETRA DE AMENAZA
         const resultsSection = document.getElementById("results-panel");
         if (resultsSection) {
             resultsSection.className = 'results-section';
@@ -319,6 +281,7 @@ async function analyze() {
             }
         }
 
+        // IMPRIME EXCLUSIVAMENTE LA LETRA (Sin cifras ni puntuación)
         if (scoreDiv) {
             scoreDiv.innerText = `${t.ethicLabel}: ${getEthicLetter(score)}`;
         }
@@ -341,7 +304,7 @@ async function analyze() {
     }
 }
 
-// EXPORTAR PDF
+// 5. EXPORTAR PDF
 function triggerPDFDownload() {
     const analysisElement = document.getElementById("analysis-report");
     const currentAnalysis = analysisElement ? analysisElement.innerText.trim() : "No analysis target found.";
@@ -387,7 +350,7 @@ function triggerPDFDownload() {
     });
 }
 
-// PURGAR DASHBOARD
+// 6. PURGAR DASHBOARD
 function purgeDashboard() {
     const textInput = document.getElementById("user-input");
     if (textInput) textInput.value = "";
