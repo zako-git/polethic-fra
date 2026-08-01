@@ -7,19 +7,35 @@ let lastAnalysisText = "";
 const urlParams = new URLSearchParams(window.location.search);
 let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang') || "fr";
 
-// Diccionario de textos
+// Diccionario Completo de Traducciones
 const i18n = {
     fr: {
-        ethicLabel: "Ethic-Score™",
-        btnAnalyze: "⚡ BEACON-IZE",
+        nav_home: "ACCUEIL",
+        nav_obs: "L'OBSERVATOIRE",
+        nav_museum: "PSICOMUSÉE",
+        nav_beacon: "BEACON LAB",
+        nav_cap: "NOTRE CAP",
+        nav_contact: "CONTACT",
+        beacon_subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
+        btn_beaconise: "⚡ BEACON-IZE",
         btnAnalyzeLoading: "⏳ ANALYSE EN COURS...",
-        btnRefute: "🔄 DÉFIER LE BIAIS",
-        btnPdf: "EXPORTER EN PDF",
-        btnPurge: "PURGER",
+        status_ready: "● MOTEUR PRÊT",
+        flag_ready: "ANALYSE PRÊTE",
+        report_placeholder: "En attente d'analyse... Entrez un texte ou téléchargez une image ci-dessus et cliquez sur BEACON-IZE.",
+        btn_refute: "🔄 RÉFUTER / CHALLENGER",
+        btn_pdf: "📄 EXPORTER EN PDF",
+        btn_purge: "🗑️ PURGER",
+        ethicLabel: "Ethic-Score™",
         runningText: "⚡ Analyse des motifs linguistiques et des biais en cours... Veuillez patienter.",
         emptyText: "Veuillez introduire du contenu ou joindre une image à analyser.",
         systemOffline: "Erreur: Système Hors Ligne",
         offlineReport: "Le cœur de Beacon est inaccessible. Vérifiez votre connexion ou le serveur.",
+        footer_shield: "Bouclier de Protection Professionnelle",
+        footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+        footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+        footer_legal: "Mentions Légales",
+        footer_privacy: "Politique de Confidentialité",
+        footer_cookies: "Gestion des Cookies",
         flags: {
             fakenews: "FakeNews",
             myth: "Chasseur de Mythes",
@@ -28,16 +44,32 @@ const i18n = {
         }
     },
     es: {
-        ethicLabel: "Ethic-Score™",
-        btnAnalyze: "⚡ BEACON-IZE",
+        nav_home: "INICIO",
+        nav_obs: "OBSERVATORIO",
+        nav_museum: "PSICOMUSEO",
+        nav_beacon: "BEACON LAB",
+        nav_cap: "NUESTRO RUMBO",
+        nav_contact: "CONTACTO",
+        beacon_subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
+        btn_beaconise: "⚡ BEACON-IZE",
         btnAnalyzeLoading: "⏳ ANALIZANDO...",
-        btnRefute: "🔄 DESAFIAR SESGO",
-        btnPdf: "EXPORTAR PDF",
-        btnPurge: "PURGAR",
+        status_ready: "● MOTOR LISTO",
+        flag_ready: "ANÁLISIS LISTO",
+        report_placeholder: "Esperando análisis... Ingrese un texto o suba una imagen arriba y haga clic en BEACON-IZE.",
+        btn_refute: "🔄 REFUTAR / DESAFIAR",
+        btn_pdf: "📄 EXPORTAR EN PDF",
+        btn_purge: "🗑️ PURGAR",
+        ethicLabel: "Ethic-Score™",
         runningText: "⚡ Ejecutando análisis de patrones lingüísticos y sesgos... Espera un momento.",
         emptyText: "Por favor, introduce algún texto o adjunta una imagen para analizar.",
         systemOffline: "Error: Sistema Fuera de Línea",
         offlineReport: "El núcleo de Beacon no está localizable. Verifica tu conexión o el servidor.",
+        footer_shield: "Escudo de Protección Profesional",
+        footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+        footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+        footer_legal: "Aviso Legal",
+        footer_privacy: "Política de Privacidad",
+        footer_cookies: "Gestión de Cookies",
         flags: {
             fakenews: "FakeNews",
             myth: "Cazador de Mitos",
@@ -46,16 +78,32 @@ const i18n = {
         }
     },
     en: {
-        ethicLabel: "Ethic-Score™",
-        btnAnalyze: "⚡ BEACON-IZE",
+        nav_home: "HOME",
+        nav_obs: "OBSERVATORY",
+        nav_museum: "PSYCHOMUSEUM",
+        nav_beacon: "BEACON LAB",
+        nav_cap: "OUR COURSE",
+        nav_contact: "CONTACT",
+        beacon_subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
+        btn_beaconise: "⚡ BEACON-IZE",
         btnAnalyzeLoading: "⏳ ANALYZING...",
-        btnRefute: "🔄 CHALLENGE BIAS",
-        btnPdf: "EXPORT PDF",
-        btnPurge: "PURGE",
+        status_ready: "● ENGINE READY",
+        flag_ready: "ANALYSIS READY",
+        report_placeholder: "Awaiting analysis... Enter text or upload an image above and click BEACON-IZE.",
+        btn_refute: "🔄 REFUTE / CHALLENGE",
+        btn_pdf: "📄 EXPORT PDF",
+        btn_purge: "🗑️ PURGE",
+        ethicLabel: "Ethic-Score™",
         runningText: "⚡ Running linguistic pattern & bias analysis... Please wait.",
         emptyText: "Please introduce some text or attach an image to analyze.",
         systemOffline: "Error: System Offline",
         offlineReport: "The Beacon core is currently unreachable. Check your connection or server status.",
+        footer_shield: "Professional Protection Shield",
+        footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+        footer_disc2: "No medical diagnosis or therapy is performed.",
+        footer_legal: "Legal Notice",
+        footer_privacy: "Privacy Policy",
+        footer_cookies: "Cookie Management",
         flags: {
             fakenews: "FakeNews",
             myth: "Myth-Buster",
@@ -65,7 +113,28 @@ const i18n = {
     }
 };
 
-// 1. VINCULACIÓN DEL BOTÓN BEACON-IZE Y RESTO DE ACCIONES
+// 1. APLICAR IDIOMA EN TODA LA PÁGINA
+function updatePageLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('preferred_lang', lang);
+
+    const t = i18n[lang] || i18n.fr;
+
+    // Actualizar elementos con atributo data-key
+    document.querySelectorAll('[data-key]').forEach(element => {
+        const key = element.getAttribute('data-key');
+        if (t && t[key]) {
+            element.textContent = t[key];
+        }
+    });
+
+    // Actualizar estados visuales de los botones FR / ES / EN
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById(`btn-${lang}`);
+    if (activeBtn) activeBtn.classList.add('active');
+}
+
+// 2. CONFIGURAR BOTONES Y LISTENERS
 function setupActionButtons() {
     const btnAnalyze = document.getElementById("btn-analyze");
     if (btnAnalyze) {
@@ -79,7 +148,7 @@ function setupActionButtons() {
     if (btnRefute) {
         btnRefute.addEventListener("click", (e) => {
             e.preventDefault();
-            if (typeof generateRefutation === "function") generateRefutation();
+            alert("Función de refutación activada");
         });
     }
 
@@ -87,7 +156,7 @@ function setupActionButtons() {
     if (btnPdf) {
         btnPdf.addEventListener("click", (e) => {
             e.preventDefault();
-            if (typeof triggerPDFDownload === "function") triggerPDFDownload();
+            window.print();
         });
     }
 
@@ -100,7 +169,7 @@ function setupActionButtons() {
     }
 }
 
-// 2. FUNCIÓN EJECUTADA AL PULSAR EL BOTÓN BEACON-IZE
+// 3. FUNCIÓN DE ANÁLISIS PRINCIPAL
 async function analyze() {
     const t = i18n[currentLang] || i18n.fr;
     const userInputEl = document.getElementById("user-input");
@@ -113,15 +182,13 @@ async function analyze() {
     const scoreDiv = document.getElementById("ethic-score");
     const resultDiv = document.getElementById("analysis-report");
 
-    // Validación de entrada vacía
     if (!textInput && !file) {
         alert(t.emptyText);
         return;
     }
 
-    // Efecto de carga en el botón y despliegue del panel
     if (btnAnalyze) {
-        btnAnalyze.innerText = t.btnAnalyzeLoading; // Usa la traducción dinámica de carga
+        btnAnalyze.innerText = t.btnAnalyzeLoading;
         btnAnalyze.disabled = true;
     }
 
@@ -132,7 +199,6 @@ async function analyze() {
     try {
         let response;
 
-        // Petición al backend (con o sin archivo)
         if (file) {
             const formData = new FormData();
             formData.append("text", textInput);
@@ -155,15 +221,12 @@ async function analyze() {
 
         const data = await response.json();
 
-        // Almacenar datos en memoria
         lastScore = parseInt(data.score, 10) || 0;
         lastAnalysisText = data.analysis || "";
 
-        // Mostrar puntuación y reporte
         if (scoreDiv) scoreDiv.innerText = `${t.ethicLabel}: ${getEthicLetter(lastScore)}`;
         if (resultDiv) resultDiv.innerText = lastAnalysisText;
 
-        // Renderizar badges de categorías detectadas
         renderDetectedFlags(data.detected_flags || []);
 
     } catch (error) {
@@ -172,13 +235,12 @@ async function analyze() {
         if (resultDiv) resultDiv.innerText = t.offlineReport;
     } finally {
         if (btnAnalyze) {
-            btnAnalyze.innerText = "⚡ BEACON-IZE"; // Marca estándar para todos los idiomas
+            btnAnalyze.innerText = "⚡ BEACON-IZE";
             btnAnalyze.disabled = false;
         }
     }
 }
 
-// Convertir nota numérica a letra (A, B, C, D)
 function getEthicLetter(score) {
     if (score <= 25) return "A";
     if (score <= 50) return "B";
@@ -186,7 +248,6 @@ function getEthicLetter(score) {
     return "D";
 }
 
-// Inyectar etiquetas detectadas automáticamente en el informe
 function renderDetectedFlags(flags) {
     const container = document.getElementById("detected-flags-container");
     if (!container) return;
@@ -202,23 +263,18 @@ function renderDetectedFlags(flags) {
     });
 }
 
-// Selector de idioma
 function setupLangSelector() {
     ["fr", "es", "en"].forEach(lang => {
         const btn = document.getElementById(`btn-${lang}`);
         if (btn) {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
-                currentLang = lang;
-                localStorage.setItem('preferred_lang', lang);
-                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                updatePageLanguage(lang);
             });
         }
     });
 }
 
-// Mostrar nombre del archivo al adjuntar cámara/imagen
 function setupFileInput() {
     const fileInput = document.getElementById("user-file");
     const fileNameDisplay = document.getElementById("file-name-display");
@@ -233,7 +289,6 @@ function setupFileInput() {
     });
 }
 
-// Purga de la consola
 function purgeDashboard() {
     const userInput = document.getElementById("user-input");
     const userFile = document.getElementById("user-file");
@@ -249,8 +304,9 @@ function purgeDashboard() {
     lastAnalysisText = "";
 }
 
-// ⚡ INICIALIZACIÓN AUTOMÁTICA AL CARGAR EL DOM
+// INICIALIZACIÓN
 document.addEventListener("DOMContentLoaded", () => {
+    updatePageLanguage(currentLang);
     setupActionButtons();
     setupLangSelector();
     setupFileInput();
