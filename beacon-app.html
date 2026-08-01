@@ -166,7 +166,7 @@
       max-width: 850px;
       margin: 0 auto 40px auto;
       backdrop-filter: blur(8px);
-      display: none; /* Se oculta hasta que haya análisis */
+      display: none;
     }
 
     .results-header {
@@ -199,8 +199,6 @@
       font-size: 0.9rem;
       line-height: 1.6;
       white-space: pre-wrap;
-      overflow-x: auto;
-      word-wrap: break-word;
     }
 
     .results-actions {
@@ -236,7 +234,6 @@
       gap: 8px;
       flex-wrap: wrap;
     }
-
     .flag-badge {
       font-family: var(--font-cyber);
       font-size: 0.75rem;
@@ -252,24 +249,22 @@
 </head>
 <body>
 
-  <!-- CAPA DE ESTRELLAS -->
   <div id="stars-container"></div>
 
-  <!-- CABECERA DE NAVEGACIÓN -->
+  <!-- CABECERA -->
   <header>
     <div class="container header-layout">
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
       <nav class="nav-buttons">
-        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
-        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
-        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
-        <a href="beacon-app.html" class="nav-btn active" data-key="nav_beacon">BEACON LAB</a>
-        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
-        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
+        <a href="index.html" class="nav-btn">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
+        <a href="beacon-app.html" class="nav-btn active">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn">CONTACT</a>
       </nav>
 
-      <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
         <a href="#" class="lang-btn active" id="btn-fr">FR</a>
         <span class="lang-separator">|</span>
@@ -280,19 +275,18 @@
     </div>
   </header>
 
-  <!-- CONTENIDO BEACON LAB -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="container">
     
     <div class="beacon-title-block">
       <h1 class="hero-app-title">POLETHIC BEACON</h1>
-      <p class="subtitle" data-key="beacon_subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
+      <p class="subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
     </div>
 
-    <!-- CONSOLA TÁCTICA DE ENTRADA -->
+    <!-- CONSOLA TÁCTICA -->
     <section class="input-card">
-      
       <div class="textarea-container">
-        <textarea id="user-input" placeholder="Collez du texte média, des articles politiques, des liens ou des déclarations..."></textarea>
+        <textarea id="user-input" placeholder="Collez du texte média, des articles politiques, des publications ou des slogans..."></textarea>
       </div>
       
       <div class="input-actions-bar">
@@ -301,13 +295,13 @@
         </label>
         <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
 
-        <button id="btn-analyze" class="btn-beacon-primary" data-key="btn_beaconise">
+        <button id="btn-analyze" class="btn-beacon-primary">
           ⚡ BEACON-IZE
         </button>
       </div>
 
       <div class="status-bar">
-        <span data-key="status_ready">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span>
+        <span>● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span>
       </div>
     </section>
 
@@ -316,79 +310,40 @@
       <div class="results-header">
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
         <div id="detected-flags-container" class="flags-container">
-          <span class="flag-badge" data-key="flag_ready">ANALYSE PRÊTE</span>
+          <span class="flag-badge">ANALYSE PRÊTE</span>
         </div>
       </div>
 
       <div class="analysis-body">
-        <div id="analysis-report" class="report-box" data-key="report_placeholder">En attente d'analyse... Entrez un texte ou téléchargez une image ci-dessus et cliquez sur BEACONISER.</div>
+        <div id="analysis-report" class="report-box">En attente d'analyse... Entrez un texte et cliquez sur BEACONISER.</div>
       </div>
 
-      <!-- BOTONES DE ACCIÓN -->
       <div class="results-actions">
-        <button id="btn-refute" class="btn-action-refute" data-key="btn_refute">🔄 RÉFUTER / CHALLENGER</button>
-        <button id="btn-pdf" class="btn-action-pdf" data-key="btn_pdf">📄 EXPORTER EN PDF</button>
-        <button id="btn-purge" class="btn-action-purge" data-key="btn_purge">🗑️ PURGER</button>
+        <button id="btn-refute" class="btn-action-refute">🔄 RÉFUTER / CHALLENGER</button>
+        <button id="btn-pdf" class="btn-action-pdf">📄 EXPORTER EN PDF</button>
+        <button id="btn-purge" class="btn-action-purge">🗑️ PURGER</button>
       </div>
     </section>
 
   </main>
 
-  <!-- FOOTER GLOBAL -->
+  <!-- FOOTER -->
   <footer>
     <div class="container footer-content">
       <div class="footer-shield">
         <div class="shield-badge">
-          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="M9 12l2 2 4-4"/>
-          </svg>
-          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+          <span class="shield-title">Bouclier de Protection Professionnelle</span>
         </div>
-        <p class="shield-disclaimer" data-key="footer_disc1">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
-        <p class="shield-disclaimer" data-key="footer_disc2">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
+        <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
       </div>
 
-      <div class="footer-divider"></div>
-
       <div class="footer-bottom">
-        <div class="social-links-container">
-            <a href="https://instagram.com/polethic_france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram POLETHIC">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-            </a>
-
-            <a href="https://facebook.com/polethic.france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook POLETHIC">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
-            </a>
-
-            <a href="https://www.linkedin.com/in/metalzako/" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn Professionnel">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                    <rect x="2" y="9" width="4" height="12"></rect>
-                    <circle cx="4" cy="4" r="2"></circle>
-                </svg>
-            </a>
-        </div>
-
-        <div class="footer-links">
-          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
-          <span class="footer-sep">•</span>
-          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
-          <span class="footer-sep">•</span>
-          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
-        </div>
         <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
       </div>
     </div>
   </footer>
 
-  <!-- SCRIPT INTEGRAL BEACON LAB -->
+  <!-- SCRIPT CON MOTOR PROPORCIONAL MULTILINGÜE -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
@@ -409,7 +364,7 @@
       let currentScoreLetter = 'C';
       let lastAnalyzedText = '';
 
-      // 📎 0. FEEDBACK DE ARCHIVO SELECCIONADO
+      // 📎 Adjuntar archivo feedback
       if (userFile) {
         userFile.addEventListener('change', (e) => {
           if (e.target.files.length > 0) {
@@ -420,18 +375,13 @@
         });
       }
 
-      // 🎯 1. ASIGNACIÓN DE GRADO Y COLOR (A, B, C, D)
+      // 🎯 Insignia de Ethic-Score
       function applyEthicBadge(score) {
         let letter = 'C';
         let color = '#ff9900';
         let glow = 'rgba(255, 153, 0, 0.4)';
 
-        if (typeof score === 'number') {
-          if (score <= 25) { letter = 'A'; color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
-          else if (score <= 50) { letter = 'B'; color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
-          else if (score <= 75) { letter = 'C'; color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
-          else { letter = 'D'; color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
-        } else if (typeof score === 'string') {
+        if (typeof score === 'string') {
           letter = score.toUpperCase();
           if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
           if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
@@ -446,16 +396,14 @@
         ethicScore.style.color = '#030a12';
       }
 
-      // 🚩 2. RENDERIZADO DE BANDERAS/FLAGS DETECTADAS
+      // 🚩 Banderas / Flags
       function renderFlags(flagsArray) {
         if (!detectedFlags) return;
         detectedFlags.innerHTML = '';
-
         if (!flagsArray || flagsArray.length === 0) {
           detectedFlags.innerHTML = '<span class="flag-badge">ANALYSE PRÊTE</span>';
           return;
         }
-
         flagsArray.forEach(flag => {
           const span = document.createElement('span');
           span.className = 'flag-badge';
@@ -464,7 +412,7 @@
         });
       }
 
-      // ⚡ 3. FUNCIÓN PRINCIPAL DE ANÁLISIS (BEACON-IZE)
+      // ⚡ BEACON-IZE (Análisis)
       if (btnAnalyze) {
         btnAnalyze.addEventListener('click', async () => {
           const text = userInput.value.trim();
@@ -475,11 +423,11 @@
             return;
           }
 
-          lastAnalyzedText = text || (file ? `Fichier analysé: ${file.name}` : '');
+          lastAnalyzedText = text || (file ? `Fichier: ${file.name}` : '');
           btnAnalyze.disabled = true;
           btnAnalyze.innerText = '⏳ ANALYSE EN COURS...';
           resultsPanel.style.display = 'block';
-          analysisReport.innerText = '⚡ Analyse des motifs linguistiques et des biais en cours... Veuillez patienter.';
+          analysisReport.innerText = '⚡ Décodage métacommunicationnel en cours... Veuillez patienter.';
 
           try {
             let response;
@@ -489,10 +437,7 @@
               formData.append('file', file);
               formData.append('lang', 'fr');
 
-              response = await fetch(`${API_BASE_URL}/analyze`, {
-                method: 'POST',
-                body: formData
-              });
+              response = await fetch(`${API_BASE_URL}/analyze`, { method: 'POST', body: formData });
             } else {
               response = await fetch(`${API_BASE_URL}/analyze`, {
                 method: 'POST',
@@ -504,71 +449,72 @@
             if (!response.ok) throw new Error('Erreur API');
 
             const data = await response.json();
-            applyEthicBadge(data.score || data.grade || 'D');
-            analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
-            renderFlags(data.detected_flags || ['EMPRISE_COGNITIVE', 'PSEUDO_SCIENCE']);
+            applyEthicBadge(data.score || data.grade || 'C');
+            analysisReport.innerText = data.analysis || data.report;
+            renderFlags(data.detected_flags || ['SIGNAL_ANALYSE']);
 
           } catch (err) {
-            // MOTOR FALLBACK MULTI-APARTADO (Offline Local BEACON)
+            // MOTOR FALLBACK LOCAL PROPORCIONAL Y 100% EN FRANCÉS
             const lower = text.toLowerCase();
-            
+            const textLength = text.length;
+            const isShortText = textLength < 180; // Detección de texto corto / redes sociales
+
             const hasPseudo = lower.includes('quantique') || lower.includes('hypnose') || lower.includes('vibratoire') || lower.includes('cellulaire') || lower.includes('inverser');
-            const hasCoercion = lower.includes('maintenant') || lower.includes('seulement') || lower.includes('urgent') || lower.includes('inscrivez-vous') || lower.includes('dernières places');
-            const hasPosture = lower.includes('exclusive') || lower.includes('secret') || lower.includes('révolutionnaire') || lower.includes('unique') || lower.includes('méthode');
+            const hasCoercion = lower.includes('maintenant') || lower.includes('seulement') || lower.includes('urgent') || lower.includes('inscrivez-vous') || lower.includes('places limitées');
+            const hasPosture = lower.includes('exclusive') || lower.includes('secret') || lower.includes('révolutionnaire') || lower.includes('unique');
 
             let flags = [];
-            let reportSections = [];
             let finalGrade = 'A';
 
-            if (hasPseudo) {
-              flags.push('PSEUDO_SCIENCE');
-              reportSections.push(`• Pseudo-Science & Mystisme : DÉTECTÉ 🚨\n  -> Emploi de concepts scientifiques détournés ("quantique", "vibratoire") sans fondement clinique.`);
-            }
-
-            if (hasCoercion) {
-              flags.push('COERCITION_MENTALE');
-              reportSections.push(`• Coercion & Urgence : DÉTECTÉ ⚠️\n  -> Pression temporelle et incitation directe à l'engagement émotionnel/financier immédiat.`);
-            }
-
-            if (hasPosture) {
-              flags.push('POSTURE_ET_BLUFF');
-              reportSections.push(`• Posture & Exclusivité (Vendeur de rêves) : DÉTECTÉ ⚠️\n  -> Rhétorique de fausse autorité et promesse de résultats miracles sans méthodologie étayée.`);
-            }
+            if (hasPseudo) flags.push('PSEUDO_SCIENCE');
+            if (hasCoercion) flags.push('COERCITION_MENTALE');
+            if (hasPosture) flags.push('POSTURE_ET_BLUFF');
 
             if (hasPseudo || (hasCoercion && hasPosture)) {
               finalGrade = 'D';
             } else if (hasCoercion || hasPosture) {
               finalGrade = 'C';
-            } else if (text.length > 50) {
+            } else if (textLength > 50) {
               finalGrade = 'B';
-              flags.push('ANALYSE_STANDARD');
-              reportSections.push(`• Anatomie du discours : Structuration standard avec éléments promotionnels basiques.`);
             } else {
               finalGrade = 'A';
-              flags.push('CONFORME');
-              reportSections.push(`• Anatomie du discours : Communication neutre et factuelle.`);
             }
 
             applyEthicBadge(finalGrade);
-            renderFlags(flags);
+            renderFlags(flags.length > 0 ? flags : ['COMMUNICATION_NEUTRE']);
 
-            analysisReport.innerText = 
+            let reportContent = '';
+
+            // FORMATO CORTO (Express / Redes Sociales)
+            if (isShortText) {
+              reportContent = 
 `==================================================
-[AUDIT CORTICAL METACONCEPTUEL - RANG : ${finalGrade}]
+[AUDIT BEACON — FORMAT EXPRESS / ÉVALUATION RAPIDE]
 ==================================================
 
-1. ANATOMIE DU DISCOURS :
-${reportSections.join('\n\n')}
+1. DIAGNOSTIC DU SIGNAL (RANG : ${finalGrade})
+${hasPseudo ? '• RHÉTORIQUE : Usage du jargon scientifique ("quantique", "vibratoire") détourné sans fondement biologique.\n' : ''}${hasCoercion ? '• COERCITION : Pression temporelle ou incitation à l\'urgence émotionnelle.\n' : ''}${hasPosture ? '• POSTURE : Promesse de résultat extraordinaire sans méthodologie explicite.\n' : ''}${!hasPseudo && !hasCoercion && !hasPosture ? '• ANALYSE : Signal court sans marqueur explicite de manipulation.\n' : ''}
+2. BIAIS RHÉTORIQUES IDENTIFIÉS
+${hasPseudo ? '• Biais d\'autorité scientifique fictive / Illusion de contrôle.\n' : ''}${hasCoercion ? '• Aversion à la perte et urgence artificielle.\n' : ''}${!hasPseudo && !hasCoercion ? '• Aucun biais critique détecté dans cette accroche.\n' : ''}
+3. RÈGLE DU BOUCLIER (RÉFLEXE CRITIQUE)
+💡 "La charge de la preuve incombe toujours à l'émetteur. Sans étude clinique contrôlée et vérifiable, cette déclaration relève de la simple affirmation commerciale."`;
 
-2. BIAIS COGNITIFS DÉTECTÉS :
-${hasPseudo ? '• Biais d\'autorité scientifique fictive.\n• Illusion de contrôle sur des processus biologiques.' : ''}
-${hasCoercion ? '• Biais d\'urgence et aversion à la perte.' : ''}
-${!hasPseudo && !hasCoercion ? '• Aucun biais critique majeur identifié.' : ''}
+            // FORMATO LARGO (Artículos, Documentos)
+            } else {
+              reportContent = 
+`==================================================
+[AUDIT CORTICAL MÉTACONCEPTUEL — RANG : ${finalGrade}]
+==================================================
 
-3. RECOMMANDATION CORTICALE :
-${finalGrade === 'D' ? '🚨 Vigilance maximale. Absence de preuves scientifiques. Risque élevé de manipulation cognitive.' : ''}
-${finalGrade === 'C' ? '⚠️ Prendre du recul. Vérifier la pertinence des affirmations avant tout engagement.' : ''}
-${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux standards de neutralité.' : ''}`;
+1. ANATOMIE DU DISCOURS
+${hasPseudo ? '• Pseudo-Science & Mysticisme : DÉTECTÉ 🚨\n  Emploi de concepts scientifiques détournés pour simuler une caution médicale.\n\n' : ''}${hasCoercion ? '• Coercition & Pression : DÉTECTÉ ⚠️\n  Cadrage incitant à une décision impulsive.\n\n' : ''}${hasPosture ? '• Posture d\'Autorité & Promesse : DÉTECTÉ ⚠️\n  Affirmation de résultats exceptionnels sans présentation de preuves factuelles.\n\n' : ''}${!hasPseudo && !hasCoercion && !hasPosture ? '• Structure informative standard ne présentant pas d\'anomalie rhétorique majeure.\n\n' : ''}
+2. BIAIS COGNITIFS ET CADRAGE
+${hasPseudo ? '• Biais d\'illusion scientifique et appel à la crédulité.\n' : ''}${hasCoercion ? '• Exploitation du biais d\'urgence et de la peur de rater une opportunité.\n' : ''}${!hasPseudo && !hasCoercion ? '• Discours neutre et factuel.\n' : ''}
+3. ÉVALUATION MÉTACOMMUNICATIONNELLE
+${finalGrade === 'D' ? '🚨 Vigilance maximale : Absence de garanties méthodologiques. Risque élevé de manipulation cognitive.' : ''}${finalGrade === 'C' ? '⚠️ Attention requise : Vérifier l\'origine des affirmations avant tout engagement.' : ''}${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux standards de neutralité.' : ''}`;
+            }
+
+            analysisReport.innerText = reportContent;
           } finally {
             btnAnalyze.disabled = false;
             btnAnalyze.innerText = '⚡ BEACON-IZE';
@@ -577,7 +523,7 @@ ${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux sta
         });
       }
 
-      // 🔄 4. MOTOR DE REFUTACIÓN / CHALLENGER
+      // 🔄 RÉFUTER / CHALLENGER
       if (btnRefute) {
         btnRefute.addEventListener('click', async () => {
           if (!lastAnalyzedText) {
@@ -597,18 +543,16 @@ ${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux sta
 
             if (!res.ok) throw new Error('Erreur API Refute');
             const data = await res.json();
-
-            analysisReport.innerText += `\n\n========================================\n🔥 CONTRE-ARGUMENTATION DE PROTECTION:\n========================================\n${data.refutation || data.reply}`;
+            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (CONTRE-RHÉTORIQUE):\n========================================\n${data.refutation || data.reply}`;
 
           } catch (err) {
-            // Refutación local dinámica adaptada
             analysisReport.innerText += 
 `\n\n========================================
 🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):
 ========================================
-1. PREUVE SCIENTIFIQUE : Aucune réorganisation cellulaire n'a été prouvée biologiquement par simple suggestion ou vibration mentalisée.
-2. DÉCRYPTAGE RHÉTORIQUE : Le jargon emprunté à la physique quantique sert ici d'habillage pseudo-scientifique pour court-circuiter l'esprit critique.
-3. RATIONALITÉ FINANCIÈRE : Les mécanismes de pression d'urgence sont conçus pour limiter la phase de réflexion du consommateur.`;
+1. PREUVE SCIENTIFIQUE : Aucune réorganisation cellulaire ou inversion biologique n'a été prouvée cliniquement par suggestion hypnotique.
+2. DÉCRYPTAGE RHÉTORIQUE : Le terme "quantique" est détourné de la physique fondamentale pour servir d'habillage séduisant.
+3. RATIONALITÉ CRITIQUE : La création d'une urgence temporelle vise uniquement à court-circuiter la phase de réflexion du consommateur.`;
           } finally {
             btnRefute.disabled = false;
             btnRefute.innerText = '🔄 RÉFUTER / CHALLENGER';
@@ -616,7 +560,7 @@ ${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux sta
         });
       }
 
-      // 📄 5. EXPORTAR A PDF (Optimizada para Impresión)
+      // 📄 EXPORTAR PDF
       if (btnPdf) {
         btnPdf.addEventListener('click', () => {
           const reportText = analysisReport.innerText;
@@ -632,41 +576,32 @@ ${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux sta
                 <title>Rapport BEACON LAB - Ethic Score ${currentScoreLetter}</title>
                 <style>
                   body { font-family: Courier, monospace; padding: 40px; background: #fff; color: #111; }
-                  h1 { color: #008080; border-bottom: 2px solid #008080; padding-bottom: 10px; font-size: 20px; }
-                  .score { display: inline-block; padding: 8px 16px; font-weight: bold; background: #111; color: #fff; margin: 15px 0; border-radius: 4px; }
-                  pre { white-space: pre-wrap; font-size: 13px; line-height: 1.5; background: #f4f4f4; padding: 20px; border-left: 4px solid #008080; }
-                  footer { margin-top: 40px; font-size: 11px; color: #666; border-top: 1px solid #ccc; padding-top: 10px; }
+                  h1 { color: #008080; border-bottom: 2px solid #008080; padding-bottom: 10px; font-size: 18px; }
+                  .score { display: inline-block; padding: 6px 12px; font-weight: bold; background: #111; color: #fff; margin: 15px 0; border-radius: 4px; }
+                  pre { white-space: pre-wrap; font-size: 12px; line-height: 1.5; background: #f8f8f8; padding: 15px; border-left: 4px solid #008080; }
                 </style>
               </head>
               <body>
-                <h1>POLETHIC BEACON - AUDIT METACONCEPTUEL</h1>
+                <h1>POLETHIC BEACON — RAPPORT D'ANALYSE</h1>
                 <div class="score">ETHIC-SCORE™: ${currentScoreLetter}</div>
                 <pre>${reportText}</pre>
-                <footer>Rapport généré automatiquement par POLETHIC BEACON (2026) - Licence de Psychoéducation & Prévention Primaire</footer>
               </body>
             </html>
           `);
           printWindow.document.close();
           printWindow.focus();
-          setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-          }, 500);
+          setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         });
       }
 
-      // 🗑️ 6. PURGAR CONSOLA
+      // 🗑️ PURGAR
       if (btnPurge) {
         btnPurge.addEventListener('click', () => {
           resultsPanel.style.display = 'none';
           userInput.value = '';
-          if (userFile) {
-            userFile.value = '';
-            fileNameDisplay.innerText = 'Joindre fichier';
-          }
+          if (userFile) { userFile.value = ''; fileNameDisplay.innerText = 'Joindre fichier'; }
           lastAnalyzedText = '';
           analysisReport.innerText = '';
-          renderFlags([]);
         });
       }
     });
