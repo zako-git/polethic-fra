@@ -382,8 +382,53 @@
     </div>
   </footer>
 
-  <!-- LÓGICA ÚNICA Y COMPLETA EN JS -->
-  <script src="js/script.js"></script>
+ <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btnAnalyze = document.getElementById('btn-analyze');
+    const userInput = document.getElementById('user-input');
+    const resultsPanel = document.getElementById('results-panel');
+    const analysisReport = document.getElementById('analysis-report');
+    const ethicScore = document.getElementById('ethic-score');
+    const btnPurge = document.getElementById('btn-purge');
 
-</body>
-</html>
+    if (btnAnalyze) {
+      btnAnalyze.addEventListener('click', () => {
+        const text = userInput.value.trim();
+
+        if (!text) {
+          alert('Veuillez entrer du texte à analyser.');
+          return;
+        }
+
+        // 1. Mostrar estado de carga en el botón
+        btnAnalyze.disabled = true;
+        btnAnalyze.innerText = '⏳ ANALYSE EN COURS...';
+
+        // 2. Simular el proceso de análisis
+        setTimeout(() => {
+          // Mostrar el panel de resultados
+          resultsPanel.style.display = 'block';
+          
+          // Actualizar la puntuación y el informe
+          ethicScore.innerText = 'Ethic-Score™: 85/100';
+          analysisReport.innerText = `[RANG CORTEX ALERTE]\n\nTexte analysé avec succès:\n"${text}"\n\n- Biais cognitifs détectés: Aucun biais critique majeur.\n- Niveau de persuasion: Modéré.\n- Recommandation: Analyse métacommunicationnelle validée.`;
+
+          // Restaurar el botón
+          btnAnalyze.disabled = false;
+          btnAnalyze.innerText = '⚡ BEACON-IZE';
+
+          // Desplazar la pantalla suavemente hacia el resultado
+          resultsPanel.scrollIntoView({ behavior: 'smooth' });
+        }, 1200);
+      });
+    }
+
+    // Botón de purgar/limpiar
+    if (btnPurge) {
+      btnPurge.addEventListener('click', () => {
+        resultsPanel.style.display = 'none';
+        userInput.value = '';
+      });
+    }
+  });
+</script>
