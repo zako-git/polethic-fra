@@ -343,6 +343,48 @@ def analyze():
             "analysis": f"Internal Server Error: {str(general_err)}"
         }), 500
 
+def get_ethic_letter(score):
+    if score <= 25:
+        return "A"
+    elif score <= 50:
+        return "B"
+    elif score <= 75:
+        return "C"
+    return "D"
+
+
+@app.route("/refute", methods=["POST"])
+def refute():
+    try:
+        data = request.get_json() or {}
+        analysis = data.get("analysis", "")
+        lang = data.get("lang", "fr")
+
+        if not analysis:
+            return jsonify({"refutation": "No content provided to counter-argue."}), 400
+
+        if client:
+            prompt = (
+                f"Basándote en este análisis previo:\n{analysis}\n\n"
+                f"Genera exactamente 3 preguntas incómodas y quirúrgicas para devolver la carga de la prueba al emisor. "
+                f"Escribe la respuesta 100% en el idioma identificado por el código '{lang}'."
+            )
+            response = client.chat.completions.create(
+                model="Qwen/Qwen2.5-Coder-32B-Instruct",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=400
+            )
+            refutation_text = response.choices[0].message.content.strip()
+        else:
+            refutation_text = (
+                "1. ¿En qué estudio empírico se basan para realizar esta afirmación?\n"
+                "2. ¿Cuál es el conflicto de interés tras esta narrativa?\n"
+                "3. Si eliminamos la apelación emocional, ¿qué evidencia verificable queda?"
+            )
+
+        return jsonify({"refutation": refutation_text}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/export_pdf", methods=["POST"])
 def export_pdf():
@@ -365,29 +407,27 @@ def export_pdf():
         except ValueError:
             numeric_score = 0
 
-        accent_color = colors.HexColor("#ff4d6d") if numeric_score >= 81 else (colors.HexColor("#f0883e") if numeric_score >= 41 else colors.HexColor("#2ea44f"))
+        if numeric_score >= 76:
+            accent_color = colors.HexColor("#ff4d6d")
+        elif numeric_score >= 51:
+            accent_color = colors.HexColor("#f0883e")
+        elif numeric_score >= 26:
+            accent_color = colors.HexColor("#eab308")
+        else:
+            accent_color = colors.HexColor("#2ea44f")
 
         title_style = ParagraphStyle('DocTitle', fontName='Helvetica-Bold', fontSize=22, leading=26, textColor=colors.HexColor("#1e293b"))
         score_style = ParagraphStyle('ScoreDisplay', fontName='Helvetica-Bold', fontSize=18, leading=22, textColor=accent_color)
         body_style = ParagraphStyle('ReportBody', fontName='Helvetica', fontSize=10, leading=15, textColor=colors.HexColor("#334155"))
 
         story.append(Paragraph("POLETHIC BEACON — FORENSIC REPORT", title_style))
-        story.append(Paragraph(f"Ethic-Score™: {numeric_score}/100", score_style))
+        story.append(Paragraph(f"Ethic-Score™: {numeric_score}/100 (Grado {get_ethic_letter(numeric_score)})", score_style))
         story.append(Spacer(1, 15))
 
         for p_text in analysis.split('\n'):
             if p_text.strip():
                 story.append(Paragraph(p_text.strip(), body_style))
                 story.append(Spacer(1, 6))
-                # En app.py -> ruta /export_pdf
-if numeric_score >= 76:
-    accent_color = colors.HexColor("#ff4d6d") # Rojo (Peligro Alto / Letra D)
-elif numeric_score >= 51:
-    accent_color = colors.HexColor("#f0883e") # Naranja (Letra C)
-elif numeric_score >= 26:
-    accent_color = colors.HexColor("#eab308") # Amarillo / Azul (Letra B)
-else:
-    accent_color = colors.HexColor("#2ea44f") # Verde (Limpio / Letra A)
 
         doc.build(story)
         pdf_buffer.seek(0)
