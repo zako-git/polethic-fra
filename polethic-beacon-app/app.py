@@ -78,7 +78,7 @@ def extract_transcript(url):
         return None
 
 
-def apply_local_rules(module_key, content):
+def apply_local_rules(content):
     flags = []
     penalty_total = 0
 
@@ -90,8 +90,7 @@ def apply_local_rules(module_key, content):
     try:
         conn = get_db_connection()
         rules = conn.execute(
-            "SELECT keyword, risk_category, penalty_points FROM local_rules WHERE module_key = ?",
-            (module_key,)
+            "SELECT keyword, risk_category, penalty_points FROM local_rules"
         ).fetchall()
         conn.close()
 
@@ -99,15 +98,11 @@ def apply_local_rules(module_key, content):
             keyword_lower = rule["keyword"].lower()
             if keyword_lower in lowered_content:
                 penalty_total += rule["penalty_points"]
-                flags.append({
-                    "keyword": rule["keyword"],
-                    "category": rule["risk_category"],
-                    "penalty": rule["penalty_points"]
-                })
+                flags.append(rule["risk_category"].lower())
     except Exception as e:
         print(f"[apply_local_rules] Warning/Skipped: {e}")
 
-    return penalty_total, flags
+    return penalty_total, list(set(flags))
 
 
 def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_report):
@@ -124,22 +119,18 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
         print(f"[save_audit] error: {e}")
 
 
-@app.route("/")
-def index():
-    return jsonify({"status": "online", "message": "POLETHIC BEACON API Running"}), 200
-
-
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
+        lang = "fr"
         if request.is_json:
             data = request.get_json() or {}
             user_input = data.get("text", "").strip()
-            module = data.get("module", "news")
+            lang = data.get("lang", "fr")
             file = None
         else:
             user_input = request.form.get("text", "").strip()
-            module = request.form.get("module", "news")
+            lang = request.form.get("lang", "fr")
             file = request.files.get('file')
 
         final_content = user_input
@@ -154,7 +145,6 @@ def analyze():
 
         if file:
             try:
-                # Convertir la imagen subida a Base64
                 image_bytes = file.read()
                 image_base64 = base64.b64encode(image_bytes).decode("utf-8")
                 source_type = "image_file"
@@ -164,10 +154,99 @@ def analyze():
         if not final_content and not image_base64:
             return jsonify({
                 "score": 0,
-                "analysis": "No text or image content was provided to analyze.",
+                "analysis": "No content provided.",
                 "source_type": source_type,
-                "local_flags": []
+                "detected_flags": []
             }), 400
+
+        local_penalty, local_flags = apply_local_rules(final_content)
+
+        llm_score = 30
+        detected_flags = list(local_flags)
+        final_report = "Error: HF_TOKEN client not initialized."
+
+        if client:
+            system_instructions = (
+                "You are POLETHIC BEACON, an advanced Metacognitive Defense Engine.\n\n"
+                "THEORETICAL FRAMEWORKS:\n"
+                "1. PREDICTIVE BRAIN (Lisa Feldman Barrett)\n"
+                "2. THE MIND IS FLAT (Nick Chater)\n"
+                "3. BITE MODEL OF COERCIVE CONTROL (Steven Hassan)\n\n"
+                "CRITICAL LANGUAGE RULE:\n"
+                f"Respond 100% in the target language specified: '{lang}'.\n\n"
+                "MANDATORY AUDIT OUTPUT FORMAT:\n"
+                "### 1. DIAGNÓSTICO TÉCNICO\n"
+                "- Análisis de Hechos/Contenido:\n"
+                "- Sesgos y Falacias:\n"
+                "- Táctica de Manipulación:\n\n"
+                "### 2. REGLAMENTO DIALÉCTICO\n"
+                "- ⚽ Falta Cometida:\n"
+                "- ⚖️ Carga de la Prueba:\n"
+                "- 🛡️ Respuesta Escudo:\n\n"
+                "### 3. ESTRATEGIA DE DEFENSA\n"
+                "- Pasos de autodefensa.\n\n"
+                "<flags>[Lista separada por comas de las categorías detectadas ÚNICAMENTE entre: fakenews, myth, bluff, coercion]</flags>\n"
+                "<score>[Número entero de 0 a 100]</score>"
+            )
+
+            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}"
+
+            messages = [
+                {"role": "system", "content": system_instructions},
+                {"role": "user", "content": prompt_user}
+            ]
+
+            try:
+                response = client.chat.completions.create(
+                    model="Qwen/Qwen2.5-Coder-32B-Instruct",
+                    messages=messages,
+                    max_tokens=1000
+                )
+                raw_text = response.choices[0].message.content
+
+                score_match = re.search(r"<score>\s*(\d+)\s*</score>", raw_text, re.IGNORECASE)
+                flags_match = re.search(r"<flags>(.*?)</flags>", raw_text, re.DOTALL | re.IGNORECASE)
+
+                if score_match:
+                    llm_score = int(score_match.group(1))
+                    raw_text = re.sub(r"<score>\s*\d+\s*</score>", "", raw_text, flags=re.IGNORECASE)
+
+                if flags_match:
+                    parsed_flags = [f.strip().lower() for f in flags_match.group(1).split(",") if f.strip()]
+                    detected_flags = list(set(detected_flags + parsed_flags))
+                    raw_text = re.sub(r"<flags>.*?</flags>", "", raw_text, flags=re.IGNORECASE | re.DOTALL)
+
+                final_report = raw_text.strip()
+
+            except Exception as e:
+                print(f"[HuggingFace API Error]: {e}")
+                final_report = f"Audit Completed (Fallback mode). Error: {str(e)}"
+                llm_score = 40
+        else:
+            final_report = "[DEMO MODE - Set HF_TOKEN in environment]"
+            llm_score = 30
+            detected_flags = ["bluff", "myth"]
+
+        combined_score = max(0, min(100, llm_score + local_penalty))
+        ethic_letter = get_ethic_letter(combined_score)
+
+        save_audit("auto_beacon", source_type, final_content or "Image Uploaded", combined_score, final_report)
+
+        return jsonify({
+            "score": combined_score,
+            "ethic_letter": ethic_letter,
+            "analysis": final_report,
+            "source_type": source_type,
+            "detected_flags": detected_flags
+        }), 200
+
+    except Exception as general_err:
+        return jsonify({
+            "score": 0,
+            "ethic_letter": "A",
+            "analysis": f"Internal Server Error: {str(general_err)}",
+            "detected_flags": []
+        }), 500
 
         # Reglas locales de coincidencia de texto
         local_penalty, local_flags = apply_local_rules(module, final_content)
