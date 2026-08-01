@@ -3,107 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POLETHIC_FRA - Beacon App</title>
-
-  <!-- Tipografías de Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  
-  <!-- Enlace al CSS principal -->
+  <title>POLETHIC BEACON | Moteur d'Autodéfense Cognitive</title>
   <link rel="stylesheet" href="css/styles.css">
-
-  <style>
-    .app-container {
-      max-width: 900px;
-      margin: 2rem auto;
-    }
-
-    .tabs-container {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      padding: 0.8rem 1.5rem;
-      border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .tab-btn:hover, .tab-btn.active {
-      background: rgba(0, 240, 255, 0.08);
-      border-color: var(--cyan-neon);
-      color: var(--cyan-neon);
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-    }
-
-    .input-box-wrapper {
-      background: var(--bg-card);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      backdrop-filter: blur(12px);
-    }
-
-    textarea.beacon-input {
-      width: 100%;
-      height: 180px;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: var(--text-cream-bright);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      padding: 1rem;
-      resize: vertical;
-      box-sizing: border-box;
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-
-    textarea.beacon-input:focus {
-      border-color: var(--cyan-neon);
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
-    }
-
-    .action-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1rem;
-    }
-  </style>
 </head>
 <body>
-  <!-- FONDO CON ESTRELLAS Y NEBULOSAS -->
+
+  <!-- CAPA DE ESTRELLAS DE FONDO -->
   <div id="stars-container"></div>
 
-  <!-- CABECERA DE NAVEGACIÓN CORREGIDA -->
+  <!-- CABECERA DE NAVEGACIÓN -->
   <header>
     <div class="container header-layout">
-      <!-- LOGO -->
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
-      <!-- MENÚ TRADUCIBLE -->
       <nav class="nav-buttons">
-        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
-        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
-        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
-        <a href="beacon.html" class="nav-btn active" data-key="nav_beacon">BEACON LAB</a>
-        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
-        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
+        <a href="index.html" class="nav-btn">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
+        <a href="beacon-app.html" class="nav-btn active">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn">CONTACT</a>
       </nav>
 
-      <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
         <a href="#" class="lang-btn active" id="btn-fr">FR</a>
         <span class="lang-separator">|</span>
@@ -114,191 +35,88 @@
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL DE LA APP -->
-  <main class="container app-container">
+  <!-- CONTENIDO PRINCIPAL BEACON LAB -->
+  <main class="container">
     
-    <section class="lab-hero" style="text-align: center; margin-bottom: 2rem;">
-      <h1 class="lab-title">POLETHIC BEACON</h1>
-      <p class="lab-lead" data-key="app_subtitle">
-        Moteur d'autodéfense cognitive & Analyse métacommunicationnelle
-      </p>
-    </section>
-
-    <!-- PESTAÑAS DE MODALIDAD DE ANÁLISIS -->
-    <div class="tabs-container">
-      <button class="tab-btn active" data-key="tab_fakenews">1. FakeNews</button>
-      <button class="tab-btn" data-key="tab_mythbuster">2. Myth-Buster</button>
-      <button class="tab-btn" data-key="tab_identity">3. Identity Spoofing</button>
+    <div class="beacon-title-block">
+      <h1 class="hero-app-title">POLETHIC BEACON</h1>
+      <p class="subtitle" id="subtitle-text">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
     </div>
 
-    <!-- CAJA DE ENTRADA Y ACCIÓN -->
-    <div class="input-box-wrapper">
-      <textarea 
-        id="input-text" 
-        class="beacon-input"
-        data-key-placeholder="placeholder_text" 
-        placeholder="Collez du texte média, des articles politiques ou des liens vidéo..."></textarea>
+    <!-- CAJA ÚNICA DE ENTRADA (Sin botones/categorías fijos arriba) -->
+    <section class="input-card">
+      <h3 id="window-title">Collez le texte, le lien ou joignez une image à évaluer :</h3>
       
-      <div class="action-bar">
-        <span class="status-active" style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;" data-key="app_status">
-          ● ENGINE READY
-        </span>
-        <button class="btn-lab-action btn-cyan" id="analyze-btn" data-key="btn_analyze">
+      <textarea id="user-input" placeholder="Collez du texte média, des articles politiques, des liens ou des déclarations..."></textarea>
+      
+      <div class="input-actions-bar">
+        <!-- BOTÓN DE CÁMARA / SUBIR ARCHIVO -->
+        <label for="user-file" class="file-upload-btn" title="Adjuntar imagen o captura">
+          📷 <span id="file-name-display"></span>
+        </label>
+        <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
+
+        <!-- BOTÓN PRINCIPAL BEACON-IZE -->
+        <button id="btn-analyze" class="btn-beacon-primary">
           ⚡ ANALYSER LE TEXTE
         </button>
       </div>
-    </div>
+
+      <div class="status-bar">
+        <span class="status-indicator">● MOTEUR PRÊT</span>
+      </div>
+    </section>
+
+    <!-- PANEL DINÁMICO DE RESULTADOS (Se despliega automáticamente tras analizar) -->
+    <section id="results-panel" class="results-card" style="display: none;">
+      
+      <div class="results-header">
+        <!-- Ethic-Score detectado -->
+        <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
+        
+        <!-- Aquí la IA inyecta las banderas/categorías detectadas (FakeNews, Cazador de Mitos, etc.) -->
+        <div id="detected-flags-container" class="flags-container"></div>
+      </div>
+
+      <!-- DESGLOSE Y DIAGNÓSTICO -->
+      <div class="analysis-body">
+        <div id="analysis-report" class="report-box">...</div>
+      </div>
+
+      <!-- ACCIONES DÉFENSA Y EXPORTACIÓN -->
+      <div class="results-actions">
+        <button id="btn-refute" class="btn-action-refute">🔄 REFUTER / CHALLENGER LE BIAIS</button>
+        <button id="btn-pdf" class="btn-action-pdf">📄 EXPORTER EN PDF</button>
+        <button id="btn-purge" class="btn-action-purge">🗑️ PURGER</button>
+      </div>
+    </section>
 
   </main>
 
-  <!-- PIE DE PÁGINA -->
+  <!-- FOOTER CON ESCUDO -->
   <footer>
     <div class="container footer-content">
-      
       <div class="footer-shield">
         <div class="shield-badge">
           <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             <path d="M9 12l2 2 4-4"/>
           </svg>
-          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+          <span class="shield-title">Bouclier de Protection Professionnelle</span>
         </div>
-        <p class="shield-disclaimer" data-key="footer_disc1">
-          Action exclusive de prévention primaire et de psychoéducation non clinique.
-        </p>
-        <p class="shield-disclaimer" data-key="footer_disc2">
-          Aucun diagnostic ou thérapie médicale n'est pratiqué.
-        </p>
+        <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
       </div>
 
       <div class="footer-divider"></div>
 
       <div class="footer-bottom">
-        <div class="footer-links">
-          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
-          <span class="footer-sep">•</span>
-          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
-          <span class="footer-sep">•</span>
-          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
-        </div>
-        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+        <p class="copyright">&copy; 2026 POLETHIC France • Association Loi 1901. Tous droits réservés.</p>
       </div>
-
     </div>
   </footer>
 
-  <!-- SCRIPT TRILINGÜE DE TRADUCCIÓN -->
-  <script>
-  const appTranslations = {
-      fr: {
-          nav_home: "ACCUEIL",
-          nav_obs: "L'OBSERVATOIRE",
-          nav_museum: "PSICOMUSÉE",
-          nav_beacon: "BEACON LAB",
-          nav_cap: "NOTRE CAP",
-          nav_contact: "CONTACT",
-
-          app_subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
-          tab_fakenews: "1. FakeNews",
-          tab_mythbuster: "2. Chasseur de Mythes",
-          tab_identity: "3. Usurpation d'Identité",
-          placeholder_text: "Collez du texte média, des articles politiques ou des liens vidéo...",
-          btn_analyze: "⚡ ANALYSER LE TEXTE",
-          app_status: "● MOTEUR PRÊT",
-
-          footer_shield: "Bouclier de Protection Professionnelle",
-          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
-          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
-          footer_legal: "Mentions Légales",
-          footer_privacy: "Politique de Confidentialité",
-          footer_cookies: "Gestion des Cookies"
-      },
-      es: {
-          nav_home: "INICIO",
-          nav_obs: "OBSERVATORIO",
-          nav_museum: "PSICOMUSEO",
-          nav_beacon: "BEACON LAB",
-          nav_cap: "NUESTRO RUMBO",
-          nav_contact: "CONTACTO",
-
-          app_subtitle: "Motor de autodefensa cognitiva y análisis metacomunicacional",
-          tab_fakenews: "1. FakeNews / Bulo",
-          tab_mythbuster: "2. Caza-Mitos",
-          tab_identity: "3. Suplantación de Identidad",
-          placeholder_text: "Pegue aquí texto de medios, artículos políticos o enlaces de vídeo...",
-          btn_analyze: "⚡ ANALIZAR TEXTO",
-          app_status: "● MOTOR LISTO",
-
-          footer_shield: "Escudo de Protección Profesional",
-          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
-          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
-          footer_legal: "Aviso Legal",
-          footer_privacy: "Política de Privacidad",
-          footer_cookies: "Gestión de Cookies"
-      },
-      en: {
-          nav_home: "HOME",
-          nav_obs: "OBSERVATORY",
-          nav_museum: "PSYCHOMUSEUM",
-          nav_beacon: "BEACON LAB",
-          nav_cap: "OUR COURSE",
-          nav_contact: "CONTACT",
-
-          app_subtitle: "Cognitive Self-Defense Engine & Metacommunication Analysis",
-          tab_fakenews: "1. FakeNews",
-          tab_mythbuster: "2. Myth-Buster",
-          tab_identity: "3. Identity Spoofing",
-          placeholder_text: "Paste media text, political articles or video links...",
-          btn_analyze: "⚡ ANALYZE TEXT",
-          app_status: "● ENGINE READY",
-
-          footer_shield: "Professional Protection Shield",
-          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
-          footer_disc2: "No medical diagnosis or therapy is performed.",
-          footer_legal: "Legal Notice",
-          footer_privacy: "Privacy Policy",
-          footer_cookies: "Cookie Management"
-      }
-  };
-
-  function setAppLanguage(lang) {
-      localStorage.setItem('preferred_lang', lang);
-
-      // 1. Traducir textos con data-key
-      document.querySelectorAll('[data-key]').forEach(element => {
-          const key = element.getAttribute('data-key');
-          if (appTranslations[lang] && appTranslations[lang][key]) {
-              element.innerHTML = appTranslations[lang][key];
-          }
-      });
-
-      // 2. Traducir placeholders de inputs/textareas
-      document.querySelectorAll('[data-key-placeholder]').forEach(element => {
-          const key = element.getAttribute('data-key-placeholder');
-          if (appTranslations[lang] && appTranslations[lang][key]) {
-              element.placeholder = appTranslations[lang][key];
-          }
-      });
-
-      // 3. Resaltar botón de idioma activo
-      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = document.getElementById(`btn-${lang}`);
-      if (activeBtn) activeBtn.classList.add('active');
-  }
-
-  // Event Listeners para selector de idioma
-  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setAppLanguage('fr'); });
-  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setAppLanguage('es'); });
-  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setAppLanguage('en'); });
-
-  // Inicialización: Priorizar parámetro ?lang= de la URL, luego localStorage, por defecto 'fr'
-  document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlLang = urlParams.get('lang');
-      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
-      
-      setAppLanguage(urlLang || savedLang);
-  });
-  </script>
+  <!-- LÓGICA DE FUNCIONAMIENTO Y TRADUCCIONES DE LA APLICACIÓN -->
+  <script src="js/script.js"></script>
 </body>
 </html>
