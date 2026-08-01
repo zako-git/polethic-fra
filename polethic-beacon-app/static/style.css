@@ -1,171 +1,282 @@
-/* --- POLETHIC BEACON: MASTER STYLESHEET --- */
+/* ==========================================
+   INTERFAZ CYBER TOTAL - BEACON LAB
+   ========================================== */
 
-body {
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-    background-color: #0d1117;
-    color: #c9d1d9;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+:root {
+  --cyber-cyan: #00f0ff;
+  --cyber-green: #00ff88;
+  --cyber-red: #ff2a6d;
+  --cyber-yellow: #ffe600;
+  --cyber-dark-bg: rgba(5, 12, 22, 0.85);
+  --cyber-border-glow: 0 0 15px rgba(0, 240, 255, 0.3);
+  --font-cyber: 'Courier New', Courier, monospace;
 }
 
-header { text-align: center; margin-bottom: 30px; }
-header h1 { color: #8ab4f8; margin-bottom: 5px; font-size: 2.5rem; letter-spacing: 1px; }
-header p { color: #8b949e; margin: 0; font-size: 1rem; }
-main { width: 100%; max-width: 700px; }
-
-/* Navigation Tabs */
-.nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-.nav-tabs button {
-    background-color: #21262d;
-    color: #c9d1d9;
-    border: 1px solid #30363d;
-    padding: 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    flex: 1;
-    font-weight: bold;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-}
-.nav-tabs button:hover { background-color: #30363d; color: #f0f6fc; }
-.nav-tabs button.active { background-color: #8ab4f8; color: #0d1117; border-color: #aecbfa; }
-
-/* Input Components */
-.input-section { background-color: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 6px; margin-bottom: 20px; }
-.input-section h2 { font-size: 1.1rem; color: #8ab4f8; margin-top: 0; margin-bottom: 12px; }
-
-.file-name-display {
-    font-size: 0.8rem;
-    color: #8ab4f8;
-    margin-top: 6px;
-    min-height: 1.2em;
+/* Alineación general del contenedor */
+.beacon-title-block {
+  text-align: center;
+  margin: 30px 0;
 }
 
-.textarea-wrapper {
-    position: relative;
+.hero-app-title {
+  font-family: var(--font-cyber);
+  font-size: 2.8rem;
+  color: #fff;
+  text-shadow: 0 0 10px var(--cyber-cyan), 0 0 20px var(--cyber-cyan);
+  letter-spacing: 2px;
+  margin-bottom: 5px;
 }
 
-textarea {
-    width: 100%;
-    background-color: #0d1117;
-    color: #f0f6fc;
-    border: 1px solid #30363d;
-    border-radius: 6px;
-    padding: 12px;
-    padding-bottom: 44px;
-    box-sizing: border-box;
-    resize: vertical;
-    font-family: inherit;
-    font-size: 0.9rem;
-}
-textarea:focus { outline: none; border-color: #8ab4f8; }
-textarea::placeholder {
-    font-size: 0.85rem;
-    color: #8b949e;
+.subtitle {
+  color: var(--cyber-cyan);
+  font-family: var(--font-cyber);
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  opacity: 0.9;
 }
 
-/* Photo upload button */
-.file-upload-label {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(33, 38, 45, 0.85);
-    color: #c9d1d9;
-    border: 1px solid #30363d;
-    border-radius: 50%;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
-}
-.file-upload-label:hover {
-    background-color: #30363d;
-    border-color: #8ab4f8;
+/* CARCASA TÁCTICA DEL FORMULARIO */
+.input-card {
+  background: var(--cyber-dark-bg);
+  border: 1px solid var(--cyber-cyan);
+  box-shadow: var(--cyber-border-glow);
+  border-radius: 6px;
+  padding: 25px;
+  max-width: 850px;
+  margin: 0 auto 30px auto;
+  backdrop-filter: blur(8px);
+  position: relative;
 }
 
-/* Action Buttons */
-.button-container { text-align: center; margin-top: 20px; }
-#btn-analyze {
-    background-color: #238636;
-    color: white;
-    border: none;
-    padding: 14px 50px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    transition: background-color 0.2s, transform 0.1s;
-}
-#btn-analyze:hover { background-color: #2ea44f; }
-#btn-analyze:active { transform: scale(0.98); }
-#btn-analyze:disabled { background-color: #30363d; color: #8b949e; cursor: not-allowed; }
-
-.button-group { display: flex; gap: 10px; margin-top: 15px; }
-.button-group button {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: opacity 0.2s, background-color 0.2s;
-}
-.button-group button:hover { opacity: 0.95; }
-#btn-purge { background-color: #21262d; border-color: #d73a49; color: #ff7b72; }
-#btn-purge:hover { background-color: rgba(248, 81, 73, 0.15); }
-#btn-pdf { background-color: #8ab4f8; border-color: #aecbfa; color: #0d1117; }
-#btn-pdf:hover { background-color: #aecbfa; }
-
-/* Results Component (The Beacon UI Signal) */
-.results-section {
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    padding: 20px;
-    border-radius: 6px;
-    transition: border-color 0.4s ease, background-color 0.4s ease;
+.input-card h3 {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  font-family: var(--font-cyber);
+  border-left: 3px solid var(--cyber-cyan);
+  padding-left: 10px;
 }
 
-/* Ethic-Score text color matching the active threat level */
-#ethic-score { color: #f0f6fc; font-weight: bold; font-size: 1.2rem; }
-.results-section.threat-high #ethic-score { color: #ff4d6d !important; }     /* Rojo */
-.results-section.threat-medium #ethic-score { color: #f0883e !important; }   /* Naranja */
-.results-section.threat-caution #ethic-score { color: #eab308 !important; }  /* Amarillo */
-.results-section.threat-low #ethic-score { color: #2ea44f !important; }      /* Verde */
-
-/* 🟢 LETRA A (0-25 pts): Limpio / Saludable */
-.results-section.threat-low {
-    border: 2px solid #2ea44f !important;
-    background-color: rgba(46, 164, 79, 0.03) !important;
+/* ÁREA DE TEXTO CON EFECTO NEÓN */
+textarea#user-input {
+  width: 100%;
+  height: 140px;
+  background: rgba(0, 10, 20, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 4px;
+  color: #00ff88;
+  font-family: var(--font-cyber);
+  font-size: 0.95rem;
+  padding: 15px;
+  box-sizing: border-box;
+  resize: vertical;
+  outline: none;
+  transition: all 0.3s ease;
 }
 
-/* 🟡 LETRA B (26-50 pts): Riesgo Leve / Precaución */
-.results-section.threat-caution {
-    border: 2px solid #eab308 !important;
-    background-color: rgba(234, 179, 8, 0.03) !important;
+textarea#user-input:focus {
+  border-color: var(--cyber-cyan);
+  box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.3), 0 0 10px rgba(0, 240, 255, 0.4);
 }
 
-/* 🟠 LETRA C (51-75 pts): Riesgo Alto / Sesgos / Pseudociencia */
-.results-section.threat-medium {
-    border: 2px solid #f0883e !important;
-    background-color: rgba(240, 136, 62, 0.03) !important;
+/* BARRA DE ACCIONES SUPERIOR (Cámara + Botón Beacon-ize) */
+.input-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
 }
 
-/* 🔴 LETRA D (76-100 pts): Peligro Máximo / Coerción / Modelo BITE */
-.results-section.threat-high {
-    border: 2px solid #ff4d6d !important;
-    background-color: rgba(255, 77, 109, 0.05) !important;
+/* BOTÓN DE CÁMARA (Ícono futurista) */
+.file-upload-btn {
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid var(--cyber-cyan);
+  color: var(--cyber-cyan);
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-cyber);
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Responsive Layout */
-@media (max-width: 600px) {
-    .nav-tabs, .button-group { flex-direction: column; gap: 8px; }
-    body { padding: 10px; }
+.file-upload-btn:hover {
+  background: var(--cyber-cyan);
+  color: #000;
+  box-shadow: 0 0 12px var(--cyber-cyan);
+}
+
+/* BOTÓN PRINCIPAL: BEACON-IZE */
+.btn-beacon-primary {
+  flex-grow: 1;
+  background: transparent;
+  border: 1px solid var(--cyber-cyan);
+  color: var(--cyber-cyan);
+  font-family: var(--font-cyber);
+  font-weight: bold;
+  font-size: 1.05rem;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 5px var(--cyber-cyan);
+}
+
+.btn-beacon-primary:hover {
+  background: var(--cyber-cyan);
+  color: #050c16;
+  text-shadow: none;
+  box-shadow: 0 0 20px var(--cyber-cyan);
+  transform: translateY(-1px);
+}
+
+.btn-beacon-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #555;
+  color: #555;
+  box-shadow: none;
+}
+
+/* BARRA DE ESTADO DE MOTOR */
+.status-bar {
+  margin-top: 15px;
+  font-family: var(--font-cyber);
+  font-size: 0.75rem;
+  color: var(--cyber-green);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ==========================================
+   PANEL DE RESULTADOS (DESPLIEGUE)
+   ========================================== */
+.results-card {
+  background: rgba(5, 12, 22, 0.95);
+  border: 1px solid var(--cyber-green);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+  border-radius: 6px;
+  padding: 25px;
+  max-width: 850px;
+  margin: 0 auto 30px auto;
+  backdrop-filter: blur(10px);
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.ethic-score-badge {
+  background: var(--cyber-cyan);
+  color: #050c16;
+  font-family: var(--font-cyber);
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 6px 14px;
+  border-radius: 3px;
+  box-shadow: 0 0 10px var(--cyber-cyan);
+}
+
+/* BANDERAS / BADGES DINÁMICAS */
+.flags-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.flag-badge {
+  font-family: var(--font-cyber);
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.flag-fakenews { border: 1px solid var(--cyber-red); color: var(--cyber-red); background: rgba(255, 42, 109, 0.1); }
+.flag-myth { border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow); background: rgba(255, 230, 0, 0.1); }
+.flag-posturing { border: 1px solid #b366ff; color: #b366ff; background: rgba(179, 102, 255, 0.1); }
+.flag-coercion { border: 1px solid #ff8000; color: #ff8000; background: rgba(255, 128, 0, 0.1); }
+
+/* INFORME DETALLADO */
+.report-box {
+  background: rgba(0, 0, 0, 0.5);
+  border-left: 3px solid var(--cyber-green);
+  padding: 15px;
+  color: #e0e0e0;
+  font-family: var(--font-cyber);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-top: 10px;
+}
+
+/* ACCIONES POST-ANÁLISIS */
+.results-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-action-refute {
+  background: transparent;
+  border: 1px solid var(--cyber-yellow);
+  color: var(--cyber-yellow);
+  font-family: var(--font-cyber);
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-action-refute:hover {
+  background: var(--cyber-yellow);
+  color: #000;
+  box-shadow: 0 0 15px var(--cyber-yellow);
+}
+
+.btn-action-pdf {
+  background: transparent;
+  border: 1px solid var(--cyber-cyan);
+  color: var(--cyber-cyan);
+  font-family: var(--font-cyber);
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-action-pdf:hover {
+  background: var(--cyber-cyan);
+  color: #000;
+  box-shadow: 0 0 15px var(--cyber-cyan);
+}
+
+.btn-action-purge {
+  background: transparent;
+  border: 1px solid var(--cyber-red);
+  color: var(--cyber-red);
+  font-family: var(--font-cyber);
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-action-purge:hover {
+  background: var(--cyber-red);
+  color: #fff;
+  box-shadow: 0 0 15px var(--cyber-red);
 }
