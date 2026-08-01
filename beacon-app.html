@@ -506,46 +506,44 @@
             renderFlags(data.detected_flags || ['EMPRISE_COGNITIVE', 'PSEUDO_SCIENCE']);
 
           } catch (err) {
-            // MOTOR FALLBACK MULTI-APARTADO (Offline Local BEACON)
-            const lower = text.toLowerCase();
-            
-            const hasPseudo = lower.includes('quantique') || lower.includes('hypnose') || lower.includes('vibratoire') || lower.includes('cellulaire') || lower.includes('inverser');
-            const hasCoercion = lower.includes('maintenant') || lower.includes('seulement') || lower.includes('urgent') || lower.includes('inscrivez-vous') || lower.includes('dernières places');
-            const hasPosture = lower.includes('exclusive') || lower.includes('secret') || lower.includes('révolutionnaire') || lower.includes('unique');
+  // MOTOR FALLBACK LOCAL (Sin repetir texto y categorizando los ejes)
+  const lower = text.toLowerCase();
+  
+  const hasPseudo = lower.includes('quantique') || lower.includes('hypnose') || lower.includes('vibratoire') || lower.includes('cellulaire') || lower.includes('inverser');
+  const hasCoercion = lower.includes('maintenant') || lower.includes('seulement') || lower.includes('urgent') || lower.includes('inscrivez-vous') || lower.includes('dernières places');
+  const hasPosture = lower.includes('exclusive') || lower.includes('secret') || lower.includes('révolutionnaire') || lower.includes('unique') || lower.includes('méthode');
 
-            let flags = [];
-            let reportSections = [];
-            let finalGrade = 'A';
+  let flags = [];
+  let finalGrade = 'A';
 
-            if (hasPseudo) {
-              flags.push('PSEUDO_SCIENCE');
-              reportSections.push(`• Pseudo-Science & Mystisme : DÉTECTÉ 🚨\n  -> Emploi de concepts scientifiques détournés ("quantique", "vibratoire") sans fondement clinique.`);
-            }
+  if (hasPseudo) flags.push('PSEUDO_SCIENCE');
+  if (hasCoercion) flags.push('COERCITION_MENTALE');
+  if (hasPosture) flags.push('POSTURE_ET_BLUFF');
 
-            if (hasCoercion) {
-              flags.push('COERCITION_MENTALE');
-              reportSections.push(`• Coercion & Urgence : DÉTECTÉ ⚠️\n  -> Pression temporelle et incitation directe à l'engagement émotionnel/financier immédiat.`);
-            }
+  if (hasPseudo || (hasCoercion && hasPosture)) {
+    finalGrade = 'D';
+  } else if (hasCoercion || hasPosture) {
+    finalGrade = 'C';
+  } else {
+    finalGrade = 'B';
+    flags.push('ANALYSE_STANDARD');
+  }
 
-            if (hasPosture) {
-              flags.push('POSTURE_ET_BLUFF');
-              reportSections.push(`• Posture & Exclusivité : DÉTECTÉ ⚠️\n  -> Rhétorique de fausse autorité et promesse de résultats miracles sans méthodologie étayée.`);
-            }
+  applyEthicBadge(finalGrade);
+  renderFlags(flags);
 
-            if (hasPseudo || (hasCoercion && hasPosture)) {
-              finalGrade = 'D';
-            } else if (hasCoercion || hasPosture) {
-              finalGrade = 'C';
-            } else if (text.length > 50) {
-              finalGrade = 'B';
-              flags.push('ANALYSE_STANDARD');
-              reportSections.push(`• Anatomy du discours : Structuration standard avec éléments promotionnels basiques.`);
-            } else {
-              finalGrade = 'A';
-              flags.push('CONFORME');
-              reportSections.push(`• Anatomy du discours : Communication neutre et factuelle.`);
-            }
+  // Formato limpio sin repetir el texto del usuario:
+  analysisReport.innerText = 
+`[AUDIT CORTICAL - ÉVALUATION DE L'EMPRISE]
 
+• PSEUDO-SCIENCE / MYSTISME : ${hasPseudo ? '🚨 DÉTECTÉ (Usage abusif de terminologie scientifique)' : '✅ Non détecté'}
+• POSTURE & ESBROUFE (VENDEUR DE RÊVES) : ${hasPosture ? '⚠️ DÉTECTÉ (Promesse de résultats miracles / Méthode exclusive)' : '✅ Non détecté'}
+• COERCITION ET PRESSION : ${hasCoercion ? '⚠️ DÉTECTÉ (Urgence artificielle et incitation à l\'action)' : '✅ Non détecté'}
+
+• BIAIS DÉTECTÉS : ${hasPseudo ? 'Biais d\'autorité fictive, Illusion de contrôle.' : ''} ${hasCoercion ? 'Aversion à la perte, Effet de rareté.' : ''}
+
+• RECOMMANDATION : ${finalGrade === 'D' ? 'Vigilance maximale. Absence de preuves scientifiques et stratégie d\'influence agressive.' : 'Prudence standard.'}`;
+}
             applyEthicBadge(finalGrade);
             renderFlags(flags);
 
