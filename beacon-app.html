@@ -79,7 +79,7 @@
 
     textarea#user-input {
       width: 100%;
-      height: 130px;
+      height: 140px;
       background: rgba(1, 6, 12, 0.8);
       border: 1px solid rgba(0, 240, 255, 0.3);
       border-radius: 6px;
@@ -112,8 +112,11 @@
       border-radius: 6px;
       cursor: pointer;
       font-family: var(--font-cyber);
-      font-size: 1.1rem;
+      font-size: 0.9rem;
       transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .file-upload-btn:hover {
@@ -290,8 +293,8 @@
       </div>
       
       <div class="input-actions-bar">
-        <label for="user-file" class="file-upload-btn" title="Joindre une image">
-          📷 <span id="file-name-display"></span>
+        <label for="user-file" class="file-upload-btn" title="Joindre une image ou un PDF">
+          📷 <span id="file-name-display">Joindre fichier</span>
         </label>
         <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
 
@@ -301,7 +304,7 @@
       </div>
 
       <div class="status-bar">
-        <span data-key="status_ready">● MOTEUR PRÊT</span>
+        <span data-key="status_ready">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span>
       </div>
     </section>
 
@@ -382,215 +385,287 @@
     </div>
   </footer>
 
- <!-- SCRIPT INTEGRAL BEACON LAB (ANÁLISIS COMPLETO, REFUTAR Y PDF) -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+  <!-- SCRIPT INTEGRAL BEACON LAB -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
 
-    const btnAnalyze = document.getElementById('btn-analyze');
-    const userInput = document.getElementById('user-input');
-    const userFile = document.getElementById('user-file');
-    const resultsPanel = document.getElementById('results-panel');
-    const analysisReport = document.getElementById('analysis-report');
-    const ethicScore = document.getElementById('ethic-score');
-    const detectedFlags = document.getElementById('detected-flags-container');
+      const btnAnalyze = document.getElementById('btn-analyze');
+      const userInput = document.getElementById('user-input');
+      const userFile = document.getElementById('user-file');
+      const fileNameDisplay = document.getElementById('file-name-display');
+      const resultsPanel = document.getElementById('results-panel');
+      const analysisReport = document.getElementById('analysis-report');
+      const ethicScore = document.getElementById('ethic-score');
+      const detectedFlags = document.getElementById('detected-flags-container');
 
-    const btnRefute = document.getElementById('btn-refute');
-    const btnPdf = document.getElementById('btn-pdf');
-    const btnPurge = document.getElementById('btn-purge');
+      const btnRefute = document.getElementById('btn-refute');
+      const btnPdf = document.getElementById('btn-pdf');
+      const btnPurge = document.getElementById('btn-purge');
 
-    let currentScoreLetter = 'C';
-    let lastAnalyzedText = '';
+      let currentScoreLetter = 'C';
+      let lastAnalyzedText = '';
 
-    // 🎯 1. ASIGNACIÓN DE GRADO Y COLOR (A, B, C, D)
-    function applyEthicBadge(score) {
-      let letter = 'C';
-      let color = '#ff9900';
-      let glow = 'rgba(255, 153, 0, 0.4)';
-
-      // Soporta tanto número (0-100) como Letra directa
-      if (typeof score === 'number') {
-        if (score <= 25) { letter = 'A'; color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
-        else if (score <= 50) { letter = 'B'; color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
-        else if (score <= 75) { letter = 'C'; color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
-        else { letter = 'D'; color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
-      } else if (typeof score === 'string') {
-        letter = score.toUpperCase();
-        if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
-        if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
-        if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
-        if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
+      // 📎 0. FEEDBACK DE ARCHIVO SELECCIONADO
+      if (userFile) {
+        userFile.addEventListener('change', (e) => {
+          if (e.target.files.length > 0) {
+            fileNameDisplay.innerText = e.target.files[0].name.substring(0, 15) + '...';
+          } else {
+            fileNameDisplay.innerText = 'Joindre fichier';
+          }
+        });
       }
 
-      currentScoreLetter = letter;
-      ethicScore.innerText = `Ethic-Score™: ${letter}`;
-      ethicScore.style.backgroundColor = color;
-      ethicScore.style.boxShadow = `0 0 15px ${glow}`;
-      ethicScore.style.color = '#030a12';
-    }
+      // 🎯 1. ASIGNACIÓN DE GRADO Y COLOR (A, B, C, D)
+      function applyEthicBadge(score) {
+        let letter = 'C';
+        let color = '#ff9900';
+        let glow = 'rgba(255, 153, 0, 0.4)';
 
-    // 🚩 2. RENDERIZADO DE BANDERAS/FLAGS DETECTADAS
-    function renderFlags(flagsArray) {
-      if (!detectedFlags) return;
-      detectedFlags.innerHTML = '';
+        if (typeof score === 'number') {
+          if (score <= 25) { letter = 'A'; color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
+          else if (score <= 50) { letter = 'B'; color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
+          else if (score <= 75) { letter = 'C'; color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
+          else { letter = 'D'; color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
+        } else if (typeof score === 'string') {
+          letter = score.toUpperCase();
+          if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
+          if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
+          if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
+          if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
+        }
 
-      if (!flagsArray || flagsArray.length === 0) {
-        detectedFlags.innerHTML = '<span class="flag-badge">ANALYSE PRÊTE</span>';
-        return;
+        currentScoreLetter = letter;
+        ethicScore.innerText = `Ethic-Score™: ${letter}`;
+        ethicScore.style.backgroundColor = color;
+        ethicScore.style.boxShadow = `0 0 15px ${glow}`;
+        ethicScore.style.color = '#030a12';
       }
 
-      flagsArray.forEach(flag => {
-        const span = document.createElement('span');
-        span.className = 'flag-badge';
-        span.innerText = flag.toUpperCase();
-        detectedFlags.appendChild(span);
-      });
-    }
+      // 🚩 2. RENDERIZADO DE BANDERAS/FLAGS DETECTADAS
+      function renderFlags(flagsArray) {
+        if (!detectedFlags) return;
+        detectedFlags.innerHTML = '';
 
-    // ⚡ 3. FUNCIÓN PRINCIPAL DE ANÁLISIS (BEACON-IZE)
-    if (btnAnalyze) {
-      btnAnalyze.addEventListener('click', async () => {
-        const text = userInput.value.trim();
-        const file = userFile && userFile.files.length > 0 ? userFile.files[0] : null;
-
-        if (!text && !file) {
-          alert('Veuillez entrer du texte ou joindre un fichier à analyser.');
+        if (!flagsArray || flagsArray.length === 0) {
+          detectedFlags.innerHTML = '<span class="flag-badge">ANALYSE PRÊTE</span>';
           return;
         }
 
-        lastAnalyzedText = text;
-        btnAnalyze.disabled = true;
-        btnAnalyze.innerText = '⏳ ANALYSE EN COURS...';
-        resultsPanel.style.display = 'block';
-        analysisReport.innerText = '⚡ Analyse des motifs linguistiques et des biais en cours... Veuillez patienter.';
+        flagsArray.forEach(flag => {
+          const span = document.createElement('span');
+          span.className = 'flag-badge';
+          span.innerText = flag.toUpperCase();
+          detectedFlags.appendChild(span);
+        });
+      }
 
-        try {
-          let response;
-          if (file) {
-            const formData = new FormData();
-            formData.append('text', text);
-            formData.append('file', file);
-            formData.append('lang', 'fr');
+      // ⚡ 3. FUNCIÓN PRINCIPAL DE ANÁLISIS (BEACON-IZE)
+      if (btnAnalyze) {
+        btnAnalyze.addEventListener('click', async () => {
+          const text = userInput.value.trim();
+          const file = userFile && userFile.files.length > 0 ? userFile.files[0] : null;
 
-            response = await fetch(`${API_BASE_URL}/analyze`, {
-              method: 'POST',
-              body: formData
-            });
-          } else {
-            response = await fetch(`${API_BASE_URL}/analyze`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: text, lang: 'fr' })
-            });
+          if (!text && !file) {
+            alert('Veuillez entrer du texte ou joindre un fichier à analyser.');
+            return;
           }
 
-          if (!response.ok) throw new Error('Erreur API');
+          lastAnalyzedText = text || (file ? `Fichier analysé: ${file.name}` : '');
+          btnAnalyze.disabled = true;
+          btnAnalyze.innerText = '⏳ ANALYSE EN COURS...';
+          resultsPanel.style.display = 'block';
+          analysisReport.innerText = '⚡ Analyse des motifs linguistiques et des biais en cours... Veuillez patienter.';
 
-          const data = await response.json();
-          applyEthicBadge(data.score || data.grade || 'D');
-          analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
-          renderFlags(data.detected_flags || ['EMPRISE_COGNITIVE', 'PSEUDO_SCIENCE']);
+          try {
+            let response;
+            if (file) {
+              const formData = new FormData();
+              formData.append('text', text);
+              formData.append('file', file);
+              formData.append('lang', 'fr');
 
-        } catch (err) {
-          // Fallback dinámico si la API no está disponible en Render (Modo Local Offline)
-          const isPseudo = text.toLowerCase().includes('hypnose') || text.toLowerCase().includes('quantique') || text.toLowerCase().includes('inverser');
-          
-          applyEthicBadge(isPseudo ? 'D' : 'B');
-          renderFlags(isPseudo ? ['PSEUDO_SCIENCE', 'EMPRISE_COGNITIVE', 'COERCITION'] : ['ANALYSE_STANDARD']);
+              response = await fetch(`${API_BASE_URL}/analyze`, {
+                method: 'POST',
+                body: formData
+              });
+            } else {
+              response = await fetch(`${API_BASE_URL}/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text, lang: 'fr' })
+              });
+            }
 
-          analysisReport.innerText = isPseudo ?
-            `[RANG CORTEX ALERTE CRITIQUE]\n\nTexte analysé:\n"${text}"\n\n1. ANATOMIE DE LA MANIPULATION:\n- Motif: Argumentation sous couvert de "science quantique" non prouvée.\n- Levier émotionnel: Peur du vieillissement / Désir de jeunesse éternelle.\n\n2. BIAIS COGNITIFS DÉTECTÉS:\n- Biais d'autorité scientifique fictive.\n- Biais d'ancrage sur des promesses irréalistes (3 sessions).\n\n3. RECOMMANDATION CORTICALE:\n- Vigilance maximale. Absence complète de preuves cliniques ou biologiques.` 
-            :
-            `[RANG CORTEX STANDBY]\n\nTexte analysé:\n"${text}"\n\n- Aucune structure coercive majeure détectée.\n- Recommandation: Traitement standard de l'information.`;
-        } finally {
-          btnAnalyze.disabled = false;
-          btnAnalyze.innerText = '⚡ BEACON-IZE';
-          resultsPanel.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    }
+            if (!response.ok) throw new Error('Erreur API');
 
-    // 🔄 4. MOTOR DE REFUTACIÓN / CHALLENGER
-    if (btnRefute) {
-      btnRefute.addEventListener('click', async () => {
-        if (!lastAnalyzedText) {
-          alert('Veuillez d\'abord analyser un texte.');
-          return;
-        }
+            const data = await response.json();
+            applyEthicBadge(data.score || data.grade || 'D');
+            analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
+            renderFlags(data.detected_flags || ['EMPRISE_COGNITIVE', 'PSEUDO_SCIENCE']);
 
-        btnRefute.disabled = true;
-        btnRefute.innerText = '⏳ GÉNÉRATION DE LA RÉFUTATION...';
+          } catch (err) {
+            // MOTOR FALLBACK MULTI-APARTADO (Offline Local BEACON)
+            const lower = text.toLowerCase();
+            
+            const hasPseudo = lower.includes('quantique') || lower.includes('hypnose') || lower.includes('vibratoire') || lower.includes('cellulaire') || lower.includes('inverser');
+            const hasCoercion = lower.includes('maintenant') || lower.includes('seulement') || lower.includes('urgent') || lower.includes('inscrivez-vous') || lower.includes('dernières places');
+            const hasPosture = lower.includes('exclusive') || lower.includes('secret') || lower.includes('révolutionnaire') || lower.includes('unique');
 
-        try {
-          const res = await fetch(`${API_BASE_URL}/refute`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: lastAnalyzedText, lang: 'fr' })
-          });
+            let flags = [];
+            let reportSections = [];
+            let finalGrade = 'A';
 
-          if (!res.ok) throw new Error('Erreur API Refute');
-          const data = await res.json();
+            if (hasPseudo) {
+              flags.push('PSEUDO_SCIENCE');
+              reportSections.push(`• Pseudo-Science & Mystisme : DÉTECTÉ 🚨\n  -> Emploi de concepts scientifiques détournés ("quantique", "vibratoire") sans fondement clinique.`);
+            }
 
-          analysisReport.innerText += `\n\n========================================\n🔥 CONTRE-ARGUMENTATION DE PROTECTION:\n========================================\n${data.refutation || data.reply}`;
+            if (hasCoercion) {
+              flags.push('COERCITION_MENTALE');
+              reportSections.push(`• Coercion & Urgence : DÉTECTÉ ⚠️\n  -> Pression temporelle et incitation directe à l'engagement émotionnel/financier immédiat.`);
+            }
 
-        } catch (err) {
-          // Generación de refutación inmediata local
-          analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n1. PREUVE BIOLOGIQUE: La réorganisation cellulaire par la pensée ou le son n'a aucun fondement en biologie moléculaire.\n2.ANALYSE DE DISCOURS: L'utilisation du mot "quantique" est un détournement abusif de la physique pour crédibiliser une offre commerciale.\n3. RATIONALITÉ: Aucun traitement au monde n'inverse le vieillissement cellulaire en 3 séances.`;
-        } finally {
-          btnRefute.disabled = false;
-          btnRefute.innerText = '🔄 RÉFUTER / CHALLENGER';
-        }
-      });
-    }
+            if (hasPosture) {
+              flags.push('POSTURE_ET_BLUFF');
+              reportSections.push(`• Posture & Exclusivité : DÉTECTÉ ⚠️\n  -> Rhétorique de fausse autorité et promesse de résultats miracles sans méthodologie étayée.`);
+            }
 
-    // 📄 5. EXPORTAR A PDF
-    if (btnPdf) {
-      btnPdf.addEventListener('click', () => {
-        const reportText = analysisReport.innerText;
-        if (!reportText || reportText.includes("En attente d'analyse")) {
-          alert('Aucun rapport à exporter.');
-          return;
-        }
+            if (hasPseudo || (hasCoercion && hasPosture)) {
+              finalGrade = 'D';
+            } else if (hasCoercion || hasPosture) {
+              finalGrade = 'C';
+            } else if (text.length > 50) {
+              finalGrade = 'B';
+              flags.push('ANALYSE_STANDARD');
+              reportSections.push(`• Anatomy du discours : Structuration standard avec éléments promotionnels basiques.`);
+            } else {
+              finalGrade = 'A';
+              flags.push('CONFORME');
+              reportSections.push(`• Anatomy du discours : Communication neutre et factuelle.`);
+            }
 
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>Rapport BEACON LAB - Ethic Score ${currentScoreLetter}</title>
-              <style>
-                body { font-family: monospace; padding: 30px; background: #030a12; color: #00ff88; }
-                h1 { color: #00f0ff; border-bottom: 2px solid #00f0ff; padding-bottom: 10px; }
-                .score { display: inline-block; padding: 10px 20px; font-weight: bold; background: #ff2a6d; color: #fff; margin-bottom: 20px; border-radius: 5px; }
-                pre { white-space: pre-wrap; font-size: 14px; line-height: 1.5; background: rgba(255,255,255,0.05); padding: 20px; border-left: 4px solid #00ff88; }
-                footer { margin-top: 40px; font-size: 10px; color: #888; border-top: 1px solid #333; padding-top: 10px; }
-              </style>
-            </head>
-            <body>
-              <h1>POLETHIC BEACON - RAPPORT D'AUDIT METACOMMUNICATIONNEL</h1>
-              <div class="score">Ethic-Score™: ${currentScoreLetter}</div>
-              <pre>${reportText}</pre>
-              <footer>Document généré automatiquement par POLETHIC BEACON (2026) - Bouclier de Protection Professionnelle</footer>
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => {
-          printWindow.print();
-          printWindow.close();
-        }, 500);
-      });
-    }
+            applyEthicBadge(finalGrade);
+            renderFlags(flags);
 
-    // 🗑️ 6. PURGAR CONSOLA
-    if (btnPurge) {
-      btnPurge.addEventListener('click', () => {
-        resultsPanel.style.display = 'none';
-        userInput.value = '';
-        if (userFile) userFile.value = '';
-        lastAnalyzedText = '';
-        analysisReport.innerText = '';
-      });
-    }
-  });
-</script>
+            analysisReport.innerText = 
+`==================================================
+[AUDIT CORTICAL METACONCEPTUEL - RANG : ${finalGrade}]
+==================================================
+
+1. ANATOMIE DU DISCOURS :
+${reportSections.join('\n\n')}
+
+2. BIAIS COGNITIFS DÉTECTÉS :
+${hasPseudo ? '• Biais d\'autorité scientifique fictive.\n• Illusion de contrôle sur des processus biologiques.' : ''}
+${hasCoercion ? '• Biais d\'urgence et aversion à la perte.' : ''}
+${!hasPseudo && !hasCoercion ? '• Aucun biais critique majeur identifié.' : ''}
+
+3. RECOMMANDATION CORTICALE :
+${finalGrade === 'D' ? '🚨 Vigilance maximale. Absence de preuves scientifiques. Risque élevé de manipulation cognitive.' : ''}
+${finalGrade === 'C' ? '⚠️ Prendre du recul. Vérifier la pertinence des affirmations avant tout engagement.' : ''}
+${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux standards de neutralité.' : ''}`;
+          } finally {
+            btnAnalyze.disabled = false;
+            btnAnalyze.innerText = '⚡ BEACON-IZE';
+            resultsPanel.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+
+      // 🔄 4. MOTOR DE REFUTACIÓN / CHALLENGER
+      if (btnRefute) {
+        btnRefute.addEventListener('click', async () => {
+          if (!lastAnalyzedText) {
+            alert('Veuillez d\'abord analyser un texte.');
+            return;
+          }
+
+          btnRefute.disabled = true;
+          btnRefute.innerText = '⏳ GÉNÉRATION DE LA RÉFUTATION...';
+
+          try {
+            const res = await fetch(`${API_BASE_URL}/refute`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: lastAnalyzedText, lang: 'fr' })
+            });
+
+            if (!res.ok) throw new Error('Erreur API Refute');
+            const data = await res.json();
+
+            analysisReport.innerText += `\n\n========================================\n🔥 CONTRE-ARGUMENTATION DE PROTECTION:\n========================================\n${data.refutation || data.reply}`;
+
+          } catch (err) {
+            // Refutación local dinámica adaptada
+            analysisReport.innerText += 
+`\n\n========================================
+🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):
+========================================
+1. PROUVE SCIENTIFIQUE : Aucune réorganisation cellulaire n'a été prouvée biologiquement par simple suggestion ou vibration mentalisée.
+2. DÉCRYPTAGE RHÉTORIQUE : Le jargon emprunté à la physique quantique sert ici d'habillage pseudo-scientifique pour court-circuiter l'esprit critique.
+3. RATIONALITÉ FINANCIÈRE : Les mécanismes de pression d'urgence sont conçus pour limiter la phase de réflexion du consommateur.`;
+          } finally {
+            btnRefute.disabled = false;
+            btnRefute.innerText = '🔄 RÉFUTER / CHALLENGER';
+          }
+        });
+      }
+
+      // 📄 5. EXPORTAR A PDF (Optimizada para Impresión)
+      if (btnPdf) {
+        btnPdf.addEventListener('click', () => {
+          const reportText = analysisReport.innerText;
+          if (!reportText || reportText.includes("En attente d'analyse")) {
+            alert('Aucun rapport à exporter.');
+            return;
+          }
+
+          const printWindow = window.open('', '_blank');
+          printWindow.document.write(`
+            <html>
+              <head>
+                <title>Rapport BEACON LAB - Ethic Score ${currentScoreLetter}</title>
+                <style>
+                  body { font-family: Courier, monospace; padding: 40px; background: #fff; color: #111; }
+                  h1 { color: #008080; border-bottom: 2px solid #008080; padding-bottom: 10px; font-size: 20px; }
+                  .score { display: inline-block; padding: 8px 16px; font-weight: bold; background: #111; color: #fff; margin: 15px 0; border-radius: 4px; }
+                  pre { white-space: pre-wrap; font-size: 13px; line-height: 1.5; background: #f4f4f4; padding: 20px; border-left: 4px solid #008080; }
+                  footer { margin-top: 40px; font-size: 11px; color: #666; border-top: 1px solid #ccc; padding-top: 10px; }
+                </style>
+              </head>
+              <body>
+                <h1>POLETHIC BEACON - AUDIT METACONCEPTUEL</h1>
+                <div class="score">ETHIC-SCORE™: ${currentScoreLetter}</div>
+                <pre>${reportText}</pre>
+                <footer>Rapport généré automatiquement par POLETHIC BEACON (2026) - Licence de Psychoéducation & Prévention Primaire</footer>
+              </body>
+            </html>
+          `);
+          printWindow.document.close();
+          printWindow.focus();
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 500);
+        });
+      }
+
+      // 🗑️ 6. PURGAR CONSOLA
+      if (btnPurge) {
+        btnPurge.addEventListener('click', () => {
+          resultsPanel.style.display = 'none';
+          userInput.value = '';
+          if (userFile) {
+            userFile.value = '';
+            fileNameDisplay.innerText = 'Joindre fichier';
+          }
+          lastAnalyzedText = '';
+          analysisReport.innerText = '';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
