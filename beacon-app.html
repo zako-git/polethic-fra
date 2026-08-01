@@ -73,13 +73,8 @@
       backdrop-filter: blur(8px);
     }
 
-    .window-title {
-      color: #ffffff;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-      font-family: var(--font-cyber);
-      border-left: 3px solid var(--cyber-cyan);
-      padding-left: 10px;
+    .textarea-container {
+      margin-bottom: 15px;
     }
 
     textarea#user-input {
@@ -168,6 +163,7 @@
       max-width: 850px;
       margin: 0 auto 40px auto;
       backdrop-filter: blur(8px);
+      display: none; /* Se oculta hasta que haya análisis */
     }
 
     .results-header {
@@ -250,7 +246,7 @@
 </head>
 <body>
 
-  <!-- CAPA DE ESTRELLAS DE TU WEB -->
+  <!-- CAPA DE ESTRELLAS -->
   <div id="stars-container"></div>
 
   <!-- CABECERA DE NAVEGACIÓN -->
@@ -267,7 +263,7 @@
         <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
       </nav>
 
-      <!-- SELECTOR DE IDIOMAS CON SUS IDs -->
+      <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
         <a href="#" class="lang-btn active" id="btn-fr">FR</a>
         <span class="lang-separator">|</span>
@@ -289,7 +285,9 @@
     <!-- CONSOLA TÁCTICA DE ENTRADA -->
     <section class="input-card">
       
-      <textarea id="user-input" placeholder="Collez du texte média, des articles politiques, des liens ou des déclarations..."></textarea>
+      <div class="textarea-container">
+        <textarea id="user-input" placeholder="Collez du texte média, des articles politiques, des liens ou des déclarations..."></textarea>
+      </div>
       
       <div class="input-actions-bar">
         <label for="user-file" class="file-upload-btn" title="Joindre une image">
@@ -298,8 +296,8 @@
         <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
 
         <button id="btn-analyze" class="btn-beacon-primary" data-key="btn_beaconise">
-    ⚡ BEACON-IZE
-</button>
+          ⚡ BEACON-IZE
+        </button>
       </div>
 
       <div class="status-bar">
@@ -307,7 +305,7 @@
       </div>
     </section>
 
-    <!-- PANEL DE RESULTADOS CON BOTONES DE ACCIÓN -->
+    <!-- PANEL DE RESULTADOS -->
     <section id="results-panel" class="results-card">
       <div class="results-header">
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
@@ -320,7 +318,7 @@
         <div id="analysis-report" class="report-box" data-key="report_placeholder">En attente d'analyse... Entrez un texte ou téléchargez une image ci-dessus et cliquez sur BEACONISER.</div>
       </div>
 
-      <!-- BOTONES DE ACCIÓN (RÉFUTER, PDF, PURGER) -->
+      <!-- BOTONES DE ACCIÓN -->
       <div class="results-actions">
         <button id="btn-refute" class="btn-action-refute" data-key="btn_refute">🔄 RÉFUTER / CHALLENGER</button>
         <button id="btn-pdf" class="btn-action-pdf" data-key="btn_pdf">📄 EXPORTER EN PDF</button>
@@ -330,7 +328,7 @@
 
   </main>
 
-  <!-- FOOTER GLOBAL DE POLETHIC -->
+  <!-- FOOTER GLOBAL -->
   <footer>
     <div class="container footer-content">
       <div class="footer-shield">
@@ -348,7 +346,6 @@
       <div class="footer-divider"></div>
 
       <div class="footer-bottom">
-        <!-- REDES SOCIALES -->
         <div class="social-links-container">
             <a href="https://instagram.com/polethic_france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram POLETHIC">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -385,107 +382,8 @@
     </div>
   </footer>
 
-  <!-- LÓGICA DE LA APP BEACON -->
+  <!-- LÓGICA ÚNICA Y COMPLETA EN JS -->
   <script src="js/script.js"></script>
-
-  <!-- SCRIPT DE TRADUCCIÓN MULTI-IDIOMA -->
-  <script>
-  const translations = {
-      fr: {
-          nav_home: "ACCUEIL",
-          nav_obs: "L'OBSERVATOIRE",
-          nav_museum: "PSICOMUSÉE",
-          nav_beacon: "BEACON LAB",
-          nav_cap: "NOTRE CAP",
-          nav_contact: "CONTACT",
-          beacon_subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
-          input_title: "Collez le texte, le lien ou joignez une image à évaluer :",
-          btn_beaconise: "⚡ BEACON-IZE",
-          status_ready: "● MOTEUR PRÊT",
-          flag_ready: "ANALYSE PRÊTE",
-          report_placeholder: "En attente d'analyse... Entrez un texte ou téléchargez une image ci-dessus et cliquez sur BEACONISER.",
-          btn_refute: "🔄 RÉFUTER / CHALLENGER",
-          btn_pdf: "📄 EXPORTER EN PDF",
-          btn_purge: "🗑️ PURGER",
-          footer_shield: "Bouclier de Protection Professionnelle",
-          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
-          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
-          footer_legal: "Mentions Légales",
-          footer_privacy: "Politique de Confidentialité",
-          footer_cookies: "Gestion des Cookies"
-      },
-      es: {
-          nav_home: "INICIO",
-          nav_obs: "OBSERVATORIO",
-          nav_museum: "PSICOMUSEO",
-          nav_beacon: "BEACON LAB",
-          nav_cap: "NUESTRO RUMBO",
-          nav_contact: "CONTACTO",
-          beacon_subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
-          input_title: "Pegue el texto, enlace o adjunte una imagen para evaluar:",
-          btn_beaconise: "⚡ BEACON-IZE",
-          status_ready: "● MOTOR LISTO",
-          flag_ready: "ANÁLISIS LISTO",
-          report_placeholder: "Esperando análisis... Ingrese un texto o suba una imagen arriba y haga clic en BEACONIZAR.",
-          btn_refute: "🔄 REFUTAR / DESAFIAR",
-          btn_pdf: "📄 EXPORTAR EN PDF",
-          btn_purge: "🗑️ PURGAR",
-          footer_shield: "Escudo de Protección Profesional",
-          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
-          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
-          footer_legal: "Aviso Legal",
-          footer_privacy: "Política de Privacidad",
-          footer_cookies: "Gestión de Cookies"
-      },
-      en: {
-          nav_home: "HOME",
-          nav_obs: "OBSERVATORY",
-          nav_museum: "PSYCHOMUSEUM",
-          nav_beacon: "BEACON LAB",
-          nav_cap: "OUR COURSE",
-          nav_contact: "CONTACT",
-          beacon_subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
-          input_title: "Paste text, link, or attach an image to evaluate:",
-          btn_beaconise: "⚡ BEACON-IZE",
-          status_ready: "● ENGINE READY",
-          flag_ready: "ANALYSIS READY",
-          report_placeholder: "Awaiting analysis... Enter text or upload an image above and click BEACONIZE.",
-          btn_refute: "🔄 REFUTE / CHALLENGE",
-          btn_pdf: "📄 EXPORT PDF",
-          btn_purge: "🗑️ PURGE",
-          footer_shield: "Professional Protection Shield",
-          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
-          footer_disc2: "No medical diagnosis or therapy is performed.",
-          footer_legal: "Legal Notice",
-          footer_privacy: "Privacy Policy",
-          footer_cookies: "Cookie Management"
-      }
-  };
-
-  function setLanguage(lang) {
-      localStorage.setItem('preferred_lang', lang);
-
-      document.querySelectorAll('[data-key]').forEach(element => {
-          const key = element.getAttribute('data-key');
-          if (translations[lang] && translations[lang][key]) {
-              element.textContent = translations[lang][key];
-          }
-      });
-
-      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = document.getElementById(`btn-${lang}`);
-      if (activeBtn) activeBtn.classList.add('active');
-  }
-
-  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
-  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
-  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
-
-  document.addEventListener('DOMContentLoaded', () => {
-      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
-      setLanguage(savedLang);
-  });
-  </script>
 
 </body>
 </html>
