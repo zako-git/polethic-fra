@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POLETHIC BEACON | Moteur d'Autodéfense Cognitive</title>
+  <title>BEACON LAB | POLETHIC France</title>
   
+  <link rel="stylesheet" href="css/styles.css">
+
   <style>
     /* ==========================================
-       ESTILOS CYBER TOTAL (INCORPORADOS)
+       ESTILOS CYBER TOTAL (INTERFAZ BEACON)
        ========================================== */
     :root {
       --cyber-cyan: #00f0ff;
@@ -15,7 +17,7 @@
       --cyber-red: #ff2a6d;
       --cyber-yellow: #ffe600;
       --cyber-bg: #030a12;
-      --cyber-card-bg: rgba(5, 16, 28, 0.85);
+      --cyber-card-bg: rgba(15, 23, 42, 0.85);
       --font-cyber: 'Courier New', Courier, monospace;
     }
 
@@ -36,87 +38,7 @@
       background-attachment: fixed;
     }
 
-    .container {
-      max-width: 1050px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    /* CABECERA Y NAVEGACIÓN */
-    header {
-      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-      background: rgba(3, 10, 18, 0.9);
-      backdrop-filter: blur(10px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-layout {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 0;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    .logo-title {
-      font-family: var(--font-cyber);
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--cyber-cyan);
-      text-decoration: none;
-      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
-      letter-spacing: 2px;
-    }
-
-    .nav-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .nav-btn {
-      color: #8a9ba8;
-      text-decoration: none;
-      font-size: 0.82rem;
-      font-family: var(--font-cyber);
-      padding: 6px 12px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-
-    .nav-btn:hover, .nav-btn.active {
-      color: var(--cyber-cyan);
-      border-color: rgba(0, 240, 255, 0.4);
-      background: rgba(0, 240, 255, 0.05);
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-    }
-
-    .lang-selector {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-cyber);
-      font-size: 0.8rem;
-    }
-
-    .lang-btn {
-      color: #5a6e7f;
-      text-decoration: none;
-      padding: 2px 6px;
-    }
-
-    .lang-btn.active {
-      color: var(--cyber-green);
-      font-weight: bold;
-    }
-
-    .lang-separator { color: #334455; }
-
-    /* SECCIÓN PRINCIPAL */
+    /* TITULAR BEACON LAB */
     .beacon-title-block {
       text-align: center;
       margin: 40px 0 25px 0;
@@ -139,14 +61,14 @@
       opacity: 0.9;
     }
 
-    /* TARJETA DE ENTRADA TÁCTICA */
+    /* CONSOLA DE ENTRADA */
     .input-card {
       background: var(--cyber-card-bg);
       border: 1px solid var(--cyber-cyan);
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
-      border-radius: 6px;
+      border-radius: 12px;
       padding: 25px;
-      max-width: 800px;
+      max-width: 850px;
       margin: 0 auto 30px auto;
       backdrop-filter: blur(8px);
     }
@@ -165,7 +87,7 @@
       height: 130px;
       background: rgba(1, 6, 12, 0.8);
       border: 1px solid rgba(0, 240, 255, 0.3);
-      border-radius: 4px;
+      border-radius: 6px;
       color: var(--cyber-green);
       font-family: var(--font-cyber);
       font-size: 0.95rem;
@@ -180,7 +102,6 @@
       box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2), 0 0 12px rgba(0, 240, 255, 0.3);
     }
 
-    /* BARRA DE ACCIONES */
     .input-actions-bar {
       display: flex;
       align-items: center;
@@ -193,7 +114,7 @@
       border: 1px solid var(--cyber-cyan);
       color: var(--cyber-cyan);
       padding: 10px 16px;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       font-family: var(--font-cyber);
       font-size: 1.1rem;
@@ -215,7 +136,7 @@
       font-weight: bold;
       font-size: 1rem;
       padding: 12px 20px;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       letter-spacing: 2px;
       transition: all 0.3s ease;
@@ -237,15 +158,16 @@
       letter-spacing: 1px;
     }
 
-    /* PANEL DE RESULTADOS DINÁMICO */
+    /* TARJETA DE RESULTADOS CON BOTONES */
     .results-card {
-      background: rgba(3, 15, 25, 0.95);
+      background: rgba(15, 23, 42, 0.9);
       border: 1px solid var(--cyber-green);
       box-shadow: 0 0 25px rgba(0, 255, 136, 0.2);
-      border-radius: 6px;
+      border-radius: 12px;
       padding: 25px;
-      max-width: 800px;
+      max-width: 850px;
       margin: 0 auto 40px auto;
+      backdrop-filter: blur(8px);
     }
 
     .results-header {
@@ -264,8 +186,9 @@
       font-weight: bold;
       font-size: 1.1rem;
       padding: 6px 14px;
-      border-radius: 3px;
+      border-radius: 4px;
       box-shadow: 0 0 12px var(--cyber-cyan);
+      letter-spacing: 1px;
     }
 
     .report-box {
@@ -281,57 +204,70 @@
 
     .results-actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       margin-top: 20px;
+      flex-wrap: wrap;
     }
 
     .btn-action-refute, .btn-action-pdf, .btn-action-purge {
       background: transparent;
       font-family: var(--font-cyber);
-      padding: 8px 14px;
-      border-radius: 4px;
+      padding: 10px 18px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 0.85rem;
+      font-weight: bold;
+      letter-spacing: 1px;
       transition: all 0.2s ease;
     }
 
     .btn-action-refute { border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow); }
-    .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; box-shadow: 0 0 10px var(--cyber-yellow); }
+    .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; box-shadow: 0 0 15px var(--cyber-yellow); }
 
     .btn-action-pdf { border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); }
-    .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; box-shadow: 0 0 10px var(--cyber-cyan); }
+    .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; box-shadow: 0 0 15px var(--cyber-cyan); }
 
     .btn-action-purge { border: 1px solid var(--cyber-red); color: var(--cyber-red); }
-    .btn-action-purge:hover { background: var(--cyber-red); color: #fff; box-shadow: 0 0 10px var(--cyber-red); }
+    .btn-action-purge:hover { background: var(--cyber-red); color: #fff; box-shadow: 0 0 15px var(--cyber-red); }
 
-    /* FOOTER */
-    footer {
-      border-top: 1px solid rgba(0, 240, 255, 0.15);
-      padding: 30px 0;
-      margin-top: 40px;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #5a6e7f;
+    .flags-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .flag-badge {
       font-family: var(--font-cyber);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      background: rgba(0, 240, 255, 0.1);
     }
   </style>
 </head>
 <body>
 
-  <!-- ENCABEZADO -->
+  <!-- CAPA DE ESTRELLAS DE TU WEB -->
+  <div id="stars-container"></div>
+
+  <!-- CABECERA DE NAVEGACIÓN -->
   <header>
     <div class="container header-layout">
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
       <nav class="nav-buttons">
-        <a href="index.html" class="nav-btn">ACCUEIL</a>
-        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
-        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
-        <a href="beacon-app.html" class="nav-btn active">BEACON LAB</a>
-        <a href="notre-cap.html" class="nav-btn">NOTRE CAP</a>
-        <a href="contact.html" class="nav-btn">CONTACT</a>
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon-app.html" class="nav-btn active" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
       </nav>
 
+      <!-- SELECTOR DE IDIOMAS CON SUS IDs -->
       <div class="lang-selector">
         <a href="#" class="lang-btn active" id="btn-fr">FR</a>
         <span class="lang-separator">|</span>
@@ -347,7 +283,7 @@
     
     <div class="beacon-title-block">
       <h1 class="hero-app-title">POLETHIC BEACON</h1>
-      <p class="subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
+      <p class="subtitle" data-key="beacon_subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
     </div>
 
     <!-- CONSOLA TÁCTICA DE ENTRADA -->
@@ -356,46 +292,200 @@
       <textarea id="user-input" placeholder="Collez du texte média, des articles politiques, des liens ou des déclarations..."></textarea>
       
       <div class="input-actions-bar">
-        <label for="user-file" class="file-upload-btn" title="Adjuntar imagen">
+        <label for="user-file" class="file-upload-btn" title="Joindre une image">
           📷 <span id="file-name-display"></span>
         </label>
         <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
 
-        <button id="btn-analyze" class="btn-beacon-primary">
+        <button id="btn-analyze" class="btn-beacon-primary" data-key="btn_beaconise">
           ⚡ BEACONISER
         </button>
       </div>
 
       <div class="status-bar">
-        <span>● MOTEUR PRÊT</span>
+        <span data-key="status_ready">● MOTEUR PRÊT</span>
       </div>
     </section>
 
-    <!-- PANEL DE RESULTADOS (OCULTO HASTA ANALIZAR) -->
-    <section id="results-panel" class="results-card" style="display: none;">
+    <!-- PANEL DE RESULTADOS CON BOTONES DE ACCIÓN -->
+    <section id="results-panel" class="results-card">
       <div class="results-header">
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
-        <div id="detected-flags-container"></div>
+        <div id="detected-flags-container" class="flags-container">
+          <span class="flag-badge" data-key="flag_ready">ANALYSE PRÊTE</span>
+        </div>
       </div>
 
       <div class="analysis-body">
-        <div id="analysis-report" class="report-box"></div>
+        <div id="analysis-report" class="report-box" data-key="report_placeholder">En attente d'analyse... Entrez un texte ou téléchargez une image ci-dessus et cliquez sur BEACONISER.</div>
       </div>
 
+      <!-- BOTONES DE ACCIÓN (RÉFUTER, PDF, PURGER) -->
       <div class="results-actions">
-        <button id="btn-refute" class="btn-action-refute">🔄 REFUTER</button>
-        <button id="btn-pdf" class="btn-action-pdf">📄 EXPORT PDF</button>
-        <button id="btn-purge" class="btn-action-purge">🗑️ PURGER</button>
+        <button id="btn-refute" class="btn-action-refute" data-key="btn_refute">🔄 RÉFUTER / CHALLENGER</button>
+        <button id="btn-pdf" class="btn-action-pdf" data-key="btn_pdf">📄 EXPORTER EN PDF</button>
+        <button id="btn-purge" class="btn-action-purge" data-key="btn_purge">🗑️ PURGER</button>
       </div>
     </section>
 
   </main>
 
+  <!-- FOOTER GLOBAL DE POLETHIC -->
   <footer>
-    <p>&copy; 2026 POLETHIC France • Association Loi 1901. Tous droits réservés.</p>
+    <div class="container footer-content">
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer" data-key="footer_disc1">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer" data-key="footer_disc2">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <!-- REDES SOCIALES -->
+        <div class="social-links-container">
+            <a href="https://instagram.com/polethic_france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram POLETHIC">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+
+            <a href="https://facebook.com/polethic.france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook POLETHIC">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                </svg>
+            </a>
+
+            <a href="https://www.linkedin.com/in/metalzako/" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn Professionnel">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                    <rect x="2" y="9" width="4" height="12"></rect>
+                    <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+            </a>
+        </div>
+
+        <div class="footer-links">
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+      </div>
+    </div>
   </footer>
 
+  <!-- LÓGICA DE LA APP BEACON -->
   <script src="js/script.js"></script>
+
+  <!-- SCRIPT DE TRADUCCIÓN MULTI-IDIOMA -->
+  <script>
+  const translations = {
+      fr: {
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+          beacon_subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
+          input_title: "Collez le texte, le lien ou joignez une image à évaluer :",
+          btn_beaconise: "⚡ BEACONISER",
+          status_ready: "● MOTEUR PRÊT",
+          flag_ready: "ANALYSE PRÊTE",
+          report_placeholder: "En attente d'analyse... Entrez un texte ou téléchargez une image ci-dessus et cliquez sur BEACONISER.",
+          btn_refute: "🔄 RÉFUTER / CHALLENGER",
+          btn_pdf: "📄 EXPORTER EN PDF",
+          btn_purge: "🗑️ PURGER",
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies"
+      },
+      es: {
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+          beacon_subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
+          input_title: "Pegue el texto, enlace o adjunte una imagen para evaluar:",
+          btn_beaconise: "⚡ BEACONIZAR",
+          status_ready: "● MOTOR LISTO",
+          flag_ready: "ANÁLISIS LISTO",
+          report_placeholder: "Esperando análisis... Ingrese un texto o suba una imagen arriba y haga clic en BEACONIZAR.",
+          btn_refute: "🔄 REFUTAR / DESAFIAR",
+          btn_pdf: "📄 EXPORTAR EN PDF",
+          btn_purge: "🗑️ PURGAR",
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies"
+      },
+      en: {
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
+          beacon_subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
+          input_title: "Paste text, link, or attach an image to evaluate:",
+          btn_beaconise: "⚡ BEACONIZE",
+          status_ready: "● ENGINE READY",
+          flag_ready: "ANALYSIS READY",
+          report_placeholder: "Awaiting analysis... Enter text or upload an image above and click BEACONIZE.",
+          btn_refute: "🔄 REFUTE / CHALLENGE",
+          btn_pdf: "📄 EXPORT PDF",
+          btn_purge: "🗑️ PURGE",
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management"
+      }
+  };
+
+  function setLanguage(lang) {
+      localStorage.setItem('preferred_lang', lang);
+
+      document.querySelectorAll('[data-key]').forEach(element => {
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.textContent = translations[lang][key];
+          }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
+      setLanguage(savedLang);
+  });
+  </script>
+
 </body>
 </html>
-
