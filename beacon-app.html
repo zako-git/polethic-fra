@@ -562,8 +562,7 @@ ${finalGrade === 'D' ? '🚨 Vigilance maximale : Absence de garanties méthodol
         });
       }
 
-      // 📄 EXPORTAR PDF
-     // 📄 EXPORTAR PDF DIRECTO (SIN VENTANA DE IMPRESIÓN)
+      // 📄 EXPORTAR PDF DIRECTO (CON PREVENCIÓN DE INYECCIÓN Y FORMATO SEGURO)
 if (btnPdf) {
   btnPdf.addEventListener('click', () => {
     const reportText = analysisReport.innerText;
@@ -575,46 +574,49 @@ if (btnPdf) {
     btnPdf.disabled = true;
     btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
 
-    // 1. Crear un contenedor HTML invisible con diseño Cyber/Institucional
+    // 1. Crear contenedor HTML con soporte para saltos de línea preservados
     const element = document.createElement('div');
-    element.innerHTML = `
-      <div style="
-        padding: 30px; 
-        font-family: 'Courier New', monospace; 
-        background-color: #030a12; 
-        color: #e0e0e0; 
-        border: 2px solid #00f0ff; 
-        border-radius: 8px;
-      ">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00f0ff; padding-bottom: 15px; margin-bottom: 20px;">
-          <div>
-            <h1 style="color: #00f0ff; font-size: 20px; margin: 0; letter-spacing: 2px;">POLETHIC FRANCE — BEACON LAB</h1>
-            <p style="color: #00ff88; font-size: 11px; margin-top: 4px;">RAPPORT D'AUDIT COGNITIF ET MÉTACOMMUNICATIONNEL</p>
-          </div>
-          <div style="background-color: #00f0ff; color: #030a12; padding: 8px 16px; font-weight: bold; font-size: 16px; border-radius: 4px;">
-            ETHIC-SCORE™: ${currentScoreLetter}
-          </div>
+    element.style.padding = '30px';
+    element.style.fontFamily = "'Courier New', monospace";
+    element.style.backgroundColor = '#030a12';
+    element.style.color = '#e0e0e0';
+    element.style.border = '2px solid #00f0ff';
+    element.style.borderRadius = '8px';
+
+    const headerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00f0ff; padding-bottom: 15px; margin-bottom: 20px;">
+        <div>
+          <h1 style="color: #00f0ff; font-size: 20px; margin: 0; letter-spacing: 2px;">POLETHIC FRANCE — BEACON LAB</h1>
+          <p style="color: #00ff88; font-size: 11px; margin-top: 4px;">RAPPORT D'AUDIT COGNITIF ET MÉTACOMMUNICATIONNEL</p>
         </div>
-
-        <div style="
-          background-color: rgba(1, 6, 12, 0.9); 
-          border-left: 4px solid #00ff88; 
-          padding: 20px; 
-          font-size: 13px; 
-          line-height: 1.6; 
-          white-space: pre-wrap; 
-          color: #d0e0e0;
-          margin-bottom: 25px;
-        ">${reportText}</div>
-
-        <div style="border-top: 1px solid rgba(0, 240, 255, 0.3); padding-top: 15px; text-align: center; font-size: 10px; color: #888;">
-          <p>© 2026 POLETHIC France — Organisme d'autodéfense cognitive.</p>
-          <p>Document généré automatiquement via POLETHIC BEACON Engine.</p>
+        <div style="background-color: #00f0ff; color: #030a12; padding: 8px 16px; font-weight: bold; font-size: 16px; border-radius: 4px;">
+          ETHIC-SCORE™: ${currentScoreLetter}
         </div>
       </div>
     `;
 
-    // 2. Configurar la descarga directa
+    const reportBox = document.createElement('div');
+    reportBox.style.backgroundColor = 'rgba(1, 6, 12, 0.9)';
+    reportBox.style.borderLeft = '4px solid #00ff88';
+    reportBox.style.padding = '20px';
+    reportBox.style.fontSize = '13px';
+    reportBox.style.lineHeight = '1.6';
+    reportBox.style.whiteSpace = 'pre-wrap';
+    reportBox.style.color = '#d0e0e0';
+    reportBox.style.marginBottom = '25px';
+    reportBox.textContent = reportText; // Se usa textContent por seguridad
+
+    const footerHTML = `
+      <div style="border-top: 1px solid rgba(0, 240, 255, 0.3); padding-top: 15px; text-align: center; font-size: 10px; color: #888;">
+        <p>© 2026 POLETHIC France — Organisme d'autodéfense cognitive.</p>
+        <p>Document généré automatiquement via POLETHIC BEACON Engine.</p>
+      </div>
+    `;
+
+    element.innerHTML = headerHTML;
+    element.appendChild(reportBox);
+    element.insertAdjacentHTML('beforeend', footerHTML);
+
     const options = {
       margin:       10,
       filename:     `Audit_BEACON_Score_${currentScoreLetter}.pdf`,
@@ -623,7 +625,6 @@ if (btnPdf) {
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // 3. Ejecutar y descargar sin intervención del usuario
     html2pdf().set(options).from(element).save().then(() => {
       btnPdf.disabled = false;
       btnPdf.innerText = '📄 EXPORTER EN PDF';
