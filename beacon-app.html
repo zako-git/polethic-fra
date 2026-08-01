@@ -199,6 +199,8 @@
       font-size: 0.9rem;
       line-height: 1.6;
       white-space: pre-wrap;
+      overflow-x: auto;
+      word-wrap: break-word;
     }
 
     .results-actions {
@@ -234,6 +236,7 @@
       gap: 8px;
       flex-wrap: wrap;
     }
+
     .flag-badge {
       font-family: var(--font-cyber);
       font-size: 0.75rem;
@@ -506,44 +509,46 @@
             renderFlags(data.detected_flags || ['EMPRISE_COGNITIVE', 'PSEUDO_SCIENCE']);
 
           } catch (err) {
-  // MOTOR FALLBACK LOCAL (Sin repetir texto y categorizando los ejes)
-  const lower = text.toLowerCase();
-  
-  const hasPseudo = lower.includes('quantique') || lower.includes('hypnose') || lower.includes('vibratoire') || lower.includes('cellulaire') || lower.includes('inverser');
-  const hasCoercion = lower.includes('maintenant') || lower.includes('seulement') || lower.includes('urgent') || lower.includes('inscrivez-vous') || lower.includes('dernières places');
-  const hasPosture = lower.includes('exclusive') || lower.includes('secret') || lower.includes('révolutionnaire') || lower.includes('unique') || lower.includes('méthode');
+            // MOTOR FALLBACK MULTI-APARTADO (Offline Local BEACON)
+            const lower = text.toLowerCase();
+            
+            const hasPseudo = lower.includes('quantique') || lower.includes('hypnose') || lower.includes('vibratoire') || lower.includes('cellulaire') || lower.includes('inverser');
+            const hasCoercion = lower.includes('maintenant') || lower.includes('seulement') || lower.includes('urgent') || lower.includes('inscrivez-vous') || lower.includes('dernières places');
+            const hasPosture = lower.includes('exclusive') || lower.includes('secret') || lower.includes('révolutionnaire') || lower.includes('unique') || lower.includes('méthode');
 
-  let flags = [];
-  let finalGrade = 'A';
+            let flags = [];
+            let reportSections = [];
+            let finalGrade = 'A';
 
-  if (hasPseudo) flags.push('PSEUDO_SCIENCE');
-  if (hasCoercion) flags.push('COERCITION_MENTALE');
-  if (hasPosture) flags.push('POSTURE_ET_BLUFF');
+            if (hasPseudo) {
+              flags.push('PSEUDO_SCIENCE');
+              reportSections.push(`• Pseudo-Science & Mystisme : DÉTECTÉ 🚨\n  -> Emploi de concepts scientifiques détournés ("quantique", "vibratoire") sans fondement clinique.`);
+            }
 
-  if (hasPseudo || (hasCoercion && hasPosture)) {
-    finalGrade = 'D';
-  } else if (hasCoercion || hasPosture) {
-    finalGrade = 'C';
-  } else {
-    finalGrade = 'B';
-    flags.push('ANALYSE_STANDARD');
-  }
+            if (hasCoercion) {
+              flags.push('COERCITION_MENTALE');
+              reportSections.push(`• Coercion & Urgence : DÉTECTÉ ⚠️\n  -> Pression temporelle et incitation directe à l'engagement émotionnel/financier immédiat.`);
+            }
 
-  applyEthicBadge(finalGrade);
-  renderFlags(flags);
+            if (hasPosture) {
+              flags.push('POSTURE_ET_BLUFF');
+              reportSections.push(`• Posture & Exclusivité (Vendeur de rêves) : DÉTECTÉ ⚠️\n  -> Rhétorique de fausse autorité et promesse de résultats miracles sans méthodologie étayée.`);
+            }
 
-  // Formato limpio sin repetir el texto del usuario:
-  analysisReport.innerText = 
-`[AUDIT CORTICAL - ÉVALUATION DE L'EMPRISE]
+            if (hasPseudo || (hasCoercion && hasPosture)) {
+              finalGrade = 'D';
+            } else if (hasCoercion || hasPosture) {
+              finalGrade = 'C';
+            } else if (text.length > 50) {
+              finalGrade = 'B';
+              flags.push('ANALYSE_STANDARD');
+              reportSections.push(`• Anatomie du discours : Structuration standard avec éléments promotionnels basiques.`);
+            } else {
+              finalGrade = 'A';
+              flags.push('CONFORME');
+              reportSections.push(`• Anatomie du discours : Communication neutre et factuelle.`);
+            }
 
-• PSEUDO-SCIENCE / MYSTISME : ${hasPseudo ? '🚨 DÉTECTÉ (Usage abusif de terminologie scientifique)' : '✅ Non détecté'}
-• POSTURE & ESBROUFE (VENDEUR DE RÊVES) : ${hasPosture ? '⚠️ DÉTECTÉ (Promesse de résultats miracles / Méthode exclusive)' : '✅ Non détecté'}
-• COERCITION ET PRESSION : ${hasCoercion ? '⚠️ DÉTECTÉ (Urgence artificielle et incitation à l\'action)' : '✅ Non détecté'}
-
-• BIAIS DÉTECTÉS : ${hasPseudo ? 'Biais d\'autorité fictive, Illusion de contrôle.' : ''} ${hasCoercion ? 'Aversion à la perte, Effet de rareté.' : ''}
-
-• RECOMMANDATION : ${finalGrade === 'D' ? 'Vigilance maximale. Absence de preuves scientifiques et stratégie d\'influence agressive.' : 'Prudence standard.'}`;
-}
             applyEthicBadge(finalGrade);
             renderFlags(flags);
 
@@ -601,7 +606,7 @@ ${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux sta
 `\n\n========================================
 🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):
 ========================================
-1. PROUVE SCIENTIFIQUE : Aucune réorganisation cellulaire n'a été prouvée biologiquement par simple suggestion ou vibration mentalisée.
+1. PREUVE SCIENTIFIQUE : Aucune réorganisation cellulaire n'a été prouvée biologiquement par simple suggestion ou vibration mentalisée.
 2. DÉCRYPTAGE RHÉTORIQUE : Le jargon emprunté à la physique quantique sert ici d'habillage pseudo-scientifique pour court-circuiter l'esprit critique.
 3. RATIONALITÉ FINANCIÈRE : Les mécanismes de pression d'urgence sont conçus pour limiter la phase de réflexion du consommateur.`;
           } finally {
@@ -661,6 +666,7 @@ ${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux sta
           }
           lastAnalyzedText = '';
           analysisReport.innerText = '';
+          renderFlags([]);
         });
       }
     });
