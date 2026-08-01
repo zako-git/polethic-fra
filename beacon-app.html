@@ -391,6 +391,48 @@
     const ethicScore = document.getElementById('ethic-score');
     const btnPurge = document.getElementById('btn-purge');
 
+    // Función para asignar Letra y Color dinámico (Sin números)
+    function getEthicGrade(text) {
+      const lower = text.toLowerCase();
+      
+      // Si detecta pseudociencia/promesas mágicas -> ROJO (D)
+      if (lower.includes('hypnose') || lower.includes('quantique') || lower.includes('cellulaire') || lower.includes('vieillissement')) {
+        return { 
+          letter: 'D', 
+          color: '#ff2a6d', 
+          glow: 'rgba(255, 42, 109, 0.4)',
+          report: `[RANG CORTEX ALERTE CRITIQUE]\n\nTexte analysé:\n"${text}"\n\n- Emprise cognitive: Élevée (Pseudo-science & fausses promesses médicales).\n- Biais détectés: Biais de confirmation, appel à l'autorité quantique fictive.\n- Recommandation: Absence totale de preuves scientifiques. Prudence maximale.`
+        };
+      } 
+      // Si detecta lenguaje persuasivo o de ventas -> NARANJA (C)
+      else if (lower.includes('gratuit') || lower.includes('exclusif') || lower.includes('urgent') || lower.includes('cliquez')) {
+        return { 
+          letter: 'C', 
+          color: '#ff9900', 
+          glow: 'rgba(255, 153, 0, 0.4)',
+          report: `[RANG CORTEX ALERTE MODÉRÉE]\n\nTexte analysé:\n"${text}"\n\n- Niveau de persuasion: Élevé (Techniques d'urgence / Marketing agressif).\n- Biais détectés: Aversion à la perte, rareté artificielle.\n- Recommandation: Prendre du recul avant toute décision.`
+        };
+      } 
+      // Texto con tono estándar -> AMARILLO (B)
+      else if (text.length > 50) {
+        return { 
+          letter: 'B', 
+          color: '#ffe600', 
+          glow: 'rgba(255, 230, 0, 0.4)',
+          report: `[RANG CORTEX STANDBY]\n\nTexte analysé avec succès:\n"${text}"\n\n- Biais cognitifs détectés: Aucun biais critique majeur.\n- Niveau de persuasion: Modéré.\n- Recommandation: Communication standard.`
+        };
+      } 
+      // Texto limpio -> VERDE (A)
+      else {
+        return { 
+          letter: 'A', 
+          color: '#00ff88', 
+          glow: 'rgba(0, 255, 136, 0.4)',
+          report: `[RANG CORTEX OPTIMAL]\n\nTexte analysé avec succès:\n"${text}"\n\n- Éthique globale: Conforme.\n- Biais cognitifs: Aucun (0%).\n- Recommandation: Communication neutre et factuelle.`
+        };
+      }
+    }
+
     if (btnAnalyze) {
       btnAnalyze.addEventListener('click', () => {
         const text = userInput.value.trim();
@@ -400,28 +442,45 @@
           return;
         }
 
-        // 1. Mostrar estado de carga en el botón
+        // 1. Mostrar estado de carga
         btnAnalyze.disabled = true;
         btnAnalyze.innerText = '⏳ ANALYSE EN COURS...';
 
         // 2. Simular el proceso de análisis
         setTimeout(() => {
-          // Mostrar el panel de resultados
           resultsPanel.style.display = 'block';
           
-          // Actualizar la puntuación y el informe
-          ethicScore.innerText = 'Ethic-Score™: 85/100';
-          analysisReport.innerText = `[RANG CORTEX ALERTE]\n\nTexte analysé avec succès:\n"${text}"\n\n- Biais cognitifs détectés: Aucun biais critique majeur.\n- Niveau de persuasion: Modéré.\n- Recommandation: Analyse métacommunicationnelle validée.`;
+          // Evaluar texto para obtener Letra y Color
+          const result = getEthicGrade(text);
 
-          // Restaurar el botón
+          // Actualizar el Badge sin números y con color dinámico
+          ethicScore.innerText = `Ethic-Score™: ${result.letter}`;
+          ethicScore.style.backgroundColor = result.color;
+          ethicScore.style.boxShadow = `0 0 15px ${result.glow}`;
+          ethicScore.style.color = '#030a12';
+
+          // Actualizar el reporte
+          analysisReport.innerText = result.report;
+
+          // Restaurar botón
           btnAnalyze.disabled = false;
           btnAnalyze.innerText = '⚡ BEACON-IZE';
 
           // Desplazar la pantalla suavemente hacia el resultado
           resultsPanel.scrollIntoView({ behavior: 'smooth' });
-        }, 1200);
+        }, 1000);
       });
     }
+
+    // Botón de purgar/limpiar
+    if (btnPurge) {
+      btnPurge.addEventListener('click', () => {
+        resultsPanel.style.display = 'none';
+        userInput.value = '';
+      });
+    }
+  });
+</script>
 
     // Botón de purgar/limpiar
     if (btnPurge) {
