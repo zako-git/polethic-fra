@@ -11,6 +11,11 @@ let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang'
 const i18n = {
     fr: {
         ethicLabel: "Ethic-Score™",
+        btnAnalyze: "ÉVALUER / AUDITER",
+        btnAnalyzeLoading: "⏳ ANALYSE EN COURS...",
+        btnRefute: "🔄 DÉFIER LE BIAIS",
+        btnPdf: "EXPORTER EN PDF",
+        btnPurge: "PURGER",
         runningText: "⚡ Analyse des motifs linguistiques et des biais en cours... Veuillez patienter.",
         emptyText: "Veuillez introduire du contenu ou joindre une image à analyser.",
         systemOffline: "Erreur: Système Hors Ligne",
@@ -18,12 +23,17 @@ const i18n = {
         flags: {
             fakenews: "FakeNews",
             myth: "Chasseur de Mythes",
-            identity_spoofing: "Usurpation / Posture",
+            identity_spoofing: "Bluff & Esbroufe", // <-- La combinación exacta en francés
             coercion: "Filtre Coercitif"
         }
     },
     es: {
         ethicLabel: "Ethic-Score™",
+        btnAnalyze: "AUDITAR CONTENIDO",
+        btnAnalyzeLoading: "⏳ ANALIZANDO...",
+        btnRefute: "🔄 DESAFIAR SESGO",
+        btnPdf: "EXPORTAR PDF",
+        btnPurge: "PURGAR",
         runningText: "⚡ Ejecutando análisis de patrones lingüísticos y sesgos... Espera un momento.",
         emptyText: "Por favor, introduce algún texto o adjunta una imagen para analizar.",
         systemOffline: "Error: Sistema Fuera de Línea",
@@ -32,11 +42,16 @@ const i18n = {
             fakenews: "FakeNews",
             myth: "Cazador de Mitos",
             identity_spoofing: "Postureo / Identidad",
-            coercion: "Filtre Coercitivo"
+            coercion: "Filtro Coercitivo"
         }
     },
     en: {
         ethicLabel: "Ethic-Score™",
+        btnAnalyze: "AUDIT CONTENT",
+        btnAnalyzeLoading: "⏳ ANALYZING...",
+        btnRefute: "🔄 CHALLENGE BIAS",
+        btnPdf: "EXPORT PDF",
+        btnPurge: "PURGE",
         runningText: "⚡ Running linguistic pattern & bias analysis... Please wait.",
         emptyText: "Please introduce some text or attach an image to analyze.",
         systemOffline: "Error: System Offline",
@@ -49,12 +64,6 @@ const i18n = {
         }
     }
 };
-
-document.addEventListener("DOMContentLoaded", () => {
-    setupActionButtons();
-    setupFileInput();
-    setupLangSelector();
-});
 
 // 1. VINCULACIÓN DEL BOTÓN BEACON-IZE Y RESTO DE ACCIONES
 function setupActionButtons() {
