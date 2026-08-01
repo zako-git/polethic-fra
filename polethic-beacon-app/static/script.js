@@ -11,7 +11,7 @@ let currentLang = urlParams.get('lang') || localStorage.getItem('preferred_lang'
 const i18n = {
     fr: {
         ethicLabel: "Ethic-Score™",
-        btnAnalyze: "ÉVALUER / AUDITER",
+        btnAnalyze: "⚡ BEACON-IZE",
         btnAnalyzeLoading: "⏳ ANALYSE EN COURS...",
         btnRefute: "🔄 DÉFIER LE BIAIS",
         btnPdf: "EXPORTER EN PDF",
@@ -23,13 +23,13 @@ const i18n = {
         flags: {
             fakenews: "FakeNews",
             myth: "Chasseur de Mythes",
-            identity_spoofing: "Bluff & Esbroufe", // <-- La combinación exacta en francés
+            identity_spoofing: "Bluff & Esbroufe",
             coercion: "Filtre Coercitif"
         }
     },
     es: {
         ethicLabel: "Ethic-Score™",
-        btnAnalyze: "AUDITAR CONTENIDO",
+        btnAnalyze: "⚡ BEACON-IZE",
         btnAnalyzeLoading: "⏳ ANALIZANDO...",
         btnRefute: "🔄 DESAFIAR SESGO",
         btnPdf: "EXPORTAR PDF",
@@ -47,7 +47,7 @@ const i18n = {
     },
     en: {
         ethicLabel: "Ethic-Score™",
-        btnAnalyze: "AUDIT CONTENT",
+        btnAnalyze: "⚡ BEACON-IZE",
         btnAnalyzeLoading: "⏳ ANALYZING...",
         btnRefute: "🔄 CHALLENGE BIAS",
         btnPdf: "EXPORT PDF",
@@ -71,7 +71,7 @@ function setupActionButtons() {
     if (btnAnalyze) {
         btnAnalyze.addEventListener("click", (e) => {
             e.preventDefault();
-            analyze(); // Llama a la función principal
+            analyze();
         });
     }
 
@@ -79,7 +79,7 @@ function setupActionButtons() {
     if (btnRefute) {
         btnRefute.addEventListener("click", (e) => {
             e.preventDefault();
-            generateRefutation();
+            if (typeof generateRefutation === "function") generateRefutation();
         });
     }
 
@@ -87,7 +87,7 @@ function setupActionButtons() {
     if (btnPdf) {
         btnPdf.addEventListener("click", (e) => {
             e.preventDefault();
-            triggerPDFDownload();
+            if (typeof triggerPDFDownload === "function") triggerPDFDownload();
         });
     }
 
@@ -103,7 +103,8 @@ function setupActionButtons() {
 // 2. FUNCIÓN EJECUTADA AL PULSAR EL BOTÓN BEACON-IZE
 async function analyze() {
     const t = i18n[currentLang] || i18n.fr;
-    const textInput = document.getElementById("user-input").value.trim();
+    const userInputEl = document.getElementById("user-input");
+    const textInput = userInputEl ? userInputEl.value.trim() : "";
     const fileInput = document.getElementById("user-file");
     const file = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : null;
 
@@ -120,7 +121,7 @@ async function analyze() {
 
     // Efecto de carga en el botón y despliegue del panel
     if (btnAnalyze) {
-        btnAnalyze.innerText = "⏳ ANALYSING...";
+        btnAnalyze.innerText = t.btnAnalyzeLoading; // Usa la traducción dinámica de carga
         btnAnalyze.disabled = true;
     }
 
@@ -162,7 +163,7 @@ async function analyze() {
         if (scoreDiv) scoreDiv.innerText = `${t.ethicLabel}: ${getEthicLetter(lastScore)}`;
         if (resultDiv) resultDiv.innerText = lastAnalysisText;
 
-        // Renderizar botones/badges de categorías detectadas automáticamente
+        // Renderizar badges de categorías detectadas
         renderDetectedFlags(data.detected_flags || []);
 
     } catch (error) {
@@ -171,7 +172,7 @@ async function analyze() {
         if (resultDiv) resultDiv.innerText = t.offlineReport;
     } finally {
         if (btnAnalyze) {
-            btnAnalyze.innerText = "⚡ ANALYSER LE TEXTE";
+            btnAnalyze.innerText = "⚡ BEACON-IZE"; // Marca estándar para todos los idiomas
             btnAnalyze.disabled = false;
         }
     }
@@ -234,13 +235,23 @@ function setupFileInput() {
 
 // Purga de la consola
 function purgeDashboard() {
-    document.getElementById("user-input").value = "";
-    if (document.getElementById("user-file")) document.getElementById("user-file").value = "";
-    if (document.getElementById("file-name-display")) document.getElementById("file-name-display").innerText = "";
-    
+    const userInput = document.getElementById("user-input");
+    const userFile = document.getElementById("user-file");
+    const fileNameDisplay = document.getElementById("file-name-display");
     const resultsPanel = document.getElementById("results-panel");
+
+    if (userInput) userInput.value = "";
+    if (userFile) userFile.value = "";
+    if (fileNameDisplay) fileNameDisplay.innerText = "";
     if (resultsPanel) resultsPanel.style.display = "none";
 
     lastScore = 0;
     lastAnalysisText = "";
 }
+
+// ⚡ INICIALIZACIÓN AUTOMÁTICA AL CARGAR EL DOM
+document.addEventListener("DOMContentLoaded", () => {
+    setupActionButtons();
+    setupLangSelector();
+    setupFileInput();
+});
