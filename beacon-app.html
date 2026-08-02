@@ -539,7 +539,7 @@
         });
       }
 
-     // 📄 EXPORTAR PDF CON DISEÑO CIBERNÉTICO PREMIUM
+     // 📄 EXPORTAR PDF EN FONDO BLANCO / FORMATO EJECUTIVO
 if (btnPdf) {
   btnPdf.addEventListener('click', () => {
     const reportText = analysisReport.innerText;
@@ -549,53 +549,59 @@ if (btnPdf) {
     }
 
     btnPdf.disabled = true;
-    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
+    btnPdf.innerText = '⏳ GENERANDO PDF...';
 
-    // Contenedor principal del informe
+    // Contenedor principal (Fondo Blanco)
     const container = document.createElement('div');
-    container.style.padding = '35px';
-    container.style.backgroundColor = '#030a12';
-    container.style.fontFamily = "'Courier New', Monaco, monospace";
-    container.style.color = '#d0e0e0';
+    container.style.padding = '40px';
+    container.style.backgroundColor = '#ffffff';
+    container.style.fontFamily = "'Helvetica Neue', Arial, sans-serif";
+    container.style.color = '#1e293b';
     container.style.boxSizing = 'border-box';
 
-    // Banner Superior / Header
+    // Badge de color según el Score
+    let scoreBg = '#059669'; // Verde por defecto (A)
+    if (currentScoreLetter === 'B') scoreBg = '#d97706';
+    if (currentScoreLetter === 'C') scoreBg = '#ea580c';
+    if (currentScoreLetter === 'D') scoreBg = '#dc2626';
+
+    // Encabezado institucional
     const headerHTML = `
-      <div style="border-bottom: 2px solid #00f0ff; padding-bottom: 18px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="border-bottom: 2px solid #0284c7; padding-bottom: 16px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <div style="color: #00f0ff; font-weight: bold; font-size: 20px; letter-spacing: 3px; margin-bottom: 4px;">
+          <div style="color: #0369a1; font-weight: bold; font-size: 20px; letter-spacing: 2px; margin-bottom: 4px;">
             POLETHIC FRANCE — BEACON LAB
           </div>
-          <div style="color: #00ff88; font-size: 10px; letter-spacing: 1.5px;">
+          <div style="color: #64748b; font-size: 11px; font-weight: 600; letter-spacing: 1px;">
             RAPPORT D'AUDIT MÉTACOGNITIF ET MÉTACONTEXTUEL
           </div>
         </div>
-        <div style="border: 2px solid #00f0ff; background-color: rgba(0, 240, 255, 0.1); padding: 8px 16px; border-radius: 4px; text-align: center;">
-          <div style="font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 1px;">ETHIC-SCORE™</div>
-          <div style="font-size: 22px; font-weight: bold; color: #00f0ff;">${currentScoreLetter}</div>
+        <div style="border: 1px solid ${scoreBg}; background-color: ${scoreBg}10; padding: 8px 18px; border-radius: 6px; text-align: center;">
+          <div style="font-size: 9px; color: ${scoreBg}; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">ETHIC-SCORE™</div>
+          <div style="font-size: 24px; font-weight: 800; color: ${scoreBg}; line-height: 1.1;">${currentScoreLetter}</div>
         </div>
       </div>
     `;
 
-    // Cuerpo del Reporte formateado
+    // Cuerpo del reporte con formato de bloque técnico
     const bodyBox = document.createElement('div');
-    bodyBox.style.backgroundColor = '#07121e';
-    bodyBox.style.borderLeft = '4px solid #00f0ff';
-    bodyBox.style.borderRight = '1px solid rgba(0, 240, 255, 0.2)';
-    bodyBox.style.borderTop = '1px solid rgba(0, 240, 255, 0.2)';
-    bodyBox.style.borderBottom = '1px solid rgba(0, 240, 255, 0.2)';
-    bodyBox.style.borderRadius = '0 6px 6px 0';
-    bodyBox.style.padding = '22px';
+    bodyBox.style.backgroundColor = '#f8fafc';
+    bodyBox.style.borderLeft = '4px solid #0284c7';
+    bodyBox.style.border = '1px solid #e2e8f0';
+    bodyBox.style.borderLeftWidth = '4px';
+    bodyBox.style.borderLeftColor = '#0284c7';
+    bodyBox.style.borderRadius = '4px';
+    bodyBox.style.padding = '24px';
     bodyBox.style.fontSize = '12px';
     bodyBox.style.lineHeight = '1.6';
     bodyBox.style.whiteSpace = 'pre-wrap';
-    bodyBox.style.color = '#e0e0e0';
+    bodyBox.style.color = '#334155';
     bodyBox.textContent = reportText;
 
     // Pie de página
     const footerHTML = `
-      <div style="margin-top: 30px; border-top: 1px solid rgba(0, 240, 255, 0.2); padding-top: 15px; display: flex; justify-content: space-between; font-size: 9px; color: #668099;">
-        <span>CONFIDENTIEL — POLETHIC FORENSIC SYSTEM</span>
+      <div style="margin-top: 35px; border-top: 1px solid #e2e8f0; padding-top: 15px; display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8;">
+        <span>DOCUMENT CONFIDENTIEL — POLETHIC FORENSIC SYSTEM</span>
         <span>GÉNÉRÉ LE ${new Date().toLocaleDateString('fr-FR')}</span>
       </div>
     `;
@@ -605,10 +611,10 @@ if (btnPdf) {
     container.insertAdjacentHTML('beforeend', footerHTML);
 
     const options = {
-      margin: 0, // Elimina el marco blanco exterior
+      margin: 0, // Elimina los bordes/marcos blancos feos alrededor del lienzo
       filename: `Audit_BEACON_Score_${currentScoreLetter}.pdf`,
       image: { type: 'jpeg', quality: 1.0 },
-      html2canvas: { scale: 2, backgroundColor: '#030a12', logging: false },
+      html2canvas: { scale: 2, backgroundColor: '#ffffff', logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
