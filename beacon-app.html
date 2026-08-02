@@ -629,9 +629,9 @@
         });
       }
 
-     // 📄 EXPORTACIÓN A PDF ROBUSTA (SANETIZADA PARA CARACTERES ACCENTUADOS/ESPECIALES)
+     // 📄 EXPORTACIÓN A PDF LIMPIA Y SIN JEROGLÍFICOS (REMOVEDOR DE EMOJIS & CARACTERES COMPLEJOS)
 if (btnPdf) {
-  btnPdf.addEventListener('click', async () => {
+  btnPdf.addEventListener('click', async () ="> {
     const reportText = analysisReport.innerText;
 
     if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
@@ -644,9 +644,8 @@ if (btnPdf) {
     btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
 
     try {
-      // Revisa que jsPDF esté bien cargado
       if (!window.jspdf || !window.jspdf.jsPDF) {
-        throw new Error("Librería jsPDF no detectada.");
+        throw new Error("Librería jsPDF no disponible.");
       }
 
       const { jsPDF } = window.jspdf;
@@ -656,64 +655,98 @@ if (btnPdf) {
       const pageHeight = doc.internal.pageSize.getHeight();
       const margin = 15;
       const maxLineWidth = pageWidth - (margin * 2);
-      let cursorY = 20;
+      let cursorY = 18;
 
-      // Función para limpiar/normalizar acentos y símbolos que rompen jsPDF estándar
-      const sanitizeForPDF = (str) => {
-        return str
-          .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Convierte é -> e, à -> a, etc.
+      // 1. SANITIZADOR ULTRA-ESTRICTO DE EMOJIS Y CARACTERES NO-ANSI
+      const cleanForPDF = (text) => {
+        return text
+          // Elimina emojis (Rangos Unicode de emojis e iconos gráficos)
+          .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+          // Elimina etiquetas HTML o artefactos como <B÷p>
+          .replace(/<[^>]*>/g, '')
+          // Elimina símbolos matemáticos/griegos sueltos que rompen la codificación
+          .replace(/[\u0370-\u03FF\u1F00-\u1FFF\u2200-\u22FF]/g, '')
+          // Reemplaza comillas y guiones tipográficos por estándar
           .replace(/[’']/g, "'")
           .replace(/[«»]/g, '"')
           .replace(/[—–]/g, "-")
-          .replace(/[\u200B-\u200D\uFEFF]/g, ""); // Remueve caracteres invisibles unicode
+          .replace(/[•]/g, "*")
+          .replace(/[\u200B-\u200D\uFEFF]/g, ""); // Invisibles Unicode
       };
 
-      // Encabezado
-      doc.setFont("courier", "bold");
+      const cleanText = cleanForPDF(reportText);
+
+      // 2. Encabezado limpio
+      doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
       doc.setTextColor(15, 23, 42);
-      doc.text("POLETHIC France - BEACON LAB", margin, cursorY);
+      doc.text("POLETHIC France — BEACON LAB", margin, cursorY);
       cursorY += 6;
 
-      doc.setFont("courier", "normal");
+      doc.setFont("helvetica", "normal");
       doc.setFontSize(8.5);
       doc.setTextColor(71, 85, 105);
-      doc.text("AUDIT METACOMMUNICATIONNEL ET DECODAGE COGNITIF", margin, cursorY);
-      cursorY += 6;
+      doc.text("AUDIT METACOMMUNICATIONNEL & DÉCODAGE COGNITIF", margin, cursorY);
+      cursorY += 5;
 
-      // Línea divisoria
-      doc.setDrawColor(0, 240, 255);
-      doc.setLineWidth(0.8);
+      // Línea Cyan
+      doc.setDrawColor(0, 200, 230);
+      doc.setLineWidth(0.6);
       doc.line(margin, cursorY, pageWidth - margin, cursorY);
-      cursorY += 10;
+      cursorY += 8;
 
-      // Ethic-Score Badge
+      // 3. Ethic-Score Badge
       doc.setFillColor(15, 23, 42);
-      doc.rect(margin, cursorY - 4, 45, 8, 'F');
-      doc.setFont("courier", "bold");
+      doc.rect(margin, cursorY - 4, 48, 8, 'F');
+      doc.setFont("helvetica", "bold");
       doc.setFontSize(9.5);
-      doc.setTextColor(0, 240, 255);
-      doc.text(`Ethic-Score: ${currentScoreLetter || 'C'}`, margin + 3, cursorY + 1.5);
+      doc.setTextColor(0, 220, 240);
+      doc.text(`Ethic-Score: ${currentScoreLetter || 'A'}`, margin + 3, cursorY + 1.5);
       cursorY += 12;
 
-      // Contenido del reporte sanitizado
-      doc.setFont("courier", "normal");
+      // 4. Procesamiento de líneas sin romper la maquetación
       doc.setFontSize(9);
-      doc.setTextColor(30, 41, 59);
+      const lines = cleanText.split('\n');
 
-      const cleanText = sanitizeForPDF(reportText);
-      const lines = doc.splitTextToSize(cleanText, maxLineWidth);
+      lines.forEach((rawLine) => {
+        let line = rawLine.trim();
 
-      lines.forEach(line => {
-        if (cursorY > pageHeight - 20) {
-          doc.addPage();
-          cursorY = 20;
+        if (!line) {
+          cursorY += 2.5; // Espacio entre párrafos
+          return;
         }
-        doc.text(line, margin, cursorY);
-        cursorY += 4.8;
+
+        // Detectar si es un título/fase
+        const isHeader = line.startsWith('**') || 
+                         line.toUpperCase().includes('PHASE') || 
+                         line.match(/^([0-9]\)|CLASSIFICATION|NOYAU|DÉMONTAGE|RECADRAGE)/i);
+
+        // Remover sintaxis de negritas Markdown (**)
+        line = line.replace(/\*\*/g, '').trim();
+
+        if (isHeader) {
+          cursorY += 2;
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(15, 23, 42);
+        } else {
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(47, 62, 80);
+        }
+
+        // Dividir texto largo
+        const wrappedLines = doc.splitTextToSize(line, maxLineWidth);
+
+        wrappedLines.forEach((subLine) => {
+          if (cursorY > pageHeight - 18) {
+            doc.addPage();
+            cursorY = 20;
+          }
+          doc.text(subLine, margin, cursorY);
+          cursorY += 4.6;
+        });
       });
 
-      // Pie de página
+      // 5. Pie de página
       if (cursorY > pageHeight - 15) {
         doc.addPage();
         cursorY = 20;
@@ -724,15 +757,16 @@ if (btnPdf) {
       doc.line(margin, cursorY, pageWidth - margin, cursorY);
       cursorY += 5;
 
+      doc.setFont("helvetica", "italic");
       doc.setFontSize(7.5);
       doc.setTextColor(100, 116, 139);
-      doc.text("POLETHIC France - Document genere automatiquement par BEACON ENGINE", margin, cursorY);
+      doc.text("POLETHIC France — Document généré automatiquement par BEACON ENGINE", margin, cursorY);
 
-      // Guardar PDF
+      // Guardar
       doc.save(`Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`);
 
     } catch (err) {
-      console.error("Erreur PDF detaillee:", err);
+      console.error("Erreur PDF:", err);
       alert('Erreur lors de la génération du PDF: ' + err.message);
     } finally {
       btnPdf.disabled = false;
