@@ -129,40 +129,39 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
 
 
 # =====================================================================
-# SYSTEM PROMPT METACOGNITIVO ADAPTATIVO (FASE 0 ➔ FASE 3)
+# SYSTEM PROMPT METACOGNITIVO ADAPTATIVO (SIN NÚMEROS EN SECCIONES)
 # =====================================================================
 SYSTEM_PROMPT_BEACON = (
-    "You are POLETHIC BEACON, an advanced Metacognitive Engine.\n"
+    "You are POLETHIC BEACON, an advanced Forensic Metacognitive Engine.\n"
     "Your objective is to execute a mandatory 4-Phase analysis pipeline for every input:\n\n"
-    "FASE 0: RECONOCEDOR PRINCIPAL (Context & Taxonomy)\n"
-    "- Identify Tipology: [Noticia, Personal/WhatsApp, Publicidad/Reel, CV, Científico, Filosófico, Teológico/Religioso, New Age].\n"
-    "- Identify Emisor Purpose & Subjectivity (1-10).\n"
-    "- Mode Selection:\n"
-    "  * If Scientific: Activate BYPASS LÍMBICO (Evaluate methodology & evidence).\n"
-    "  * If Philosophical/Literary: Activate CONCEPTUAL MODE (Evaluate premises & subtext).\n"
-    "  * If Religious/Spiritual/New Age: Activate HERMENEUTIC/DECONSTRUCTION MODE (Evaluate internal coherence, dogmas, and pseudoscience).\n\n"
+    "FASE 0: RECONOCEDOR PRINCIPAL (Taxonomía y Contexto)\n"
+    "- Identify Typology: [Noticia, Personal/WhatsApp, Publicidad/Reel, CV/Perfil Profesional, Científico, Filosófico, Teológico, New Age/PSNC].\n"
+    "- Identify Emisor Purpose and Strategy.\n"
+    "- EVALUATION GUIDELINES:\n"
+    "  * If text introduces Non-Conventional Therapies (PSNC/Sophrology) linked to medical/public institutions or severe diseases (AVC, Chronic Diseases), evaluate authority transfer and give an Ethic-Score in range 55-75 (Grade C).\n"
+    "  * If text is a clean CV without unproven claims or coercion, assign Range 0-25 (Grade A).\n\n"
     "FASE 1: LIMPIEZA DE RUIDO\n"
-    "- Strip clickbait, hyperbole, emotional blackmail, or fluff according to the text category.\n"
-    "- Extract 2-4 core objective facts, claims, or premises.\n\n"
-    "FASE 2: DESMONTAJE LÍMBICO (Intention & Bias Analysis)\n"
-    "- Analyze emotional triggers (Fear, Guilt, FOMO, Estatus, Devotion).\n"
-    "- Expose cognitive biases, fallacies, or unproven dogmas.\n\n"
-    "FASE 3: TRADUCTEUR CORTICAL (Actionable Output)\n"
-    "- Structure your final response into clear, objective sections.\n\n"
+    "- Strip emotional fluff, hyperbole, and decorative prose.\n"
+    "- Extract 2-4 core objective facts and explicit claims.\n\n"
+    "FASE 2: DESMONTAJE LÍMBICO (Análisis de Estrategia y Sesgos)\n"
+    "- Unmask the real rhetorical strategy: Authority Transfer, Clinical Euphemisms, Emotional Exploitation of Vulnerable Patients, False Dichotomy, etc.\n"
+    "- ABSOLUTE RULE: DO NOT INVENT BIASES OR CONCEPTS NOT PRESENT IN THE TEXT (e.g., do not mention quantum physics, hypnosis, or commercial rush if not mentioned in input).\n\n"
+    "FASE 3: TRADUCTEUR CORTICAL\n"
+    "- Provide an objective cortical summary and actionable risk assessment.\n\n"
     "CRITICAL LANGUAGE RULE:\n"
-    "Detect the language of the user input and write your entire response 100% in that target language.\n\n"
-    "MANDATORY AUDIT OUTPUT FORMAT:\n"
-    "🏷️ **1. CLASIFICACIÓN (Fase 0)**\n"
+    "Detect the input language and write the ENTIRE response (including section headings) 100% in that target language.\n\n"
+    "MANDATORY OUTPUT FORMAT (NO NUMBERS IN HEADINGS):\n"
+    "🏷️ **CLASIFICACIÓN (Fase 0)**\n"
     "- Tipo de Texto:\n"
     "- Propósito del Emisor:\n\n"
-    "📌 **2. NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
-    "- Datos/Premisas filtrados sin ruido:\n\n"
-    "🧠 **3. DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
-    "- Gatillo Emocional / Sesgo Detectado:\n"
-    "- Intención vs. Realidad:\n\n"
-    "🚀 **4. REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
-    "- Análisis objetivo final y recomendación de acción:\n\n"
-    "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience]</flags>\n"
+    "📌 **NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
+    "- Datos y afirmaciones filtradas sin ruido:\n\n"
+    "🧠 **DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
+    "- Estrategia Retórica / Gatillo Detectado:\n"
+    "- Intención vs. Realidad (Análisis de Blanqueamiento/Apropiación de Lenguaje):\n\n"
+    "🚀 **REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
+    "- Diagnóstico sintético final y valoración objetiva de riesgo:\n\n"
+    "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
     "<score>[Integer score from 0 (Healthy) to 100 (High Risk/Coercion)]</score>"
 )
 
@@ -214,7 +213,7 @@ def analyze():
         final_report = "Error: HF_TOKEN client not initialized."
 
         if client:
-            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}\nPreferred Language Code: {lang}"
+            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}\nTarget Language Code: {lang}"
 
             messages = [
                 {"role": "system", "content": SYSTEM_PROMPT_BEACON},
@@ -250,7 +249,7 @@ def analyze():
         else:
             final_report = "[DEMO MODE - Set HF_TOKEN in environment]"
             llm_score = 30
-            detected_flags = ["bluff", "myth"]
+            detected_flags = ["bluff", "authority_transfer"]
 
         combined_score = max(0, min(100, llm_score + local_penalty))
         ethic_letter = get_ethic_letter(combined_score)
@@ -280,49 +279,35 @@ def refute():
     try:
         data = request.get_json() or {}
         analysis = data.get("analysis", "")
-        lang = data.get("lang", "es")
+        lang = data.get("lang", "fr")
 
         if not analysis:
             return jsonify({"refutation": "No content provided to counter-argue."}), 400
 
-        # Detección de contenido sensible (Religión, Teología, New Age)
-        is_religious_or_newage = any(
-            k in analysis.lower() 
-            for k in ["teológico", "religioso", "dios", "dogma", "new age", "vibración", "cuántica", "manifestación", "fe", "espiritual"]
-        )
-
-        disclaimer_text = ""
-        if is_religious_or_newage:
-            disclaimer_text = (
-                "⚠️ **ADVERTENCIA DE ANÁLISIS CRÍTICO Y DECONSTRUCCIÓN**\n"
-                "*Este módulo aplica principios de lógica formal, exégesis histórica y método científico. "
-                "El resultado puede generar disonancia cognitiva al cuestionar dogmas o sistemas de creencia. "
-                "La plataforma no se responsabiliza de la fricción emocional resultante de este análisis.* \n\n"
-            )
-
         if client:
             prompt = (
-                f"Basándote en este análisis previo:\n{analysis}\n\n"
-                f"Actúa como un refutador metodológico e implacable. Genera exactamente 3 preguntas incómodas, "
-                f"quirúrgicas y profundas para devolver la carga de la prueba al emisor o desmontar su axioma no probado.\n"
+                f"Analisi forense previa:\n{analysis}\n\n"
+                f"Consigne: Genera exactamente 3 preguntas quirúrgicas de refutación o deconstrucción metodológica "
+                f"basándote ÚNICAMENTE en las afirmaciones y estrategias identificadas en el análisis previo.\n"
+                f"REGLA DE ORO: ESTÁ STRICTAMENTE PROHIBIDO inventar o mencionar términos que no existan en la entrada "
+                f"(por ejemplo, no hables de física cuántica, hipnosis, ni urgencia comercial salvo que se mencionen explícitamente).\n"
+                f"Concéntrate en cuestionar la evidencia científica, el marco legal, la transferencia de autoridad o la eficacia clínica.\n"
                 f"Escribe la respuesta 100% en el idioma objetivo indicado por el código: '{lang}'."
             )
             response = client.chat.completions.create(
                 model="Qwen/Qwen2.5-Coder-32B-Instruct",
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=500
+                max_tokens=450
             )
             refutation_text = response.choices[0].message.content.strip()
         else:
             refutation_text = (
-                "1. ¿En qué estudio empírico o evidencia histórica independiente se basa esta afirmación?\n"
-                "2. Si eliminamos el componente de fe o el uso metafórico de términos científicos, ¿qué hecho comprobable permanece?\n"
-                "3. ¿Cómo se diferencia metodológicamente este postulado de otros dogmas contradictorios con la misma pretensión de verdad?"
+                "1. ¿Qué evidencia clínica objetiva respalda esta aproximación frente a las terapias médicas convencionales?\n"
+                "2. ¿Cómo se delimita el alcance ético entre el acompañamiento no convencional y el tratamiento médico estricto?\n"
+                "3. ¿Bajo qué indicadores métricos se mide la efectividad del tratamiento en los pacientes?"
             )
 
-        full_response = f"{disclaimer_text}{refutation_text}"
-
-        return jsonify({"refutation": full_response}), 200
+        return jsonify({"refutation": refutation_text}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
