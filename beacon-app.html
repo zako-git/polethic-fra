@@ -648,19 +648,30 @@
           if (currentScoreLetter === 'D') scoreColor = '#dc2626'; 
 
           const pdfContainer = document.createElement('div');
-          // Posicionado FUERA del viewport (no tapando la pantalla con un
-          // z-index alto). Esto evita el "flash" de pantalla blanca y hace
-          // que html2canvas capture siempre el mismo contenido, sin
-          // depender del scroll del usuario.
+          // Sin desplazamiento lejano (evita que html2canvas tenga que
+          // renderizar un lienzo gigantesco, que en móvil puede superar el
+          // límite de tamaño de canvas del navegador y salir en blanco).
           pdfContainer.style.position = 'absolute';
           pdfContainer.style.top = '0';
-          pdfContainer.style.left = '-10000px';
+          pdfContainer.style.left = '0';
           pdfContainer.style.width = '750px';
           pdfContainer.style.backgroundColor = '#ffffff';
           pdfContainer.style.color = '#0f172a';
           pdfContainer.style.padding = '30px';
           pdfContainer.style.fontFamily = 'Arial, sans-serif';
           pdfContainer.style.boxSizing = 'border-box';
+
+          // Envoltorio de 0x0 con overflow oculto: el contenedor real vive
+          // dentro, con su tamaño normal, pero queda invisible para el
+          // usuario sin necesidad de "esconderlo" lejos de la pantalla.
+          const clipWrapper = document.createElement('div');
+          clipWrapper.style.position = 'fixed';
+          clipWrapper.style.top = '0';
+          clipWrapper.style.left = '0';
+          clipWrapper.style.width = '0';
+          clipWrapper.style.height = '0';
+          clipWrapper.style.overflow = 'hidden';
+          clipWrapper.appendChild(pdfContainer);
 
           const formattedText = reportText
             .replace(/&/g, "&amp;")
@@ -694,7 +705,7 @@
             </div>
           `;
 
-          document.body.appendChild(pdfContainer);
+          document.body.appendChild(clipWrapper);
 
           const options = {
             margin: 10,
@@ -719,8 +730,8 @@
             console.error("Erreur PDF:", err);
             alert('Erreur lors de la génération du PDF.');
           } finally {
-            if (document.body.contains(pdfContainer)) {
-              document.body.removeChild(pdfContainer);
+            if (document.body.contains(clipWrapper)) {
+              document.body.removeChild(clipWrapper);
             }
             btnPdf.disabled = false;
             btnPdf.innerText = '📄 EXPORTER EN PDF';
