@@ -539,79 +539,90 @@
         });
       }
 
-      // 📄 EXPORTAR PDF DIRECTO
-      if (btnPdf) {
-        btnPdf.addEventListener('click', () => {
-          const reportText = analysisReport.innerText;
-          if (!reportText || reportText.includes("En attente d'analyse")) {
-            alert('Aucun rapport à exporter.');
-            return;
-          }
+     // 📄 EXPORTAR PDF CON DISEÑO CIBERNÉTICO PREMIUM
+if (btnPdf) {
+  btnPdf.addEventListener('click', () => {
+    const reportText = analysisReport.innerText;
+    if (!reportText || reportText.includes("En attente d'analyse")) {
+      alert('Aucun rapport à exporter.');
+      return;
+    }
 
-          btnPdf.disabled = true;
-          btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
+    btnPdf.disabled = true;
+    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
 
-          const element = document.createElement('div');
-          element.style.padding = '30px';
-          element.style.fontFamily = "'Courier New', monospace";
-          element.style.backgroundColor = '#030a12';
-          element.style.color = '#e0e0e0';
-          element.style.border = '2px solid #00f0ff';
-          element.style.borderRadius = '8px';
+    // Contenedor principal del informe
+    const container = document.createElement('div');
+    container.style.padding = '35px';
+    container.style.backgroundColor = '#030a12';
+    container.style.fontFamily = "'Courier New', Monaco, monospace";
+    container.style.color = '#d0e0e0';
+    container.style.boxSizing = 'border-box';
 
-          const headerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00f0ff; padding-bottom: 15px; margin-bottom: 20px;">
-              <div>
-                <h1 style="color: #00f0ff; font-size: 20px; margin: 0; letter-spacing: 2px;">POLETHIC FRANCE — BEACON LAB</h1>
-                <p style="color: #00ff88; font-size: 11px; margin-top: 4px;">RAPPORT D'AUDIT COGNITIF ET MÉTACOMMUNICATIONNEL</p>
-              </div>
-              <div style="background-color: #00f0ff; color: #030a12; padding: 8px 16px; font-weight: bold; font-size: 16px; border-radius: 4px;">
-                ETHIC-SCORE™: ${currentScoreLetter}
-              </div>
-            </div>
-          `;
+    // Banner Superior / Header
+    const headerHTML = `
+      <div style="border-bottom: 2px solid #00f0ff; padding-bottom: 18px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="color: #00f0ff; font-weight: bold; font-size: 20px; letter-spacing: 3px; margin-bottom: 4px;">
+            POLETHIC FRANCE — BEACON LAB
+          </div>
+          <div style="color: #00ff88; font-size: 10px; letter-spacing: 1.5px;">
+            RAPPORT D'AUDIT MÉTACOGNITIF ET MÉTACONTEXTUEL
+          </div>
+        </div>
+        <div style="border: 2px solid #00f0ff; background-color: rgba(0, 240, 255, 0.1); padding: 8px 16px; border-radius: 4px; text-align: center;">
+          <div style="font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 1px;">ETHIC-SCORE™</div>
+          <div style="font-size: 22px; font-weight: bold; color: #00f0ff;">${currentScoreLetter}</div>
+        </div>
+      </div>
+    `;
 
-          const reportBox = document.createElement('div');
-          reportBox.style.backgroundColor = 'rgba(1, 6, 12, 0.9)';
-          reportBox.style.borderLeft = '4px solid #00ff88';
-          reportBox.style.padding = '20px';
-          reportBox.style.fontSize = '13px';
-          reportBox.style.lineHeight = '1.6';
-          reportBox.style.whiteSpace = 'pre-wrap';
-          reportBox.style.color = '#d0e0e0';
-          reportBox.style.marginBottom = '25px';
-          reportBox.textContent = reportText;
+    // Cuerpo del Reporte formateado
+    const bodyBox = document.createElement('div');
+    bodyBox.style.backgroundColor = '#07121e';
+    bodyBox.style.borderLeft = '4px solid #00f0ff';
+    bodyBox.style.borderRight = '1px solid rgba(0, 240, 255, 0.2)';
+    bodyBox.style.borderTop = '1px solid rgba(0, 240, 255, 0.2)';
+    bodyBox.style.borderBottom = '1px solid rgba(0, 240, 255, 0.2)';
+    bodyBox.style.borderRadius = '0 6px 6px 0';
+    bodyBox.style.padding = '22px';
+    bodyBox.style.fontSize = '12px';
+    bodyBox.style.lineHeight = '1.6';
+    bodyBox.style.whiteSpace = 'pre-wrap';
+    bodyBox.style.color = '#e0e0e0';
+    bodyBox.textContent = reportText;
 
-          const footerHTML = `
-            <div style="border-top: 1px solid rgba(0, 240, 255, 0.3); padding-top: 15px; text-align: center; font-size: 10px; color: #888;">
-              <p>© 2026 POLETHIC France — Organisme d'autodéfense cognitive.</p>
-              <p>Document généré automatiquement via POLETHIC BEACON Engine.</p>
-            </div>
-          `;
+    // Pie de página
+    const footerHTML = `
+      <div style="margin-top: 30px; border-top: 1px solid rgba(0, 240, 255, 0.2); padding-top: 15px; display: flex; justify-content: space-between; font-size: 9px; color: #668099;">
+        <span>CONFIDENTIEL — POLETHIC FORENSIC SYSTEM</span>
+        <span>GÉNÉRÉ LE ${new Date().toLocaleDateString('fr-FR')}</span>
+      </div>
+    `;
 
-          element.innerHTML = headerHTML;
-          element.appendChild(reportBox);
-          element.insertAdjacentHTML('beforeend', footerHTML);
+    container.innerHTML = headerHTML;
+    container.appendChild(bodyBox);
+    container.insertAdjacentHTML('beforeend', footerHTML);
 
-          const options = {
-            margin:       10,
-            filename:     `Audit_BEACON_Score_${currentScoreLetter}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, backgroundColor: '#030a12' },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-          };
+    const options = {
+      margin: 0, // Elimina el marco blanco exterior
+      filename: `Audit_BEACON_Score_${currentScoreLetter}.pdf`,
+      image: { type: 'jpeg', quality: 1.0 },
+      html2canvas: { scale: 2, backgroundColor: '#030a12', logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-          html2pdf().set(options).from(element).save().then(() => {
-            btnPdf.disabled = false;
-            btnPdf.innerText = '📄 EXPORTER EN PDF';
-          }).catch(err => {
-            console.error(err);
-            alert('Erreur lors de la création du PDF.');
-            btnPdf.disabled = false;
-            btnPdf.innerText = '📄 EXPORTER EN PDF';
-          });
-        });
-      }
+    html2pdf().set(options).from(container).save().then(() => {
+      btnPdf.disabled = false;
+      btnPdf.innerText = '📄 EXPORTER EN PDF';
+    }).catch(err => {
+      console.error(err);
+      alert('Erreur lors de la création du PDF.');
+      btnPdf.disabled = false;
+      btnPdf.innerText = '📄 EXPORTER EN PDF';
+    });
+  });
+}
 
       // 🗑️ PURGAR
       if (btnPurge) {
