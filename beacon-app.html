@@ -629,101 +629,117 @@
         });
       }
 
-      // 📄 EXPORTACIÓN A PDF DIRECTA MEDIANTE JSPDF (OPTIMIZADA)
-      if (btnPdf) {
-        btnPdf.addEventListener('click', async () => {
-          const reportText = analysisReport.innerText;
+     // 📄 EXPORTACIÓN A PDF ROBUSTA (SANETIZADA PARA CARACTERES ACCENTUADOS/ESPECIALES)
+if (btnPdf) {
+  btnPdf.addEventListener('click', async () => {
+    const reportText = analysisReport.innerText;
 
-          if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
-            alert('Aucun rapport à exporter.');
-            return;
-          }
+    if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
+      alert('Aucun rapport à exporter.');
+      return;
+    }
 
-          btnPdf.disabled = true;
-          const originalText = btnPdf.innerText;
-          btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
+    btnPdf.disabled = true;
+    const originalText = btnPdf.innerText;
+    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
 
-          try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 15;
-            const maxLineWidth = pageWidth - (margin * 2);
-            let cursorY = 20;
-
-            // Encabezado
-            doc.setFont("courier", "bold");
-            doc.setFontSize(16);
-            doc.setTextColor(15, 23, 42);
-            doc.text("POLETHIC France — BEACON LAB", margin, cursorY);
-            cursorY += 6;
-
-            doc.setFont("courier", "normal");
-            doc.setFontSize(9);
-            doc.setTextColor(71, 85, 105);
-            doc.text("AUDIT METACOMMUNICATIONNEL & DECODAGE COGNITIF", margin, cursorY);
-            cursorY += 6;
-
-            // Línea divisoria
-            doc.setDrawColor(0, 240, 255);
-            doc.setLineWidth(0.8);
-            doc.line(margin, cursorY, pageWidth - margin, cursorY);
-            cursorY += 10;
-
-            // Etiqueta Ethic-Score
-            doc.setFillColor(15, 23, 42);
-            doc.rect(margin, cursorY - 4, 45, 8, 'F');
-            doc.setFont("courier", "bold");
-            doc.setFontSize(10);
-            doc.setTextColor(0, 240, 255);
-            doc.text(`Ethic-Score: ${currentScoreLetter || 'C'}`, margin + 3, cursorY + 1.5);
-            cursorY += 12;
-
-            // Texto del reporte
-            doc.setFont("courier", "normal");
-            doc.setFontSize(9.5);
-            doc.setTextColor(30, 41, 59);
-
-            const lines = doc.splitTextToSize(reportText, maxLineWidth);
-
-            lines.forEach(line => {
-              if (cursorY > pageHeight - 20) {
-                doc.addPage();
-                cursorY = 20;
-              }
-              doc.text(line, margin, cursorY);
-              cursorY += 5;
-            });
-
-            // Pie de página
-            if (cursorY > pageHeight - 15) {
-              doc.addPage();
-              cursorY = 20;
-            }
-            cursorY += 5;
-            doc.setDrawColor(203, 213, 225);
-            doc.setLineWidth(0.3);
-            doc.line(margin, cursorY, pageWidth - margin, cursorY);
-            cursorY += 6;
-
-            doc.setFontSize(8);
-            doc.setTextColor(100, 116, 139);
-            doc.text("POLETHIC France - Document genere automatiquement par BEACON ENGINE", margin, cursorY);
-
-            // Guardar PDF
-            doc.save(`Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`);
-
-          } catch (err) {
-            console.error("Erreur génération PDF directo:", err);
-            alert('Erreur lors de la génération du PDF.');
-          } finally {
-            btnPdf.disabled = false;
-            btnPdf.innerText = originalText;
-          }
-        });
+    try {
+      // Revisa que jsPDF esté bien cargado
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        throw new Error("Librería jsPDF no detectada.");
       }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 15;
+      const maxLineWidth = pageWidth - (margin * 2);
+      let cursorY = 20;
+
+      // Función para limpiar/normalizar acentos y símbolos que rompen jsPDF estándar
+      const sanitizeForPDF = (str) => {
+        return str
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Convierte é -> e, à -> a, etc.
+          .replace(/[’']/g, "'")
+          .replace(/[«»]/g, '"')
+          .replace(/[—–]/g, "-")
+          .replace(/[\u200B-\u200D\uFEFF]/g, ""); // Remueve caracteres invisibles unicode
+      };
+
+      // Encabezado
+      doc.setFont("courier", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(15, 23, 42);
+      doc.text("POLETHIC France - BEACON LAB", margin, cursorY);
+      cursorY += 6;
+
+      doc.setFont("courier", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(71, 85, 105);
+      doc.text("AUDIT METACOMMUNICATIONNEL ET DECODAGE COGNITIF", margin, cursorY);
+      cursorY += 6;
+
+      // Línea divisoria
+      doc.setDrawColor(0, 240, 255);
+      doc.setLineWidth(0.8);
+      doc.line(margin, cursorY, pageWidth - margin, cursorY);
+      cursorY += 10;
+
+      // Ethic-Score Badge
+      doc.setFillColor(15, 23, 42);
+      doc.rect(margin, cursorY - 4, 45, 8, 'F');
+      doc.setFont("courier", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(0, 240, 255);
+      doc.text(`Ethic-Score: ${currentScoreLetter || 'C'}`, margin + 3, cursorY + 1.5);
+      cursorY += 12;
+
+      // Contenido del reporte sanitizado
+      doc.setFont("courier", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(30, 41, 59);
+
+      const cleanText = sanitizeForPDF(reportText);
+      const lines = doc.splitTextToSize(cleanText, maxLineWidth);
+
+      lines.forEach(line => {
+        if (cursorY > pageHeight - 20) {
+          doc.addPage();
+          cursorY = 20;
+        }
+        doc.text(line, margin, cursorY);
+        cursorY += 4.8;
+      });
+
+      // Pie de página
+      if (cursorY > pageHeight - 15) {
+        doc.addPage();
+        cursorY = 20;
+      }
+      cursorY += 4;
+      doc.setDrawColor(203, 213, 225);
+      doc.setLineWidth(0.3);
+      doc.line(margin, cursorY, pageWidth - margin, cursorY);
+      cursorY += 5;
+
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text("POLETHIC France - Document genere automatiquement par BEACON ENGINE", margin, cursorY);
+
+      // Guardar PDF
+      doc.save(`Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`);
+
+    } catch (err) {
+      console.error("Erreur PDF detaillee:", err);
+      alert('Erreur lors de la génération du PDF: ' + err.message);
+    } finally {
+      btnPdf.disabled = false;
+      btnPdf.innerText = originalText;
+    }
+  });
+}
 
       // 🗑️ PURGAR
       if (btnPurge) {
