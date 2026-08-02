@@ -660,6 +660,8 @@ if (btnPdf) {
       // 🧹 SANITIZADOR CORREGIDO (Preserva la lengua francesa y acentos)
       const sanitizeToPureText = (str) => {
         return str
+          .replace(/ET LIMBIQUE/gi, '') // Purga la palabra del PDF
+          .replace(/LIMBIQUE/gi, '')
           .replace(/\$[^$]*\$/g, '')
           .replace(/\\[a-zA-Z]+/g, '')
           .replace(/<[^>]*>/g, '')
