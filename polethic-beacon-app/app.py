@@ -2,12 +2,11 @@ import os
 import re
 import sqlite3
 import io
-import base64
+import unicodedata
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from huggingface_hub import InferenceClient
 from youtube_transcript_api import YouTubeTranscriptApi
-from PIL import Image
 from dotenv import load_dotenv
 
 # --- ReportLab para exportación PDF ---
@@ -129,7 +128,7 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
 
 
 # =====================================================================
-# DICCIONARIO DE PROMPTS Y PLANTILLAS MULTILINGÜES DINÁMICAS
+# 📍 TEMPLATES: DICCIONARIO DE PROMPTS Y PLANTILLAS MULTILINGÜES DINÁMICAS
 # =====================================================================
 TEMPLATES = {
     "fr": {
@@ -139,10 +138,11 @@ TEMPLATES = {
             "RÈGLE LINGUISTIQUE ABSOLUE : Rédigez l'INTÉGRALITÉ de la réponse et des titres EN FRANÇAIS.\n\n"
             "INTERDICTION ABSOLUE : N'utilisez JAMAIS les mots 'LIMBIQUE' ni 'ET LIMBIQUE' dans les titres ou le texte.\n\n"
             "DIRECTIVES D'ÉVALUATION STRICTES :\n"
-            "- TARTE ROUGE / RISQUE ÉLEVÉ (Grade D, Score 76 à 100) : Attribution OBLIGATOIRE si le texte promeut des thérapies non conventionnelles à risque de dérive sectaire (ex: Constellations familiales / Bert Hellinger, mémoire cellulaire, ésotérisme), que ce soit dans la santé ou appliquées aux entreprises, au coaching et au leadership. Signalez l'absence de preuve scientifique et le risque de manipulation.\n"
+            "- TARTE ROUGE / RISQUE ÉLEVÉ (Grade D, Score 76 à 100) : Attribution OBLIGATOIRE si le texte promeut des thérapies non conventionnelles ou approches à risque de dérive sectaire (ex: Constellations familiales / Bert Hellinger, mémoire cellulaire, ésotérisme), que ce soit dans la santé ou appliquées aux entreprises, au coaching et au leadership.\n"
+            "- ORGANISMES DE VIGILANCE : Mentionnez systématiquement que ces pratiques font l'objet d'une vigilance accrue par des organismes officiels (ex: MIVILUDES en France) en raison des risques de dérive sectaire, d'emprise et de sujection psychologique.\n"
             "- RISQUE MODÉRÉ (Grade B-C, Score 26 à 75) : Si le texte présente des biais rhétoriques majeurs, de l'exagération commerciale ou du blanchiment de langage sans dérive ésotérique/sectaire.\n"
             "- RISQUE MINIME (Grade A, Score 0 à 25) : CV propre, texte informatif ou factuel sans coercition ni affirmations trompeuses.\n"
-            "- NE JAMAIS INVENTER de biais (ex: pas de physique quantique ni d'hypnose si non mentionnés).\n\n"
+            "- NE JAMAIS INVENTER de biais non présents dans le texte.\n\n"
             "FORMAT DE SORTIE IMPÉRATIF (RESPECTEZ EXATEMENT CES TITRES) :\n\n"
             "🏷️ **CLASSIFICATION (Phase 0)**\n"
             "- Type de Texte:\n"
@@ -159,7 +159,7 @@ TEMPLATES = {
         ),
         "refute_fallback": (
             "1. PREUVE CLINIQUE / ÉMPIRIQUE : Quelles études contrôlées démontrent l'efficacité de cette approche face aux méthodes scientifiques conventionnelles ?\n"
-            "2. CADRE DÉRIVE SECTAIRE : Comment garantissez-vous l'absence de sujection psychologique ou d'influence ésotérique (ex: thèses d'Hellinger) sur les participants ?\n"
+            "2. CADRE DÉRIVE SECTAIRE : Comment garantissez-vous l'absence de sujection psychologique ou d'influence ésotérique (ex: thèses d'Hellinger, MIVILUDES) sur les participants ?\n"
             "3. MESURE DE L'EFFICACITÉ : Quels indicateurs objectifs et vérifiables permettent de mesurer les résultats réels ?"
         )
     },
@@ -170,10 +170,11 @@ TEMPLATES = {
             "REGLA LINGÜÍSTICA ABSOLUTA: Escribe la TOTALIDAD de la respuesta y los títulos EN ESPAÑOL.\n\n"
             "PROHIBICIÓN ABSOLUTA: NUNCA utilices las palabras 'LÍMBICO' ni 'Y LÍMBICO' en los títulos o el texto.\n\n"
             "DIRECTRICES DE EVALUACIÓN STRICTAS:\n"
-            "- TARJETA ROJA / RIESGO ALTO (Grado D, Score 76 a 100): Asignación OBLIGATORIA si el texto promueve terapias no convencionales con riesgo de deriva sectaria (ej: Constelaciones familiares / Bert Hellinger, memoria celular, esoterismo), ya sea en salud o aplicadas a empresas, coaching y liderazgo. Señala la falta de evidencia científica y el riesgo de manipulación.\n"
+            "- TARJETA ROJA / RIESGO ALTO (Grado D, Score 76 a 100): Asignación OBLIGATORIA si el texto promueve terapias no convencionales con riesgo de deriva sectaria (ej: Constelaciones familiares / Bert Hellinger, memoria celular, esoterismo), ya sea en salud o aplicadas a empresas, coaching y liderazgo.\n"
+            "- ORGANISMOS DE VIGILANCIA: Señala explícitamente que estas prácticas están sometidas a la vigilancia de organismos oficiales (ej: MIVILUDES en Francia) debido al riesgo documentado de deriva sectaria, manipulación y sujeción psicológica.\n"
             "- RIESGO MODERADO (Grado B-C, Score 26 a 75): Si el texto presenta sesgos retóricos mayores, exageración comercial o blanqueamiento de lenguaje sin deriva esotérica/sectaria.\n"
             "- RIESGO MÍNIMO (Grado A, Score 0 a 25): CV limpio, texto informativo o factual sin coerción ni afirmaciones engañosas.\n"
-            "- NO INVENTAR sesgos no presentes en el texto (ej: no mencionar física cuántica ni hipnosis si no están en el texto).\n\n"
+            "- NO INVENTAR sesgos no presentes en el texto.\n\n"
             "FORMATO DE SALIDA OBLIGATORIO (RESPETA EXACTAMENTE ESTOS TÍTULOS):\n\n"
             "🏷️ **CLASIFICACIÓN (Fase 0)**\n"
             "- Tipo de Texto:\n"
@@ -190,7 +191,7 @@ TEMPLATES = {
         ),
         "refute_fallback": (
             "1. EVIDENCIA EMPÍRICA: ¿Qué estudios controlados respaldan la efectividad de este enfoque frente a la gestión/psicología convencional?\n"
-            "2. RIESGO SECTARIO: ¿Cómo se garantiza la ausencia de manipulación psicológica o doctrina esotérica (ej: tesis de Hellinger) en los participantes?\n"
+            "2. RIESGO SECTARIO: ¿Cómo se garantiza la ausencia de manipulación psicológica o doctrina esotérica (ej: observaciones de MIVILUDES u organismos estatales) en los participantes?\n"
             "3. MEDICIÓN DE RESULTADOS: ¿Bajo qué indicadores métricos y objetivos se evalúa el impacto real?"
         )
     },
@@ -201,7 +202,8 @@ TEMPLATES = {
             "ABSOLUTE LANGUAGE RULE: Write the ENTIRE response and section titles IN ENGLISH.\n\n"
             "ABSOLUTE PROHIBITION: NEVER use the words 'LIMBIC' or 'AND LIMBIC' in titles or text.\n\n"
             "STRICT EVALUATION DIRECTIVES:\n"
-            "- RED CARD / HIGH RISK (Grade D, Score 76 to 100): MANDATORY assignment if the text promotes unconventional therapies with high risk of cultic deviance (e.g., Family Constellations / Bert Hellinger, cellular memory, esotericism), whether in healthcare or applied to corporate settings, coaching, and leadership. Highlight the absence of scientific evidence and manipulation risks.\n"
+            "- RED CARD / HIGH RISK (Grade D, Score 76 to 100): MANDATORY assignment if the text promotes unconventional therapies with high risk of cultic deviance (e.g., Family Constellations / Bert Hellinger, cellular memory, esotericism), whether in healthcare or applied to corporate settings, coaching, and leadership.\n"
+            "- MONITORING AGENCIES: Highlight that these practices are closely monitored by official state agencies (e.g., MIVILUDES in France) due to documented risks of cultic deviance and psychological manipulation.\n"
             "- MODERATE RISK (Grade B-C, Score 26 to 75): If the text presents major rhetorical biases, commercial hype, or language laundering without esoteric/cultic deviance.\n"
             "- MINIMAL RISK (Grade A, Score 0 to 25): Clean CV, purely factual or informative text without coercion or misleading claims.\n"
             "- NEVER INVENT biases not present in the input text.\n\n"
@@ -221,7 +223,7 @@ TEMPLATES = {
         ),
         "refute_fallback": (
             "1. EMPIRICAL EVIDENCE: What controlled studies demonstrate the effectiveness of this approach compared to conventional scientific methods?\n"
-            "2. CULTIC RISK SAFEGUARD: How do you guarantee the absence of psychological coercion or esoteric doctrine (e.g., Hellinger's theses) on participants?\n"
+            "2. CULTIC RISK SAFEGUARD: How do you guarantee the absence of psychological coercion or esoteric doctrine (e.g., state watchdog warnings like MIVILUDES) on participants?\n"
             "3. PERFORMANCE METRICS: Which objective and verifiable metrics are used to evaluate real-world outcomes?"
         )
     }
@@ -230,173 +232,112 @@ TEMPLATES = {
 # =====================================================================
 # SANEADO DE TEXTO PARA PDF (ReportLab)
 # =====================================================================
-import unicodedata
-
 _EMOJI_PATTERN = re.compile(
     "["
-    "\U0001F300-\U0001FAFF"  # símbolos, pictogramas, emoji varios
-    "\U00002600-\U000027BF"  # símbolos misceláneos / dingbats
-    "\U0001F1E6-\U0001F1FF"  # banderas
-    "\U0000FE0F"             # variation selector (el "️" de 🏷️)
+    "\U0001F300-\U0001FAFF"
+    "\U00002600-\U000027BF"
+    "\U0001F1E6-\U0001F1FF"
+    "\U0000FE0F"
     "]+",
     flags=re.UNICODE
 )
 
 
 def sanitize_for_pdf(text):
-    """
-    Prepara texto libre (venido del LLM) para insertarlo en un
-    reportlab.Paragraph, que interpreta el contenido como XML:
-    1) Quita emojis/pictogramas que Helvetica (WinAnsi) no sabe dibujar
-       y que pueden romper la codificación -> texto/página en blanco.
-    2) Escapa &, < y > para que no rompan el parser XML de Paragraph.
-    3) Convierte **negrita** (markdown) en <b>negrita</b> real.
-    """
     if not text:
         return ""
 
-    # 1) fuera emojis/pictogramas
     text = _EMOJI_PATTERN.sub("", text)
-
-    # 2) fuera cualquier otro carácter no soportado por WinAnsiEncoding
-    #    (deja intactas las tildes/ñ/ü que sí soporta Latin-1)
     text = "".join(
         ch for ch in text
-        if unicodedata.category(ch)[0] != "C"  # caracteres de control
-        and (ord(ch) < 0x2500 or ch in "™")     # descarta symbol blocks raros
+        if unicodedata.category(ch)[0] != "C"
+        and (ord(ch) < 0x2500 or ch in "™")
     )
-
-    # 3) escapar XML antes de reinsertar nuestras propias etiquetas
     text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
-    # 4) **negrita** -> <b>negrita</b>
     text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
-
     return text.strip()
 
 
 def is_heading_line(original_line):
-    """Detecta líneas de cabecera de fase (van envueltas en ** **)."""
     stripped = _EMOJI_PATTERN.sub("", original_line).strip()
     return stripped.startswith("**") and stripped.rstrip().endswith("**")
 
 
-@app.route("/export_pdf", methods=["POST"])
-def export_pdf():
+# =====================================================================
+# ENDPOINTS DE LA API
+# =====================================================================
+
+@app.route("/analyze", methods=["POST"])
+def analyze():
     try:
         data = request.get_json() or {}
-        raw_score = data.get("score", 0)
-        raw_analysis = (data.get("analysis") or "").replace("<br>", "\n").replace("<br/>", "\n")
+        text = data.get("text", "")
+        url = data.get("url", "")
+        lang = str(data.get("lang", "fr")).lower()
 
-        if not raw_analysis.strip():
-            return jsonify({"error": "No hay análisis para exportar."}), 400
+        if lang not in TEMPLATES:
+            lang = "fr"
 
-        # Extraer número o asignar 0 por defecto de forma segura
-        try:
-            digits = re.sub(r"[^\d]", "", str(raw_score))
-            numeric_score = int(digits) if digits else 0
-        except ValueError:
-            numeric_score = 0
+        content_to_analyze = text
+        source_type = "text"
 
-        ethic_letter = data.get("ethic_letter") or get_ethic_letter(numeric_score)
+        if url:
+            transcript = extract_transcript(url)
+            if transcript:
+                content_to_analyze = transcript
+                source_type = "youtube"
 
-        pdf_buffer = io.BytesIO()
-        doc = SimpleDocTemplate(
-            pdf_buffer,
-            pagesize=letter,
-            rightMargin=40, leftMargin=40,
-            topMargin=40, bottomMargin=40
-        )
+        if not content_to_analyze.strip():
+            return jsonify({"error": "No content to analyze."}), 400
 
-        story = []
+        # Reglas locales
+        local_penalty, local_flags = apply_local_rules(content_to_analyze)
 
-        # Colores
-        primary_blue = colors.HexColor("#0284c7")
-        text_body = colors.HexColor("#334155")
-        heading_color = colors.HexColor("#0f172a")
+        template = TEMPLATES[lang]
+        analysis_text = ""
 
-        if ethic_letter == "A":
-            score_color = colors.HexColor("#059669")
-        elif ethic_letter == "B":
-            score_color = colors.HexColor("#d97706")
-        elif ethic_letter == "C":
-            score_color = colors.HexColor("#ea580c")
-        else:
-            score_color = colors.HexColor("#dc2626")
+        if client:
+            try:
+                response = client.chat.completions.create(
+                    model="Qwen/Qwen2.5-Coder-32B-Instruct",
+                    messages=[
+                        {"role": "system", "content": template["system"]},
+                        {"role": "user", "content": content_to_analyze}
+                    ],
+                    max_tokens=1000
+                )
+                analysis_text = response.choices[0].message.content
+            except Exception as hf_err:
+                print(f"[HF Error]: {hf_err}")
+                analysis_text = "Error connecting to LLM service."
 
-        # Estilos
-        title_style = ParagraphStyle(
-            'DocTitle',
-            fontName='Helvetica-Bold',
-            fontSize=16,
-            leading=20,
-            textColor=primary_blue
-        )
-        subtitle_style = ParagraphStyle(
-            'DocSubtitle',
-            fontName='Helvetica-Bold',
-            fontSize=9,
-            leading=12,
-            textColor=colors.HexColor("#64748b")
-        )
-        score_style = ParagraphStyle(
-            'ScoreDisplay',
-            fontName='Helvetica-Bold',
-            fontSize=13,
-            leading=16,
-            textColor=score_color,
-            alignment=2
-        )
-        heading_style = ParagraphStyle(
-            'SectionHeading',
-            fontName='Helvetica-Bold',
-            fontSize=11,
-            leading=15,
-            textColor=heading_color,
-            spaceBefore=12,
-            spaceAfter=4,
-        )
-        body_style = ParagraphStyle(
-            'ReportBody',
-            fontName='Helvetica',
-            fontSize=9.5,
-            leading=14,
-            textColor=text_body
-        )
+        # Extraer score y flags de la respuesta del modelo
+        score_match = re.search(r"<score>(\d+)</score>", analysis_text)
+        flags_match = re.search(r"<flags>(.*?)</flags>", analysis_text)
 
-        # Construcción PDF
-        story.append(Paragraph("POLETHIC FRANCE — BEACON LAB", title_style))
-        story.append(Paragraph("RAPPORT D'AUDIT METACOGNITIF ET METACONTEXTUEL", subtitle_style))
-        story.append(Spacer(1, 6))
-        story.append(Paragraph(f"ETHIC-SCORE: {ethic_letter} ({numeric_score}/100)", score_style))
-        story.append(Spacer(1, 12))
+        model_score = int(score_match.group(1)) if score_match else 0
+        model_flags = [f.strip() for f in flags_match.group(1).split(",")] if flags_match else []
 
-        for raw_line in raw_analysis.split('\n'):
-            line_str = raw_line.strip()
-            if not line_str:
-                continue
-            
-            clean_line = sanitize_for_pdf(line_str)
-            if not clean_line:
-                continue
+        # Fusionar con reglas locales
+        final_score = min(100, model_score + local_penalty)
+        final_flags = list(set(model_flags + local_flags))
 
-            if is_heading_line(line_str):
-                story.append(Paragraph(clean_line, heading_style))
-            else:
-                story.append(Paragraph(clean_line, body_style))
-                story.append(Spacer(1, 4))
+        # Limpiar etiquetas XML del informe visual
+        clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text)
+        clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis).strip()
 
-        doc.build(story)
-        pdf_buffer.seek(0)
+        ethic_letter = get_ethic_letter(final_score)
+        save_audit("CORE", source_type, content_to_analyze, final_score, clean_analysis)
 
-        return send_file(
-            pdf_buffer,
-            mimetype='application/pdf',
-            as_attachment=True,
-            download_name=f'Audit_BEACON_{ethic_letter}.pdf'
-        )
+        return jsonify({
+            "analysis": clean_analysis,
+            "score": final_score,
+            "flags": final_flags,
+            "ethic_letter": ethic_letter
+        }), 200
+
     except Exception as e:
-        print(f"[export_pdf error]: {e}")
+        print(f"[Analyze error]: {e}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -440,11 +381,19 @@ def refute():
 def export_pdf():
     try:
         data = request.get_json() or {}
-        score = data.get("score", "0")
+        raw_score = data.get("score", 0)
         raw_analysis = (data.get("analysis") or "").replace("<br>", "\n").replace("<br/>", "\n")
 
         if not raw_analysis.strip():
             return jsonify({"error": "No hay análisis para exportar."}), 400
+
+        try:
+            digits = re.sub(r"[^\d]", "", str(raw_score))
+            numeric_score = int(digits) if digits else 0
+        except ValueError:
+            numeric_score = 0
+
+        ethic_letter = data.get("ethic_letter") or get_ethic_letter(numeric_score)
 
         pdf_buffer = io.BytesIO()
         doc = SimpleDocTemplate(
@@ -456,34 +405,24 @@ def export_pdf():
 
         story = []
 
-        try:
-            numeric_score = int(re.sub(r"[^\d]", "", str(score)))
-        except ValueError:
-            numeric_score = 0
-
-        ethic_letter = get_ethic_letter(numeric_score)
-
-        # Colores para fondo claro
         primary_blue = colors.HexColor("#0284c7")
         text_body = colors.HexColor("#334155")
         heading_color = colors.HexColor("#0f172a")
 
-        # Color del Score según la severidad
         if ethic_letter == "A":
-            score_color = colors.HexColor("#059669")  # Verde
+            score_color = colors.HexColor("#059669")
         elif ethic_letter == "B":
-            score_color = colors.HexColor("#d97706")  # Amarillo
+            score_color = colors.HexColor("#d97706")
         elif ethic_letter == "C":
-            score_color = colors.HexColor("#ea580c")  # Naranja
+            score_color = colors.HexColor("#ea580c")
         else:
-            score_color = colors.HexColor("#dc2626")  # Rojo
+            score_color = colors.HexColor("#dc2626")
 
-        # Estilos tipográficos
         title_style = ParagraphStyle(
             'DocTitle',
             fontName='Helvetica-Bold',
-            fontSize=18,
-            leading=22,
+            fontSize=16,
+            leading=20,
             textColor=primary_blue
         )
         subtitle_style = ParagraphStyle(
@@ -496,48 +435,48 @@ def export_pdf():
         score_style = ParagraphStyle(
             'ScoreDisplay',
             fontName='Helvetica-Bold',
-            fontSize=14,
-            leading=18,
+            fontSize=13,
+            leading=16,
             textColor=score_color,
             alignment=2
         )
         heading_style = ParagraphStyle(
             'SectionHeading',
             fontName='Helvetica-Bold',
-            fontSize=11.5,
-            leading=16,
+            fontSize=11,
+            leading=15,
             textColor=heading_color,
-            spaceBefore=10,
+            spaceBefore=12,
             spaceAfter=4,
-            borderColor=primary_blue,
-            borderWidth=0,
         )
         body_style = ParagraphStyle(
             'ReportBody',
             fontName='Helvetica',
-            fontSize=10,
-            leading=15,
+            fontSize=9.5,
+            leading=14,
             textColor=text_body
         )
 
-        # Construcción del documento
         story.append(Paragraph("POLETHIC FRANCE — BEACON LAB", title_style))
         story.append(Paragraph("RAPPORT D'AUDIT METACOGNITIF ET METACONTEXTUEL", subtitle_style))
-        story.append(Spacer(1, 4))
+        story.append(Spacer(1, 6))
         story.append(Paragraph(f"ETHIC-SCORE: {ethic_letter} ({numeric_score}/100)", score_style))
-        story.append(Spacer(1, 15))
+        story.append(Spacer(1, 12))
 
         for raw_line in raw_analysis.split('\n'):
-            if not raw_line.strip():
+            line_str = raw_line.strip()
+            if not line_str:
                 continue
-            clean_line = sanitize_for_pdf(raw_line)
+
+            clean_line = sanitize_for_pdf(line_str)
             if not clean_line:
                 continue
-            if is_heading_line(raw_line):
+
+            if is_heading_line(line_str):
                 story.append(Paragraph(clean_line, heading_style))
             else:
                 story.append(Paragraph(clean_line, body_style))
-                story.append(Spacer(1, 6))
+                story.append(Spacer(1, 4))
 
         doc.build(story)
         pdf_buffer.seek(0)
@@ -549,7 +488,7 @@ def export_pdf():
             download_name=f'Audit_BEACON_{ethic_letter}.pdf'
         )
     except Exception as e:
-        print(f"[export_pdf] error: {e}")
+        print(f"[export_pdf error]: {e}")
         return jsonify({"error": str(e)}), 500
 
 
