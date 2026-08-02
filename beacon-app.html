@@ -648,30 +648,18 @@
           if (currentScoreLetter === 'D') scoreColor = '#dc2626'; 
 
           const pdfContainer = document.createElement('div');
-          // Sin desplazamiento lejano (evita que html2canvas tenga que
-          // renderizar un lienzo gigantesco, que en móvil puede superar el
-          // límite de tamaño de canvas del navegador y salir en blanco).
-          pdfContainer.style.position = 'absolute';
-          pdfContainer.style.top = '0';
-          pdfContainer.style.left = '0';
+          pdfContainer.id = 'beacon-pdf-export-container';
+          // Oculto en la página real con display:none (no ocupa espacio,
+          // no se ve, no consume memoria de canvas). html2canvas lo hará
+          // visible SOLO dentro de la copia interna que usa para capturar
+          // (ver onclone más abajo), así que nunca aparece en pantalla.
+          pdfContainer.style.display = 'none';
           pdfContainer.style.width = '750px';
           pdfContainer.style.backgroundColor = '#ffffff';
           pdfContainer.style.color = '#0f172a';
           pdfContainer.style.padding = '30px';
           pdfContainer.style.fontFamily = 'Arial, sans-serif';
           pdfContainer.style.boxSizing = 'border-box';
-
-          // Envoltorio de 0x0 con overflow oculto: el contenedor real vive
-          // dentro, con su tamaño normal, pero queda invisible para el
-          // usuario sin necesidad de "esconderlo" lejos de la pantalla.
-          const clipWrapper = document.createElement('div');
-          clipWrapper.style.position = 'fixed';
-          clipWrapper.style.top = '0';
-          clipWrapper.style.left = '0';
-          clipWrapper.style.width = '0';
-          clipWrapper.style.height = '0';
-          clipWrapper.style.overflow = 'hidden';
-          clipWrapper.appendChild(pdfContainer);
 
           const formattedText = reportText
             .replace(/&/g, "&amp;")
@@ -705,20 +693,23 @@
             </div>
           `;
 
-          document.body.appendChild(clipWrapper);
+          document.body.appendChild(pdfContainer);
 
           const options = {
             margin: 10,
             filename: `Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
-              scale: 2,
+              scale: 1,
               backgroundColor: '#ffffff',
               logging: false,
-              scrollX: 0,
-              scrollY: 0,
-              windowWidth: pdfContainer.scrollWidth,
-              windowHeight: pdfContainer.scrollHeight
+              windowWidth: 750,
+              onclone: (clonedDoc) => {
+                const clonedEl = clonedDoc.getElementById('beacon-pdf-export-container');
+                if (clonedEl) {
+                  clonedEl.style.display = 'block';
+                }
+              }
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
@@ -730,8 +721,8 @@
             console.error("Erreur PDF:", err);
             alert('Erreur lors de la génération du PDF.');
           } finally {
-            if (document.body.contains(clipWrapper)) {
-              document.body.removeChild(clipWrapper);
+            if (document.body.contains(pdfContainer)) {
+              document.body.removeChild(pdfContainer);
             }
             btnPdf.disabled = false;
             btnPdf.innerText = '📄 EXPORTER EN PDF';
