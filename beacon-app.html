@@ -345,7 +345,7 @@
     </div>
   </footer>
 
-  <!-- SCRIPT CON MOTOR PROPORCIONAL MULTILINGÜE -->
+  <!-- SCRIPT CON MOTOR PROPORCIONAL MULTILINGÜE Y REFUTACIÓN DINÁMICA -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
@@ -385,11 +385,17 @@
 
         if (typeof score === 'string') {
           letter = score.toUpperCase();
-          if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
-          if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
-          if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
-          if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
+        } else if (typeof score === 'number') {
+          if (score <= 25) letter = 'A';
+          else if (score <= 50) letter = 'B';
+          else if (score <= 75) letter = 'C';
+          else letter = 'D';
         }
+
+        if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
+        if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
+        if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
+        if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
 
         currentScoreLetter = letter;
         ethicScore.innerText = `Ethic-Score™: ${letter}`;
@@ -398,19 +404,30 @@
         ethicScore.style.color = '#030a12';
       }
 
-      // 🚩 Banderas / Flags
+      // 🚩 Banderas / Flags limpias sin textos pegados
       function renderFlags(flagsArray) {
         if (!detectedFlags) return;
         detectedFlags.innerHTML = '';
-        if (!flagsArray || flagsArray.length === 0) {
+        
+        let normalizedFlags = [];
+        if (typeof flagsArray === 'string') {
+          normalizedFlags = flagsArray.split(',').map(f => f.trim());
+        } else if (Array.isArray(flagsArray)) {
+          normalizedFlags = flagsArray;
+        }
+
+        if (!normalizedFlags || normalizedFlags.length === 0) {
           detectedFlags.innerHTML = '<span class="flag-badge">ANALYSE PRÊTE</span>';
           return;
         }
-        flagsArray.forEach(flag => {
-          const span = document.createElement('span');
-          span.className = 'flag-badge';
-          span.innerText = flag.toUpperCase();
-          detectedFlags.appendChild(span);
+
+        normalizedFlags.forEach(flag => {
+          if (flag) {
+            const span = document.createElement('span');
+            span.className = 'flag-badge';
+            span.innerText = flag.toUpperCase();
+            detectedFlags.appendChild(span);
+          }
         });
       }
 
@@ -451,72 +468,27 @@
             if (!response.ok) throw new Error('Erreur API');
 
             const data = await response.json();
-            applyEthicBadge(data.score || data.grade || 'C');
+            applyEthicBadge(data.ethic_letter || data.score || 'C');
             analysisReport.innerText = data.analysis || data.report;
             renderFlags(data.detected_flags || ['SIGNAL_ANALYSE']);
 
           } catch (err) {
-            // MOTOR FALLBACK LOCAL PROPORCIONAL Y 100% EN FRANCÉS
-            const lower = text.toLowerCase();
-            const textLength = text.length;
-            const isShortText = textLength < 180; // Detección de texto corto / redes sociales
-
-            const hasPseudo = lower.includes('quantique') || lower.includes('hypnose') || lower.includes('vibratoire') || lower.includes('cellulaire') || lower.includes('inverser');
-            const hasCoercion = lower.includes('maintenant') || lower.includes('seulement') || lower.includes('urgent') || lower.includes('inscrivez-vous') || lower.includes('places limitées');
-            const hasPosture = lower.includes('exclusive') || lower.includes('secret') || lower.includes('révolutionnaire') || lower.includes('unique');
-
-            let flags = [];
-            let finalGrade = 'A';
-
-            if (hasPseudo) flags.push('PSEUDO_SCIENCE');
-            if (hasCoercion) flags.push('COERCITION_MENTALE');
-            if (hasPosture) flags.push('POSTURE_ET_BLUFF');
-
-            if (hasPseudo || (hasCoercion && hasPosture)) {
-              finalGrade = 'D';
-            } else if (hasCoercion || hasPosture) {
-              finalGrade = 'C';
-            } else if (textLength > 50) {
-              finalGrade = 'B';
-            } else {
-              finalGrade = 'A';
-            }
-
-            applyEthicBadge(finalGrade);
-            renderFlags(flags.length > 0 ? flags : ['COMMUNICATION_NEUTRE']);
-
-            let reportContent = '';
-
-            // FORMATO CORTO (Express / Redes Sociales)
-            if (isShortText) {
-              reportContent = 
+            console.error(err);
+            applyEthicBadge('C');
+            renderFlags(['ERREUR_CONNEXION']);
+            
+            analysisReport.innerText = 
 `==================================================
-[AUDIT BEACON — FORMAT EXPRESS / ÉVALUATION RAPIDE]
+[AUDIT BEACON — MODE DE SECOURS DE CONNEXION]
 ==================================================
 
-1. DIAGNOSTIC DU SIGNAL (RANG : ${finalGrade})
-${hasPseudo ? '• RHÉTORIQUE : Usage du jargon scientifique ("quantique", "vibratoire") détourné sans fondement biologique.\n' : ''}${hasCoercion ? '• COERCITION : Pression temporelle ou incitation à l\'urgence émotionnelle.\n' : ''}${hasPosture ? '• POSTURE : Promesse de résultat extraordinaire sans méthodologie explicite.\n' : ''}${!hasPseudo && !hasCoercion && !hasPosture ? '• ANALYSE : Signal court sans marqueur explicite de manipulation.\n' : ''}
-2. BIAIS RHÉTORIQUES IDENTIFIÉS
-${hasPseudo ? '• Biais d\'autorité scientifique fictive / Illusion de contrôle.\n' : ''}${hasCoercion ? '• Aversion à la perte et urgence artificielle.\n' : ''}${!hasPseudo && !hasCoercion ? '• Aucun biais critique détecté dans cette accroche.\n' : ''}
-3. RÈGLE DU BOUCLIER (RÉFLEXE CRITIQUE)
-💡 "La charge de la preuve incombe toujours à l'émetteur. Sans étude clinique contrôlée et vérifiable, cette déclaration relève de la simple affirmation commerciale."`;
+⚠️ Impossible de joindre le serveur BEACON principal sur Render.
 
-            // FORMATO LARGO (Artículos, Documentos)
-            } else {
-              reportContent = 
-`==================================================
-[AUDIT CORTICAL MÉTACONCEPTUEL — RANG : ${finalGrade}]
-==================================================
+1. DIAGNOSTIC DU SIGNAL
+• Connexion réseau interrompue ou temps d'attente dépassé du serveur.
 
-1. ANATOMIE DU DISCOURS
-${hasPseudo ? '• Pseudo-Science & Mysticisme : DÉTECTÉ 🚨\n  Emploi de concepts scientifiques détournés pour simuler une caution médicale.\n\n' : ''}${hasCoercion ? '• Coercition & Pression : DÉTECTÉ ⚠️\n  Cadrage incitant à une décision impulsive.\n\n' : ''}${hasPosture ? '• Posture d\'Autorité & Promesse : DÉTECTÉ ⚠️\n  Affirmation de résultats exceptionnels sans présentation de preuves factuelles.\n\n' : ''}${!hasPseudo && !hasCoercion && !hasPosture ? '• Structure informative standard ne présentant pas d\'anomalie rhétorique majeure.\n\n' : ''}
-2. BIAIS COGNITIFS ET CADRAGE
-${hasPseudo ? '• Biais d\'illusion scientifique et appel à la crédulité.\n' : ''}${hasCoercion ? '• Exploitation du biais d\'urgence et de la peur de rater une opportunité.\n' : ''}${!hasPseudo && !hasCoercion ? '• Discours neutre et factuel.\n' : ''}
-3. ÉVALUATION MÉTACOMMUNICATIONNELLE
-${finalGrade === 'D' ? '🚨 Vigilance maximale : Absence de garanties méthodologiques. Risque élevé de manipulation cognitive.' : ''}${finalGrade === 'C' ? '⚠️ Attention requise : Vérifier l\'origine des affirmations avant tout engagement.' : ''}${finalGrade === 'B' || finalGrade === 'A' ? '✅ Communication conforme aux standards de neutralité.' : ''}`;
-            }
-
-            analysisReport.innerText = reportContent;
+2. RECOMMANDATION
+• Veuillez vérifier votre connexion Internet et cliquer à nouveau sur BEACON-IZE.`;
           } finally {
             btnAnalyze.disabled = false;
             btnAnalyze.innerText = '⚡ BEACON-IZE';
@@ -525,11 +497,13 @@ ${finalGrade === 'D' ? '🚨 Vigilance maximale : Absence de garanties méthodol
         });
       }
 
-      // 🔄 RÉFUTER / CHALLENGER
+      // 🔄 RÉFUTER / CHALLENGER (CORREGIDO SIN TEXTOS HARDCODEADOS)
       if (btnRefute) {
         btnRefute.addEventListener('click', async () => {
-          if (!lastAnalyzedText) {
-            alert('Veuillez d\'abord analyser un texte.');
+          const currentAnalysis = analysisReport.innerText;
+
+          if (!currentAnalysis || currentAnalysis.includes("En attente d'analyse")) {
+            alert('Veuillez d\'abord effectuer une analyse.');
             return;
           }
 
@@ -540,21 +514,24 @@ ${finalGrade === 'D' ? '🚨 Vigilance maximale : Absence de garanties méthodol
             const res = await fetch(`${API_BASE_URL}/refute`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: lastAnalyzedText, lang: 'fr' })
+              body: JSON.stringify({ 
+                analysis: currentAnalysis,
+                text: lastAnalyzedText, 
+                lang: 'fr' 
+              })
             });
 
             if (!res.ok) throw new Error('Erreur API Refute');
             const data = await res.json();
-            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (CONTRE-RHÉTORIQUE):\n========================================\n${data.refutation || data.reply}`;
+            
+            const refutationContent = data.refutation || data.reply || 'Aucune contre-argumentation générée.';
+            
+            // Añadir el desafío de refutación dinámica al final del informe actual
+            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationContent}`;
 
           } catch (err) {
-            analysisReport.innerText += 
-`\n\n========================================
-🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):
-========================================
-1. PREUVE SCIENTIFIQUE : Aucune réorganisation cellulaire ou inversion biologique n'a été prouvée cliniquement par suggestion hypnotique.
-2. DÉCRYPTAGE RHÉTORIQUE : Le terme "quantique" est détourné de la physique fondamentale pour servir d'habillage séduisant.
-3. RATIONALITÉ CRITIQUE : La création d'une urgence temporelle vise uniquement à court-circuiter la phase de réflexion du consommateur.`;
+            console.error("Erreur de réfutation:", err);
+            alert("Erreur lors de la génération de la réfutation. Veuillez rééessayer.");
           } finally {
             btnRefute.disabled = false;
             btnRefute.innerText = '🔄 RÉFUTER / CHALLENGER';
@@ -562,80 +539,80 @@ ${finalGrade === 'D' ? '🚨 Vigilance maximale : Absence de garanties méthodol
         });
       }
 
-      // 📄 EXPORTAR PDF DIRECTO (CON PREVENCIÓN DE INYECCIÓN Y FORMATO SEGURO)
-if (btnPdf) {
-  btnPdf.addEventListener('click', () => {
-    const reportText = analysisReport.innerText;
-    if (!reportText || reportText.includes("En attente d'analyse")) {
-      alert('Aucun rapport à exporter.');
-      return;
-    }
+      // 📄 EXPORTAR PDF DIRECTO
+      if (btnPdf) {
+        btnPdf.addEventListener('click', () => {
+          const reportText = analysisReport.innerText;
+          if (!reportText || reportText.includes("En attente d'analyse")) {
+            alert('Aucun rapport à exporter.');
+            return;
+          }
 
-    btnPdf.disabled = true;
-    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
+          btnPdf.disabled = true;
+          btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
 
-    // 1. Crear contenedor HTML con soporte para saltos de línea preservados
-    const element = document.createElement('div');
-    element.style.padding = '30px';
-    element.style.fontFamily = "'Courier New', monospace";
-    element.style.backgroundColor = '#030a12';
-    element.style.color = '#e0e0e0';
-    element.style.border = '2px solid #00f0ff';
-    element.style.borderRadius = '8px';
+          const element = document.createElement('div');
+          element.style.padding = '30px';
+          element.style.fontFamily = "'Courier New', monospace";
+          element.style.backgroundColor = '#030a12';
+          element.style.color = '#e0e0e0';
+          element.style.border = '2px solid #00f0ff';
+          element.style.borderRadius = '8px';
 
-    const headerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00f0ff; padding-bottom: 15px; margin-bottom: 20px;">
-        <div>
-          <h1 style="color: #00f0ff; font-size: 20px; margin: 0; letter-spacing: 2px;">POLETHIC FRANCE — BEACON LAB</h1>
-          <p style="color: #00ff88; font-size: 11px; margin-top: 4px;">RAPPORT D'AUDIT COGNITIF ET MÉTACOMMUNICATIONNEL</p>
-        </div>
-        <div style="background-color: #00f0ff; color: #030a12; padding: 8px 16px; font-weight: bold; font-size: 16px; border-radius: 4px;">
-          ETHIC-SCORE™: ${currentScoreLetter}
-        </div>
-      </div>
-    `;
+          const headerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00f0ff; padding-bottom: 15px; margin-bottom: 20px;">
+              <div>
+                <h1 style="color: #00f0ff; font-size: 20px; margin: 0; letter-spacing: 2px;">POLETHIC FRANCE — BEACON LAB</h1>
+                <p style="color: #00ff88; font-size: 11px; margin-top: 4px;">RAPPORT D'AUDIT COGNITIF ET MÉTACOMMUNICATIONNEL</p>
+              </div>
+              <div style="background-color: #00f0ff; color: #030a12; padding: 8px 16px; font-weight: bold; font-size: 16px; border-radius: 4px;">
+                ETHIC-SCORE™: ${currentScoreLetter}
+              </div>
+            </div>
+          `;
 
-    const reportBox = document.createElement('div');
-    reportBox.style.backgroundColor = 'rgba(1, 6, 12, 0.9)';
-    reportBox.style.borderLeft = '4px solid #00ff88';
-    reportBox.style.padding = '20px';
-    reportBox.style.fontSize = '13px';
-    reportBox.style.lineHeight = '1.6';
-    reportBox.style.whiteSpace = 'pre-wrap';
-    reportBox.style.color = '#d0e0e0';
-    reportBox.style.marginBottom = '25px';
-    reportBox.textContent = reportText; // Se usa textContent por seguridad
+          const reportBox = document.createElement('div');
+          reportBox.style.backgroundColor = 'rgba(1, 6, 12, 0.9)';
+          reportBox.style.borderLeft = '4px solid #00ff88';
+          reportBox.style.padding = '20px';
+          reportBox.style.fontSize = '13px';
+          reportBox.style.lineHeight = '1.6';
+          reportBox.style.whiteSpace = 'pre-wrap';
+          reportBox.style.color = '#d0e0e0';
+          reportBox.style.marginBottom = '25px';
+          reportBox.textContent = reportText;
 
-    const footerHTML = `
-      <div style="border-top: 1px solid rgba(0, 240, 255, 0.3); padding-top: 15px; text-align: center; font-size: 10px; color: #888;">
-        <p>© 2026 POLETHIC France — Organisme d'autodéfense cognitive.</p>
-        <p>Document généré automatiquement via POLETHIC BEACON Engine.</p>
-      </div>
-    `;
+          const footerHTML = `
+            <div style="border-top: 1px solid rgba(0, 240, 255, 0.3); padding-top: 15px; text-align: center; font-size: 10px; color: #888;">
+              <p>© 2026 POLETHIC France — Organisme d'autodéfense cognitive.</p>
+              <p>Document généré automatiquement via POLETHIC BEACON Engine.</p>
+            </div>
+          `;
 
-    element.innerHTML = headerHTML;
-    element.appendChild(reportBox);
-    element.insertAdjacentHTML('beforeend', footerHTML);
+          element.innerHTML = headerHTML;
+          element.appendChild(reportBox);
+          element.insertAdjacentHTML('beforeend', footerHTML);
 
-    const options = {
-      margin:       10,
-      filename:     `Audit_BEACON_Score_${currentScoreLetter}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, backgroundColor: '#030a12' },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+          const options = {
+            margin:       10,
+            filename:     `Audit_BEACON_Score_${currentScoreLetter}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, backgroundColor: '#030a12' },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
 
-    html2pdf().set(options).from(element).save().then(() => {
-      btnPdf.disabled = false;
-      btnPdf.innerText = '📄 EXPORTER EN PDF';
-    }).catch(err => {
-      console.error(err);
-      alert('Erreur lors de la création du PDF.');
-      btnPdf.disabled = false;
-      btnPdf.innerText = '📄 EXPORTER EN PDF';
-    });
-  });
-}
+          html2pdf().set(options).from(element).save().then(() => {
+            btnPdf.disabled = false;
+            btnPdf.innerText = '📄 EXPORTER EN PDF';
+          }).catch(err => {
+            console.error(err);
+            alert('Erreur lors de la création du PDF.');
+            btnPdf.disabled = false;
+            btnPdf.innerText = '📄 EXPORTER EN PDF';
+          });
+        });
+      }
+
       // 🗑️ PURGAR
       if (btnPurge) {
         btnPurge.addEventListener('click', () => {
@@ -648,5 +625,3 @@ if (btnPdf) {
       }
     });
   </script>
-</body>
-</html>
