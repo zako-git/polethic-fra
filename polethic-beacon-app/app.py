@@ -272,121 +272,123 @@ def is_heading_line(original_line):
     return stripped.startswith("**") and stripped.rstrip().endswith("**")
 
 
-@app.route("/analyze", methods=["POST"])
-def analyze():
+@app.route("/export_pdf", methods=["POST"])
+def export_pdf():
     try:
-        lang = "fr"
-        if request.is_json:
-            data = request.get_json() or {}
-            user_input = data.get("text", "").strip()
-            lang = str(data.get("lang", "fr")).lower()
-            file = None
+        data = request.get_json() or {}
+        raw_score = data.get("score", 0)
+        raw_analysis = (data.get("analysis") or "").replace("<br>", "\n").replace("<br/>", "\n")
+
+        if not raw_analysis.strip():
+            return jsonify({"error": "No hay análisis para exportar."}), 400
+
+        # Extraer número o asignar 0 por defecto de forma segura
+        try:
+            digits = re.sub(r"[^\d]", "", str(raw_score))
+            numeric_score = int(digits) if digits else 0
+        except ValueError:
+            numeric_score = 0
+
+        ethic_letter = data.get("ethic_letter") or get_ethic_letter(numeric_score)
+
+        pdf_buffer = io.BytesIO()
+        doc = SimpleDocTemplate(
+            pdf_buffer,
+            pagesize=letter,
+            rightMargin=40, leftMargin=40,
+            topMargin=40, bottomMargin=40
+        )
+
+        story = []
+
+        # Colores
+        primary_blue = colors.HexColor("#0284c7")
+        text_body = colors.HexColor("#334155")
+        heading_color = colors.HexColor("#0f172a")
+
+        if ethic_letter == "A":
+            score_color = colors.HexColor("#059669")
+        elif ethic_letter == "B":
+            score_color = colors.HexColor("#d97706")
+        elif ethic_letter == "C":
+            score_color = colors.HexColor("#ea580c")
         else:
-            user_input = request.form.get("text", "").strip()
-            lang = str(request.form.get("lang", "fr")).lower()
-            file = request.files.get('file')
+            score_color = colors.HexColor("#dc2626")
 
-        if lang not in TEMPLATES:
-            lang = "fr"
+        # Estilos
+        title_style = ParagraphStyle(
+            'DocTitle',
+            fontName='Helvetica-Bold',
+            fontSize=16,
+            leading=20,
+            textColor=primary_blue
+        )
+        subtitle_style = ParagraphStyle(
+            'DocSubtitle',
+            fontName='Helvetica-Bold',
+            fontSize=9,
+            leading=12,
+            textColor=colors.HexColor("#64748b")
+        )
+        score_style = ParagraphStyle(
+            'ScoreDisplay',
+            fontName='Helvetica-Bold',
+            fontSize=13,
+            leading=16,
+            textColor=score_color,
+            alignment=2
+        )
+        heading_style = ParagraphStyle(
+            'SectionHeading',
+            fontName='Helvetica-Bold',
+            fontSize=11,
+            leading=15,
+            textColor=heading_color,
+            spaceBefore=12,
+            spaceAfter=4,
+        )
+        body_style = ParagraphStyle(
+            'ReportBody',
+            fontName='Helvetica',
+            fontSize=9.5,
+            leading=14,
+            textColor=text_body
+        )
 
-        final_content = user_input
-        source_type = "plain_text"
-        image_base64 = None
+        # Construcción PDF
+        story.append(Paragraph("POLETHIC FRANCE — BEACON LAB", title_style))
+        story.append(Paragraph("RAPPORT D'AUDIT METACOGNITIF ET METACONTEXTUEL", subtitle_style))
+        story.append(Spacer(1, 6))
+        story.append(Paragraph(f"ETHIC-SCORE: {ethic_letter} ({numeric_score}/100)", score_style))
+        story.append(Spacer(1, 12))
 
-        if user_input and ("youtube.com" in user_input or "youtu.be" in user_input):
-            transcript = extract_transcript(user_input)
-            if transcript:
-                final_content = transcript
-                source_type = "video_transcript"
+        for raw_line in raw_analysis.split('\n'):
+            line_str = raw_line.strip()
+            if not line_str:
+                continue
+            
+            clean_line = sanitize_for_pdf(line_str)
+            if not clean_line:
+                continue
 
-        if file:
-            try:
-                image_bytes = file.read()
-                image_base64 = base64.b64encode(image_bytes).decode("utf-8")
-                source_type = "image_file"
-            except Exception as img_err:
-                print(f"[Image Read Error]: {img_err}")
+            if is_heading_line(line_str):
+                story.append(Paragraph(clean_line, heading_style))
+            else:
+                story.append(Paragraph(clean_line, body_style))
+                story.append(Spacer(1, 4))
 
-        if not final_content and not image_base64:
-            return jsonify({
-                "score": 0,
-                "analysis": "Aucun contenu fourni / No content provided.",
-                "source_type": source_type,
-                "detected_flags": []
-            }), 400
+        doc.build(story)
+        pdf_buffer.seek(0)
 
-        local_penalty, local_flags = apply_local_rules(final_content)
-
-        llm_score = 30
-        detected_flags = list(local_flags)
-        final_report = "Error: HF_TOKEN client not initialized."
-
-        if client:
-            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}\nMandatory Output Language: {lang.upper()}"
-
-            system_instruction = TEMPLATES[lang]["system"]
-
-            messages = [
-                {"role": "system", "content": system_instruction},
-                {"role": "user", "content": prompt_user}
-            ]
-
-            try:
-                response = client.chat.completions.create(
-                    model="Qwen/Qwen2.5-Coder-32B-Instruct",
-                    messages=messages,
-                    max_tokens=1200
-                )
-                raw_text = response.choices[0].message.content
-
-                score_match = re.search(r"<score>\s*(\d+)\s*</score>", raw_text, re.IGNORECASE)
-                flags_match = re.search(r"<flags>(.*?)</flags>", raw_text, re.DOTALL | re.IGNORECASE)
-
-                if score_match:
-                    llm_score = int(score_match.group(1))
-                    raw_text = re.sub(r"<score>\s*\d+\s*</score>", "", raw_text, flags=re.IGNORECASE)
-
-                if flags_match:
-                    parsed_flags = [f.strip().lower() for f in flags_match.group(1).split(",") if f.strip()]
-                    detected_flags = list(set(detected_flags + parsed_flags))
-                    raw_text = re.sub(r"<flags>.*?</flags>", "", raw_text, flags=re.IGNORECASE | re.DOTALL)
-
-                final_report = raw_text.strip()
-
-            except Exception as e:
-                print(f"[HuggingFace API Error]: {e}")
-                final_report = f"Audit Completed (Fallback mode). Error: {str(e)}"
-                llm_score = 40
-        else:
-            final_report = "[DEMO MODE - Set HF_TOKEN in environment]"
-            llm_score = 30
-            detected_flags = ["authority_transfer", "psnc"]
-
-        combined_score = max(0, min(100, llm_score + local_penalty))
-        ethic_letter = get_ethic_letter(combined_score)
-
-        save_audit("metacognitive_beacon", source_type, final_content or "Image Uploaded", combined_score, final_report)
-
-        # Formateo ultra-limpio para evitar que las flags salgan pegadas
-        formatted_flags_list = [f.upper() for f in detected_flags if f]
-        formatted_flags_str = ", ".join(formatted_flags_list)
-
-        return jsonify({
-            "score": combined_score,
-            "ethic_letter": ethic_letter,
-            "analysis": final_report,
-            "source_type": source_type,
-            "detected_flags": formatted_flags_str
-        }), 200
-
-    except Exception as general_err:
-        print(f"[Analyze Global Error]: {str(general_err)}")
-        return jsonify({
-            "score": 0,
-            "ethic_letter": "A",
-            "analysis": f"Internal Server Error: {str(general_err)}",
-            "detected_flags": ""
-        }), 500
+        return send_file(
+            pdf_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'Audit_BEACON_{ethic_letter}.pdf'
+        )
+    except Exception as e:
+        print(f"[export_pdf error]: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/refute", methods=["POST"])
