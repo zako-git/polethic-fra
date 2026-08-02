@@ -218,6 +218,60 @@ TEMPLATES = {
 }
 
 
+# =====================================================================
+# SANEADO DE TEXTO PARA PDF (ReportLab)
+# =====================================================================
+import unicodedata
+
+_EMOJI_PATTERN = re.compile(
+    "["
+    "\U0001F300-\U0001FAFF"  # símbolos, pictogramas, emoji varios
+    "\U00002600-\U000027BF"  # símbolos misceláneos / dingbats
+    "\U0001F1E6-\U0001F1FF"  # banderas
+    "\U0000FE0F"             # variation selector (el "️" de 🏷️)
+    "]+",
+    flags=re.UNICODE
+)
+
+
+def sanitize_for_pdf(text):
+    """
+    Prepara texto libre (venido del LLM) para insertarlo en un
+    reportlab.Paragraph, que interpreta el contenido como XML:
+    1) Quita emojis/pictogramas que Helvetica (WinAnsi) no sabe dibujar
+       y que pueden romper la codificación -> texto/página en blanco.
+    2) Escapa &, < y > para que no rompan el parser XML de Paragraph.
+    3) Convierte **negrita** (markdown) en <b>negrita</b> real.
+    """
+    if not text:
+        return ""
+
+    # 1) fuera emojis/pictogramas
+    text = _EMOJI_PATTERN.sub("", text)
+
+    # 2) fuera cualquier otro carácter no soportado por WinAnsiEncoding
+    #    (deja intactas las tildes/ñ/ü que sí soporta Latin-1)
+    text = "".join(
+        ch for ch in text
+        if unicodedata.category(ch)[0] != "C"  # caracteres de control
+        and (ord(ch) < 0x2500 or ch in "™")     # descarta symbol blocks raros
+    )
+
+    # 3) escapar XML antes de reinsertar nuestras propias etiquetas
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    # 4) **negrita** -> <b>negrita</b>
+    text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+
+    return text.strip()
+
+
+def is_heading_line(original_line):
+    """Detecta líneas de cabecera de fase (van envueltas en ** **)."""
+    stripped = _EMOJI_PATTERN.sub("", original_line).strip()
+    return stripped.startswith("**") and stripped.rstrip().endswith("**")
+
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
@@ -376,7 +430,10 @@ def export_pdf():
     try:
         data = request.get_json() or {}
         score = data.get("score", "0")
-        analysis = data.get("analysis", "").replace("<br>", "\n").replace("<br/>", "\n")
+        raw_analysis = (data.get("analysis") or "").replace("<br>", "\n").replace("<br/>", "\n")
+
+        if not raw_analysis.strip():
+            return jsonify({"error": "No hay análisis para exportar."}), 400
 
         pdf_buffer = io.BytesIO()
         doc = SimpleDocTemplate(
@@ -397,60 +454,78 @@ def export_pdf():
 
         # Colores para fondo claro
         primary_blue = colors.HexColor("#0284c7")
-        title_dark = colors.HexColor("#0f172a")
         text_body = colors.HexColor("#334155")
-        
+        heading_color = colors.HexColor("#0f172a")
+
         # Color del Score según la severidad
         if ethic_letter == "A":
-            score_color = colors.HexColor("#059669") # Verde
+            score_color = colors.HexColor("#059669")  # Verde
         elif ethic_letter == "B":
-            score_color = colors.HexColor("#d97706") # Amarillo
+            score_color = colors.HexColor("#d97706")  # Amarillo
         elif ethic_letter == "C":
-            score_color = colors.HexColor("#ea580c") # Naranja
+            score_color = colors.HexColor("#ea580c")  # Naranja
         else:
-            score_color = colors.HexColor("#dc2626") # Rojo
+            score_color = colors.HexColor("#dc2626")  # Rojo
 
         # Estilos tipográficos
         title_style = ParagraphStyle(
-            'DocTitle', 
-            fontName='Helvetica-Bold', 
-            fontSize=18, 
-            leading=22, 
+            'DocTitle',
+            fontName='Helvetica-Bold',
+            fontSize=18,
+            leading=22,
             textColor=primary_blue
         )
         subtitle_style = ParagraphStyle(
-            'DocSubtitle', 
-            fontName='Helvetica-Bold', 
-            fontSize=9, 
-            leading=12, 
+            'DocSubtitle',
+            fontName='Helvetica-Bold',
+            fontSize=9,
+            leading=12,
             textColor=colors.HexColor("#64748b")
         )
         score_style = ParagraphStyle(
-            'ScoreDisplay', 
-            fontName='Helvetica-Bold', 
-            fontSize=14, 
-            leading=18, 
-            textColor=score_color, 
+            'ScoreDisplay',
+            fontName='Helvetica-Bold',
+            fontSize=14,
+            leading=18,
+            textColor=score_color,
             alignment=2
         )
+        heading_style = ParagraphStyle(
+            'SectionHeading',
+            fontName='Helvetica-Bold',
+            fontSize=11.5,
+            leading=16,
+            textColor=heading_color,
+            spaceBefore=10,
+            spaceAfter=4,
+            borderColor=primary_blue,
+            borderWidth=0,
+        )
         body_style = ParagraphStyle(
-            'ReportBody', 
-            fontName='Helvetica', 
-            fontSize=10, 
-            leading=15, 
+            'ReportBody',
+            fontName='Helvetica',
+            fontSize=10,
+            leading=15,
             textColor=text_body
         )
 
         # Construcción del documento
         story.append(Paragraph("POLETHIC FRANCE — BEACON LAB", title_style))
-        story.append(Paragraph("RAPPORT D'AUDIT MÉTACOGNITIF ET MÉTACONTEXTUEL", subtitle_style))
+        story.append(Paragraph("RAPPORT D'AUDIT METACOGNITIF ET METACONTEXTUEL", subtitle_style))
         story.append(Spacer(1, 4))
-        story.append(Paragraph(f"ETHIC-SCORE™: {ethic_letter} ({numeric_score}/100)", score_style))
+        story.append(Paragraph(f"ETHIC-SCORE: {ethic_letter} ({numeric_score}/100)", score_style))
         story.append(Spacer(1, 15))
 
-        for p_text in analysis.split('\n'):
-            if p_text.strip():
-                story.append(Paragraph(p_text.strip(), body_style))
+        for raw_line in raw_analysis.split('\n'):
+            if not raw_line.strip():
+                continue
+            clean_line = sanitize_for_pdf(raw_line)
+            if not clean_line:
+                continue
+            if is_heading_line(raw_line):
+                story.append(Paragraph(clean_line, heading_style))
+            else:
+                story.append(Paragraph(clean_line, body_style))
                 story.append(Spacer(1, 6))
 
         doc.build(story)
@@ -463,6 +538,7 @@ def export_pdf():
             download_name=f'Audit_BEACON_{ethic_letter}.pdf'
         )
     except Exception as e:
+        print(f"[export_pdf] error: {e}")
         return jsonify({"error": str(e)}), 500
 
 
