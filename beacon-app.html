@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BEACON LAB | POLETHIC France</title>
 
+  <!-- Librería HTML2PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  
-  <link rel="stylesheet" href="css/styles.css">
 
   <style>
     /* ==========================================
@@ -38,6 +37,71 @@
         radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
         radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
       background-attachment: fixed;
+    }
+
+    /* CABECERA Y NAVEGACIÓN */
+    header {
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      background: rgba(3, 10, 18, 0.9);
+      padding: 15px 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .header-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo-title {
+      font-family: var(--font-cyber);
+      color: var(--cyber-cyan);
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      color: #a0aec0;
+      text-decoration: none;
+      font-family: var(--font-cyber);
+      font-size: 0.85rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      color: var(--cyber-cyan);
+      text-shadow: 0 0 8px var(--cyber-cyan);
+    }
+
+    .lang-selector {
+      font-family: var(--font-cyber);
+      font-size: 0.85rem;
+      color: #a0aec0;
+    }
+
+    .lang-btn {
+      color: #a0aec0;
+      text-decoration: none;
+    }
+
+    .lang-btn.active {
+      color: var(--cyber-cyan);
+      font-weight: bold;
     }
 
     /* TITULAR BEACON LAB */
@@ -73,10 +137,6 @@
       max-width: 850px;
       margin: 0 auto 30px auto;
       backdrop-filter: blur(8px);
-    }
-
-    .textarea-container {
-      margin-bottom: 15px;
     }
 
     textarea#user-input {
@@ -158,7 +218,7 @@
       letter-spacing: 1px;
     }
 
-    /* TARJETA DE RESULTADOS CON BOTONES */
+    /* RESULTADOS */
     .results-card {
       background: rgba(15, 23, 42, 0.9);
       border: 1px solid var(--cyber-green);
@@ -236,6 +296,7 @@
       gap: 8px;
       flex-wrap: wrap;
     }
+
     .flag-badge {
       font-family: var(--font-cyber);
       font-size: 0.75rem;
@@ -247,11 +308,45 @@
       color: var(--cyber-cyan);
       background: rgba(0, 240, 255, 0.1);
     }
+
+    /* FOOTER */
+    footer {
+      margin-top: 50px;
+      padding: 30px 0;
+      border-top: 1px solid rgba(0, 240, 255, 0.1);
+      text-align: center;
+    }
+
+    .footer-shield {
+      max-width: 600px;
+      margin: 0 auto 20px auto;
+      padding: 15px;
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    .shield-title {
+      font-family: var(--font-cyber);
+      color: var(--cyber-green);
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .shield-disclaimer {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 5px;
+    }
+
+    .copyright {
+      font-family: var(--font-cyber);
+      font-size: 0.75rem;
+      color: #64748b;
+    }
   </style>
 </head>
 <body>
-
-  <div id="stars-container"></div>
 
   <!-- CABECERA -->
   <header>
@@ -269,9 +364,9 @@
 
       <div class="lang-selector">
         <a href="#" class="lang-btn active" id="btn-fr">FR</a>
-        <span class="lang-separator">|</span>
+        <span>|</span>
         <a href="#" class="lang-btn" id="btn-es">ES</a>
-        <span class="lang-separator">|</span>
+        <span>|</span>
         <a href="#" class="lang-btn" id="btn-en">EN</a>
       </div>
     </div>
@@ -331,21 +426,17 @@
 
   <!-- FOOTER -->
   <footer>
-    <div class="container footer-content">
+    <div class="container">
       <div class="footer-shield">
-        <div class="shield-badge">
-          <span class="shield-title">Bouclier de Protection Professionnelle</span>
-        </div>
+        <div class="shield-title">Bouclier de Protection Professionnelle</div>
         <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
       </div>
 
-      <div class="footer-bottom">
-        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
-      </div>
+      <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
     </div>
   </footer>
 
- <!-- SCRIPT CON MOTOR PROPORCIONAL MULTILINGÜE Y REFUTACIÓN DINÁMICA -->
+  <!-- TODO EL JAVASCRIPT VA DENTRO DE ESTA ÚNICA ETIQUETA -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
@@ -366,7 +457,7 @@
       let currentScoreLetter = 'C';
       let lastAnalyzedText = '';
 
-      // 📎 Adjuntar archivo feedback
+      // 📎 Adjuntar archivo
       if (userFile) {
         userFile.addEventListener('change', (e) => {
           if (e.target.files.length > 0) {
@@ -377,7 +468,7 @@
         });
       }
 
-      // 🎯 Insignia de Ethic-Score
+      // 🎯 Badge de Ethic-Score
       function applyEthicBadge(score) {
         let letter = 'C';
         let color = '#ff9900';
@@ -404,7 +495,7 @@
         ethicScore.style.color = '#030a12';
       }
 
-      // 🚩 Banderas / Flags
+      // 🚩 Rendering Flags
       function renderFlags(flagsArray) {
         if (!detectedFlags) return;
         detectedFlags.innerHTML = '';
@@ -431,7 +522,7 @@
         });
       }
 
-      // ⚡ BEACON-IZE (Análisis)
+      // ⚡ BEACON-IZE
       if (btnAnalyze) {
         btnAnalyze.addEventListener('click', async () => {
           const text = userInput.value.trim();
@@ -530,7 +621,7 @@
 
           } catch (err) {
             console.error("Erreur de réfutation:", err);
-            alert("Erreur lors de la génération de la réfutation. Veuillez rééessayer.");
+            alert("Erreur lors de la génération de la réfutation. Veuillez réessayer.");
           } finally {
             btnRefute.disabled = false;
             btnRefute.innerText = '🔄 RÉFUTER / CHALLENGER';
@@ -538,7 +629,7 @@
         });
       }
 
-      // 📄 EXPORTAR Y DESCARGAR PDF DIRECTO
+      // 📄 EXPORTAR A PDF
       if (btnPdf) {
         btnPdf.addEventListener('click', async () => {
           const reportText = analysisReport.innerText;
@@ -625,134 +716,6 @@
         });
       }
 
-      // 🗑️ PURGAR / LIMPIAR
-      if (btnPurge) {
-        btnPurge.addEventListener('click', () => {
-          resultsPanel.style.display = 'none';
-          userInput.value = '';
-          if (userFile) { userFile.value = ''; fileNameDisplay.innerText = 'Joindre fichier'; }
-          lastAnalyzedText = '';
-          analysisReport.innerText = '';
-        });
-      }
-    });
-  </script>
-
-    // 📄 EXPORTAR Y DESCARGAR PDF DIRECTO (SIN DIÁLOGO DE IMPRESIÓN)
-if (btnPdf) {
-  btnPdf.addEventListener('click', async () => {
-    const reportText = analysisReport.innerText;
-
-    if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
-      alert('Aucun rapport à exporter.');
-      return;
-    }
-
-    btnPdf.disabled = true;
-    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
-
-    // 1. Asignar color dinámico según la nota Ethic-Score
-    let scoreColor = '#059669'; // Verde (A)
-    if (currentScoreLetter === 'B') scoreColor = '#d97706'; // Amarillo
-    if (currentScoreLetter === 'C') scoreColor = '#ea580c'; // Naranja
-    if (currentScoreLetter === 'D') scoreColor = '#dc2626'; // Rojo
-
-    // 2. Crear un contenedor con fondo blanco y estilos explícitos
-    // IMPORTANTE: Se renderiza visible en pantalla pero tapado temporalmente para no parpadear la UI
-    const pdfContainer = document.createElement('div');
-    pdfContainer.style.position = 'fixed';
-    pdfContainer.style.top = '0';
-    pdfContainer.style.left = '0';
-    pdfContainer.style.width = '750px'; // Ancho estándar para A4
-    pdfContainer.style.backgroundColor = '#ffffff';
-    pdfContainer.style.color = '#0f172a';
-    pdfContainer.style.padding = '30px';
-    pdfContainer.style.fontFamily = 'Arial, sans-serif';
-    pdfContainer.style.zIndex = '99999'; // Traer al frente para que html2canvas lo capture perfectamente
-    pdfContainer.style.boxSizing = 'border-box';
-
-    // Formatear saltos de línea e inyectar HTML limpio
-    const formattedText = reportText
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/\n/g, "<br>");
-
-    pdfContainer.innerHTML = `
-      <div style="border-bottom: 2px solid #0284c7; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <h1 style="color: #0369a1; font-size: 20px; margin: 0 0 4px 0; font-weight: bold; letter-spacing: 0.5px;">
-            POLETHIC FRANCE — BEACON LAB
-          </h1>
-          <p style="color: #64748b; font-size: 11px; margin: 0; font-weight: 600; text-transform: uppercase;">
-            RAPPORT D'AUDIT MÉTACOGNITIF ET MÉTACONTEXTUEL
-          </p>
-        </div>
-        <div style="border: 2px solid ${scoreColor}; background-color: #ffffff; padding: 6px 14px; border-radius: 6px; text-align: center;">
-          <div style="font-size: 8px; color: ${scoreColor}; font-weight: bold; text-transform: uppercase;">ETHIC-SCORE™</div>
-          <div style="font-size: 22px; font-weight: 800; color: ${scoreColor}; line-height: 1;">${currentScoreLetter || 'A'}</div>
-        </div>
-      </div>
-
-      <div style="background-color: #f8fafc; border-left: 4px solid #0284c7; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 6px; padding: 18px; font-size: 11px; line-height: 1.6; color: #1e293b; font-family: 'Courier New', Courier, monospace;">
-        ${formattedText}
-      </div>
-
-      <div style="margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; font-size: 9px; color: #94a3b8;">
-        <span>DOCUMENT CONFIDENTIEL — POLETHIC FORENSIC SYSTEM</span>
-        <span>GÉNÉRÉ LE ${new Date().toLocaleDateString('fr-FR')}</span>
-      </div>
-    `;
-
-    // 3. Insertar el contenedor en el DOM
-    document.body.appendChild(pdfContainer);
-
-    // 4. Configurar html2pdf para descargar el archivo automáticamente
-    const options = {
-      margin: 10,
-      filename: `Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2, 
-        backgroundColor: '#ffffff',
-        logging: false
-      },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    try {
-      // Generar y descargar automáticamente
-      await html2pdf().set(options).from(pdfContainer).save();
-    } catch (err) {
-      console.error("Erreur PDF:", err);
-      alert('Erreur lors de la génération du PDF.');
-    } finally {
-      // Limpiar el DOM eliminando el contenedor temporal
-      if (document.body.contains(pdfContainer)) {
-        document.body.removeChild(pdfContainer);
-      }
-      btnPdf.disabled = false;
-      btnPdf.innerText = '📄 EXPORTER EN PDF';
-    }
-  });
-}
-
-          // 5. Ejecutar la descarga y remover el nodo
-          html2pdf().set(options).from(pdfWrapper).save().then(() => {
-            document.body.removeChild(pdfWrapper);
-            btnPdf.disabled = false;
-            btnPdf.innerText = '📄 EXPORTER EN PDF';
-          }).catch(err => {
-            console.error("Erreur PDF:", err);
-            if (document.getElementById('pdf-render-element')) {
-              document.body.removeChild(pdfWrapper);
-            }
-            alert('Erreur lors de la génération du PDF.');
-            btnPdf.disabled = false;
-            btnPdf.innerText = '📄 EXPORTER EN PDF';
-          });
-        });
-      }
       // 🗑️ PURGAR
       if (btnPurge) {
         btnPurge.addEventListener('click', () => {
@@ -765,3 +728,5 @@ if (btnPdf) {
       }
     });
   </script>
+</body>
+</html>
