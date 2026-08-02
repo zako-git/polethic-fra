@@ -133,7 +133,7 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
 # =====================================================================
 TEMPLATES = {
     "fr": {
-        "system": (
+        "system": ( 
             "Vous êtes POLETHIC BEACON, un moteur d'analyse métacognitive et forensique avancé.\n"
             "Votre objectif est d'exécuter un pipeline d'analyse obligatoire en 4 phases.\n\n"
             "RÈGLE LINGUISTIQUE ABSOLUE : Rédigez l'INTÉGRALITÉ de la réponse et des titres EN FRANÇAIS.\n\n"
