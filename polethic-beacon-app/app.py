@@ -19,7 +19,6 @@ from reportlab.lib import colors
 load_dotenv()
 
 app = Flask(__name__)
-# Permitir peticiones desde cualquier origen (CORS)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 DATABASE_NAME = "beacon.db"
@@ -105,6 +104,16 @@ def apply_local_rules(content):
     return penalty_total, list(set(flags))
 
 
+def get_ethic_letter(score):
+    if score <= 25:
+        return "A"
+    elif score <= 50:
+        return "B"
+    elif score <= 75:
+        return "C"
+    return "D"
+
+
 def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_report):
     try:
         conn = get_db_connection()
@@ -117,6 +126,45 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
         conn.close()
     except Exception as e:
         print(f"[save_audit] error: {e}")
+
+
+# =====================================================================
+# SYSTEM PROMPT METACOGNITIVO ADAPTATIVO (FASE 0 ➔ FASE 3)
+# =====================================================================
+SYSTEM_PROMPT_BEACON = (
+    "You are POLETHIC BEACON, an advanced Metacognitive Engine.\n"
+    "Your objective is to execute a mandatory 4-Phase analysis pipeline for every input:\n\n"
+    "FASE 0: RECONOCEDOR PRINCIPAL (Context & Taxonomy)\n"
+    "- Identify Tipology: [Noticia, Personal/WhatsApp, Publicidad/Reel, CV, Científico, Filosófico, Teológico/Religioso, New Age].\n"
+    "- Identify Emisor Purpose & Subjectivity (1-10).\n"
+    "- Mode Selection:\n"
+    "  * If Scientific: Activate BYPASS LÍMBICO (Evaluate methodology & evidence).\n"
+    "  * If Philosophical/Literary: Activate CONCEPTUAL MODE (Evaluate premises & subtext).\n"
+    "  * If Religious/Spiritual/New Age: Activate HERMENEUTIC/DECONSTRUCTION MODE (Evaluate internal coherence, dogmas, and pseudoscience).\n\n"
+    "FASE 1: LIMPIEZA DE RUIDO\n"
+    "- Strip clickbait, hyperbole, emotional blackmail, or fluff according to the text category.\n"
+    "- Extract 2-4 core objective facts, claims, or premises.\n\n"
+    "FASE 2: DESMONTAJE LÍMBICO (Intention & Bias Analysis)\n"
+    "- Analyze emotional triggers (Fear, Guilt, FOMO, Estatus, Devotion).\n"
+    "- Expose cognitive biases, fallacies, or unproven dogmas.\n\n"
+    "FASE 3: TRADUCTEUR CORTICAL (Actionable Output)\n"
+    "- Structure your final response into clear, objective sections.\n\n"
+    "CRITICAL LANGUAGE RULE:\n"
+    "Detect the language of the user input and write your entire response 100% in that target language.\n\n"
+    "MANDATORY AUDIT OUTPUT FORMAT:\n"
+    "🏷️ **1. CLASIFICACIÓN (Fase 0)**\n"
+    "- Tipo de Texto:\n"
+    "- Propósito del Emisor:\n\n"
+    "📌 **2. NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
+    "- Datos/Premisas filtrados sin ruido:\n\n"
+    "🧠 **3. DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
+    "- Gatillo Emocional / Sesgo Detectado:\n"
+    "- Intención vs. Realidad:\n\n"
+    "🚀 **4. REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
+    "- Análisis objetivo final y recomendación de acción:\n\n"
+    "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience]</flags>\n"
+    "<score>[Integer score from 0 (Healthy) to 100 (High Risk/Coercion)]</score>"
+)
 
 
 @app.route("/analyze", methods=["POST"])
@@ -166,33 +214,10 @@ def analyze():
         final_report = "Error: HF_TOKEN client not initialized."
 
         if client:
-            system_instructions = (
-                "You are POLETHIC BEACON, an advanced Metacognitive Defense Engine.\n\n"
-                "THEORETICAL FRAMEWORKS:\n"
-                "1. PREDICTIVE BRAIN (Lisa Feldman Barrett)\n"
-                "2. THE MIND IS FLAT (Nick Chater)\n"
-                "3. BITE MODEL OF COERCIVE CONTROL (Steven Hassan)\n\n"
-                "CRITICAL LANGUAGE RULE:\n"
-                f"Respond 100% in the target language specified: '{lang}'.\n\n"
-                "MANDATORY AUDIT OUTPUT FORMAT:\n"
-                "### 1. DIAGNÓSTICO TÉCNICO\n"
-                "- Análisis de Hechos/Contenido:\n"
-                "- Sesgos y Falacias:\n"
-                "- Táctica de Manipulación:\n\n"
-                "### 2. REGLAMENTO DIALÉCTICO\n"
-                "- ⚽ Falta Cometida:\n"
-                "- ⚖️ Carga de la Prueba:\n"
-                "- 🛡️ Respuesta Escudo:\n\n"
-                "### 3. ESTRATEGIA DE DEFENSA\n"
-                "- Pasos de autodefensa.\n\n"
-                "<flags>[Lista separada por comas de las categorías detectadas ÚNICAMENTE entre: fakenews, myth, bluff, coercion]</flags>\n"
-                "<score>[Número entero de 0 a 100]</score>"
-            )
-
-            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}"
+            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}\nPreferred Language Code: {lang}"
 
             messages = [
-                {"role": "system", "content": system_instructions},
+                {"role": "system", "content": SYSTEM_PROMPT_BEACON},
                 {"role": "user", "content": prompt_user}
             ]
 
@@ -200,7 +225,7 @@ def analyze():
                 response = client.chat.completions.create(
                     model="Qwen/Qwen2.5-Coder-32B-Instruct",
                     messages=messages,
-                    max_tokens=1000
+                    max_tokens=1200
                 )
                 raw_text = response.choices[0].message.content
 
@@ -230,7 +255,7 @@ def analyze():
         combined_score = max(0, min(100, llm_score + local_penalty))
         ethic_letter = get_ethic_letter(combined_score)
 
-        save_audit("auto_beacon", source_type, final_content or "Image Uploaded", combined_score, final_report)
+        save_audit("metacognitive_beacon", source_type, final_content or "Image Uploaded", combined_score, final_report)
 
         return jsonify({
             "score": combined_score,
@@ -241,6 +266,7 @@ def analyze():
         }), 200
 
     except Exception as general_err:
+        print(f"[Analyze Global Error]: {str(general_err)}")
         return jsonify({
             "score": 0,
             "ethic_letter": "A",
@@ -248,143 +274,58 @@ def analyze():
             "detected_flags": []
         }), 500
 
-        # Reglas locales de coincidencia de texto
-        local_penalty, local_flags = apply_local_rules(module, final_content)
-
-        module_names = {
-            "news": "FakeNews (Polarization & Hype Tracking)",
-            "myth": "Myth-Buster (Pseudoscience & Dogmatic Verification)",
-            "identity": "Identity Spoofing (Inflated Credentials)",
-            "coercive": "Coercive Filter (Information Control & Predatory Rhetoric)"
-        }
-        formal_module_name = module_names.get(module, "General Content Audit")
-
-        llm_score = 30
-        final_report = "Error: HF_TOKEN client not initialized."
-
-        if client:
-            system_instructions = (
-    "You are POLETHIC BEACON, an advanced Metacognitive Defense Engine and Relational Shield.\n"
-    f"Active Module: '{formal_module_name}'.\n\n"
-    "THEORETICAL & CLINICAL FRAMEWORKS:\n"
-    "1. PREDICTIVE BRAIN (Lisa Feldman Barrett): Identify how the message triggers emotional prediction errors or forced allostatic load.\n"
-    "2. THE MIND IS FLAT (Nick Chater): Unmask superficial depth, inflated credentials, and ungrounded dogmas.\n"
-    "3. BITE MODEL OF COERCIVE CONTROL (Steven Hassan): Analyze Behavioral, Informational, Thought, and Emotional manipulation. Explicitly identify DOUBLE BINDS and gaslighting.\n\n"
-    "REGLA CRÍTICA DE IDIOMA:\n"
-    "Detecta automáticamente el idioma del contenido recibido. Escribe TU RESPUESTA COMPLETA EN ESE MISMO IDIOMA (si la entrada es en español, responde 100% en español).\n\n"
-    "REGLAS STRICTAS DE FORMATO:\n"
-    "<analysis>\n"
-    "A. DETECTOR DE SESGOS Y MANIPULACIÓN COERCITIVA (Modelo BITE / Trampa de comunicación)\n"
-    "B. VERIFICACIÓN DE EVIDENCIA Y RIGOR (Calidad de afirmaciones o datos)\n"
-    "C. REFUTACIÓN Y DESMONTAJE DE CÁMARAS DE ECO (La otra cara fundada)\n"
-    "D. CARGA METABÓLICA Y ESTRATEGIA DE SALIDA (Pasos concretos de autodefensa y comunicación)\n"
-    "</analysis>\n"
-    "<score>[número de 0 a 100 donde 100 es PELIGRO MÁXIMO / COERCIÓN y 0 es saludable]</score>"
-)
-
-            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}"
-
-            messages = [
-                {"role": "system", "content": system_instructions},
-                {"role": "user", "content": prompt_user}
-            ]
-
-            try:
-                # Usamos un modelo universalmente activo en la Inference API de HF
-                response = client.chat.completions.create(
-                    model="Qwen/Qwen2.5-Coder-32B-Instruct",  # O "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
-                    messages=messages,
-                    max_tokens=1000
-                )
-                raw_text = response.choices[0].message.content
-
-                score_match = re.search(r"<score>\s*(\d+)\s*</score>", raw_text, re.IGNORECASE)
-                analysis_match = re.search(r"<analysis>(.*?)</analysis>", raw_text, re.DOTALL | re.IGNORECASE)
-
-                if analysis_match and score_match:
-                    llm_score = int(score_match.group(1))
-                    final_report = analysis_match.group(1).strip()
-                elif score_match:
-                    llm_score = int(score_match.group(1))
-                    final_report = raw_text
-                else:
-                    llm_score = 35
-                    final_report = raw_text
-
-            except Exception as e:
-                print(f"[HuggingFace API Error]: {e}")
-                final_report = f"Audit Completed (Fallback mode). Error details: {str(e)}"
-                llm_score = 40
-        else:
-            final_report = f"[DEMO MODE - Set HF_TOKEN in environment]\nAnalyzed input under module '{formal_module_name}'."
-            llm_score = 30
-
-        combined_score = max(0, min(100, llm_score + local_penalty))
-
-        if local_flags:
-            flags_summary = "\n\n---\nLocal Pattern Flags Detected:\n" + "\n".join(
-                f"- \"{f['keyword']}\" → {f['category']} (+{f['penalty']} risk pts)" for f in local_flags
-            )
-            final_report += flags_summary
-
-        save_audit(module, source_type, final_content or "Image Uploaded", combined_score, final_report)
-
-        return jsonify({
-            "score": combined_score,
-            "analysis": final_report,
-            "source_type": source_type,
-            "local_flags": local_flags
-        }), 200
-
-    except Exception as general_err:
-        print(f"[Analyze Global Error]: {str(general_err)}")
-        return jsonify({
-            "score": 0,
-            "analysis": f"Internal Server Error: {str(general_err)}"
-        }), 500
-
-def get_ethic_letter(score):
-    if score <= 25:
-        return "A"
-    elif score <= 50:
-        return "B"
-    elif score <= 75:
-        return "C"
-    return "D"
-
 
 @app.route("/refute", methods=["POST"])
 def refute():
     try:
         data = request.get_json() or {}
         analysis = data.get("analysis", "")
-        lang = data.get("lang", "fr")
+        lang = data.get("lang", "es")
 
         if not analysis:
             return jsonify({"refutation": "No content provided to counter-argue."}), 400
 
+        # Detección de contenido sensible (Religión, Teología, New Age)
+        is_religious_or_newage = any(
+            k in analysis.lower() 
+            for k in ["teológico", "religioso", "dios", "dogma", "new age", "vibración", "cuántica", "manifestación", "fe", "espiritual"]
+        )
+
+        disclaimer_text = ""
+        if is_religious_or_newage:
+            disclaimer_text = (
+                "⚠️ **ADVERTENCIA DE ANÁLISIS CRÍTICO Y DECONSTRUCCIÓN**\n"
+                "*Este módulo aplica principios de lógica formal, exégesis histórica y método científico. "
+                "El resultado puede generar disonancia cognitiva al cuestionar dogmas o sistemas de creencia. "
+                "La plataforma no se responsabiliza de la fricción emocional resultante de este análisis.* \n\n"
+            )
+
         if client:
             prompt = (
                 f"Basándote en este análisis previo:\n{analysis}\n\n"
-                f"Genera exactamente 3 preguntas incómodas y quirúrgicas para devolver la carga de la prueba al emisor. "
-                f"Escribe la respuesta 100% en el idioma identificado por el código '{lang}'."
+                f"Actúa como un refutador metodológico e implacable. Genera exactamente 3 preguntas incómodas, "
+                f"quirúrgicas y profundas para devolver la carga de la prueba al emisor o desmontar su axioma no probado.\n"
+                f"Escribe la respuesta 100% en el idioma objetivo indicado por el código: '{lang}'."
             )
             response = client.chat.completions.create(
                 model="Qwen/Qwen2.5-Coder-32B-Instruct",
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=400
+                max_tokens=500
             )
             refutation_text = response.choices[0].message.content.strip()
         else:
             refutation_text = (
-                "1. ¿En qué estudio empírico se basan para realizar esta afirmación?\n"
-                "2. ¿Cuál es el conflicto de interés tras esta narrativa?\n"
-                "3. Si eliminamos la apelación emocional, ¿qué evidencia verificable queda?"
+                "1. ¿En qué estudio empírico o evidencia histórica independiente se basa esta afirmación?\n"
+                "2. Si eliminamos el componente de fe o el uso metafórico de términos científicos, ¿qué hecho comprobable permanece?\n"
+                "3. ¿Cómo se diferencia metodológicamente este postulado de otros dogmas contradictorios con la misma pretensión de verdad?"
             )
 
-        return jsonify({"refutation": refutation_text}), 200
+        full_response = f"{disclaimer_text}{refutation_text}"
+
+        return jsonify({"refutation": full_response}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/export_pdf", methods=["POST"])
 def export_pdf():
