@@ -559,10 +559,20 @@
             if (!response.ok) throw new Error('Erreur API');
 
             const data = await response.json();
-            applyEthicBadge(data.ethic_letter || data.score || 'C');
-            analysisReport.innerText = data.analysis || data.report || data.result;
-            renderFlags(data.detected_flags || ['SIGNAL_ANALYSE']);
+applyEthicBadge(data.ethic_letter || data.score || 'C');
 
+// 1. Extraer la cadena de texto de la respuesta
+let cleanAnalysis = data.analysis || data.report || data.result || '';
+
+// 2. Limpieza forzada en el navegador: quita "ET LIMBIQUE" o "LIMBIQUE"
+cleanAnalysis = cleanAnalysis
+  .replace(/DÉMONTAGE COGNITIF ET LIMBIQUE/gi, 'DÉMONTAGE COGNITIF')
+  .replace(/ET LIMBIQUE/gi, '')
+  .replace(/LIMBIQUE/gi, '');
+
+// 3. Asignar el texto ya limpio a la pantalla
+analysisReport.innerText = cleanAnalysis;
+renderFlags(data.detected_flags || ['SIGNAL_ANALYSE']);
           } catch (err) {
             console.error(err);
             applyEthicBadge('C');
