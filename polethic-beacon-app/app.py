@@ -382,31 +382,70 @@ def export_pdf():
         doc = SimpleDocTemplate(
             pdf_buffer,
             pagesize=letter,
-            rightMargin=54, leftMargin=54,
-            topMargin=54, bottomMargin=54
+            rightMargin=40, leftMargin=40,
+            topMargin=40, bottomMargin=40
         )
 
         story = []
+
         try:
             numeric_score = int(re.sub(r"[^\d]", "", str(score)))
         except ValueError:
             numeric_score = 0
 
-        if numeric_score >= 76:
-            accent_color = colors.HexColor("#ff4d6d")
-        elif numeric_score >= 51:
-            accent_color = colors.HexColor("#f0883e")
-        elif numeric_score >= 26:
-            accent_color = colors.HexColor("#eab308")
+        ethic_letter = get_ethic_letter(numeric_score)
+
+        # Colores para fondo claro
+        primary_blue = colors.HexColor("#0284c7")
+        title_dark = colors.HexColor("#0f172a")
+        text_body = colors.HexColor("#334155")
+        
+        # Color del Score según la severidad
+        if ethic_letter == "A":
+            score_color = colors.HexColor("#059669") # Verde
+        elif ethic_letter == "B":
+            score_color = colors.HexColor("#d97706") # Amarillo
+        elif ethic_letter == "C":
+            score_color = colors.HexColor("#ea580c") # Naranja
         else:
-            accent_color = colors.HexColor("#2ea44f")
+            score_color = colors.HexColor("#dc2626") # Rojo
 
-        title_style = ParagraphStyle('DocTitle', fontName='Helvetica-Bold', fontSize=22, leading=26, textColor=colors.HexColor("#1e293b"))
-        score_style = ParagraphStyle('ScoreDisplay', fontName='Helvetica-Bold', fontSize=18, leading=22, textColor=accent_color)
-        body_style = ParagraphStyle('ReportBody', fontName='Helvetica', fontSize=10, leading=15, textColor=colors.HexColor("#334155"))
+        # Estilos tipográficos
+        title_style = ParagraphStyle(
+            'DocTitle', 
+            fontName='Helvetica-Bold', 
+            fontSize=18, 
+            leading=22, 
+            textColor=primary_blue
+        )
+        subtitle_style = ParagraphStyle(
+            'DocSubtitle', 
+            fontName='Helvetica-Bold', 
+            fontSize=9, 
+            leading=12, 
+            textColor=colors.HexColor("#64748b")
+        )
+        score_style = ParagraphStyle(
+            'ScoreDisplay', 
+            fontName='Helvetica-Bold', 
+            fontSize=14, 
+            leading=18, 
+            textColor=score_color, 
+            alignment=2
+        )
+        body_style = ParagraphStyle(
+            'ReportBody', 
+            fontName='Helvetica', 
+            fontSize=10, 
+            leading=15, 
+            textColor=text_body
+        )
 
-        story.append(Paragraph("POLETHIC BEACON — FORENSIC REPORT", title_style))
-        story.append(Paragraph(f"Ethic-Score™: {numeric_score}/100 (Grado {get_ethic_letter(numeric_score)})", score_style))
+        # Construcción del documento
+        story.append(Paragraph("POLETHIC FRANCE — BEACON LAB", title_style))
+        story.append(Paragraph("RAPPORT D'AUDIT MÉTACOGNITIF ET MÉTACONTEXTUEL", subtitle_style))
+        story.append(Spacer(1, 4))
+        story.append(Paragraph(f"ETHIC-SCORE™: {ethic_letter} ({numeric_score}/100)", score_style))
         story.append(Spacer(1, 15))
 
         for p_text in analysis.split('\n'):
@@ -421,7 +460,7 @@ def export_pdf():
             pdf_buffer,
             mimetype='application/pdf',
             as_attachment=True,
-            download_name='Polethic_Beacon_Report.pdf'
+            download_name=f'Audit_BEACON_{ethic_letter}.pdf'
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
