@@ -629,53 +629,93 @@
         });
       }
 
-      // 📄 EXPORTAR A PDF (Generación del lado del cliente con html2pdf)
-      if (btnPdf) {
-        btnPdf.addEventListener('click', async () => {
-          const reportText = analysisReport.innerText;
+      // 📄 EXPORTAR A PDF (Con estilos blindados y legibilidad garantizada)
+if (btnPdf) {
+  btnPdf.addEventListener('click', async () => {
+    const reportText = analysisReport.innerText;
 
-          if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
-            alert('Aucun rapport à exporter.');
-            return;
-          }
+    if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
+      alert('Aucun rapport à exporter.');
+      return;
+    }
 
-          btnPdf.disabled = true;
-          const originalText = btnPdf.innerText;
-          btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
+    btnPdf.disabled = true;
+    const originalText = btnPdf.innerText;
+    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
 
-          // Opciones de configuración para la descarga del PDF
-          const opt = {
-            margin:       [12, 12, 12, 12],
-            filename:     `Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, backgroundColor: '#ffffff', useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-          };
+    // 1. Crear el contenedor oculto con estilos totalmente aislados
+    const printContainer = document.createElement('div');
+    printContainer.style.position = 'fixed';
+    printContainer.style.left = '-9999px';
+    printContainer.style.top = '0';
+    printContainer.style.width = '700px';
+    printContainer.style.padding = '40px';
+    printContainer.style.backgroundColor = '#ffffff';
+    printContainer.style.color = '#000000';
+    printContainer.style.fontFamily = 'Courier, monospace, sans-serif';
 
-          try {
-            // Ajustar temporalmente el color del texto para lectura óptima en papel blanco
-            const prevColor = analysisReport.style.color;
-            const prevBg = analysisReport.style.backgroundColor;
-            
-            analysisReport.style.color = '#0f172a';
-            analysisReport.style.backgroundColor = '#f8fafc';
+    // Remplazar saltos de línea por etiquetas <br> de HTML
+    const formattedContent = reportText
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\n/g, '<br>');
 
-            // Generar y descargar el PDF usando html2pdf.js
-            await html2pdf().set(opt).from(analysisReport).save();
+    // 2. Estructurar plantilla con colores contrastados explícitos en cada etiqueta
+    printContainer.innerHTML = `
+      <div style="border-bottom: 2px solid #00f0ff; padding-bottom: 15px; margin-bottom: 20px; background-color: #ffffff;">
+        <h1 style="font-size: 20px; color: #0f172a; margin: 0; font-weight: bold;">POLETHIC France — BEACON LAB</h1>
+        <p style="font-size: 11px; color: #475569; margin: 5px 0 0 0; text-transform: uppercase;">Rapport d'Audit Mêtacommunicationnel & Cognitif</p>
+      </div>
 
-            // Restaurar los estilos visuales originales
-            analysisReport.style.color = prevColor;
-            analysisReport.style.backgroundColor = prevBg;
+      <div style="margin-bottom: 20px; background-color: #ffffff;">
+        <span style="background-color: #0f172a; color: #ffffff; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 12px;">
+          Ethic-Score™: ${currentScoreLetter || 'C'}
+        </span>
+      </div>
 
-          } catch (err) {
-            console.error("Erreur PDF:", err);
-            alert('Erreur lors de la génération du PDF.');
-          } finally {
-            btnPdf.disabled = false;
-            btnPdf.innerText = originalText;
-          }
-        });
-      }
+      <div style="background-color: #f8fafc; border-left: 4px solid #00f0ff; padding: 20px; border-radius: 4px; color: #0f172a !important; font-size: 12px; line-height: 1.6; white-space: normal; word-break: break-word;">
+        ${formattedContent}
+      </div>
+
+      <div style="margin-top: 40px; border-top: 1px solid #cbd5e1; padding-top: 12px; font-size: 10px; color: #64748b; text-align: center; background-color: #ffffff;">
+        © 2026 POLETHIC France — Document généré automatiquement par BEACON ENGINE
+      </div>
+    `;
+
+    document.body.appendChild(printContainer);
+
+    // 3. Opciones de conversión a PDF
+    const opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     `Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { 
+        scale: 2, 
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        scrollY: 0
+      },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    try {
+      // Breve pausa técnica para asegurar el renderizado
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Generar y descargar el PDF
+      await html2pdf().set(opt).from(printContainer).save();
+
+    } catch (err) {
+      console.error("Erreur PDF:", err);
+      alert('Erreur lors de la génération du PDF.');
+    } finally {
+      // Limpieza
+      document.body.removeChild(printContainer);
+      btnPdf.disabled = false;
+      btnPdf.innerText = originalText;
+    }
+  });
+}
 
       // 🗑️ PURGAR
       if (btnPurge) {
