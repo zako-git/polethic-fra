@@ -436,7 +436,7 @@
     </div>
   </footer>
 
-  <!-- SCRIPT COMPLETO CON GENERACIÓN DE PDF AISLADA -->
+  <!-- SCRIPT COMPLETO CON GENERACIÓN DE PDF CORREGIDA -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
@@ -629,7 +629,7 @@
         });
       }
 
-      // 📄 EXPORTAR A PDF (Generación mediante contenedor aislado)
+      // 📄 EXPORTAR A PDF (MÉTODO CORREGIDO)
       if (btnPdf) {
         btnPdf.addEventListener('click', async () => {
           const reportText = analysisReport.innerText;
@@ -643,48 +643,53 @@
           const originalText = btnPdf.innerText;
           btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
 
-          // 1. Crear un contenedor borrador fuera de pantalla
+          // 1. Crear un contenedor con renderizado real en pantalla pero invisible para el usuario
           const printContainer = document.createElement('div');
-          printContainer.style.position = 'fixed';
-          printContainer.style.left = '-9999px';
+          printContainer.style.position = 'absolute';
           printContainer.style.top = '0';
-          printContainer.style.width = '700px';
+          printContainer.style.left = '0';
+          printContainer.style.width = '750px';
           printContainer.style.padding = '30px';
           printContainer.style.backgroundColor = '#ffffff';
           printContainer.style.color = '#0f172a';
           printContainer.style.fontFamily = 'Courier New, Courier, monospace';
+          printContainer.style.zIndex = '-9999';
+          printContainer.style.opacity = '0.99'; // Mantiene activa la aceleración por hardware
 
-          // Convertir caracteres especiales HTML y saltos de línea a <br>
+          // Convertir saltos de línea a etiquetas <br>
           const formattedContent = reportText
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/\n/g, '<br>');
 
-          // 2. Estructurar el documento para la exportación
+          // Extraer etiquetas visibles si las hay
+          const flagsHtml = detectedFlags ? detectedFlags.innerHTML : '';
+
+          // 2. Maquetación limpia para el documento A4
           printContainer.innerHTML = `
-            <div style="border-bottom: 2px solid #00f0ff; padding-bottom: 12px; margin-bottom: 20px; background-color: #ffffff;">
-              <h1 style="font-size: 18px; color: #0f172a; margin: 0; font-weight: bold;">POLETHIC France — BEACON LAB</h1>
-              <p style="font-size: 11px; color: #475569; margin: 4px 0 0 0;">AUDIT MÊTACOMMUNICATIONNEL & COGNITIF</p>
+            <div style="border-bottom: 2px solid #00f0ff; padding-bottom: 12px; margin-bottom: 20px;">
+              <h1 style="font-size: 20px; color: #0f172a; margin: 0; font-weight: bold;">POLETHIC France — BEACON LAB</h1>
+              <p style="font-size: 11px; color: #475569; margin: 4px 0 0 0; letter-spacing: 1px;">AUDIT MÊTACOMMUNICATIONNEL & DÉCODAGE COGNITIF</p>
             </div>
 
-            <div style="margin-bottom: 15px; background-color: #ffffff;">
-              <span style="background-color: #0f172a; color: #ffffff; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <span style="background-color: #0f172a; color: #00f0ff; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px;">
                 Ethic-Score™: ${currentScoreLetter || 'C'}
               </span>
             </div>
 
-            <div style="background-color: #f8fafc; border-left: 4px solid #00f0ff; padding: 18px; border-radius: 4px; color: #0f172a !important; font-size: 12px; line-height: 1.6; white-space: normal; word-break: break-word;">
+            <div style="background-color: #f8fafc; border-left: 4px solid #00f0ff; padding: 20px; border-radius: 4px; color: #0f172a; font-size: 12px; line-height: 1.6; word-break: break-word;">
               ${formattedContent}
             </div>
 
-            <div style="margin-top: 30px; border-top: 1px solid #cbd5e1; padding-top: 10px; font-size: 10px; color: #64748b; text-align: center; background-color: #ffffff;">
-              &copy; 2026 POLETHIC France — Document généré automatiquement par BEACON ENGINE
+            <div style="margin-top: 40px; border-top: 1px solid #cbd5e1; padding-top: 12px; font-size: 10px; color: #64748b; text-align: center;">
+              &copy; 2026 POLETHIC France — Document officiel généré par BEACON ENGINE
             </div>
           `;
 
           document.body.appendChild(printContainer);
 
-          // 3. Configuración de html2pdf
+          // 3. Configuración de conversión
           const opt = {
             margin:       [10, 10, 10, 10],
             filename:     `Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`,
@@ -693,24 +698,26 @@
               scale: 2, 
               backgroundColor: '#ffffff',
               useCORS: true,
-              scrollY: 0
+              logging: false
             },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
           };
 
           try {
-            // Pausa síncrona para permitir la renderización interna del navegador
-            await new Promise(resolve => setTimeout(resolve, 200));
+            // Pequeña pausa para asegurar la carga completa de fuentes y nodos
+            await new Promise(resolve => setTimeout(resolve, 250));
 
-            // Exportar directamente desde el contenedor aislado
+            // Exportar a PDF
             await html2pdf().set(opt).from(printContainer).save();
 
           } catch (err) {
-            console.error("Erreur PDF:", err);
+            console.error("Erreur generación PDF:", err);
             alert('Erreur lors de la génération du PDF.');
           } finally {
-            // 4. Limpieza del DOM flotante
-            document.body.removeChild(printContainer);
+            // Eliminar el contenedor auxiliar
+            if (document.body.contains(printContainer)) {
+              document.body.removeChild(printContainer);
+            }
             btnPdf.disabled = false;
             btnPdf.innerText = originalText;
           }
