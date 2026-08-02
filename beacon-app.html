@@ -629,58 +629,54 @@
         });
       }
 
-     // 📄 EXPORTAR A PDF (Vía Backend Flask / ReportLab)
-if (btnPdf) {
-  btnPdf.addEventListener('click', async () => {
-    const reportText = analysisReport.innerText;
+      // 📄 EXPORTAR A PDF (Generación del lado del cliente con html2pdf)
+      if (btnPdf) {
+        btnPdf.addEventListener('click', async () => {
+          const reportText = analysisReport.innerText;
 
-    if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
-      alert('Aucun rapport à exporter.');
-      return;
-    }
+          if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
+            alert('Aucun rapport à exporter.');
+            return;
+          }
 
-    btnPdf.disabled = true;
-    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
+          btnPdf.disabled = true;
+          const originalText = btnPdf.innerText;
+          btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
 
-    try {
-      const response = await fetch('/export_pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          analysis: reportText,
-          score: currentScoreValue || 0, // Pasa el score numérico o 0
-          ethic_letter: currentScoreLetter || 'A'
-        })
-      });
+          // Opciones de configuración para la descarga del PDF
+          const opt = {
+            margin:       [12, 12, 12, 12],
+            filename:     `Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, backgroundColor: '#ffffff', useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
 
-      if (!response.ok) {
-        throw new Error('Erreur serveur lors de la génération du PDF.');
+          try {
+            // Ajustar temporalmente el color del texto para lectura óptima en papel blanco
+            const prevColor = analysisReport.style.color;
+            const prevBg = analysisReport.style.backgroundColor;
+            
+            analysisReport.style.color = '#0f172a';
+            analysisReport.style.backgroundColor = '#f8fafc';
+
+            // Generar y descargar el PDF usando html2pdf.js
+            await html2pdf().set(opt).from(analysisReport).save();
+
+            // Restaurar los estilos visuales originales
+            analysisReport.style.color = prevColor;
+            analysisReport.style.backgroundColor = prevBg;
+
+          } catch (err) {
+            console.error("Erreur PDF:", err);
+            alert('Erreur lors de la génération du PDF.');
+          } finally {
+            btnPdf.disabled = false;
+            btnPdf.innerText = originalText;
+          }
+        });
       }
 
-      // Recibir el archivo binario (blob)
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      
-      // Forzar la descarga en el navegador
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-
-    } catch (err) {
-      console.error("Erreur PDF:", err);
-      alert('Erreur lors de la génération du PDF.');
-    } finally {
-      btnPdf.disabled = false;
-      btnPdf.innerText = '📄 EXPORTER EN PDF';
-    }
-  });
-}
       // 🗑️ PURGAR
       if (btnPurge) {
         btnPurge.addEventListener('click', () => {
