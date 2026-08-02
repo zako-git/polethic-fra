@@ -648,15 +648,18 @@
           if (currentScoreLetter === 'D') scoreColor = '#dc2626'; 
 
           const pdfContainer = document.createElement('div');
-          pdfContainer.style.position = 'fixed';
+          // Posicionado FUERA del viewport (no tapando la pantalla con un
+          // z-index alto). Esto evita el "flash" de pantalla blanca y hace
+          // que html2canvas capture siempre el mismo contenido, sin
+          // depender del scroll del usuario.
+          pdfContainer.style.position = 'absolute';
           pdfContainer.style.top = '0';
-          pdfContainer.style.left = '0';
+          pdfContainer.style.left = '-10000px';
           pdfContainer.style.width = '750px';
           pdfContainer.style.backgroundColor = '#ffffff';
           pdfContainer.style.color = '#0f172a';
           pdfContainer.style.padding = '30px';
           pdfContainer.style.fontFamily = 'Arial, sans-serif';
-          pdfContainer.style.zIndex = '99999';
           pdfContainer.style.boxSizing = 'border-box';
 
           const formattedText = reportText
@@ -697,8 +700,17 @@
             margin: 10,
             filename: `Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, backgroundColor: '#ffffff', logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas: {
+              scale: 2,
+              backgroundColor: '#ffffff',
+              logging: false,
+              scrollX: 0,
+              scrollY: 0,
+              windowWidth: pdfContainer.scrollWidth,
+              windowHeight: pdfContainer.scrollHeight
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
           };
 
           try {
