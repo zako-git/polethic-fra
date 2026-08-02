@@ -70,7 +70,7 @@ def extract_transcript(url):
         else:
             video_id = url.split("v=")[1].split("&")[0]
 
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'es', 'fr'])
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['fr', 'es', 'en'])
         return " ".join([t['text'] for t in transcript])
     except Exception as e:
         print(f"[extract_transcript] error: {e}")
@@ -129,41 +129,93 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
 
 
 # =====================================================================
-# SYSTEM PROMPT METACOGNITIVO ADAPTATIVO (SIN NÚMEROS EN SECCIONES)
+# DICCIONARIO DE PROMPTS Y PLANTILLAS MULTILINGÜES DINÁMICAS
 # =====================================================================
-SYSTEM_PROMPT_BEACON = (
-    "You are POLETHIC BEACON, an advanced Forensic Metacognitive Engine.\n"
-    "Your objective is to execute a mandatory 4-Phase analysis pipeline for every input:\n\n"
-    "FASE 0: RECONOCEDOR PRINCIPAL (Taxonomía y Contexto)\n"
-    "- Identify Typology: [Noticia, Personal/WhatsApp, Publicidad/Reel, CV/Perfil Profesional, Científico, Filosófico, Teológico, New Age/PSNC].\n"
-    "- Identify Emisor Purpose and Strategy.\n"
-    "- EVALUATION GUIDELINES:\n"
-    "  * If text introduces Non-Conventional Therapies (PSNC/Sophrology) linked to medical/public institutions or severe diseases (AVC, Chronic Diseases), evaluate authority transfer and give an Ethic-Score in range 55-75 (Grade C).\n"
-    "  * If text is a clean CV without unproven claims or coercion, assign Range 0-25 (Grade A).\n\n"
-    "FASE 1: LIMPIEZA DE RUIDO\n"
-    "- Strip emotional fluff, hyperbole, and decorative prose.\n"
-    "- Extract 2-4 core objective facts and explicit claims.\n\n"
-    "FASE 2: DESMONTAJE LÍMBICO (Análisis de Estrategia y Sesgos)\n"
-    "- Unmask the real rhetorical strategy: Authority Transfer, Clinical Euphemisms, Emotional Exploitation of Vulnerable Patients, False Dichotomy, etc.\n"
-    "- ABSOLUTE RULE: DO NOT INVENT BIASES OR CONCEPTS NOT PRESENT IN THE TEXT (e.g., do not mention quantum physics, hypnosis, or commercial rush if not mentioned in input).\n\n"
-    "FASE 3: TRADUCTEUR CORTICAL\n"
-    "- Provide an objective cortical summary and actionable risk assessment.\n\n"
-    "CRITICAL LANGUAGE RULE:\n"
-    "Detect the input language and write the ENTIRE response (including section headings) 100% in that target language.\n\n"
-    "MANDATORY OUTPUT FORMAT (NO NUMBERS IN HEADINGS):\n"
-    "🏷️ **CLASIFICACIÓN (Fase 0)**\n"
-    "- Tipo de Texto:\n"
-    "- Propósito del Emisor:\n\n"
-    "📌 **NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
-    "- Datos y afirmaciones filtradas sin ruido:\n\n"
-    "🧠 **DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
-    "- Estrategia Retórica / Gatillo Detectado:\n"
-    "- Intención vs. Realidad (Análisis de Blanqueamiento/Apropiación de Lenguaje):\n\n"
-    "🚀 **REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
-    "- Diagnóstico sintético final y valoración objetiva de riesgo:\n\n"
-    "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
-    "<score>[Integer score from 0 (Healthy) to 100 (High Risk/Coercion)]</score>"
-)
+TEMPLATES = {
+    "fr": {
+        "system": (
+            "Vous êtes POLETHIC BEACON, un moteur d'analyse métacognitive et forensique avancé.\n"
+            "Votre objectif est d'exécuter un pipeline d'analyse obligatoire en 4 phases.\n\n"
+            "RÈGLE LINGUISTIQUE ABSOLUE : Rédigez l'INTÉGRALITÉ de la réponse et des titres EN FRANÇAIS.\n\n"
+            "DIRECTIVES D'ÉVALUATION :\n"
+            "- Si le texte introduit des thérapies non conventionnelles (PSNC/Sophrologie) associées à des institutions médicales/publiques ou des maladies graves, attribuez un Ethic-Score entre 55 et 75 (Grade C).\n"
+            "- Si le texte est un CV propre sans affirmations trompeuses ni coercition, attribuez un score entre 0 et 25 (Grade A).\n"
+            "- NE JAMAIS INVENTER de biais (ex: pas de physique quantique ni d'hypnose si non mentionnés).\n\n"
+            "FORMAT DE SORTIE IMPÉRATIF (RESPECTEZ EXATEMENT CES TITRES) :\n\n"
+            "🏷️ **CLASSIFICATION (Phase 0)**\n"
+            "- Type de Texte:\n"
+            "- Objectif de l'Émetteur:\n\n"
+            "📌 **NOYAU DE FAITS / PRÉMISSES (Phase 1)**\n"
+            "- Données et affirmations filtrées sans bruit:\n\n"
+            "🧠 **DÉMONTAGE COGNITIF ET LIMBIQUE (Phase 2)**\n"
+            "- Stratégie Rhétorique / Déclencheur Détecté:\n"
+            "- Intention vs Réalité (Analyse de blanchiment / appropriation de langage):\n\n"
+            "🚀 **RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**\n"
+            "- Diagnostic synthétique final et évaluation objective du risque:\n\n"
+            "<flags>[Liste séparée par des virgules parmi: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
+            "<score>[Note entière de 0 à 100]</score>"
+        ),
+        "refute_fallback": (
+            "1. PREUVE CLINIQUE : Quelles études contrôlées démontrent l'efficacité de cette approche face aux protocoles médicaux conventionnels ?\n"
+            "2. CADRE LÉGAL : Comment est délimité le cadre d'intervention entre l'accompagnement non conventionnel et le traitement médical strict ?\n"
+            "3. MESURE DE L'EFFICACITÉ : Quels indicateurs objectifs et vérifiables permettent de mesurer les résultats chez les patients ?"
+        )
+    },
+    "es": {
+        "system": (
+            "Eres POLETHIC BEACON, un motor de análisis metacognitivo forense avanzado.\n"
+            "Tu objetivo es ejecutar un pipeline obligatorio de 4 fases.\n\n"
+            "REGLA LINGÜÍSTICA ABSOLUTA: Escribe la TOTALIDAD de la respuesta y los títulos EN ESPAÑOL.\n\n"
+            "DIRECTRICES DE EVALUACIÓN:\n"
+            "- Si el texto introduce terapias no convencionales (PSNC/Sofrología) asociadas a instituciones médicas/públicas o enfermedades graves, asigna un Ethic-Score entre 55 y 75 (Grado C).\n"
+            "- Si el texto es un CV limpio sin afirmaciones engañosas, asigna entre 0 y 25 (Grado A).\n"
+            "- NO INVENTAR sesgos no presentes en el texto.\n\n"
+            "FORMATO DE SALIDA OBLIGATORIO:\n\n"
+            "🏷️ **CLASIFICACIÓN (Fase 0)**\n"
+            "- Tipo de Texto:\n"
+            "- Propósito del Emisor:\n\n"
+            "📌 **NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
+            "- Datos y afirmaciones filtradas sin ruido:\n\n"
+            "🧠 **DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
+            "- Estrategia Retórica / Gatillo Detectado:\n"
+            "- Intención vs. Realidad:\n\n"
+            "🚀 **REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
+            "- Diagnóstico sintético final y valoración objetiva de riesgo:\n\n"
+            "<flags>[Lista separada por comas de: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
+            "<score>[Número entero de 0 a 100]</score>"
+        ),
+        "refute_fallback": (
+            "1. EVIDENCIA CLÍNICA: ¿Qué estudios controlados respaldan la efectividad de este enfoque frente a la medicina convencional?\n"
+            "2. MARCO LEGAL: ¿Cómo se delimita el alcance entre el acompañamiento no convencional y el tratamiento médico estricto?\n"
+            "3. MEDICIÓN DE RESULTADOS: ¿Bajo qué indicadores métricos y objetivos se evalúa la mejora real en los pacientes?"
+        )
+    },
+    "en": {
+        "system": (
+            "You are POLETHIC BEACON, an advanced Forensic Metacognitive Engine.\n"
+            "Your objective is to execute a mandatory 4-Phase analysis pipeline.\n\n"
+            "ABSOLUTE LANGUAGE RULE: Write the ENTIRE response and headings 100% IN ENGLISH.\n\n"
+            "MANDATORY OUTPUT FORMAT:\n\n"
+            "🏷️ **CLASSIFICATION (Phase 0)**\n"
+            "- Text Type:\n"
+            "- Issuer Purpose:\n\n"
+            "📌 **CORE FACTS / PREMISES (Phase 1)**\n"
+            "- Filtered data and claims without noise:\n\n"
+            "🧠 **COGNITIVE & LIMBIC DECONSTRUCTION (Phase 2)**\n"
+            "- Rhetorical Strategy / Trigger Detected:\n"
+            "- Intention vs Reality:\n\n"
+            "🚀 **CORTICAL REFRAMING & STRATEGY (Phase 3)**\n"
+            "- Final synthetic diagnosis and objective risk assessment:\n\n"
+            "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
+            "<score>[Integer score from 0 to 100]</score>"
+        ),
+        "refute_fallback": (
+            "1. CLINICAL EVIDENCE: What controlled studies support the efficacy of this approach compared to conventional medicine?\n"
+            "2. LEGAL FRAMEWORK: How is the scope defined between non-conventional support and strict medical treatment?\n"
+            "3. OUTCOME MEASUREMENT: What objective metrics are used to measure actual patient outcomes?"
+        )
+    }
+}
 
 
 @app.route("/analyze", methods=["POST"])
@@ -173,12 +225,15 @@ def analyze():
         if request.is_json:
             data = request.get_json() or {}
             user_input = data.get("text", "").strip()
-            lang = data.get("lang", "fr")
+            lang = str(data.get("lang", "fr")).lower()
             file = None
         else:
             user_input = request.form.get("text", "").strip()
-            lang = request.form.get("lang", "fr")
+            lang = str(request.form.get("lang", "fr")).lower()
             file = request.files.get('file')
+
+        if lang not in TEMPLATES:
+            lang = "fr"
 
         final_content = user_input
         source_type = "plain_text"
@@ -201,7 +256,7 @@ def analyze():
         if not final_content and not image_base64:
             return jsonify({
                 "score": 0,
-                "analysis": "No content provided.",
+                "analysis": "Aucun contenu fourni / No content provided.",
                 "source_type": source_type,
                 "detected_flags": []
             }), 400
@@ -213,10 +268,12 @@ def analyze():
         final_report = "Error: HF_TOKEN client not initialized."
 
         if client:
-            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}\nTarget Language Code: {lang}"
+            prompt_user = f"Content to audit:\n{final_content if final_content else '[Image content attached]'}\nMandatory Output Language: {lang.upper()}"
+
+            system_instruction = TEMPLATES[lang]["system"]
 
             messages = [
-                {"role": "system", "content": SYSTEM_PROMPT_BEACON},
+                {"role": "system", "content": system_instruction},
                 {"role": "user", "content": prompt_user}
             ]
 
@@ -249,24 +306,24 @@ def analyze():
         else:
             final_report = "[DEMO MODE - Set HF_TOKEN in environment]"
             llm_score = 30
-            detected_flags = ["bluff", "authority_transfer"]
+            detected_flags = ["authority_transfer", "psnc"]
 
         combined_score = max(0, min(100, llm_score + local_penalty))
         ethic_letter = get_ethic_letter(combined_score)
 
         save_audit("metacognitive_beacon", source_type, final_content or "Image Uploaded", combined_score, final_report)
 
-        # --- Ajuste del formateo de Flags dentro de analyze() ---
-# En lugar de devolver una lista sin formatear, asegúrate de limpiarla:
-formatted_flags = ", ".join([flag.upper() for flag in detected_flags if flag])
+        # Formateo ultra-limpio para evitar que las flags salgan pegadas
+        formatted_flags_list = [f.upper() for f in detected_flags if f]
+        formatted_flags_str = ", ".join(formatted_flags_list)
 
-return jsonify({
-    "score": combined_score,
-    "ethic_letter": ethic_letter,
-    "analysis": final_report,
-    "source_type": source_type,
-    "detected_flags": formatted_flags  # Devuelve "AUTHORITY_TRANSFER, PSNC" limpio
-}), 200
+        return jsonify({
+            "score": combined_score,
+            "ethic_letter": ethic_letter,
+            "analysis": final_report,
+            "source_type": source_type,
+            "detected_flags": formatted_flags_str
+        }), 200
 
     except Exception as general_err:
         print(f"[Analyze Global Error]: {str(general_err)}")
@@ -274,7 +331,7 @@ return jsonify({
             "score": 0,
             "ethic_letter": "A",
             "analysis": f"Internal Server Error: {str(general_err)}",
-            "detected_flags": []
+            "detected_flags": ""
         }), 500
 
 
@@ -283,20 +340,22 @@ def refute():
     try:
         data = request.get_json() or {}
         analysis = data.get("analysis", "")
-        lang = data.get("lang", "fr")
+        lang = str(data.get("lang", "fr")).lower()
+
+        if lang not in TEMPLATES:
+            lang = "fr"
 
         if not analysis:
             return jsonify({"refutation": "No content provided to counter-argue."}), 400
 
         if client:
             prompt = (
-                f"Analisi forense previa:\n{analysis}\n\n"
-                f"Consigne: Genera exactamente 3 preguntas quirúrgicas de refutación o deconstrucción metodológica "
-                f"basándote ÚNICAMENTE en las afirmaciones y estrategias identificadas en el análisis previo.\n"
-                f"REGLA DE ORO: ESTÁ STRICTAMENTE PROHIBIDO inventar o mencionar términos que no existan en la entrada "
-                f"(por ejemplo, no hables de física cuántica, hipnosis, ni urgencia comercial salvo que se mencionen explícitamente).\n"
-                f"Concéntrate en cuestionar la evidencia científica, el marco legal, la transferencia de autoridad o la eficacia clínica.\n"
-                f"Escribe la respuesta 100% en el idioma objetivo indicado por el código: '{lang}'."
+                f"Analyse forensique préalable:\n{analysis}\n\n"
+                f"CONSIGNE IMPÉRATIVE:\n"
+                f"Génère exactement 3 questions chirurgicales de réfutation méthodologique "
+                f"basées UNIQUEMENT sur les affirmations du texte ci-dessus.\n"
+                f"INTERDICTION ABSOLUE d'inventer des termes absents du texte (pas de physique quantique, hypnose, urgence commerciale).\n"
+                f"Rédige la réponse 100% dans la langue du code : '{lang.upper()}'."
             )
             response = client.chat.completions.create(
                 model="Qwen/Qwen2.5-Coder-32B-Instruct",
@@ -305,11 +364,7 @@ def refute():
             )
             refutation_text = response.choices[0].message.content.strip()
         else:
-            refutation_text = (
-                "1. ¿Qué evidencia clínica objetiva respalda esta aproximación frente a las terapias médicas convencionales?\n"
-                "2. ¿Cómo se delimita el alcance ético entre el acompañamiento no convencional y el tratamiento médico estricto?\n"
-                "3. ¿Bajo qué indicadores métricos se mide la efectividad del tratamiento en los pacientes?"
-            )
+            refutation_text = TEMPLATES[lang]["refute_fallback"]
 
         return jsonify({"refutation": refutation_text}), 200
     except Exception as e:
