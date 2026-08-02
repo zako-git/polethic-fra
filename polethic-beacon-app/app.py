@@ -256,13 +256,17 @@ def analyze():
 
         save_audit("metacognitive_beacon", source_type, final_content or "Image Uploaded", combined_score, final_report)
 
-        return jsonify({
-            "score": combined_score,
-            "ethic_letter": ethic_letter,
-            "analysis": final_report,
-            "source_type": source_type,
-            "detected_flags": detected_flags
-        }), 200
+        # --- Ajuste del formateo de Flags dentro de analyze() ---
+# En lugar de devolver una lista sin formatear, asegúrate de limpiarla:
+formatted_flags = ", ".join([flag.upper() for flag in detected_flags if flag])
+
+return jsonify({
+    "score": combined_score,
+    "ethic_letter": ethic_letter,
+    "analysis": final_report,
+    "source_type": source_type,
+    "detected_flags": formatted_flags  # Devuelve "AUTHORITY_TRANSFER, PSNC" limpio
+}), 200
 
     except Exception as general_err:
         print(f"[Analyze Global Error]: {str(general_err)}")
