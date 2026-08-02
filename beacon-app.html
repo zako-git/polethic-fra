@@ -629,9 +629,9 @@
         });
       }
 
-     // 📄 EXPORTACIÓN A PDF LIMPIA Y SIN JEROGLÍFICOS (REMOVEDOR DE EMOJIS & CARACTERES COMPLEJOS)
+     // 📄 GENERADOR DE PDF DE NIVEL PERITAJE / AUDITORÍA FORMAL
 if (btnPdf) {
-  btnPdf.addEventListener('click', async () ="> {
+  btnPdf.addEventListener('click', async () => {
     const reportText = analysisReport.innerText;
 
     if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
@@ -641,11 +641,11 @@ if (btnPdf) {
 
     btnPdf.disabled = true;
     const originalText = btnPdf.innerText;
-    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF...';
+    btnPdf.innerText = '⏳ GÉNÉRATION DU PDF EN COURS...';
 
     try {
       if (!window.jspdf || !window.jspdf.jsPDF) {
-        throw new Error("Librería jsPDF no disponible.");
+        throw new Error("Librería jsPDF no detectada.");
       }
 
       const { jsPDF } = window.jspdf;
@@ -653,121 +653,166 @@ if (btnPdf) {
 
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
-      const margin = 15;
+      const margin = 18;
       const maxLineWidth = pageWidth - (margin * 2);
-      let cursorY = 18;
+      let cursorY = 20;
 
-      // 1. SANITIZADOR ULTRA-ESTRICTO DE EMOJIS Y CARACTERES NO-ANSI
-      const cleanForPDF = (text) => {
-        return text
-          // Elimina emojis (Rangos Unicode de emojis e iconos gráficos)
-          .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
-          // Elimina etiquetas HTML o artefactos como <B÷p>
+      // ==========================================
+      // 🧹 SANITIZADOR COMPLETO (3 CAPAS DE LIMPIEZA)
+      // ==========================================
+      const sanitizeToPureText = (str) => {
+        return str
+          // Capa 1: Eliminar código/fórmulas LaTeX y artefactos matemáticos
+          .replace(/\$[^$]*\$/g, '')
+          .replace(/\\[a-zA-R]+/g, '')
+          .replace(/[=\/\\$\emptyset\hat\tilde\alpha\beta\gamma]/g, '')
+          
+          // Capa 2: Eliminar tags html sueltos y artefactos de codificación (<B÷p, 0="ÜÌ, etc.)
           .replace(/<[^>]*>/g, '')
-          // Elimina símbolos matemáticos/griegos sueltos que rompen la codificación
-          .replace(/[\u0370-\u03FF\u1F00-\u1FFF\u2200-\u22FF]/g, '')
-          // Reemplaza comillas y guiones tipográficos por estándar
+          .replace(/[^\x00-\x7F\xC0-\xFF\u0100-\u017F\s\.,;:!\?\-\(\)'"°%]/g, '')
+          
+          // Capa 3: Normalización de puntuación y tipografía
           .replace(/[’']/g, "'")
           .replace(/[«»]/g, '"')
           .replace(/[—–]/g, "-")
-          .replace(/[•]/g, "*")
-          .replace(/[\u200B-\u200D\uFEFF]/g, ""); // Invisibles Unicode
+          .replace(/\*\*/g, '') // Quitar asteriscos Markdown
+          .replace(/\*/g, '-')  // Convertir viñetas a guiones
+          .replace(/[ \t]+/g, ' ') // Quitar espacios dobles
+          .trim();
       };
 
-      const cleanText = cleanForPDF(reportText);
+      // ==========================================
+      // 🎨 CABECERA FORMAL Y OFICIAL
+      // ==========================================
+      // Banner superior
+      doc.setFillColor(15, 23, 42); // Azul oscuro corporativo
+      doc.rect(0, 0, pageWidth, 12, 'F');
 
-      // 2. Encabezado limpio
+      // Título Institucional
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
       doc.setTextColor(15, 23, 42);
       doc.text("POLETHIC BEACON", margin, cursorY);
+      
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 116, 139);
+      doc.text("OBSERVATOIRE & EXPERTISE MÊTACOMMUNICATIONNELLE", pageWidth - margin - 85, cursorY);
       cursorY += 6;
 
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
-      doc.setTextColor(71, 85, 105);
-      doc.text("AUDIT METACOMMUNICATIONNEL", margin, cursorY);
-      cursorY += 5;
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(0, 150, 180);
+      doc.text("RAPPORT D'AUDIT BEACON LAB", margin, cursorY);
+      cursorY += 6;
 
-      // Línea Cyan
-      doc.setDrawColor(0, 200, 230);
-      doc.setLineWidth(0.6);
+      // Línea divisoria
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.5);
       doc.line(margin, cursorY, pageWidth - margin, cursorY);
       cursorY += 8;
 
-      // 3. Ethic-Score Badge
-      doc.setFillColor(15, 23, 42);
-      doc.rect(margin, cursorY - 4, 48, 8, 'F');
+      // Ficha Técnica de la Auditoría
+      doc.setFillColor(248, 250, 252);
+      doc.rect(margin, cursorY, maxLineWidth, 14, 'F');
+      doc.setDrawColor(203, 213, 225);
+      doc.rect(margin, cursorY, maxLineWidth, 14, 'S');
+
+      doc.setFontSize(8.5);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(9.5);
-      doc.setTextColor(0, 220, 240);
-      doc.text(`Ethic-Score: ${currentScoreLetter || 'A'}`, margin + 3, cursorY + 1.5);
-      cursorY += 12;
+      doc.setTextColor(51, 65, 85);
+      doc.text(`ETHIC-SCORE™ : ${currentScoreLetter || 'C'}`, margin + 4, cursorY + 5.5);
 
-      // 4. Procesamiento de líneas sin romper la maquetación
-      doc.setFontSize(9);
-      const lines = cleanText.split('\n');
+      const currentDate = new Date().toLocaleDateString('fr-FR', {
+        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      doc.setFont("helvetica", "normal");
+      doc.text(`DATE D'ÉMISSION : ${currentDate}`, margin + 4, cursorY + 10.5);
+      doc.text(`ID MOTEUR : BEACON-v2.6`, pageWidth - margin - 45, cursorY + 10.5);
 
-      lines.forEach((rawLine) => {
-        let line = rawLine.trim();
+      cursorY += 20;
 
-        if (!line) {
-          cursorY += 2.5; // Espacio entre párrafos
+      // ==========================================
+      // 📖 PROCESAMIENTO DEL CUERPO DEL TEXTO
+      // ==========================================
+      const rawParagraphs = reportText.split('\n');
+
+      rawParagraphs.forEach((rawPara) => {
+        const cleanPara = sanitizeToPureText(rawPara);
+
+        if (!cleanPara) {
+          cursorY += 3; // Salto de espacio
           return;
         }
 
-        // Detectar si es un título/fase
-        const isHeader = line.startsWith('**') || 
-                         line.toUpperCase().includes('PHASE') || 
-                         line.match(/^([0-9]\)|CLASSIFICATION|NOYAU|DÉMONTAGE|RECADRAGE)/i);
-
-        // Remover sintaxis de negritas Markdown (**)
-        line = line.replace(/\*\*/g, '').trim();
+        // Detectar si la línea es un encabezado/fase (ej. PHASE 0, CLASSIFICATION, etc.)
+        const isHeader = /^([0-9]\)|PHASE|CLASSIFICATION|NOYAU|DÉMONTAGE|RECADRAGE|AUDIT|PREMISSES)/i.test(cleanPara);
 
         if (isHeader) {
-          cursorY += 2;
-          doc.setFont("helvetica", "bold");
-          doc.setTextColor(15, 23, 42);
-        } else {
-          doc.setFont("helvetica", "normal");
-          doc.setTextColor(47, 62, 80);
-        }
-
-        // Dividir texto largo
-        const wrappedLines = doc.splitTextToSize(line, maxLineWidth);
-
-        wrappedLines.forEach((subLine) => {
-          if (cursorY > pageHeight - 18) {
+          cursorY += 4;
+          
+          // Comprobar salto de página antes de imprimir un título
+          if (cursorY > pageHeight - 25) {
             doc.addPage();
             cursorY = 20;
           }
-          doc.text(subLine, margin, cursorY);
-          cursorY += 4.6;
-        });
+
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(15, 23, 42);
+
+          // Subrayado ligero para secciones principales
+          doc.text(cleanPara.toUpperCase(), margin, cursorY);
+          cursorY += 1.5;
+          doc.setDrawColor(0, 200, 230);
+          doc.setLineWidth(0.3);
+          doc.line(margin, cursorY, margin + 40, cursorY);
+          cursorY += 5;
+
+        } else {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(8.8);
+          doc.setTextColor(51, 65, 85);
+
+          // Dividir líneas que excedan el margen
+          const lines = doc.splitTextToSize(cleanPara, maxLineWidth);
+
+          lines.forEach((line) => {
+            if (cursorY > pageHeight - 20) {
+              doc.addPage();
+              cursorY = 20;
+            }
+            doc.text(line, margin, cursorY);
+            cursorY += 4.5;
+          });
+          cursorY += 1.5;
+        }
       });
 
-      // 5. Pie de página
-      if (cursorY > pageHeight - 15) {
-        doc.addPage();
-        cursorY = 20;
+      // ==========================================
+      // 🛡️ PIE DE PÁGINA PERICIAL
+      // ==========================================
+      const totalPages = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(7.5);
+        doc.setTextColor(148, 163, 184);
+
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.4);
+        doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+
+        doc.text("POLETHIC France — Protection primaire, analyse de discours et d'intégrité cognitive.", margin, pageHeight - 7);
+        doc.text(`Page ${i} sur ${totalPages}`, pageWidth - margin - 18, pageHeight - 7);
       }
-      cursorY += 4;
-      doc.setDrawColor(203, 213, 225);
-      doc.setLineWidth(0.3);
-      doc.line(margin, cursorY, pageWidth - margin, cursorY);
-      cursorY += 5;
 
-      doc.setFont("helvetica", "italic");
-      doc.setFontSize(7.5);
-      doc.setTextColor(100, 116, 139);
-      doc.text("POLETHIC France — Document généré automatiquement par BEACON ENGINE", margin, cursorY);
-
-      // Guardar
-      doc.save(`Audit_BEACON_${currentScoreLetter || 'Report'}.pdf`);
+      // Descarga con nombre formal de auditoría
+      doc.save(`Rapport_Audit_BEACON_${currentScoreLetter || 'SEC'}_${Date.now()}.pdf`);
 
     } catch (err) {
       console.error("Erreur PDF:", err);
-      alert('Erreur lors de la génération du PDF: ' + err.message);
+      alert('Erreur lors de la génération du rapport PDF: ' + err.message);
     } finally {
       btnPdf.disabled = false;
       btnPdf.innerText = originalText;
