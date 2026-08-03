@@ -436,476 +436,514 @@
     </div>
   </footer>
 
- document.addEventListener('DOMContentLoaded', () => {
-  const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
 
-  // Elementos del DOM
-  const btnAnalyze = document.getElementById('btn-analyze');
-  const userInput = document.getElementById('user-input');
-  const userFile = document.getElementById('user-file');
-  const fileNameDisplay = document.getElementById('file-name-display');
-  const resultsPanel = document.getElementById('results-panel');
-  const analysisReport = document.getElementById('analysis-report');
-  const ethicScore = document.getElementById('ethic-score');
-  const detectedFlags = document.getElementById('detected-flags-container');
+      // Elementos del DOM
+      const btnAnalyze = document.getElementById('btn-analyze');
+      const userInput = document.getElementById('user-input');
+      const userFile = document.getElementById('user-file');
+      const fileNameDisplay = document.getElementById('file-name-display');
+      const resultsPanel = document.getElementById('results-panel');
+      const analysisReport = document.getElementById('analysis-report');
+      const ethicScore = document.getElementById('ethic-score');
+      const detectedFlags = document.getElementById('detected-flags-container');
 
-  const btnRefute = document.getElementById('btn-refute');
-  const btnPdf = document.getElementById('btn-pdf');
-  const btnPurge = document.getElementById('btn-purge');
+      const btnRefute = document.getElementById('btn-refute');
+      const btnPdf = document.getElementById('btn-pdf');
+      const btnPurge = document.getElementById('btn-purge');
 
-  // Elementos traducibles del DOM
-  const navBtnAccueil = document.querySelector('.nav-buttons .nav-btn:nth-child(1)');
-  const navBtnObs = document.querySelector('.nav-buttons .nav-btn:nth-child(2)');
-  const heroTitle = document.querySelector('.hero-app-title');
-  const heroSubtitle = document.querySelector('.subtitle');
-  const statusBarText = document.querySelector('.status-bar span');
-  const footerTitle = document.querySelector('.shield-title');
-  const footerDisclaimer = document.querySelector('.shield-disclaimer');
+      // Elementos traducibles del DOM
+      const navBtnAccueil = document.querySelector('.nav-buttons .nav-btn:nth-child(1)');
+      const navBtnObs = document.querySelector('.nav-buttons .nav-btn:nth-child(2)');
+      const heroTitle = document.querySelector('.hero-app-title');
+      const heroSubtitle = document.querySelector('.subtitle');
+      const statusBarText = document.querySelector('.status-bar span');
+      const footerTitle = document.querySelector('.shield-title');
+      const footerDisclaimer = document.querySelector('.shield-disclaimer');
 
-  let currentLanguage = 'fr';
-  let currentScoreLetter = 'C';
-  let lastAnalyzedText = '';
+      let currentLanguage = 'fr';
+      let currentScoreLetter = 'C';
+      let lastAnalyzedText = '';
 
-  // 🌐 DICCIONARIO DE TRADUCCIONES (i18n)
-  const translations = {
-    fr: {
-      navAccueil: "ACCUEIL",
-      navObs: "L'OBSERVATOIRE",
-      subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
-      placeholder: "Collez du texte média, des articles politiques, des publications ou des slogans...",
-      joinFile: "Joindre fichier",
-      btnAnalyze: "⚡ BEACON-IZE",
-      statusReady: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
-      flagReady: "ANALYSE PRÊTE",
-      reportWaiting: "En attente d'analyse... Entrez un texte et cliquez sur BEACON-IZE.",
-      btnRefute: "🔄 RÉFUTER / CHALLENGER",
-      btnPdf: "📄 EXPORTER EN PDF",
-      btnPurge: "🗑️ PURGER",
-      shieldTitle: "Bouclier de Protection Professionnelle",
-      shieldDisclaimer: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
-      alertNoText: "Veuillez entrer du texte ou joindre un fichier à analyser.",
-      analyzing: "⚡ Décodage métacommunicationnel en cours... Veuillez patienter.",
-      btnAnalyzing: "⏳ ANALYSE EN COURS...",
-      refuting: "⏳ GÉNÉRATION DE LA RÉFUTATION...",
-      noAnalysisAlert: "Veuillez d'abord effectuer une analyse.",
-      exportingPdf: "⏳ GÉNÉRATION DU PDF EN COURS...",
-      noReportPdf: "Aucun rapport à exporter."
-    },
-    es: {
-      navAccueil: "INICIO",
-      navObs: "OBSERVATORIO",
-      subtitle: "Motor de autodefensa cognitiva y análisis metacomunicacional",
-      placeholder: "Pega texto de medios, artículos políticos, publicaciones o eslóganes...",
-      joinFile: "Adjuntar archivo",
-      btnAnalyze: "⚡ BEACON-IZE",
-      statusReady: "● MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
-      flagReady: "ANÁLISIS LISTO",
-      reportWaiting: "Esperando análisis... Introduce un texto y haz clic en BEACON-IZE.",
-      btnRefute: "🔄 REFUTAR / DESAFIAR",
-      btnPdf: "📄 EXPORTAR EN PDF",
-      btnPurge: "🗑️ PURGAR",
-      shieldTitle: "Escudo de Protección Profesional",
-      shieldDisclaimer: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
-      alertNoText: "Por favor, introduce un texto o adjunta un archivo para analizar.",
-      analyzing: "⚡ Decodificación metacomunicacional en curso... Por favor espera.",
-      btnAnalyzing: "⏳ ANÁLISIS EN CURSO...",
-      refuting: "⏳ GENERANDO REFUTACIÓN...",
-      noAnalysisAlert: "Por favor, realiza un análisis primero.",
-      exportingPdf: "⏳ GENERANDO PDF...",
-      noReportPdf: "No hay ningún informe para exportar."
-    },
-    en: {
-      navAccueil: "HOME",
-      navObs: "OBSERVATORY",
-      subtitle: "Cognitive Self-Defense Engine & Metacommunicational Analysis",
-      placeholder: "Paste media text, political articles, posts or slogans...",
-      joinFile: "Attach file",
-      btnAnalyze: "⚡ BEACON-IZE",
-      statusReady: "● ENGINE READY | SYSTEM ONLINE (2026)",
-      flagReady: "ANALYSIS READY",
-      reportWaiting: "Awaiting analysis... Enter text and click BEACON-IZE.",
-      btnRefute: "🔄 REFUTE / CHALLENGE",
-      btnPdf: "📄 EXPORT TO PDF",
-      btnPurge: "🗑️ PURGE",
-      shieldTitle: "Professional Protection Shield",
-      shieldDisclaimer: "Exclusive primary prevention and non-clinical psychoeducation action.",
-      alertNoText: "Please enter text or attach a file to analyze.",
-      analyzing: "⚡ Metacommunicational decoding in progress... Please wait.",
-      btnAnalyzing: "⏳ ANALYSIS IN PROGRESS...",
-      refuting: "⏳ GENERATING REFUTATION...",
-      noAnalysisAlert: "Please perform an analysis first.",
-      exportingPdf: "⏳ GENERATING PDF...",
-      noReportPdf: "No report to export."
-    }
-  };
+      // 🌐 DICCIONARIO DE TRADUCCIONES (i18n)
+      const translations = {
+        fr: {
+          navAccueil: "ACCUEIL",
+          navObs: "L'OBSERVATOIRE",
+          subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
+          placeholder: "Collez du texte média, des articles politiques, des publications ou des slogans...",
+          joinFile: "Joindre fichier",
+          btnAnalyze: "⚡ BEACON-IZE",
+          statusReady: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
+          flagReady: "ANALYSE PRÊTE",
+          reportWaiting: "En attente d'analyse... Entrez un texte et cliquez sur BEACON-IZE.",
+          btnRefute: "🔄 RÉFUTER / CHALLENGER",
+          btnPdf: "📄 EXPORTER EN PDF",
+          btnPurge: "🗑️ PURGER",
+          shieldTitle: "Bouclier de Protection Professionnelle",
+          shieldDisclaimer: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          alertNoText: "Veuillez entrer du texte ou joindre un fichier à analyser.",
+          analyzing: "⚡ Décodage métacommunicationnel en cours... Veuillez patienter.",
+          btnAnalyzing: "⏳ ANALYSE EN COURS...",
+          refuting: "⏳ GÉNÉRATION DE LA RÉFUTATION...",
+          noAnalysisAlert: "Veuillez d'abord effectuer une analyse.",
+          exportingPdf: "⏳ GÉNÉRATION DU PDF EN COURS...",
+          noReportPdf: "Aucun rapport à exporter."
+        },
+        es: {
+          navAccueil: "INICIO",
+          navObs: "OBSERVATORIO",
+          subtitle: "Motor de autodefensa cognitiva y análisis metacomunicacional",
+          placeholder: "Pega texto de medios, artículos políticos, publicaciones o eslóganes...",
+          joinFile: "Adjuntar archivo",
+          btnAnalyze: "⚡ BEACON-IZE",
+          statusReady: "● MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
+          flagReady: "ANÁLISIS LISTO",
+          reportWaiting: "Esperando análisis... Introduce un texto y haz clic en BEACON-IZE.",
+          btnRefute: "🔄 REFUTAR / DESAFIAR",
+          btnPdf: "📄 EXPORTAR EN PDF",
+          btnPurge: "🗑️ PURGAR",
+          shieldTitle: "Escudo de Protección Profesional",
+          shieldDisclaimer: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          alertNoText: "Por favor, introduce un texto o adjunta un archivo para analizar.",
+          analyzing: "⚡ Decodificación metacomunicacional en curso... Por favor espera.",
+          btnAnalyzing: "⏳ ANÁLISIS EN CURSO...",
+          refuting: "⏳ GENERANDO REFUTACIÓN...",
+          noAnalysisAlert: "Por favor, realiza un análisis primero.",
+          exportingPdf: "⏳ GENERANDO PDF...",
+          noReportPdf: "No hay ningún informe para exportar."
+        },
+        en: {
+          navAccueil: "HOME",
+          navObs: "OBSERVATORY",
+          subtitle: "Cognitive Self-Defense Engine & Metacommunicational Analysis",
+          placeholder: "Paste media text, political articles, posts or slogans...",
+          joinFile: "Attach file",
+          btnAnalyze: "⚡ BEACON-IZE",
+          statusReady: "● ENGINE READY | SYSTEM ONLINE (2026)",
+          flagReady: "ANALYSIS READY",
+          reportWaiting: "Awaiting analysis... Enter text and click BEACON-IZE.",
+          btnRefute: "🔄 REFUTE / CHALLENGE",
+          btnPdf: "📄 EXPORT TO PDF",
+          btnPurge: "🗑️ PURGE",
+          shieldTitle: "Professional Protection Shield",
+          shieldDisclaimer: "Exclusive primary prevention and non-clinical psychoeducation action.",
+          alertNoText: "Please enter text or attach a file to analyze.",
+          analyzing: "⚡ Metacommunicational decoding in progress... Please wait.",
+          btnAnalyzing: "⏳ ANALYSIS IN PROGRESS...",
+          refuting: "⏳ GENERATING REFUTATION...",
+          noAnalysisAlert: "Please perform an analysis first.",
+          exportingPdf: "⏳ GENERATING PDF...",
+          noReportPdf: "No report to export."
+        }
+      };
 
-  // 🔄 FUNCIÓN PARA CAMBIAR EL IDIOMA EN LA INTERFAZ
-  function updateLanguage(lang) {
-    currentLanguage = lang;
-    const t = translations[lang];
+      // 🔄 FUNCIÓN PARA CAMBIAR EL IDIOMA EN LA INTERFAZ
+      function updateLanguage(lang) {
+        currentLanguage = lang;
+        const t = translations[lang];
 
-    if (navBtnAccueil) navBtnAccueil.innerText = t.navAccueil;
-    if (navBtnObs) navBtnObs.innerText = t.navObs;
-    if (heroSubtitle) heroSubtitle.innerText = t.subtitle;
-    if (userInput) userInput.placeholder = t.placeholder;
-    if (fileNameDisplay && userFile.files.length === 0) fileNameDisplay.innerText = t.joinFile;
-    if (btnAnalyze && !btnAnalyze.disabled) btnAnalyze.innerText = t.btnAnalyze;
-    if (statusBarText) statusBarText.innerText = t.statusReady;
-    if (btnRefute) btnRefute.innerText = t.btnRefute;
-    if (btnPdf) btnPdf.innerText = t.btnPdf;
-    if (btnPurge) btnPurge.innerText = t.btnPurge;
-    if (footerTitle) footerTitle.innerText = t.shieldTitle;
-    if (footerDisclaimer) footerDisclaimer.innerText = t.shieldDisclaimer;
+        if (navBtnAccueil) navBtnAccueil.innerText = t.navAccueil;
+        if (navBtnObs) navBtnObs.innerText = t.navObs;
+        if (heroSubtitle) heroSubtitle.innerText = t.subtitle;
+        if (userInput) userInput.placeholder = t.placeholder;
+        if (fileNameDisplay && userFile.files.length === 0) fileNameDisplay.innerText = t.joinFile;
+        if (btnAnalyze && !btnAnalyze.disabled) btnAnalyze.innerText = t.btnAnalyze;
+        if (statusBarText) statusBarText.innerText = t.statusReady;
+        if (btnRefute) btnRefute.innerText = t.btnRefute;
+        if (btnPdf) btnPdf.innerText = t.btnPdf;
+        if (btnPurge) btnPurge.innerText = t.btnPurge;
+        if (footerTitle) footerTitle.innerText = t.shieldTitle;
+        if (footerDisclaimer) footerDisclaimer.innerText = t.shieldDisclaimer;
 
-    if (analysisReport.innerText.includes("En attente") || 
-        analysisReport.innerText.includes("Esperando") || 
-        analysisReport.innerText.includes("Awaiting")) {
-      analysisReport.innerText = t.reportWaiting;
-    }
-  }
-
-  // 🌐 EVENT LISTENERS PARA LOS BOTONES FR / ES / EN
-  const langBtns = {
-    fr: document.getElementById('btn-fr'),
-    es: document.getElementById('btn-es'),
-    en: document.getElementById('btn-en')
-  };
-
-  Object.keys(langBtns).forEach(lang => {
-    if (langBtns[lang]) {
-      langBtns[lang].addEventListener('click', (e) => {
-        e.preventDefault();
-        Object.values(langBtns).forEach(b => b && b.classList.remove('active'));
-        langBtns[lang].classList.add('active');
-        updateLanguage(lang);
-      });
-    }
-  });
-
-  // 📎 ADJUNTAR ARCHIVO
-  if (userFile) {
-    userFile.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        fileNameDisplay.innerText = e.target.files[0].name.substring(0, 15) + '...';
-      } else {
-        fileNameDisplay.innerText = translations[currentLanguage].joinFile;
-      }
-    });
-  }
-
-  // 🎯 BADGE ETHIC-SCORE
-  function applyEthicBadge(score) {
-    let letter = 'C';
-    let color = '#ff9900';
-    let glow = 'rgba(255, 153, 0, 0.4)';
-
-    if (typeof score === 'string') {
-      letter = score.toUpperCase();
-    } else if (typeof score === 'number') {
-      if (score <= 25) letter = 'A';
-      else if (score <= 50) letter = 'B';
-      else if (score <= 75) letter = 'C';
-      else letter = 'D';
-    }
-
-    if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
-    if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
-    if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
-    if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
-
-    currentScoreLetter = letter;
-    ethicScore.innerText = `Ethic-Score™: ${letter}`;
-    ethicScore.style.backgroundColor = color;
-    ethicScore.style.boxShadow = `0 0 15px ${glow}`;
-    ethicScore.style.color = '#030a12';
-  }
-
-  // 🚩 BANDERAS / FLAGS
-  function renderFlags(flagsArray) {
-    if (!detectedFlags) return;
-    detectedFlags.innerHTML = '';
-    
-    let normalizedFlags = [];
-    if (typeof flagsArray === 'string') {
-      normalizedFlags = flagsArray.split(',').map(f => f.trim());
-    } else if (Array.isArray(flagsArray)) {
-      normalizedFlags = flagsArray;
-    }
-
-    if (!normalizedFlags || normalizedFlags.length === 0) {
-      detectedFlags.innerHTML = `<span class="flag-badge">${translations[currentLanguage].flagReady}</span>`;
-      return;
-    }
-
-    normalizedFlags.forEach(flag => {
-      if (flag) {
-        const span = document.createElement('span');
-        span.className = 'flag-badge';
-        span.innerText = flag.toUpperCase();
-        detectedFlags.appendChild(span);
-      }
-    });
-  }
-
-  // ⚡ BEACON-IZE
-  if (btnAnalyze) {
-    btnAnalyze.addEventListener('click', async () => {
-      const t = translations[currentLanguage];
-      const text = userInput.value.trim();
-      const file = userFile && userFile.files.length > 0 ? userFile.files[0] : null;
-
-      if (!text && !file) {
-        alert(t.alertNoText);
-        return;
+        if (analysisReport.innerText.includes("En attente") || 
+            analysisReport.innerText.includes("Esperando") || 
+            analysisReport.innerText.includes("Awaiting")) {
+          analysisReport.innerText = t.reportWaiting;
+        }
       }
 
-      lastAnalyzedText = text || (file ? `Fichier: ${file.name}` : '');
-      btnAnalyze.disabled = true;
-      btnAnalyze.innerText = t.btnAnalyzing;
-      resultsPanel.style.display = 'block';
-      analysisReport.innerText = t.analyzing;
+      // 🌐 EVENT LISTENERS PARA LOS BOTONES FR / ES / EN
+      const langBtns = {
+        fr: document.getElementById('btn-fr'),
+        es: document.getElementById('btn-es'),
+        en: document.getElementById('btn-en')
+      };
 
-      try {
-        let response;
-        if (file) {
-          const formData = new FormData();
-          formData.append('text', text);
-          formData.append('file', file);
-          formData.append('lang', currentLanguage);
-
-          response = await fetch(`${API_BASE_URL}/analyze`, { method: 'POST', body: formData });
-        } else {
-          response = await fetch(`${API_BASE_URL}/analyze`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: text, lang: currentLanguage })
+      Object.keys(langBtns).forEach(lang => {
+        if (langBtns[lang]) {
+          langBtns[lang].addEventListener('click', (e) => {
+            e.preventDefault();
+            Object.values(langBtns).forEach(b => b && b.classList.remove('active'));
+            langBtns[lang].classList.add('active');
+            updateLanguage(lang);
           });
         }
+      });
 
-        if (!response.ok) throw new Error('Erreur API');
+      // 📎 ADJUNTAR ARCHIVO
+      if (userFile) {
+        userFile.addEventListener('change', (e) => {
+          if (e.target.files.length > 0) {
+            fileNameDisplay.innerText = e.target.files[0].name.substring(0, 15) + '...';
+          } else {
+            fileNameDisplay.innerText = translations[currentLanguage].joinFile;
+          }
+        });
+      }
 
-        const data = await response.json();
-        applyEthicBadge(data.ethic_letter || data.score || 'C');
+      // 🎯 BADGE ETHIC-SCORE
+      let ethicSpinnerInterval = null;
 
-        let cleanAnalysis = data.analysis || data.report || data.result || '';
+      // 🎰 Animación de ruleta/hackeo durante la carga
+      function startEthicSpinner() {
+        const dummyLetters = ['A', 'B', 'C', 'D', 'S', 'X', '?', '⚡', '404', '88%'];
+        const dummyColors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d', '#00f0ff'];
 
-        cleanAnalysis = cleanAnalysis
-          .replace(/DÉMONTAGE COGNITIF ET LIMBIQUE/gi, 'DÉMONTAGE COGNITIF')
-          .replace(/ET LIMBIQUE/gi, '')
-          .replace(/LIMBIQUE/gi, '');
+        if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
 
-        analysisReport.innerText = cleanAnalysis;
-        renderFlags(data.detected_flags || ['SIGNAL_ANALYSE']);
-      } catch (err) {
-        console.error(err);
-        applyEthicBadge('C');
-        renderFlags(['ERREUR_CONNEXION']);
+        ethicSpinnerInterval = setInterval(() => {
+          const randomLetter = dummyLetters[Math.floor(Math.random() * dummyLetters.length)];
+          const randomColor = dummyColors[Math.floor(Math.random() * dummyColors.length)];
+
+          ethicScore.innerText = `Ethic-Score™: ${randomLetter}`;
+          ethicScore.style.backgroundColor = randomColor;
+          ethicScore.style.boxShadow = `0 0 15px ${randomColor}`;
+          ethicScore.style.color = '#030a12';
+        }, 90);
+      }
+
+      function stopEthicSpinner() {
+        if (ethicSpinnerInterval) {
+          clearInterval(ethicSpinnerInterval);
+          ethicSpinnerInterval = null;
+        }
+      }
+
+      function applyEthicBadge(score) {
+        stopEthicSpinner();
+
+        let letter = 'C';
+        let color = '#ff9900';
+        let glow = 'rgba(255, 153, 0, 0.4)';
+
+        if (typeof score === 'string') {
+          letter = score.toUpperCase();
+        } else if (typeof score === 'number') {
+          if (score <= 25) letter = 'A';
+          else if (score <= 50) letter = 'B';
+          else if (score <= 75) letter = 'C';
+          else letter = 'D';
+        }
+
+        if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
+        if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
+        if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
+        if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
+
+        currentScoreLetter = letter;
+        ethicScore.innerText = `Ethic-Score™: ${letter}`;
+        ethicScore.style.backgroundColor = color;
+        ethicScore.style.boxShadow = `0 0 15px ${glow}`;
+        ethicScore.style.color = '#030a12';
+      }
+
+      // 🚩 BANDERAS / FLAGS
+      function renderFlags(flagsArray) {
+        if (!detectedFlags) return;
+        detectedFlags.innerHTML = '';
         
-        analysisReport.innerText = 
+        let normalizedFlags = [];
+        if (typeof flagsArray === 'string') {
+          normalizedFlags = flagsArray.split(',').map(f => f.trim());
+        } else if (Array.isArray(flagsArray)) {
+          normalizedFlags = flagsArray;
+        }
+
+        if (!normalizedFlags || normalizedFlags.length === 0) {
+          detectedFlags.innerHTML = `<span class="flag-badge">${translations[currentLanguage].flagReady}</span>`;
+          return;
+        }
+
+        normalizedFlags.forEach(flag => {
+          if (flag) {
+            const span = document.createElement('span');
+            span.className = 'flag-badge';
+            span.innerText = flag.toUpperCase();
+            detectedFlags.appendChild(span);
+          }
+        });
+      }
+
+      // ⚡ BEACON-IZE
+      if (btnAnalyze) {
+        btnAnalyze.addEventListener('click', async () => {
+          const t = translations[currentLanguage];
+          const text = userInput.value.trim();
+          const file = userFile && userFile.files.length > 0 ? userFile.files[0] : null;
+
+          if (!text && !file) {
+            alert(t.alertNoText);
+            return;
+          }
+
+          lastAnalyzedText = text || (file ? `Fichier: ${file.name}` : '');
+          btnAnalyze.disabled = true;
+          btnAnalyze.innerText = t.btnAnalyzing;
+          resultsPanel.style.display = 'block';
+          analysisReport.innerText = t.analyzing;
+
+          // Iniciar animación del Ethic-Score
+          startEthicSpinner();
+
+          try {
+            let response;
+            if (file) {
+              const formData = new FormData();
+              formData.append('text', text);
+              formData.append('file', file);
+              formData.append('lang', currentLanguage);
+
+              response = await fetch(`${API_BASE_URL}/analyze`, { method: 'POST', body: formData });
+            } else {
+              response = await fetch(`${API_BASE_URL}/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text, lang: currentLanguage })
+              });
+            }
+
+            if (!response.ok) throw new Error('Erreur API');
+
+            const data = await response.json();
+            applyEthicBadge(data.ethic_letter || data.score || 'C');
+
+            let cleanAnalysis = data.analysis || data.report || data.result || '';
+
+            cleanAnalysis = cleanAnalysis
+              .replace(/DÉMONTAGE COGNITIF ET LIMBIQUE/gi, 'DÉMONTAGE COGNITIF')
+              .replace(/ET LIMBIQUE/gi, '')
+              .replace(/LIMBIQUE/gi, '');
+
+            analysisReport.innerText = cleanAnalysis;
+            renderFlags(data.detected_flags || ['SIGNAL_ANALYSE']);
+          } catch (err) {
+            console.error(err);
+            applyEthicBadge('C');
+            renderFlags(['ERREUR_CONNEXION']);
+            
+            analysisReport.innerText = 
 `==================================================
 [AUDIT BEACON — MODE DE SECOURS DE CONNEXION]
 ================================================== 
 
 ⚠️ Connection error with BEACON API. Please check your network and try again.`;
-      } finally {
-        btnAnalyze.disabled = false;
-        btnAnalyze.innerText = t.btnAnalyze;
-        resultsPanel.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  }
-
-  // 🔄 RÉFUTER / CHALLENGER
-  if (btnRefute) {
-    btnRefute.addEventListener('click', async () => {
-      const t = translations[currentLanguage];
-      const currentAnalysis = analysisReport.innerText;
-
-      if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Esperando") || currentAnalysis.includes("Awaiting")) {
-        alert(t.noAnalysisAlert);
-        return;
-      }
-
-      btnRefute.disabled = true;
-      btnRefute.innerText = t.refuting;
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/refute`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            analysis: currentAnalysis,
-            text: lastAnalyzedText, 
-            lang: currentLanguage 
-          })
-        });
-
-        if (!res.ok) throw new Error('Erreur API Refute');
-        const data = await res.json();
-        
-        const refutationContent = data.refutation || data.reply || 'Aucune contre-argumentation générée.';
-        
-        analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationContent}`;
-
-      } catch (err) {
-        console.error("Erreur de réfutation:", err);
-        alert("Erreur lors de la génération de la réfutation.");
-      } finally {
-        btnRefute.disabled = false;
-        btnRefute.innerText = t.btnRefute;
-      }
-    });
-  }
-
-  // 📄 EXPORTAR A PDF
-  if (btnPdf) {
-    btnPdf.addEventListener('click', async () => {
-      const t = translations[currentLanguage];
-      const reportText = analysisReport.innerText;
-
-      if (!reportText || reportText.includes("En attente") || reportText.includes("Esperando") || reportText.includes("Awaiting")) {
-        alert(t.noReportPdf);
-        return;
-      }
-
-      btnPdf.disabled = true;
-      const originalText = btnPdf.innerText;
-      btnPdf.innerText = t.exportingPdf;
-
-      try {
-        if (!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF missing");
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'mm', 'a4');
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 18;
-        const maxLineWidth = pageWidth - (margin * 2);
-        let cursorY = 20;
-
-        const sanitizeToPureText = (str) => {
-          return str
-            .replace(/ET LIMBIQUE/gi, '')
-            .replace(/LIMBIQUE/gi, '')
-            .replace(/\$[^$]*\$/g, '')
-            .replace(/\\[a-zA-Z]+/g, '')
-            .replace(/<[^>]*>/g, '')
-            .replace(/\*\*/g, '')
-            .replace(/\*/g, '-')
-            .replace(/[’']/g, "'")
-            .replace(/[«»]/g, '"')
-            .replace(/[^a-zA-Z0-9àâæçéèêëîïôœùûüÿÀÂÆÇÉÈÊËÎÏÔŒÙÛÜŸ\s\.,;:!\?\-\(\)'"%\/=\+]/g, '')
-            .replace(/[ \t]+/g, ' ')
-            .trim();
-        };
-
-        doc.setFillColor(15, 23, 42); 
-        doc.rect(0, 0, pageWidth, 10, 'F');
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(13);
-        doc.setTextColor(15, 23, 42);
-        doc.text("RAPPORT D'AUDIT POLETHIC BEACON", margin, cursorY);
-        cursorY += 5;
-
-        doc.setFontSize(8.5);
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(100, 116, 139);
-        doc.text("OBSERVATOIRE & EXPERTISE MÊTACOMMUNICATIONNELLE", margin, cursorY);
-        cursorY += 6;
-
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.5);
-        doc.line(margin, cursorY, pageWidth - margin, cursorY);
-        cursorY += 8;
-
-        doc.setFillColor(248, 250, 252);
-        doc.rect(margin, cursorY, maxLineWidth, 12, 'F');
-        doc.setDrawColor(203, 213, 225);
-        doc.rect(margin, cursorY, maxLineWidth, 12, 'S');
-
-        doc.setFontSize(8.5);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(51, 65, 85);
-        doc.text(`ETHIC-SCORE™ : ${currentScoreLetter || 'B'}`, margin + 4, cursorY + 7.5);
-
-        const currentDate = new Date().toLocaleDateString(currentLanguage === 'es' ? 'es-ES' : currentLanguage === 'en' ? 'en-US' : 'fr-FR', {
-          year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-        });
-        doc.setFont("helvetica", "normal");
-        doc.text(`DATE : ${currentDate}`, margin + 45, cursorY + 7.5);
-        doc.text(`ID : BEACON-v2.6`, pageWidth - margin - 45, cursorY + 7.5);
-
-        cursorY += 18;
-
-        const rawParagraphs = reportText.split('\n');
-        rawParagraphs.forEach((rawPara) => {
-          const cleanPara = sanitizeToPureText(rawPara);
-          if (!cleanPara) { cursorY += 2; return; }
-
-          const isHeader = /^(PHASE|CLASSIFICATION|NOYAU|DÉMONTAGE|RECADRAGE|AUDIT|PREMISSES|DÉFI)/i.test(cleanPara);
-
-          if (isHeader) {
-            cursorY += 4;
-            if (cursorY > pageHeight - 25) { doc.addPage(); cursorY = 20; }
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(9.5);
-            doc.setTextColor(0, 120, 150);
-            doc.text(cleanPara.toUpperCase(), margin, cursorY);
-            cursorY += 1.5;
-            doc.setDrawColor(0, 180, 210);
-            doc.setLineWidth(0.3);
-            doc.line(margin, cursorY, margin + 35, cursorY);
-            cursorY += 5;
-          } else {
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(8.5);
-            doc.setTextColor(51, 65, 85);
-            const lines = doc.splitTextToSize(cleanPara, maxLineWidth);
-            lines.forEach((line) => {
-              if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = 20; }
-              doc.text(line, margin, cursorY);
-              cursorY += 4.2;
-            });
-            cursorY += 1.5;
+          } finally {
+            stopEthicSpinner();
+            btnAnalyze.disabled = false;
+            btnAnalyze.innerText = t.btnAnalyze;
+            resultsPanel.scrollIntoView({ behavior: 'smooth' });
           }
         });
+      }
 
-        const totalPages = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-          doc.setPage(i);
-          doc.setFont("helvetica", "italic");
-          doc.setFontSize(7.5);
-          doc.setTextColor(148, 163, 184);
-          doc.setDrawColor(226, 232, 240);
-          doc.setLineWidth(0.4);
-          doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
-          doc.text("POLETHIC France — Protection primaire & analyse de discours.", margin, pageHeight - 7);
-          doc.text(`Page ${i} / ${totalPages}`, pageWidth - margin - 18, pageHeight - 7);
-        }
+      // 🔄 RÉFUTER / CHALLENGER
+      if (btnRefute) {
+        btnRefute.addEventListener('click', async () => {
+          const t = translations[currentLanguage];
+          const currentAnalysis = analysisReport.innerText;
 
-        doc.save(`Rapport_Audit_BEACON_${currentScoreLetter}_${Date.now()}.pdf`);
-      } catch (err) {
-        console.error(err);
-        alert('PDF Export Error: ' + err.message);
-      } finally {
-        btnPdf.disabled = false;
-        btnPdf.innerText = originalText;
+          if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Esperando") || currentAnalysis.includes("Awaiting")) {
+            alert(t.noAnalysisAlert);
+            return;
+          }
+
+          btnRefute.disabled = true;
+          btnRefute.innerText = t.refuting;
+
+          try {
+            const res = await fetch(`${API_BASE_URL}/refute`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                analysis: currentAnalysis,
+                text: lastAnalyzedText, 
+                lang: currentLanguage 
+              })
+            });
+
+            if (!res.ok) throw new Error('Erreur API Refute');
+            const data = await res.json();
+            
+            const refutationContent = data.refutation || data.reply || 'Aucune contre-argumentation générée.';
+            
+            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationContent}`;
+
+          } catch (err) {
+            console.error("Erreur de réfutation:", err);
+            alert("Erreur lors de la génération de la réfutation.");
+          } finally {
+            btnRefute.disabled = false;
+            btnRefute.innerText = t.btnRefute;
+          }
+        });
+      }
+
+      // 📄 EXPORTAR A PDF
+      if (btnPdf) {
+        btnPdf.addEventListener('click', async () => {
+          const t = translations[currentLanguage];
+          const reportText = analysisReport.innerText;
+
+          if (!reportText || reportText.includes("En attente") || reportText.includes("Esperando") || reportText.includes("Awaiting")) {
+            alert(t.noReportPdf);
+            return;
+          }
+
+          btnPdf.disabled = true;
+          const originalText = btnPdf.innerText;
+          btnPdf.innerText = t.exportingPdf;
+
+          try {
+            if (!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF missing");
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 18;
+            const maxLineWidth = pageWidth - (margin * 2);
+            let cursorY = 20;
+
+            const sanitizeToPureText = (str) => {
+              return str
+                .replace(/ET LIMBIQUE/gi, '')
+                .replace(/LIMBIQUE/gi, '')
+                .replace(/\$[^$]*\$/g, '')
+                .replace(/\\[a-zA-Z]+/g, '')
+                .replace(/<[^>]*>/g, '')
+                .replace(/\*\*/g, '')
+                .replace(/\*/g, '-')
+                .replace(/[’']/g, "'")
+                .replace(/[«»]/g, '"')
+                .replace(/[^a-zA-Z0-9àâæçéèêëîïôœùûüÿÀÂÆÇÉÈÊËÎÏÔŒÙÛÜŸ\s\.,;:!\?\-\(\)'"%\/=\+]/g, '')
+                .replace(/[ \t]+/g, ' ')
+                .trim();
+            };
+
+            doc.setFillColor(15, 23, 42); 
+            doc.rect(0, 0, pageWidth, 10, 'F');
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(13);
+            doc.setTextColor(15, 23, 42);
+            doc.text("RAPPORT D'AUDIT POLETHIC BEACON", margin, cursorY);
+            cursorY += 5;
+
+            doc.setFontSize(8.5);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(100, 116, 139);
+            doc.text("OBSERVATOIRE & EXPERTISE MÊTACOMMUNICATIONNELLE", margin, cursorY);
+            cursorY += 6;
+
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.5);
+            doc.line(margin, cursorY, pageWidth - margin, cursorY);
+            cursorY += 8;
+
+            doc.setFillColor(248, 250, 252);
+            doc.rect(margin, cursorY, maxLineWidth, 12, 'F');
+            doc.setDrawColor(203, 213, 225);
+            doc.rect(margin, cursorY, maxLineWidth, 12, 'S');
+
+            doc.setFontSize(8.5);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(51, 65, 85);
+            doc.text(`ETHIC-SCORE™ : ${currentScoreLetter || 'B'}`, margin + 4, cursorY + 7.5);
+
+            const currentDate = new Date().toLocaleDateString(currentLanguage === 'es' ? 'es-ES' : currentLanguage === 'en' ? 'en-US' : 'fr-FR', {
+              year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+            doc.setFont("helvetica", "normal");
+            doc.text(`DATE : ${currentDate}`, margin + 45, cursorY + 7.5);
+            doc.text(`ID : BEACON-v2.6`, pageWidth - margin - 45, cursorY + 7.5);
+
+            cursorY += 18;
+
+            const rawParagraphs = reportText.split('\n');
+            rawParagraphs.forEach((rawPara) => {
+              const cleanPara = sanitizeToPureText(rawPara);
+              if (!cleanPara) { cursorY += 2; return; }
+
+              const isHeader = /^(PHASE|CLASSIFICATION|NOYAU|DÉMONTAGE|RECADRAGE|AUDIT|PREMISSES|DÉFI)/i.test(cleanPara);
+
+              if (isHeader) {
+                cursorY += 4;
+                if (cursorY > pageHeight - 25) { doc.addPage(); cursorY = 20; }
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(9.5);
+                doc.setTextColor(0, 120, 150);
+                doc.text(cleanPara.toUpperCase(), margin, cursorY);
+                cursorY += 1.5;
+                doc.setDrawColor(0, 180, 210);
+                doc.setLineWidth(0.3);
+                doc.line(margin, cursorY, margin + 35, cursorY);
+                cursorY += 5;
+              } else {
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(8.5);
+                doc.setTextColor(51, 65, 85);
+                const lines = doc.splitTextToSize(cleanPara, maxLineWidth);
+                lines.forEach((line) => {
+                  if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = 20; }
+                  doc.text(line, margin, cursorY);
+                  cursorY += 4.2;
+                });
+                cursorY += 1.5;
+              }
+            });
+
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+              doc.setPage(i);
+              doc.setFont("helvetica", "italic");
+              doc.setFontSize(7.5);
+              doc.setTextColor(148, 163, 184);
+              doc.setDrawColor(226, 232, 240);
+              doc.setLineWidth(0.4);
+              doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+              doc.text("POLETHIC France — Protection primaire & analyse de discours.", margin, pageHeight - 7);
+              doc.text(`Page ${i} / ${totalPages}`, pageWidth - margin - 18, pageHeight - 7);
+            }
+
+            doc.save(`Rapport_Audit_BEACON_${currentScoreLetter}_${Date.now()}.pdf`);
+          } catch (err) {
+            console.error(err);
+            alert('PDF Export Error: ' + err.message);
+          } finally {
+            btnPdf.disabled = false;
+            btnPdf.innerText = originalText;
+          }
+        });
+      }
+
+      // 🗑️ PURGAR
+      if (btnPurge) {
+        btnPurge.addEventListener('click', () => {
+          stopEthicSpinner();
+          resultsPanel.style.display = 'none';
+          userInput.value = '';
+          if (userFile) { 
+            userFile.value = ''; 
+            fileNameDisplay.innerText = translations[currentLanguage].joinFile; 
+          }
+          lastAnalyzedText = '';
+          analysisReport.innerText = translations[currentLanguage].reportWaiting;
+        });
       }
     });
-  }
-
-  // 🗑️ PURGAR
-  if (btnPurge) {
-    btnPurge.addEventListener('click', () => {
-      resultsPanel.style.display = 'none';
-      userInput.value = '';
-      if (userFile) { 
-        userFile.value = ''; 
-        fileNameDisplay.innerText = translations[currentLanguage].joinFile; 
-      }
-      lastAnalyzedText = '';
-      analysisReport.innerText = translations[currentLanguage].reportWaiting;
-    });
-  }
-});
+  </script>
+</body>
+</html>
