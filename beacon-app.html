@@ -752,55 +752,69 @@
         });
       }
 
-      // 📄 EXPORTAR PDF MULTIPÁGINA
-      if (btnPdf) {
-        btnPdf.addEventListener('click', () => {
-          const reportText = analysisReport.innerText;
-          if (!reportText || reportText.includes("En attente")) return;
+      // 📄 EXPORTAR PDF (Corregido: Sin caracteres corruptos y sin asteriscos)
+if (btnPdf) {
+  btnPdf.addEventListener('click', () => {
+    const reportText = analysisReport.innerText;
+    if (!reportText || reportText.includes("En attente")) return;
 
-          try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
 
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 15;
-            let cursorY = 20;
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 15;
+      let cursorY = 20;
 
-            // Encabezado
-            doc.setFont("courier", "bold");
-            doc.setFontSize(14);
-            doc.text("RAPPORT D'AUDIT POLETHIC BEACON", margin, cursorY);
-            
-            cursorY += 10;
-            doc.setFontSize(10);
-            doc.setFont("courier", "normal");
-            doc.text(`Ethic-Score: ${currentScoreLetter} | Date: ${new Date().toLocaleDateString()}`, margin, cursorY);
-            
-            cursorY += 10;
-            doc.setLineWidth(0.5);
-            doc.line(margin, cursorY, 195, cursorY);
-            cursorY += 10;
+      // 1. Limpiar caracteres de Markdown y caracteres especiales que rompen la fuente estándar
+      let cleanText = reportText
+        // Quitar negritas / itálicas de Markdown
+        .replace(/\*\*/g, '')
+        .replace(/\*/g, '')
+        .replace(/#/g, '')
+        // Reemplazar o limpiar caracteres UTF-8 complejos/emojis que dañan jsPDF
+        .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+        // Normalizar acentos y caracteres latinos
+        .replace(/Ø<ß÷þ/g, '')
+        .replace(/Ø=ÜÌ/g, '');
 
-            // Dividir el texto por líneas adaptadas al ancho
-            const splitLines = doc.splitTextToSize(reportText, 180);
+      // 2. Encabezado del documento
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text("RAPPORT D'AUDIT POLETHIC BEACON", margin, cursorY);
+      
+      cursorY += 8;
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Ethic-Score: ${currentScoreLetter} | Date: ${new Date().toLocaleDateString()}`, margin, cursorY);
+      
+      cursorY += 6;
+      doc.setLineWidth(0.5);
+      doc.line(margin, cursorY, 195, cursorY);
+      cursorY += 10;
 
-            // Control de páginas dinámico
-            splitLines.forEach(line => {
-              if (cursorY + 7 > pageHeight - margin) {
-                doc.addPage();
-                cursorY = margin + 5;
-              }
-              doc.text(line, margin, cursorY);
-              cursorY += 6;
-            });
+      // 3. Formatear y añadir el contenido
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
 
-            doc.save(`Rapport_BEACON_${Date.now()}.pdf`);
-          } catch (e) {
-            console.error(e);
-            alert("Error al exportar el PDF.");
-          }
-        });
-      }
+      const splitLines = doc.splitTextToSize(cleanText, 180);
+
+      splitLines.forEach(line => {
+        if (cursorY + 6 > pageHeight - margin) {
+          doc.addPage();
+          cursorY = margin + 5;
+        }
+        doc.text(line, margin, cursorY);
+        cursorY += 5;
+      });
+
+      doc.save(`Rapport_BEACON_${Date.now()}.pdf`);
+    } catch (e) {
+      console.error(e);
+      alert("Erreur lors de l'exportation du PDF.");
+    }
+  });
+}
 
       // 🗑️ PURGAR / LIMPIAR
       if (btnPurge) {
