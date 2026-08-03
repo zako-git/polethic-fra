@@ -684,3 +684,11 @@ footer {
   background: rgba(0, 255, 136, 0.08) !important;
   box-shadow: 0 0 30px rgba(0, 255, 136, 0.4) !important;
 }
+/* Forzar línea continua en la caja contenedora principal */
+.analysis-card,
+.analyzer-container,
+.moteur-container,
+.beacon-card,
+div[class*="container"] {
+  border-style: solid !important;
+}
