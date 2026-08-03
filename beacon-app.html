@@ -8,149 +8,41 @@
   <!-- Librería jsPDF para generación de PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+  <!-- Vinculación con la hoja de estilos global -->
+  <link rel="stylesheet" href="styles.css">
+
   <style>
-    :root {
-      --cyber-cyan: #00f0ff;
-      --cyber-green: #00ff88;
-      --cyber-red: #ff2a6d;
-      --cyber-yellow: #ffe600;
-      --cyber-bg: #030a12;
-      --cyber-card-bg: rgba(15, 23, 42, 0.85);
-      --font-cyber: 'Courier New', Courier, monospace;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: var(--cyber-bg);
-      color: #e0e0e0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-      background-image: 
-        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
-      background-attachment: fixed;
-    }
-
-    /* HEADER */
-    header {
-      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-      background: rgba(3, 10, 18, 0.9);
-      padding: 15px 0;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    .header-layout {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    .logo-title {
-      font-family: var(--font-cyber);
-      color: var(--cyber-cyan);
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 1.2rem;
-      letter-spacing: 2px;
-    }
-
-    .nav-buttons {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .nav-btn {
-      color: #a0aec0;
-      text-decoration: none;
-      font-family: var(--font-cyber);
-      font-size: 0.85rem;
-      transition: color 0.2s ease;
-    }
-
-    .nav-btn:hover, .nav-btn.active {
-      color: var(--cyber-cyan);
-      text-shadow: 0 0 8px var(--cyber-cyan);
-    }
-
-    .lang-selector {
-      font-family: var(--font-cyber);
-      font-size: 0.85rem;
-      color: #a0aec0;
-    }
-
-    .lang-btn {
-      color: #a0aec0;
-      text-decoration: none;
-    }
-
-    .lang-btn.active {
-      color: var(--cyber-cyan);
-      font-weight: bold;
-    }
-
-    /* TITULO */
+    /* Estilos específicos de componentes tácticos de Beacon */
     .beacon-title-block {
       text-align: center;
       margin: 40px 0 25px 0;
     }
 
     .hero-app-title {
-      font-family: var(--font-cyber);
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
       font-size: 2.5rem;
       color: #ffffff;
-      text-shadow: 0 0 12px var(--cyber-cyan);
+      text-shadow: 0 0 12px var(--cyan-neon);
       letter-spacing: 3px;
     }
 
     .subtitle {
-      color: var(--cyber-cyan);
-      font-family: var(--font-cyber);
+      color: var(--cyan-neon);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.9rem;
       margin-top: 6px;
       letter-spacing: 1px;
       opacity: 0.9;
     }
 
-    /* CONSOLA DE ENTRADA & DRAG AND DROP */
-    .input-card {
-      background: var(--cyber-card-bg);
-      border: 2px dashed var(--cyber-cyan);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
-      border-radius: 12px;
-      padding: 25px;
-      max-width: 850px;
-      margin: 0 auto 30px auto;
-      backdrop-filter: blur(8px);
-      transition: all 0.3s ease;
-    }
-
-    .input-card.drag-over {
-      border-color: var(--cyber-green) !important;
-      background: rgba(0, 255, 136, 0.1) !important;
-      box-shadow: 0 0 30px rgba(0, 255, 136, 0.5) !important;
-    }
-
     textarea#user-input {
       width: 100%;
       height: 140px;
       background: rgba(1, 6, 12, 0.8);
-      border: 1px solid rgba(0, 240, 255, 0.3);
+      border: 1px solid rgba(0, 242, 254, 0.3);
       border-radius: 6px;
-      color: var(--cyber-green);
-      font-family: var(--font-cyber);
+      color: var(--green-neon);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.95rem;
       padding: 12px;
       resize: vertical;
@@ -159,8 +51,8 @@
     }
 
     textarea#user-input:focus {
-      border-color: var(--cyber-cyan);
-      box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2), 0 0 12px rgba(0, 240, 255, 0.3);
+      border-color: var(--cyan-neon);
+      box-shadow: inset 0 0 10px rgba(0, 242, 254, 0.2), 0 0 12px rgba(0, 242, 254, 0.3);
     }
 
     .input-actions-bar {
@@ -171,13 +63,13 @@
     }
 
     .file-upload-btn {
-      background: rgba(0, 240, 255, 0.08);
-      border: 1px solid var(--cyber-cyan);
-      color: var(--cyber-cyan);
+      background: rgba(0, 242, 254, 0.08);
+      border: 1px solid var(--cyan-neon);
+      color: var(--cyan-neon);
       padding: 10px 16px;
       border-radius: 6px;
       cursor: pointer;
-      font-family: var(--font-cyber);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.85rem;
       transition: all 0.2s ease;
       display: inline-flex;
@@ -186,17 +78,17 @@
     }
 
     .file-upload-btn:hover {
-      background: var(--cyber-cyan);
+      background: var(--cyan-neon);
       color: #000;
-      box-shadow: 0 0 12px var(--cyber-cyan);
+      box-shadow: 0 0 12px var(--cyan-neon);
     }
 
     .btn-beacon-primary {
       flex-grow: 1;
       background: transparent;
-      border: 1px solid var(--cyber-cyan);
-      color: var(--cyber-cyan);
-      font-family: var(--font-cyber);
+      border: 1px solid var(--cyan-neon);
+      color: var(--cyan-neon);
+      font-family: 'JetBrains Mono', monospace;
       font-weight: bold;
       font-size: 1rem;
       padding: 12px 20px;
@@ -204,28 +96,28 @@
       cursor: pointer;
       letter-spacing: 2px;
       transition: all 0.3s ease;
-      text-shadow: 0 0 5px var(--cyber-cyan);
+      text-shadow: 0 0 5px var(--cyan-neon);
     }
 
     .btn-beacon-primary:hover {
-      background: var(--cyber-cyan);
+      background: var(--cyan-neon);
       color: #030a12;
       text-shadow: none;
-      box-shadow: 0 0 25px var(--cyber-cyan);
+      box-shadow: 0 0 25px var(--cyan-neon);
     }
 
     .status-bar {
       margin-top: 15px;
-      font-family: var(--font-cyber);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.75rem;
-      color: var(--cyber-green);
+      color: var(--green-neon);
       letter-spacing: 1px;
     }
 
     /* RESULTADOS */
     .results-card {
       background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--cyber-green);
+      border: 1px solid var(--green-neon);
       box-shadow: 0 0 25px rgba(0, 255, 136, 0.2);
       border-radius: 12px;
       padding: 25px;
@@ -245,24 +137,24 @@
     }
 
     .ethic-score-badge {
-      background: var(--cyber-cyan);
+      background: var(--cyan-neon);
       color: #030a12;
-      font-family: var(--font-cyber);
+      font-family: 'JetBrains Mono', monospace;
       font-weight: bold;
       font-size: 1.1rem;
       padding: 6px 14px;
       border-radius: 4px;
-      box-shadow: 0 0 12px var(--cyber-cyan);
+      box-shadow: 0 0 12px var(--cyan-neon);
       letter-spacing: 1px;
       transition: all 0.2s ease;
     }
 
     .report-box {
       background: rgba(0, 0, 0, 0.6);
-      border-left: 3px solid var(--cyber-green);
+      border-left: 3px solid var(--green-neon);
       padding: 15px;
-      color: #d0e0e0;
-      font-family: var(--font-cyber);
+      color: var(--text-cream);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.9rem;
       line-height: 1.6;
       white-space: pre-wrap;
@@ -277,7 +169,7 @@
 
     .btn-action-refute, .btn-action-pdf, .btn-action-purge {
       background: transparent;
-      font-family: var(--font-cyber);
+      font-family: 'JetBrains Mono', monospace;
       padding: 10px 18px;
       border-radius: 6px;
       cursor: pointer;
@@ -287,14 +179,14 @@
       transition: all 0.2s ease;
     }
 
-    .btn-action-refute { border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow); }
-    .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; box-shadow: 0 0 15px var(--cyber-yellow); }
+    .btn-action-refute { border: 1px solid var(--yellow-neon); color: var(--yellow-neon); }
+    .btn-action-refute:hover { background: var(--yellow-neon); color: #000; box-shadow: 0 0 15px var(--yellow-neon); }
 
-    .btn-action-pdf { border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); }
-    .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; box-shadow: 0 0 15px var(--cyber-cyan); }
+    .btn-action-pdf { border: 1px solid var(--cyan-neon); color: var(--cyan-neon); }
+    .btn-action-pdf:hover { background: var(--cyan-neon); color: #000; box-shadow: 0 0 15px var(--cyan-neon); }
 
-    .btn-action-purge { border: 1px solid var(--cyber-red); color: var(--cyber-red); }
-    .btn-action-purge:hover { background: var(--cyber-red); color: #fff; box-shadow: 0 0 15px var(--cyber-red); }
+    .btn-action-purge { border: 1px solid var(--red-neon); color: var(--red-neon); }
+    .btn-action-purge:hover { background: var(--red-neon); color: #fff; box-shadow: 0 0 15px var(--red-neon); }
 
     .flags-container {
       display: flex;
@@ -303,55 +195,22 @@
     }
 
     .flag-badge {
-      font-family: var(--font-cyber);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.75rem;
       padding: 4px 10px;
       border-radius: 3px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      border: 1px solid var(--cyber-cyan);
-      color: var(--cyber-cyan);
-      background: rgba(0, 240, 255, 0.1);
-    }
-
-    /* FOOTER */
-    footer {
-      margin-top: 50px;
-      padding: 30px 0;
-      border-top: 1px solid rgba(0, 240, 255, 0.1);
-      text-align: center;
-    }
-
-    .footer-shield {
-      max-width: 600px;
-      margin: 0 auto 20px auto;
-      padding: 15px;
-      border: 1px solid rgba(0, 255, 136, 0.2);
-      border-radius: 8px;
-      background: rgba(15, 23, 42, 0.5);
-    }
-
-    .shield-title {
-      font-family: var(--font-cyber);
-      color: var(--cyber-green);
-      font-weight: bold;
-      font-size: 0.95rem;
-    }
-
-    .shield-disclaimer {
-      font-size: 0.8rem;
-      color: #94a3b8;
-      margin-top: 5px;
-    }
-
-    .copyright {
-      font-family: var(--font-cyber);
-      font-size: 0.75rem;
-      color: #64748b;
+      border: 1px solid var(--cyan-neon);
+      color: var(--cyan-neon);
+      background: rgba(0, 242, 254, 0.1);
     }
   </style>
 </head>
 <body>
+
+  <!-- FONDO CON EFECTO ESPACIAL -->
+  <div id="stars-container"></div>
 
   <!-- CABECERA -->
   <header>
@@ -369,9 +228,9 @@
 
       <div class="lang-selector">
         <a href="#" class="lang-btn active" id="btn-fr">FR</a>
-        <span>|</span>
+        <span class="lang-separator">|</span>
         <a href="#" class="lang-btn" id="btn-es">ES</a>
-        <span>|</span>
+        <span class="lang-separator">|</span>
         <a href="#" class="lang-btn" id="btn-en">EN</a>
       </div>
     </div>
@@ -385,8 +244,8 @@
       <p class="subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
     </div>
 
-    <!-- CONSOLA TÁCTICA CON DRAG AND DROP -->
-    <section class="input-card" id="drop-zone">
+    <!-- CONSOLA TÁCTICA CON DRAG AND DROP (Borde continuo uniforme) -->
+    <section class="input-card drop-zone" id="drop-zone" style="max-width: 850px; margin: 0 auto 30px auto;">
       <div class="textarea-container">
         <textarea id="user-input" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
       </div>
@@ -431,9 +290,11 @@
 
   <!-- FOOTER -->
   <footer>
-    <div class="container">
+    <div class="container footer-content">
       <div class="footer-shield">
-        <div class="shield-title">Bouclier de Protection Professionnelle</div>
+        <div class="shield-badge">
+          <span class="shield-title">Bouclier de Protection Professionnelle</span>
+        </div>
         <p class="shield-disclaimer">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
       </div>
 
@@ -536,7 +397,6 @@
           const t = translations[currentLanguage];
           userInput.placeholder = t.placeholder;
           
-          // Actualizar subtítulo si existe
           const subTitleElem = document.querySelector('.subtitle');
           if(subTitleElem) subTitleElem.textContent = t.heroSubtitle;
 
@@ -588,7 +448,7 @@
 
     function startEthicSpinner() {
       const dummyLetters = ['A', 'B', 'C', 'D', 'S', 'X', '?', '⚡'];
-      const dummyColors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d', '#00f0ff'];
+      const dummyColors = ['#00ff88', '#ffe600', '#ff9900', '#ef4444', '#00f2fe'];
 
       if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
 
@@ -619,7 +479,7 @@
       if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
       if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
       if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
-      if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
+      if (letter === 'D') { color = '#ef4444'; glow = 'rgba(239, 68, 68, 0.4)'; }
 
       currentScoreLetter = letter;
       ethicScore.innerText = `Ethic-Score™: ${letter}`;
@@ -742,7 +602,7 @@
       });
     }
 
-    // 📄 EXPORTAR PDF FORENSE CYBER (Estructurado por Fases)
+    // 📄 EXPORTAR PDF FORENSE
     if (btnPdf) {
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport.innerText;
@@ -755,7 +615,6 @@
           const margin = 15;
           let cursorY = 18;
 
-          // Sanitizador de texto contra glitched characters
           const sanitize = (str) => {
             return str
               .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26BF}]/gu, '')
@@ -767,7 +626,6 @@
 
           const rawClean = sanitize(reportText);
 
-          // Header Pericial Tactico
           doc.setFont("courier", "bold");
           doc.setFontSize(14);
           doc.setTextColor(0, 0, 0);
@@ -783,7 +641,6 @@
           doc.line(margin, cursorY, 195, cursorY);
           cursorY += 8;
 
-          // Renderizado Inteligente por Líneas
           doc.setFontSize(9);
           const lines = rawClean.split('\n');
 
@@ -794,10 +651,8 @@
               return;
             }
 
-            // Detectar Encabezados de Fases (Phase 0, Phase 1, Phase 2, Phase 3...)
             const isPhaseHeader = /(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE COGNITIF|RECADRAGE CORTICAL|DÉFI DU BIAIS)/i.test(trimmedLine);
 
-            // Control de salto de página
             if (cursorY + (isPhaseHeader ? 12 : 6) > pageHeight - 15) {
               doc.addPage();
               cursorY = 18;
@@ -827,7 +682,6 @@
             }
           });
 
-          // Footer de Certificación Forense
           if (cursorY + 12 > pageHeight - 15) {
             doc.addPage();
             cursorY = 18;
@@ -862,5 +716,6 @@
       });
     }
   });
-</script>
- 
+  </script>
+</body>
+</html>
