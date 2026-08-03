@@ -7,11 +7,11 @@
   --bg-dark: #030712;
   --bg-card: rgba(11, 19, 43, 0.75);
   --card-border: rgba(0, 242, 254, 0.3);
-  
+
   /* Tonos crema para textos principales */
   --text-cream: #f4f1ea;
   --text-cream-bright: #fffdf7;
-  
+
   /* Colores de acento */
   --cyan-neon: #00f2fe;
   --green-neon: #00ff88;
@@ -19,7 +19,7 @@
   --yellow-neon: #facc15;
   --red-neon: #ef4444;
   --purple-neon: #a855f7;
-  
+
   --text-main: var(--text-cream);
   --text-muted: #94a3b8;
 }
@@ -43,7 +43,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-x: hidden; /* Evita desbordamiento horizontal */
+  overflow-x: hidden;
 }
 
 /* ==========================================================================
@@ -74,7 +74,7 @@ body {
   width: 100%;
   height: 100%;
   background: transparent;
-  will-change: transform, opacity; /* Optimización GPU */
+  will-change: transform, opacity;
   transform: translateZ(0);
 }
 
@@ -195,7 +195,7 @@ header {
   box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
 }
 
-/* SELECTOR DE IDIOMAS (UNIFICADO) */
+/* SELECTOR DE IDIOMAS */
 .lang-selector {
   display: inline-flex;
   align-items: center;
@@ -517,6 +517,32 @@ header {
 }
 
 /* ==========================================================================
+   POLETHIC BEACON APP (BEACON-APP.HTML) & ZONA DROP ZONE
+   ========================================================================== */
+
+.beacon-card,
+.beacon-container,
+.drop-zone,
+.input-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border) !important; /* Fuerza línea continua */
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.15);
+}
+
+/* Estado al arrastrar un archivo encima */
+.beacon-card.drag-over,
+.drop-zone.drag-over,
+.input-card.drag-over {
+  border: 1px solid var(--green-neon) !important;
+  background: rgba(0, 255, 136, 0.08) !important;
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.4) !important;
+}
+
+/* ==========================================================================
    FOOTER
    ========================================================================== */
 
@@ -601,7 +627,6 @@ footer {
    MEDIA QUERIES (RESPONSIVIDAD Y ACCESIBILIDAD)
    ========================================================================== */
 
-/* Tablets (<= 768px) */
 @media (max-width: 768px) {
   .header-layout {
     flex-direction: column;
@@ -626,7 +651,6 @@ footer {
   }
 }
 
-/* Móviles (<= 600px) - Prevención de desbordamiento de Tooltips */
 @media (max-width: 600px) {
   .tooltip-box {
     width: 85vw;
@@ -650,7 +674,6 @@ footer {
   }
 }
 
-/* Accesibilidad: Reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
   #stars-container::before,
   #stars-container::after {
