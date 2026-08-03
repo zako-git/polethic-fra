@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BEACON LAB | POLETHIC France</title>
 
-  <!-- Librería directa jsPDF para generación limpia de PDF -->
+  <!-- Librería jsPDF para generación de PDF profesional -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
@@ -22,11 +22,7 @@
       --font-cyber: 'Courier New', Courier, monospace;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--cyber-bg);
@@ -37,18 +33,7 @@
         radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
         radial-gradient(1px 1px at 40px 70px, rgba(0, 240, 255, 0.8), rgba(0,0,0,0)),
         radial-gradient(1.5px 1.5px at 90px 40px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 160px 120px, rgba(0, 255, 136, 0.9), rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 230px 190px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 310px 80px, rgba(0, 240, 255, 0.8), rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 450px 130px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 520px 240px, rgba(255, 255, 255, 0.9), rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 670px 60px, rgba(0, 240, 255, 0.7), rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 780px 210px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 890px 25px, rgba(0, 255, 136, 0.8), rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 950px 180px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.06) 0%, transparent 50%);
-      background-size: 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 100% 100%, 100% 100%;
+        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 60%);
       background-attachment: fixed;
     }
 
@@ -58,11 +43,7 @@
       padding: 15px 0;
     }
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
     .header-layout {
       display: flex;
@@ -81,11 +62,7 @@
       letter-spacing: 2px;
     }
 
-    .nav-buttons {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
+    .nav-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
 
     .nav-btn {
       color: #a0aec0;
@@ -106,25 +83,11 @@
       color: #a0aec0;
     }
 
-    .lang-btn {
-      color: #a0aec0;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
+    .lang-btn { color: #a0aec0; text-decoration: none; cursor: pointer; transition: all 0.2s; }
     .lang-btn:hover { color: #fff; }
+    .lang-btn.active { color: var(--cyber-cyan); font-weight: bold; text-shadow: 0 0 6px var(--cyber-cyan); }
 
-    .lang-btn.active {
-      color: var(--cyber-cyan);
-      font-weight: bold;
-      text-shadow: 0 0 6px var(--cyber-cyan);
-    }
-
-    .beacon-title-block {
-      text-align: center;
-      margin: 40px 0 25px 0;
-    }
+    .beacon-title-block { text-align: center; margin: 40px 0 25px 0; }
 
     .hero-app-title {
       font-family: var(--font-cyber);
@@ -155,12 +118,6 @@
       transition: all 0.3s ease;
     }
 
-    .drop-zone.dragover {
-      background: rgba(0, 240, 255, 0.1);
-      border-color: var(--cyber-green);
-      box-shadow: 0 0 30px var(--cyber-green);
-    }
-
     textarea#user-input {
       width: 100%;
       height: 140px;
@@ -173,20 +130,9 @@
       padding: 12px;
       resize: vertical;
       outline: none;
-      transition: all 0.3s ease;
     }
 
-    textarea#user-input:focus {
-      border-color: var(--cyber-cyan);
-      box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2), 0 0 12px rgba(0, 240, 255, 0.3);
-    }
-
-    .input-actions-bar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 15px;
-    }
+    .input-actions-bar { display: flex; align-items: center; gap: 12px; margin-top: 15px; }
 
     .file-upload-btn {
       background: rgba(0, 240, 255, 0.08);
@@ -197,17 +143,9 @@
       cursor: pointer;
       font-family: var(--font-cyber);
       font-size: 0.9rem;
-      transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      white-space: nowrap;
-    }
-
-    .file-upload-btn:hover {
-      background: var(--cyber-cyan);
-      color: #000;
-      box-shadow: 0 0 12px var(--cyber-cyan);
     }
 
     .btn-beacon-primary {
@@ -223,13 +161,11 @@
       cursor: pointer;
       letter-spacing: 2px;
       transition: all 0.3s ease;
-      text-shadow: 0 0 5px var(--cyber-cyan);
     }
 
     .btn-beacon-primary:hover {
       background: var(--cyber-cyan);
       color: #030a12;
-      text-shadow: none;
       box-shadow: 0 0 25px var(--cyber-cyan);
     }
 
@@ -238,7 +174,6 @@
       font-family: var(--font-cyber);
       font-size: 0.75rem;
       color: var(--cyber-green);
-      letter-spacing: 1px;
     }
 
     .results-card {
@@ -249,7 +184,6 @@
       padding: 25px;
       max-width: 850px;
       margin: 0 auto 40px auto;
-      backdrop-filter: blur(8px);
       display: none;
     }
 
@@ -270,8 +204,6 @@
       font-size: 1.1rem;
       padding: 6px 14px;
       border-radius: 4px;
-      box-shadow: 0 0 12px var(--cyber-cyan);
-      letter-spacing: 1px;
     }
 
     .report-box {
@@ -285,12 +217,7 @@
       white-space: pre-wrap;
     }
 
-    .results-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
+    .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 
     .btn-action-refute, .btn-action-pdf, .btn-action-purge {
       background: transparent;
@@ -300,71 +227,35 @@
       cursor: pointer;
       font-size: 0.85rem;
       font-weight: bold;
-      letter-spacing: 1px;
       transition: all 0.2s ease;
     }
 
     .btn-action-refute { border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow); }
-    .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; box-shadow: 0 0 15px var(--cyber-yellow); }
+    .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; }
 
     .btn-action-pdf { border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); }
-    .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; box-shadow: 0 0 15px var(--cyber-cyan); }
+    .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; }
 
     .btn-action-purge { border: 1px solid var(--cyber-red); color: var(--cyber-red); }
-    .btn-action-purge:hover { background: var(--cyber-red); color: #fff; box-shadow: 0 0 15px var(--cyber-red); }
+    .btn-action-purge:hover { background: var(--cyber-red); color: #fff; }
 
-    .flags-container {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .flags-container { display: flex; gap: 8px; flex-wrap: wrap; }
 
     .flag-badge {
       font-family: var(--font-cyber);
       font-size: 0.75rem;
       padding: 4px 10px;
       border-radius: 3px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
       border: 1px solid var(--cyber-cyan);
       color: var(--cyber-cyan);
       background: rgba(0, 240, 255, 0.1);
     }
 
-    footer {
-      margin-top: 50px;
-      padding: 30px 0;
-      border-top: 1px solid rgba(0, 240, 255, 0.1);
-      text-align: center;
-    }
-
-    .footer-shield {
-      max-width: 600px;
-      margin: 0 auto 20px auto;
-      padding: 15px;
-      border: 1px solid rgba(0, 255, 136, 0.2);
-      border-radius: 8px;
-      background: rgba(15, 23, 42, 0.5);
-    }
-
-    .shield-title {
-      font-family: var(--font-cyber);
-      color: var(--cyber-green);
-      font-weight: bold;
-      font-size: 0.95rem;
-    }
-
-    .shield-disclaimer {
-      font-size: 0.8rem;
-      color: #94a3b8;
-      margin-top: 5px;
-    }
-
-    .copyright {
-      font-family: var(--font-cyber);
-      font-size: 0.75rem;
-      color: #64748b;
-    }
+    footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.1); text-align: center; }
+    .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.5); }
+    .shield-title { font-family: var(--font-cyber); color: var(--cyber-green); font-weight: bold; font-size: 0.95rem; }
+    .shield-disclaimer { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
+    .copyright { font-family: var(--font-cyber); font-size: 0.75rem; color: #64748b; }
   </style>
 </head>
 <body>
@@ -373,7 +264,6 @@
   <header>
     <div class="container header-layout">
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
-      
       <nav class="nav-buttons">
         <a href="index.html" class="nav-btn" data-key="nav-home">ACCUEIL</a>
         <a href="observatoire.html" class="nav-btn" data-key="nav-obs">L'OBSERVATOIRE</a>
@@ -382,48 +272,33 @@
         <a href="notre-cap.html" class="nav-btn" data-key="nav-cap">NOTRE CAP</a>
         <a href="contact.html" class="nav-btn" data-key="nav-contact">CONTACT</a>
       </nav>
-
       <div class="lang-selector">
-        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
-        <span>|</span>
-        <a href="#" class="lang-btn" id="btn-es">ES</a>
-        <span>|</span>
+        <a href="#" class="lang-btn active" id="btn-fr">FR</a><span>|</span>
+        <a href="#" class="lang-btn" id="btn-es">ES</a><span>|</span>
         <a href="#" class="lang-btn" id="btn-en">EN</a>
       </div>
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL -->
+  <!-- CONTENIDO -->
   <main class="container">
-    
     <div class="beacon-title-block">
       <h1 class="hero-app-title">POLETHIC BEACON</h1>
       <p class="subtitle" id="txt-subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
     </div>
 
-    <!-- CONSOLA TÁCTICA -->
     <section class="drop-zone" id="drop-zone">
-      <div class="textarea-container">
-        <textarea id="user-input" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
-      </div>
-      
+      <textarea id="user-input" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
       <div class="input-actions-bar">
-        <label for="user-file" class="file-upload-btn" title="Joindre une image ou un PDF">
+        <label for="user-file" class="file-upload-btn">
           📁 <span id="file-name-display">Joindre / Glisser un fichier</span>
         </label>
         <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
-
-        <button id="btn-analyze" class="btn-beacon-primary">
-          ⚡ BEACON-IZE
-        </button>
+        <button id="btn-analyze" class="btn-beacon-primary">⚡ BEACON-IZE</button>
       </div>
-
-      <div class="status-bar">
-        <span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span>
-      </div>
+      <div class="status-bar"><span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span></div>
     </section>
 
-    <!-- PANEL DE RESULTADOS CON ETHIC-SCORE -->
     <section id="results-panel" class="results-card">
       <div class="results-header">
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
@@ -431,33 +306,28 @@
           <span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>
         </div>
       </div>
-
       <div class="analysis-body">
-        <div id="analysis-report" class="report-box">En attente d'analyse... Entrez un texte et cliquez sur BEACONISER.</div>
+        <div id="analysis-report" class="report-box">En attente d'analyse...</div>
       </div>
-
       <div class="results-actions">
         <button id="btn-refute" class="btn-action-refute">🔄 RÉFUTER / CHALLENGER</button>
         <button id="btn-pdf" class="btn-action-pdf">📄 EXPORTER EN PDF</button>
         <button id="btn-purge" class="btn-action-purge">🗑️ PURGER</button>
       </div>
     </section>
-
   </main>
 
-  <!-- FOOTER -->
   <footer>
     <div class="container">
       <div class="footer-shield">
         <div class="shield-title" id="txt-shield-title">Bouclier de Protection Professionnelle</div>
         <p class="shield-disclaimer" id="txt-shield-desc">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
       </div>
-
       <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
     </div>
   </footer>
 
-  <!-- LÓGICA DE APLICACIÓN -->
+  <!-- LÓGICA DE APLICACIÓN Y MOTOR DE GENERACIÓN PDF STRUCTURADO -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
@@ -466,36 +336,27 @@
       const userInput = document.getElementById('user-input');
       const userFile = document.getElementById('user-file');
       const fileNameDisplay = document.getElementById('file-name-display');
-      const dropZone = document.getElementById('drop-zone');
       const resultsPanel = document.getElementById('results-panel');
       const analysisReport = document.getElementById('analysis-report');
       const ethicScore = document.getElementById('ethic-score');
       const detectedFlags = document.getElementById('detected-flags-container');
-
       const btnRefute = document.getElementById('btn-refute');
       const btnPdf = document.getElementById('btn-pdf');
       const btnPurge = document.getElementById('btn-purge');
 
       let currentLang = 'fr';
       let currentScoreLetter = 'C';
-      let lastAnalyzedText = '';
       let ethicSpinnerInterval = null;
 
-      // 🎰 CONTROL DEL SPINNER (RULETA DE ETHIC-SCORE)
       function startEthicSpinner() {
-        const dummyLetters = ['A', 'B', 'C', 'D', 'S', 'X', '?', '⚡'];
-        const dummyColors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d', '#00f0ff'];
-
+        const letters = ['A', 'B', 'C', 'D', 'S', 'X'];
+        const colors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d'];
         if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
-
         ethicSpinnerInterval = setInterval(() => {
-          const randomLetter = dummyLetters[Math.floor(Math.random() * dummyLetters.length)];
-          const randomColor = dummyColors[Math.floor(Math.random() * dummyColors.length)];
-
-          ethicScore.innerText = `Ethic-Score™: ${randomLetter}`;
-          ethicScore.style.backgroundColor = randomColor;
-          ethicScore.style.boxShadow = `0 0 15px ${randomColor}`;
-          ethicScore.style.color = '#030a12';
+          const l = letters[Math.floor(Math.random() * letters.length)];
+          const c = colors[Math.floor(Math.random() * colors.length)];
+          ethicScore.innerText = `Ethic-Score™: ${l}`;
+          ethicScore.style.backgroundColor = c;
         }, 90);
       }
 
@@ -506,375 +367,195 @@
         }
       }
 
-      // 🌐 TRADUCCIONES DE LA INTERFAZ
-      const translations = {
-        fr: {
-          subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
-          placeholder: "Collez du texte ou glissez-déposez un fichier PDF/Image ici...",
-          attach: "Joindre / Glisser un fichier",
-          status: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
-          ready: "ANALYSE PRÊTE",
-          waiting: "En attente d'analyse... Entrez un texte et cliquez sur BEACONISER.",
-          btnRefute: "🔄 RÉFUTER / CHALLENGER",
-          btnPdf: "📄 EXPORTER EN PDF",
-          btnPurge: "🗑️ PURGER",
-          navHome: "ACCUEIL", navObs: "L'OBSERVATOIRE", navPsico: "PSICOMUSÉE", navCap: "NOTRE CAP", navContact: "CONTACT",
-          shieldTitle: "Bouclier de Protection Professionnelle",
-          shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique."
-        },
-        es: {
-          subtitle: "Motor de autodefensa cognitiva y análisis metacomunicacional",
-          placeholder: "Pegue texto o arrastre un archivo PDF/Imagen aquí...",
-          attach: "Adjuntar / Arrastrar archivo",
-          status: "● MOTOR LISTO | SYSTEM ONLINE (2026)",
-          ready: "ANÁLISIS LISTO",
-          waiting: "Esperando análisis... Ingrese un texto y haga clic en BEACON-IZE.",
-          btnRefute: "🔄 REFUTAR / DESAFIAR",
-          btnPdf: "📄 EXPORTAR A PDF",
-          btnPurge: "🗑️ PURGAR",
-          navHome: "INICIO", navObs: "EL OBSERVATORIO", navPsico: "PSICOMUSEO", navCap: "NUESTRO RUMBO", navContact: "CONTACTO",
-          shieldTitle: "Escudo de Protección Profesional",
-          shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica."
-        },
-        en: {
-          subtitle: "Cognitive Self-Defense Engine & Metacommunicational Analysis",
-          placeholder: "Paste text or drag & drop a PDF/Image file here...",
-          attach: "Attach / Drop file",
-          status: "● ENGINE READY | SYSTEM ONLINE (2026)",
-          ready: "ANALYSIS READY",
-          waiting: "Awaiting analysis... Enter text and click BEACON-IZE.",
-          btnRefute: "🔄 REFUTE / CHALLENGE",
-          btnPdf: "📄 EXPORT TO PDF",
-          btnPurge: "🗑️ PURGE",
-          navHome: "HOME", navObs: "OBSERVATORY", navPsico: "PSYCHOMUSEUM", navCap: "OUR COURSE", navContact: "CONTACT",
-          shieldTitle: "Professional Protection Shield",
-          shieldDesc: "Exclusive primary prevention and non-clinical psychoeducation action."
-        }
-      };
-
-      // 🌍 CAMBIO DE IDIOMA EN UI
-      function setLanguage(lang) {
-        currentLang = lang;
-        const t = translations[lang];
-
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`btn-${lang}`).classList.add('active');
-
-        document.getElementById('txt-subtitle').innerText = t.subtitle;
-        userInput.placeholder = t.placeholder;
-        if (!userFile.files.length) fileNameDisplay.innerText = t.attach;
-        document.getElementById('txt-status').innerText = t.status;
-        btnRefute.innerText = t.btnRefute;
-        btnPdf.innerText = t.btnPdf;
-        btnPurge.innerText = t.btnPurge;
-
-        document.querySelector('[data-key="nav-home"]').innerText = t.navHome;
-        document.querySelector('[data-key="nav-obs"]').innerText = t.navObs;
-        document.querySelector('[data-key="nav-psico"]').innerText = t.navPsico;
-        document.querySelector('[data-key="nav-cap"]').innerText = t.navCap;
-        document.querySelector('[data-key="nav-contact"]').innerText = t.navContact;
-
-        document.getElementById('txt-shield-title').innerText = t.shieldTitle;
-        document.getElementById('txt-shield-desc').innerText = t.shieldDesc;
-      }
-
-      document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
-      document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
-      document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
-
-      // 🖱️ DRAG & DROP
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
-      });
-
-      ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-      });
-
-      dropZone.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        if (files.length > 0) {
-          userFile.files = files;
-          fileNameDisplay.innerText = files[0].name.length > 18 ? files[0].name.substring(0, 18) + '...' : files[0].name;
-        }
-      });
-
-      if (userFile) {
-        userFile.addEventListener('change', (e) => {
-          if (e.target.files.length > 0) {
-            const fileName = e.target.files[0].name;
-            fileNameDisplay.innerText = fileName.length > 18 ? fileName.substring(0, 18) + '...' : fileName;
-          } else {
-            fileNameDisplay.innerText = translations[currentLang].attach;
-          }
-        });
-      }
-
-      // 🎯 BADGE DE ETHIC-SCORE
       function applyEthicBadge(score) {
         stopEthicSpinner();
-
         let letter = 'C';
         let color = '#ff9900';
-        let glow = 'rgba(255, 153, 0, 0.4)';
-
-        if (typeof score === 'string') {
-          letter = score.toUpperCase();
-        } else if (typeof score === 'number') {
-          if (score <= 25) letter = 'A';
-          else if (score <= 50) letter = 'B';
-          else if (score <= 75) letter = 'C';
-          else letter = 'D';
-        }
-
-        if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
-        if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
-        if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
-        if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
+        if (typeof score === 'string') letter = score.toUpperCase();
+        if (letter === 'A') color = '#00ff88';
+        if (letter === 'B') color = '#ffe600';
+        if (letter === 'C') color = '#ff9900';
+        if (letter === 'D') color = '#ff2a6d';
 
         currentScoreLetter = letter;
         ethicScore.innerText = `Ethic-Score™: ${letter}`;
         ethicScore.style.backgroundColor = color;
-        ethicScore.style.boxShadow = `0 0 15px ${glow}`;
-        ethicScore.style.color = '#030a12';
       }
 
-      // 🚩 RENDERIZADO DE BANDERAS
       function renderFlags(flagsArray) {
         if (!detectedFlags) return;
         detectedFlags.innerHTML = '';
-        
-        let normalizedFlags = [];
-        if (typeof flagsArray === 'string') {
-          normalizedFlags = flagsArray.split(',').map(f => f.trim());
-        } else if (Array.isArray(flagsArray)) {
-          normalizedFlags = flagsArray;
+        let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
+        (flags || ['ANALYSE']).forEach(f => {
+          const span = document.createElement('span');
+          span.className = 'flag-badge';
+          span.innerText = f.trim().toUpperCase();
+          detectedFlags.appendChild(span);
+        });
+      }
+
+      btnAnalyze.addEventListener('click', async () => {
+        const text = userInput.value.trim();
+        if (!text) return alert('Veuillez entrer du texte.');
+
+        btnAnalyze.disabled = true;
+        resultsPanel.style.display = 'block';
+        analysisReport.innerText = '⚡ Analyse en cours...';
+        startEthicSpinner();
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, lang: currentLang })
+          });
+          const data = await response.json();
+          applyEthicBadge(data.ethic_letter || 'C');
+          analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
+          renderFlags(data.detected_flags || ['SIGNAL']);
+        } catch (e) {
+          applyEthicBadge('C');
+          analysisReport.innerText = "Erreur de connexion.";
+        } finally {
+          btnAnalyze.disabled = false;
         }
+      });
 
-        if (!normalizedFlags || normalizedFlags.length === 0) {
-          detectedFlags.innerHTML = `<span class="flag-badge">${translations[currentLang].ready}</span>`;
-          return;
-        }
+      // 📄 GENERADOR PDF RÉPLICA MODELO OFICIAL POLETHIC
+      btnPdf.addEventListener('click', () => {
+        const reportText = analysisReport.innerText;
+        if (!reportText || reportText.includes("En attente")) return alert('Aucun rapport.');
 
-        normalizedFlags.forEach(flag => {
-          if (flag) {
-            const span = document.createElement('span');
-            span.className = 'flag-badge';
-            span.innerText = flag.toUpperCase();
-            detectedFlags.appendChild(span);
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 18;
+        let cursorY = 18;
+
+        // Formatear Fecha Actual
+        const now = new Date();
+        const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const formattedDate = now.toLocaleDateString('fr-FR', options).replace(':', 'h');
+
+        // 1. HEADER MODELO POLETHIC
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.setTextColor(15, 23, 42);
+        doc.text("RAPPORT D'AUDIT POLETHIC BEACON", margin, cursorY);
+        cursorY += 5;
+
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(100, 116, 139);
+        doc.text("OBSERVATOIRE & EXPERTISE MÉTACOMMUNICATIONNELLE", margin, cursorY);
+        cursorY += 8;
+
+        // 2. BLOQUE DE STATUS Y SCORE
+        let scoreBg = [255, 153, 0]; // C Orange
+        if (currentScoreLetter === 'A') scoreBg = [0, 255, 136];
+        if (currentScoreLetter === 'B') scoreBg = [255, 230, 0];
+        if (currentScoreLetter === 'D') scoreBg = [255, 42, 109];
+
+        // Caja Ethic Score
+        doc.setFillColor(...scoreBg);
+        doc.rect(margin, cursorY, 45, 8, 'F');
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.setTextColor(15, 23, 42);
+        doc.text(`ETHIC-SCORETM: ${currentScoreLetter}`, margin + 4, cursorY + 5.5);
+
+        // Metadatos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8.5);
+        doc.setTextColor(71, 85, 105);
+        doc.text(`DATE: ${formattedDate}`, margin + 55, cursorY + 5.5);
+        doc.text(`ID: BEACON-v2.6`, pageWidth - margin - 30, cursorY + 5.5);
+
+        cursorY += 14;
+
+        // Separador
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.4);
+        doc.line(margin, cursorY, pageWidth - margin, cursorY);
+        cursorY += 8;
+
+        // 3. RENDERIZADO DE CONTENIDO STRUCTURADO
+        const lines = reportText.split('\n');
+
+        lines.forEach((line) => {
+          if (cursorY > pageHeight - 22) {
+            doc.addPage();
+            cursorY = 20;
           }
-        });
-      }
 
-      // ⚡ BEACON-IZE
-      if (btnAnalyze) {
-        btnAnalyze.addEventListener('click', async () => {
-          const text = userInput.value.trim();
-          const file = userFile && userFile.files.length > 0 ? userFile.files[0] : null;
-
-          if (!text && !file) {
-            alert(currentLang === 'es' ? 'Ingrese texto o un archivo.' : currentLang === 'en' ? 'Please enter text or a file.' : 'Veuillez entrer du texte ou joindre un fichier.');
+          let cleanLine = line.trim();
+          if (!cleanLine) {
+            cursorY += 3;
             return;
           }
 
-          lastAnalyzedText = text || (file ? `Fichier: ${file.name}` : '');
-          btnAnalyze.disabled = true;
-          btnAnalyze.innerText = '⏳ ANALYSE...';
-          resultsPanel.style.display = 'block';
-          analysisReport.innerText = '⚡ Décodage métacommunicationnel en cours... Veuillez patienter.';
-
-          // INICIAR RULETA DE CARGA
-          startEthicSpinner();
-
-          try {
-            let response;
-            if (file) {
-              const formData = new FormData();
-              formData.append('text', text);
-              formData.append('file', file);
-              formData.append('lang', currentLang);
-
-              response = await fetch(`${API_BASE_URL}/analyze`, { method: 'POST', body: formData });
-            } else {
-              response = await fetch(`${API_BASE_URL}/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: text, lang: currentLang })
-              });
-            }
-
-            if (!response.ok) throw new Error('Erreur API');
-
-            const data = await response.json();
-            
-            // APLICAR PUNTUACIÓN FINAL (DETIENE LA RULETA)
-            applyEthicBadge(data.ethic_letter || data.score || 'C');
-
-            let cleanAnalysis = data.analysis || data.report || data.result || '';
-            cleanAnalysis = cleanAnalysis
-              .replace(/DÉMONTAGE COGNITIF ET LIMBIQUE/gi, 'DÉMONTAGE COGNITIF')
-              .replace(/ET LIMBIQUE/gi, '')
-              .replace(/LIMBIQUE/gi, '');
-
-            analysisReport.innerText = cleanAnalysis;
-            renderFlags(data.detected_flags || ['SIGNAL_ANALYSE']);
-          } catch (err) {
-            console.error(err);
-            applyEthicBadge('C');
-            renderFlags(['ERREUR_CONNEXION']);
-            
-            analysisReport.innerText = 
-`==================================================
-[AUDIT BEACON — MODE DE SECOURS DE CONNEXION]
-================================================== 
-
-⚠️ Impossible de joindre le serveur BEACON principal sur Render.
-
-1. DIAGNOSTIC DU SIGNAL
-• Connexion réseau interrompue ou temps d'attente dépassé du serveur.
-
-2. RECOMMANDATION
-• Veuillez vérifier votre connexion Internet et cliquer à nouveau sur BEACON-IZE.`;
-          } finally {
-            btnAnalyze.disabled = false;
-            btnAnalyze.innerText = '⚡ BEACON-IZE';
-            resultsPanel.scrollIntoView({ behavior: 'smooth' });
-          }
-        });
-      }
-
-      // 🔄 RÉFUTER / CHALLENGER
-      if (btnRefute) {
-        btnRefute.addEventListener('click', async () => {
-          const currentAnalysis = analysisReport.innerText;
-
-          if (!currentAnalysis || currentAnalysis.includes("En attente d'analyse")) {
-            alert('Veuillez d\'abord effectuer une analyse.');
-            return;
-          }
-
-          btnRefute.disabled = true;
-          btnRefute.innerText = '⏳ GÉNÉRATION...';
-
-          try {
-            const res = await fetch(`${API_BASE_URL}/refute`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                analysis: currentAnalysis,
-                text: lastAnalyzedText, 
-                lang: currentLang 
-              })
-            });
-
-            if (!res.ok) throw new Error('Erreur API Refute');
-            const data = await res.json();
-            
-            const refutationContent = data.refutation || data.reply || 'Aucune contre-argumentation générée.';
-            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationContent}`;
-          } catch (err) {
-            console.error("Erreur de réfutation:", err);
-            alert("Erreur lors de la génération de la réfutation.");
-          } finally {
-            btnRefute.disabled = false;
-            btnRefute.innerText = translations[currentLang].btnRefute;
-          }
-        });
-      }
-
-      // 🗑️ BOTÓN PURGER (LIMPIEZA)
-      if (btnPurge) {
-        btnPurge.addEventListener('click', () => {
-          userInput.value = '';
-          userFile.value = '';
-          fileNameDisplay.innerText = translations[currentLang].attach;
-          analysisReport.innerText = translations[currentLang].waiting;
-          resultsPanel.style.display = 'none';
-          stopEthicSpinner();
-          ethicScore.innerText = "Ethic-Score™: --";
-          ethicScore.style.backgroundColor = "var(--cyber-cyan)";
-          ethicScore.style.boxShadow = "none";
-        });
-      }
-
-      // 📄 EXPORTAR A PDF
-      if (btnPdf) {
-        btnPdf.addEventListener('click', async () => {
-          const reportText = analysisReport.innerText;
-
-          if (!reportText || reportText.includes("En attente d'analyse") || reportText.trim() === "") {
-            alert('Aucun rapport à exporter.');
-            return;
-          }
-
-          btnPdf.disabled = true;
-          const originalText = btnPdf.innerText;
-          btnPdf.innerText = '⏳ PDF...';
-
-          try {
-            if (!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF non disponible.");
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 18;
-            const maxLineWidth = pageWidth - (margin * 2);
-            let cursorY = 20;
-
-            // Encabezado del PDF
-            doc.setFillColor(15, 23, 42); 
-            doc.rect(0, 0, pageWidth, 10, 'F');
-
+          // Detección de Fases / Encabezados principales
+          if (cleanLine.match(/^(CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE COGNITIF|RECADRAGE CORTICAL|DÉFI DU BIAIS)/i) || cleanLine.startsWith('===') || cleanLine.startsWith('---')) {
+            if (cleanLine.startsWith('===') || cleanLine.startsWith('---')) return;
+            cursorY += 3;
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(13);
+            doc.setFontSize(10);
             doc.setTextColor(15, 23, 42);
-            doc.text("RAPPORT D'AUDIT POLETHIC BEACON", margin, cursorY);
+            doc.text(cleanLine.toUpperCase(), margin, cursorY);
             cursorY += 6;
-
+          } 
+          // Sub-etiquetas en negrita (ej: "- Type de Texte:", "Intention vs Réalité:")
+          else if (cleanLine.includes(':') && !cleanLine.startsWith('http')) {
+            doc.setFont("helvetica", "bold");
             doc.setFontSize(8.5);
-            doc.setFont("helvetica", "normal");
-            doc.setTextColor(100, 116, 139);
-            doc.text("OBSERVATOIRE & EXPERTISE MÊTACOMMUNICATIONNELLE", margin, cursorY);
-            cursorY += 8;
-
-            doc.setDrawColor(226, 232, 240);
-            doc.setLineWidth(0.5);
-            doc.line(margin, cursorY, pageWidth - margin, cursorY);
-            cursorY += 8;
-
-            // Cuerpo del texto del PDF
-            doc.setFontSize(9.5);
             doc.setTextColor(30, 41, 59);
 
-            const splitText = doc.splitTextToSize(reportText, maxLineWidth);
-            
-            splitText.forEach((line) => {
-              if (cursorY > pageHeight - 20) {
-                doc.addPage();
-                cursorY = 20;
-              }
-              doc.text(line, margin, cursorY);
-              cursorY += 5;
+            const splitLine = doc.splitTextToSize(cleanLine, pageWidth - (margin * 2));
+            splitLine.forEach((subLine) => {
+              if (cursorY > pageHeight - 22) { doc.addPage(); cursorY = 20; }
+              doc.text(subLine, margin, cursorY);
+              cursorY += 4.5;
             });
+          } 
+          // Texto regular y viñetas
+          else {
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(8.5);
+            doc.setTextColor(51, 65, 85);
 
-            doc.save(`Audit_BEACON_${new Date().toISOString().slice(0,10)}.pdf`);
-          } catch (err) {
-            console.error("Error PDF:", err);
-            alert("Erreur lors de la génération du PDF.");
-          } finally {
-            btnPdf.disabled = false;
-            btnPdf.innerText = originalText;
+            const splitLine = doc.splitTextToSize(cleanLine, pageWidth - (margin * 2));
+            splitLine.forEach((subLine) => {
+              if (cursorY > pageHeight - 22) { doc.addPage(); cursorY = 20; }
+              doc.text(subLine, margin, cursorY);
+              cursorY += 4.2;
+            });
           }
         });
-      }
 
+        // 4. FOOTER AUTOMÁTICO EN TODAS LAS PÁGINAS
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setDrawColor(226, 232, 240);
+          doc.line(margin, pageHeight - 14, pageWidth - margin, pageHeight - 14);
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(7.5);
+          doc.setTextColor(148, 163, 184);
+          doc.text("POLETHIC France Protection primaire, analyse de discours et d'intégrité cognitive.", margin, pageHeight - 8);
+          doc.text(`Page ${i} sur ${pageCount}`, pageWidth - margin - 18, pageHeight - 8);
+        }
+
+        // Descargar PDF
+        doc.save(`Rapport_Audit_BEACON_${currentScoreLetter}_${Date.now()}.pdf`);
+      });
+
+      btnPurge.addEventListener('click', () => {
+        userInput.value = '';
+        resultsPanel.style.display = 'none';
+        stopEthicSpinner();
+      });
     });
   </script>
 </body>
