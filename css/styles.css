@@ -662,9 +662,25 @@ footer {
   }
 }
 
-/* Estilos para el Drag & Drop */
-    .input-card.drag-over {
-      border-color: var(--cyber-green) !important;
-      background: rgba(0, 255, 136, 0.08) !important;
-      box-shadow: 0 0 30px rgba(0, 255, 136, 0.4) !important;
-    }
+/* ==========================================================================
+   ZONA DE CARGA Y DRAG & DROP (.drop-zone / .input-card)
+   ========================================================================== */
+
+.drop-zone,
+.input-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border); /* Linea continua estándar (solid) */
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+/* Estado cuando se arrastra un archivo encima */
+.drop-zone.drag-over,
+.input-card.drag-over {
+  border: 1px solid var(--green-neon) !important; /* Mantiene linea continua al arrastrar */
+  background: rgba(0, 255, 136, 0.08) !important;
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.4) !important;
+}
