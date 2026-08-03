@@ -137,7 +137,6 @@
       transition: all 0.3s ease;
     }
 
-    /* Efecto visual al arrastrar archivo encima */
     .input-card.drag-over {
       border-color: var(--cyber-green) !important;
       background: rgba(0, 255, 136, 0.1) !important;
@@ -255,6 +254,7 @@
       border-radius: 4px;
       box-shadow: 0 0 12px var(--cyber-cyan);
       letter-spacing: 1px;
+      transition: all 0.2s ease;
     }
 
     .report-box {
@@ -463,7 +463,7 @@
       let currentLanguage = 'fr';
       let currentScoreLetter = 'C';
       let lastAnalyzedText = '';
-      let droppedFile = null; // Guardará el archivo si se arrastra
+      let droppedFile = null;
 
       // 🌐 DICCIONARIO DE TRADUCCIONES (i18n)
       const translations = {
@@ -483,7 +483,7 @@
           refuting: "⏳ GÉNÉRATION DE LA RÉFUTATION...",
           noAnalysisAlert: "Veuillez d'abord effectuer une analyse.",
           exportingPdf: "⏳ GÉNÉRATION DU PDF EN COURS...",
-          noReportPdf: "Aucun rapport à exporter."
+          errConnexion: "⚠️ Erreur de connexion avec le serveur API BEACON. Veuillez vérifier votre connexion."
         },
         es: {
           placeholder: "Pega texto o arrastra un archivo PDF/Imagen aquí...",
@@ -501,7 +501,7 @@
           refuting: "⏳ GENERANDO REFUTACIÓN...",
           noAnalysisAlert: "Por favor, realiza un análisis primero.",
           exportingPdf: "⏳ GENERANDO PDF...",
-          noReportPdf: "No hay ningún informe para exportar."
+          errConnexion: "⚠️ Error de conexión con el servidor API BEACON. Comprueba tu conexión e inténtalo de nuevo."
         },
         en: {
           placeholder: "Paste text or drag & drop a PDF/Image file here...",
@@ -519,7 +519,7 @@
           refuting: "⏳ GENERATING REFUTATION...",
           noAnalysisAlert: "Please perform an analysis first.",
           exportingPdf: "⏳ GENERATING PDF...",
-          noReportPdf: "No report to export."
+          errConnexion: "⚠️ Connection error with BEACON API server. Please check your network."
         }
       };
 
@@ -540,7 +540,7 @@
         }
       });
 
-      // 🚚 LÓGICA DE DRAG & DROP (Arrastrar y Soltar)
+      // 🚚 LÓGICA DE DRAG & DROP
       if (dropZone) {
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
           dropZone.addEventListener(eventName, (e) => {
@@ -572,17 +572,17 @@
       if (userFile) {
         userFile.addEventListener('change', (e) => {
           if (e.target.files.length > 0) {
-            droppedFile = null; // Dar prioridad al botón si se selecciona explícitamente
+            droppedFile = null;
             fileNameDisplay.innerText = '📎 ' + e.target.files[0].name.substring(0, 18) + '...';
           }
         });
       }
 
-      // 🎰 RULETA / SPINNER DE CARGA
+      // 🎰 SPINNER DE CARGA DEL ETHIC-SCORE
       let ethicSpinnerInterval = null;
 
       function startEthicSpinner() {
-        const dummyLetters = ['A', 'B', 'C', 'D', 'S', 'X', '?', '⚡', '88%'];
+        const dummyLetters = ['A', 'B', 'C', 'D', 'S', 'X', '?', '⚡'];
         const dummyColors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d', '#00f0ff'];
 
         if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
@@ -672,7 +672,6 @@
           resultsPanel.style.display = 'block';
           analysisReport.innerText = t.analyzing;
 
-          // Iniciar animación de la ruleta
           startEthicSpinner();
 
           try {
@@ -709,7 +708,7 @@
             console.error(err);
             applyEthicBadge('C');
             renderFlags(['ERREUR_CONNEXION']);
-            analysisReport.innerText = "⚠️ Error de conexión con el servidor API BEACON. Comprueba tu conexión e inténtalo de nuevo.";
+            analysisReport.innerText = t.errConnexion;
           } finally {
             stopEthicSpinner();
             btnAnalyze.disabled = false;
@@ -725,7 +724,7 @@
           const t = translations[currentLanguage];
           const currentAnalysis = analysisReport.innerText;
 
-          if (!currentAnalysis || currentAnalysis.includes("En attente")) {
+          if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("⚠️")) {
             alert(t.noAnalysisAlert);
             return;
           }
@@ -753,23 +752,51 @@
         });
       }
 
-      // 📄 EXPORTAR PDF
+      // 📄 EXPORTAR PDF MULTIPÁGINA
       if (btnPdf) {
-        btnPdf.addEventListener('click', async () => {
+        btnPdf.addEventListener('click', () => {
           const reportText = analysisReport.innerText;
           if (!reportText || reportText.includes("En attente")) return;
 
           try {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
-            doc.text("RAPPORT D'AUDIT POLETHIC BEACON", 15, 15);
+
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 15;
+            let cursorY = 20;
+
+            // Encabezado
+            doc.setFont("courier", "bold");
+            doc.setFontSize(14);
+            doc.text("RAPPORT D'AUDIT POLETHIC BEACON", margin, cursorY);
             
-            const splitText = doc.splitTextToSize(reportText, 180);
+            cursorY += 10;
             doc.setFontSize(10);
-            doc.text(splitText, 15, 25);
+            doc.setFont("courier", "normal");
+            doc.text(`Ethic-Score: ${currentScoreLetter} | Date: ${new Date().toLocaleDateString()}`, margin, cursorY);
             
+            cursorY += 10;
+            doc.setLineWidth(0.5);
+            doc.line(margin, cursorY, 195, cursorY);
+            cursorY += 10;
+
+            // Dividir el texto por líneas adaptadas al ancho
+            const splitLines = doc.splitTextToSize(reportText, 180);
+
+            // Control de páginas dinámico
+            splitLines.forEach(line => {
+              if (cursorY + 7 > pageHeight - margin) {
+                doc.addPage();
+                cursorY = margin + 5;
+              }
+              doc.text(line, margin, cursorY);
+              cursorY += 6;
+            });
+
             doc.save(`Rapport_BEACON_${Date.now()}.pdf`);
           } catch (e) {
+            console.error(e);
             alert("Error al exportar el PDF.");
           }
         });
