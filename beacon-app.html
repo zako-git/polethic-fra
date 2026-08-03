@@ -434,6 +434,81 @@
     <!-- PANEL DE RESULTADOS CON RULETA / BADGE ETHIC-SCORE -->
     <section id="results-panel" class="results-card">
       <div class="results-header">
+         // 🎰 SPINNER DE CARGA DEL ETHIC-SCORE
+      let ethicSpinnerInterval = null;
+
+      function startEthicSpinner() {
+        const dummyLetters = ['A', 'B', 'C', 'D', 'S', 'X', '?', '⚡'];
+        const dummyColors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d', '#00f0ff'];
+
+        if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
+
+        ethicSpinnerInterval = setInterval(() => {
+          const randomLetter = dummyLetters[Math.floor(Math.random() * dummyLetters.length)];
+          const randomColor = dummyColors[Math.floor(Math.random() * dummyColors.length)];
+
+          ethicScore.innerText = `Ethic-Score™: ${randomLetter}`;
+          ethicScore.style.backgroundColor = randomColor;
+          ethicScore.style.boxShadow = `0 0 15px ${randomColor}`;
+          ethicScore.style.color = '#030a12';
+        }, 90);
+      }
+
+      function stopEthicSpinner() {
+        if (ethicSpinnerInterval) {
+          clearInterval(ethicSpinnerInterval);
+          ethicSpinnerInterval = null;
+        }
+      }
+
+      function applyEthicBadge(score) {
+        stopEthicSpinner();
+
+        let letter = 'C';
+        let color = '#ff9900';
+        let glow = 'rgba(255, 153, 0, 0.4)';
+
+        if (typeof score === 'string') {
+          letter = score.toUpperCase();
+        } else if (typeof score === 'number') {
+          if (score <= 25) letter = 'A';
+          else if (score <= 50) letter = 'B';
+          else if (score <= 75) letter = 'C';
+          else letter = 'D';
+        }
+
+        if (letter === 'A') { color = '#00ff88'; glow = 'rgba(0, 255, 136, 0.4)'; }
+        if (letter === 'B') { color = '#ffe600'; glow = 'rgba(255, 230, 0, 0.4)'; }
+        if (letter === 'C') { color = '#ff9900'; glow = 'rgba(255, 153, 0, 0.4)'; }
+        if (letter === 'D') { color = '#ff2a6d'; glow = 'rgba(255, 42, 109, 0.4)'; }
+
+        currentScoreLetter = letter;
+        ethicScore.innerText = `Ethic-Score™: ${letter}`;
+        ethicScore.style.backgroundColor = color;
+        ethicScore.style.boxShadow = `0 0 15px ${glow}`;
+        ethicScore.style.color = '#030a12';
+      }
+
+      function renderFlags(flagsArray) {
+        if (!detectedFlags) return;
+        detectedFlags.innerHTML = '';
+        
+        let normalizedFlags = Array.isArray(flagsArray) ? flagsArray : (typeof flagsArray === 'string' ? flagsArray.split(',') : []);
+
+        if (normalizedFlags.length === 0) {
+          detectedFlags.innerHTML = `<span class="flag-badge">${translations[currentLanguage].flagReady}</span>`;
+          return;
+        }
+
+        normalizedFlags.forEach(flag => {
+          if (flag) {
+            const span = document.createElement('span');
+            span.className = 'flag-badge';
+            span.innerText = flag.trim().toUpperCase();
+            detectedFlags.appendChild(span);
+          }
+        });
+      }
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
         <div id="detected-flags-container" class="flags-container">
           <span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>
