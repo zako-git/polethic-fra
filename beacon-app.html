@@ -33,9 +33,23 @@
       color: #e0e0e0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
+      /* FONDO CON EFECTO ESTRELLAS Y RESPLANDOR NEÓN */
       background-image: 
-        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+        radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 40px 70px, rgba(0, 240, 255, 0.8), rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 120px, rgba(0, 255, 136, 0.9), rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 230px 190px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 310px 80px, rgba(0, 240, 255, 0.8), rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 450px 130px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 520px 240px, rgba(255, 255, 255, 0.9), rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 670px 60px, rgba(0, 240, 255, 0.7), rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 780px 210px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 890px 25px, rgba(0, 255, 136, 0.8), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 950px 180px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.06) 0%, transparent 50%);
+      background-size: 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 550px 300px, 100% 100%, 100% 100%;
       background-attachment: fixed;
     }
 
@@ -134,10 +148,10 @@
       opacity: 0.9;
     }
 
-    /* ZONA DROP Y CONSOLA DE ENTRADA */
+    /* ZONA DROP Y CONSOLA DE ENTRADA (LÍNEA CONTINUA) */
     .drop-zone {
       background: var(--cyber-card-bg);
-      border: 2px dashed var(--cyber-cyan);
+      border: 1px solid var(--cyber-cyan); /* CAMBIADO DE DASHED A SOLID */
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
       border-radius: 12px;
       padding: 25px;
@@ -193,6 +207,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      white-space: nowrap;
     }
 
     .file-upload-btn:hover {
@@ -567,21 +582,22 @@
         const files = dt.files;
         if (files.length > 0) {
           userFile.files = files;
-          fileNameDisplay.innerText = files[0].name.substring(0, 18) + '...';
+          fileNameDisplay.innerText = files[0].name.length > 18 ? files[0].name.substring(0, 18) + '...' : files[0].name;
         }
       });
 
       if (userFile) {
         userFile.addEventListener('change', (e) => {
           if (e.target.files.length > 0) {
-            fileNameDisplay.innerText = e.target.files[0].name.substring(0, 18) + '...';
+            const fileName = e.target.files[0].name;
+            fileNameDisplay.innerText = fileName.length > 18 ? fileName.substring(0, 18) + '...' : fileName;
           } else {
             fileNameDisplay.innerText = translations[currentLang].attach;
           }
         });
       }
 
-      // 🎯 BADGE DE ETHIC-SCORE (CON COLORES SEGÚN LETRA)
+      // 🎯 BADGE DE ETHIC-SCORE
       function applyEthicBadge(score) {
         let letter = 'C';
         let color = '#ff9900';
@@ -783,7 +799,6 @@
                 .replace(/\*/g, '-')
                 .replace(/[’']/g, "'")
                 .replace(/[«»]/g, '"')
-                .replace(/[^a-zA-Z0-9àâæçéèêëîïôœùûüÿÀÂÆÇÉÈÊËÎÏÔŒÙÛÜŸ\s\.,;:!\?\-\(\)'"%]/g, '')
                 .replace(/[ \t]+/g, ' ')
                 .trim();
             };
