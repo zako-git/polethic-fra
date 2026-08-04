@@ -638,7 +638,7 @@
           let trimmed = line.trim();
           if (!trimmed) { cursorY += 3; return; }
 
-         const isHeader = /^(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION|DEFI DU BIAIS)/i.test(trimmed) 
+         const isHeader = /^(PHASE\s*\|CLASSIFICATION|NOYAU DE FAITS|DEMONTAGE COGNITIF|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION|DEFI DU BIAIS)/i.test(trimmed) 
                 || /CLASSIFICATION\s*\(Phase\s*0\)/i.test(trimmed)
                 || /DÉMONTAGE\s*COGNITIF\s*\(Phase\s*2\)/i.test(trimmed);
 
