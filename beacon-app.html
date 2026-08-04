@@ -553,7 +553,7 @@
         }
       });
 
-    // 📄 EXPORTAR PDF (DISEÑO POLETHIC BEACON - MULTILINGÜE Y DEPURADO)
+    // 📄 EXPORTAR PDF (DISEÑO ESTÁNDAR INFORME CRIMINAL - TAMAÑOS 11PT Y 13PT NEGRITA)
 btnPdf.addEventListener('click', () => {
   const reportText = analysisReport.innerText;
   const lang = currentLang || 'fr';
@@ -572,7 +572,7 @@ btnPdf.addEventListener('click', () => {
   const contentWidth = pageWidth - (margin * 2);
   let cursorY = margin;
 
-  // 1. Limpieza rigurosa de caracteres corruptos, invisibles, símbolos extraños (þ, \u00FE) y Markdown
+  // 1. Limpieza rigurosa de caracteres corruptos e invisibles
   let cleanText = reportText
     .replace(/\*\*/g, '')
     .replace(/[\u00FE\u00DEþØ=&%#@<>|~]/g, '')
@@ -580,14 +580,14 @@ btnPdf.addEventListener('click', () => {
     .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
     .trim();
 
-  // --- ENCABEZADO ELEGANTE POLETHIC BEACON ---
+  // --- ENCABEZADO PRINCIPAL ---
   doc.setFont("courier", "bold");
   doc.setFontSize(16);
   doc.setTextColor(15, 23, 42);
   doc.text("POLETHIC BEACON", margin, cursorY + 2);
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
+  doc.setFontSize(9);
   doc.setTextColor(0, 180, 216);
   doc.text("LABORATOIRE D'AUTODÉFENSE COGNITIVE", margin, cursorY + 7);
 
@@ -621,111 +621,116 @@ btnPdf.addEventListener('click', () => {
 
   // Insignia Ethic-Score
   doc.setFillColor(scoreR, scoreG, scoreB);
-  doc.roundedRect(margin + 3, cursorY + 3, 36, 14, 1.5, 1.5, 'F');
+  doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(7);
+  doc.setFontSize(8);
   doc.setTextColor(255, 255, 255);
   doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
-  doc.setFontSize(12);
+  doc.setFontSize(13); // Tamaño 13 para la categoría
   doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
 
   // Datos del expediente
-  doc.setFont("courier", "normal");
-  doc.setFontSize(8);
+  doc.setFont("courier", "bold");
+  doc.setFontSize(10);
   doc.setTextColor(51, 65, 85);
-  doc.text(`${refLabels[lang] || 'RÉFÉRENCE'}  : ${auditId}`, margin + 44, cursorY + 8);
-  doc.text(`${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`, margin + 44, cursorY + 13);
+  doc.text(`${refLabels[lang] || 'RÉFÉRENCE'}  : ${auditId}`, margin + 46, cursorY + 8);
+  doc.text(`${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`, margin + 46, cursorY + 13);
 
   cursorY += 26;
 
-  // --- CUERPO DEL INFORME CON DETECCIÓN PRECISA DE SECCIONES ---
+  // --- CUERPO DEL INFORME CON TIPOGRAFÍA ESTÁNDAR TIPO INFORME (11pt / 13pt) ---
   const lines = cleanText.split('\n');
 
   lines.forEach((line) => {
-    // Limpieza de espacios invisibles y caracteres parásitos al inicio/final
-    let trimmed = line.replace(/^[\s\u00A0\u200B\u00FE\u00DEþ]+|[\s\u00A0\u200B\u00FE\u00DEþ]+$/g, '');
-    if (!trimmed) { cursorY += 3; return; }
+    let trimmed = line.replace(/[\u00FE\u00DEþ]/g, '').replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
+    
+    // Omitir líneas vacías o viñetas sueltas
+    if (!trimmed || trimmed === '•' || trimmed === '-') { 
+      cursorY += 2; 
+      return; 
+    }
 
-    // REGEX DE TÍTULOS PRINCIPALES (Exige estar al inicio o tras una viñeta/número)
+    // REGEX TÍTULOS DE SECCIÓN
     const isHeader = /^[-•\s]*(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|NÚCLEO DE HECHOS|CORE FACTS|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|DESMONTAJE COGNITIVO|DECONSTRUCTION|RECADRAGE CORTICAL|REENCUADRE CORTICAL|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|BIAS CHALLENGE)/i.test(trimmed);
 
     if (isHeader) {
       if (cursorY > pageHeight - 30) { doc.addPage(); cursorY = margin + 5; }
-      cursorY += 4;
+      cursorY += 5;
 
-      // Limpiar viñetas si las tenía el título original
       let headerText = trimmed.replace(/^[-•\s]+/, '').toUpperCase();
 
+      // TÍTULOS EN NEGRITA TAMAÑO 13
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
+      doc.setFontSize(13);
       doc.setTextColor(15, 23, 42);
       doc.text(headerText, margin, cursorY);
 
-      // Subrayado destacado azul cyan
       doc.setDrawColor(0, 200, 235);
       doc.setLineWidth(0.8);
-      doc.line(margin, cursorY + 1.5, margin + contentWidth, cursorY + 1.5);
+      doc.line(margin, cursorY + 2, margin + contentWidth, cursorY + 2);
 
-      cursorY += 7;
+      cursorY += 9;
     } else {
       let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
-      let cleanContent = isBullet ? trimmed.replace(/^[-•]\s*/, '') : trimmed;
-      
-      // Comprobar si la línea contiene un par "Etiqueta: Texto" (ej. "Type de Texte: ...", "Risque: ...")
-      let hasColonLabel = cleanContent.includes(':') && cleanContent.indexOf(':') < 40;
+      let cleanContent = isBullet ? trimmed.replace(/^[-•]\s*/, '').trim() : trimmed;
+
+      if (!cleanContent) return;
+
+      // Líneas con par "Etiqueta: Texto"
+      let hasColonLabel = cleanContent.includes(':') && cleanContent.indexOf(':') < 40 && !/^\d+\./.test(cleanContent);
 
       if (hasColonLabel) {
         if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
 
-        let indent = isBullet ? margin + 4 : margin;
+        let indent = isBullet ? margin + 5 : margin;
         let colonIndex = cleanContent.indexOf(':');
         let labelPart = cleanContent.substring(0, colonIndex + 1);
-        let valuePart = cleanContent.substring(colonIndex + 1);
+        let valuePart = cleanContent.substring(colonIndex + 1).trim();
 
-        // Imprimir viñeta si la hay
         if (isBullet) {
           doc.setFont("helvetica", "normal");
-          doc.setFontSize(8.5);
+          doc.setFontSize(11); // Cuerpo tamaño 11
           doc.setTextColor(51, 65, 85);
           doc.text("• ", margin, cursorY);
         }
 
-        // Imprimir Etiqueta en NEGRITA
+        // ETIQUETA EN NEGRITA TAMAÑO 13
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(8.5);
+        doc.setFontSize(13);
         doc.setTextColor(15, 23, 42);
         doc.text(labelPart, indent, cursorY);
 
-        let labelWidth = doc.getTextWidth(labelPart);
+        let labelWidth = doc.getTextWidth(labelPart + " ");
         
-        // Imprimir el Resto del Texto en NORMAL
+        // VALOR / DESCRIPCIÓN EN NORMAL TAMAÑO 11
         doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
         doc.setTextColor(51, 65, 85);
 
-        const splitValue = doc.splitTextToSize(valuePart, contentWidth - (indent - margin) - labelWidth);
+        let maxValWidth = contentWidth - (indent - margin) - labelWidth;
+        const splitValue = doc.splitTextToSize(valuePart, maxValWidth);
 
         if (splitValue.length > 0) {
           doc.text(splitValue[0], indent + labelWidth, cursorY);
-          cursorY += 4.5;
+          cursorY += 6;
 
-          // Si el texto del valor ocupa más de una línea, envolver con sangría
           for (let k = 1; k < splitValue.length; k++) {
             if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
             doc.text(splitValue[k], indent + 4, cursorY);
-            cursorY += 4.5;
+            cursorY += 6;
           }
         } else {
-          cursorY += 4.5;
+          cursorY += 6;
         }
-        cursorY += 1;
+        cursorY += 1.5;
       } else {
-        // Texto normal o viñeta común sin dos puntos
+        // CUERPO DE TEXTO GENERAL EN NORMAL TAMAÑO 11
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(8.5);
+        doc.setFontSize(11);
         doc.setTextColor(51, 65, 85);
 
-        let indent = isBullet ? margin + 4 : margin;
-        let printWidth = isBullet ? contentWidth - 4 : contentWidth;
+        let indent = isBullet ? margin + 5 : margin;
+        let printWidth = isBullet ? contentWidth - 5 : contentWidth;
         let printText = isBullet ? "• " + cleanContent : cleanContent;
 
         const splitLines = doc.splitTextToSize(printText, printWidth);
@@ -733,9 +738,9 @@ btnPdf.addEventListener('click', () => {
         splitLines.forEach((subLine) => {
           if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
           doc.text(subLine, indent, cursorY);
-          cursorY += 4.5;
+          cursorY += 6; // Espaciado cómodo de línea para fuente 11pt
         });
-        cursorY += 1;
+        cursorY += 1.5;
       }
     }
   });
@@ -755,7 +760,7 @@ btnPdf.addEventListener('click', () => {
     doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(7);
+    doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.text(footerLabels[lang] || footerLabels['fr'], margin, pageHeight - 7);
     doc.text(`Page ${i} / ${pageCount}`, pageWidth - margin - 15, pageHeight - 7);
