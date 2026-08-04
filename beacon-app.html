@@ -17,7 +17,7 @@
       --cyber-green: #00ff88;
       --cyber-red: #ff2a6d;
       --cyber-yellow: #ffe600;
-      --cyber-bg: #061526; /* Fondo base un poco más claro */
+      --cyber-bg: #061526; /* Fondo base */
       --cyber-card-bg: rgba(15, 23, 42, 0.85);
       --font-cyber: 'Courier New', Courier, monospace;
     }
@@ -29,7 +29,7 @@
       color: #e0e0e0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
-      /* FONDO Y ESTRELLAS MÁS BRILLANTES */
+      /* FONDO Y ESTRELLAS BRILLANTES */
       background-image: 
         radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
         radial-gradient(2px 2px at 40px 70px, rgba(0, 240, 255, 0.9), rgba(0,0,0,0)),
@@ -218,52 +218,6 @@
       white-space: pre-wrap;
     }
 
-    /* SISTEMA DE REFUTACIÓN / CHAT DE PREGUNTAS */
-    .refute-box-container {
-      margin-top: 20px;
-      padding: 15px;
-      background: rgba(255, 230, 0, 0.05);
-      border: 1px solid var(--cyber-yellow);
-      border-radius: 8px;
-      display: none; /* Se activa al presionar Réfuter */
-    }
-
-    .refute-title {
-      font-family: var(--font-cyber);
-      color: var(--cyber-yellow);
-      font-size: 0.9rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .refute-input-group {
-      display: flex;
-      gap: 10px;
-    }
-
-    .refute-input {
-      flex-grow: 1;
-      background: rgba(3, 10, 18, 0.9);
-      border: 1px solid var(--cyber-yellow);
-      color: #fff;
-      padding: 10px;
-      font-family: var(--font-cyber);
-      font-size: 0.85rem;
-      border-radius: 4px;
-      outline: none;
-    }
-
-    .btn-send-refutation {
-      background: var(--cyber-yellow);
-      color: #000;
-      border: none;
-      padding: 10px 16px;
-      font-family: var(--font-cyber);
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
     .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 
     .btn-action-refute, .btn-action-pdf, .btn-action-purge {
@@ -347,7 +301,7 @@
       <div class="status-bar"><span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span></div>
     </section>
 
-    <!-- RESULTADOS Y CAJA DE REFUTACIÓN -->
+    <!-- RESULTADOS Y ACCIONES DE ANÁLISIS -->
     <section id="results-panel" class="results-card">
       <div class="results-header">
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
@@ -358,15 +312,6 @@
 
       <div class="analysis-body">
         <div id="analysis-report" class="report-box">En attente d'analyse...</div>
-      </div>
-
-      <!-- MÓDULO INTERACTIVO DE REFUTACIÓN / PREGUNTAS -->
-      <div id="refute-box" class="refute-box-container">
-        <div class="refute-title" id="txt-refute-title">❓ POSER UNE QUESTION / CHALLENGER CE RAPPORT</div>
-        <div class="refute-input-group">
-          <input type="text" id="refute-question" class="refute-input" placeholder="Posez votre contre-question ou objection ici..." />
-          <button id="btn-send-refutation" class="btn-send-refutation">ENVOYER</button>
-        </div>
       </div>
 
       <div class="results-actions">
@@ -399,10 +344,6 @@
       const analysisReport = document.getElementById('analysis-report');
       const ethicScore = document.getElementById('ethic-score');
       const detectedFlags = document.getElementById('detected-flags-container');
-      
-      const refuteBox = document.getElementById('refute-box');
-      const refuteQuestion = document.getElementById('refute-question');
-      const btnSendRefutation = document.getElementById('btn-send-refutation');
 
       const btnRefute = document.getElementById('btn-refute');
       const btnPdf = document.getElementById('btn-pdf');
@@ -415,6 +356,7 @@
       let currentLang = 'fr';
       let currentScoreLetter = 'C';
       let ethicSpinnerInterval = null;
+      let lastAnalyzedText = "";
 
       // Idiomas
       const langMap = {
@@ -424,14 +366,14 @@
           fileBtn: "Joindre / Glisser un fichier",
           analyzeBtn: "⚡ BEACON-IZE",
           status: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
-          refuteTitle: "❓ POSER UNE QUESTION / CHALLENGER CE RAPPORT",
-          refutePlaceholder: "Posez votre contre-question ou objection ici...",
-          refuteSend: "ENVOYER",
           refuteBtn: "🔄 RÉFUTER / CHALLENGER",
+          refuting: "⏳ GÉNÉRATION DU DÉFI...",
           pdfBtn: "📄 EXPORTER EN PDF",
           purgeBtn: "🗑️ PURGER",
           shieldTitle: "Bouclier de Protection Professionnelle",
-          shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique."
+          shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          noAnalysisAlert: "Effectuez d'abord une analyse valide avant de lancer une réfutation.",
+          noExportAlert: "Aucun rapport valide à exporter."
         },
         es: {
           subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
@@ -439,14 +381,14 @@
           fileBtn: "Adjuntar / Arrastrar archivo",
           analyzeBtn: "⚡ BEACON-IZE",
           status: "● MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
-          refuteTitle: "❓ HACER UNA PREGUNTA / DESAFIAR ESTE INFORME",
-          refutePlaceholder: "Escriba su objeción o contra-pregunta aquí...",
-          refuteSend: "ENVIAR",
           refuteBtn: "🔄 REFUTAR / DESAFIAR",
+          refuting: "⏳ GENERANDO REFUTACIÓN...",
           pdfBtn: "📄 EXPORTAR A PDF",
           purgeBtn: "🗑️ PURGAR",
           shieldTitle: "Escudo de Protección Profesional",
-          shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica."
+          shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          noAnalysisAlert: "Realice primero un análisis válido antes de refutar.",
+          noExportAlert: "No hay un informe válido para exportar."
         },
         en: {
           subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
@@ -454,14 +396,14 @@
           fileBtn: "Attach / Drag file",
           analyzeBtn: "⚡ BEACON-IZE",
           status: "● ENGINE READY | SYSTEM ONLINE (2026)",
-          refuteTitle: "❓ ASK A QUESTION / CHALLENGE THIS REPORT",
-          refutePlaceholder: "Type your objection or counter-question here...",
-          refuteSend: "SEND",
           refuteBtn: "🔄 REFUTE / CHALLENGE",
+          refuting: "⏳ GENERATING CHALLENGE...",
           pdfBtn: "📄 EXPORT TO PDF",
           purgeBtn: "🗑️ PURGE",
           shieldTitle: "Professional Protection Shield",
-          shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation."
+          shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          noAnalysisAlert: "Perform a valid analysis first before refuting.",
+          noExportAlert: "No valid report to export."
         }
       };
 
@@ -478,9 +420,6 @@
         if (userFile.files.length === 0) fileNameDisplay.innerText = t.fileBtn;
         btnAnalyze.innerText = t.analyzeBtn;
         document.getElementById('txt-status').innerText = t.status;
-        document.getElementById('txt-refute-title').innerText = t.refuteTitle;
-        refuteQuestion.placeholder = t.refutePlaceholder;
-        btnSendRefutation.innerText = t.refuteSend;
         btnRefute.innerText = t.refuteBtn;
         btnPdf.innerText = t.pdfBtn;
         btnPurge.innerText = t.purgeBtn;
@@ -546,16 +485,16 @@
         });
       }
 
-      // ⚡ Análisis inicial
+      // ⚡ Análisis Inicial
       btnAnalyze.addEventListener('click', async () => {
         const text = userInput.value.trim();
         if (!text && userFile.files.length === 0) {
           return alert(currentLang === 'es' ? 'Por favor ingrese texto o adjunte un archivo.' : 'Veuillez entrer du texte ou joindre un fichier.');
         }
 
+        lastAnalyzedText = text;
         btnAnalyze.disabled = true;
         resultsPanel.style.display = 'block';
-        refuteBox.style.display = 'none'; // oculta la caja de refutar hasta que haya análisis
         analysisReport.innerText = currentLang === 'es' ? '⚡ Análisis en proceso...' : '⚡ Analyse en cours...';
         startEthicSpinner();
 
@@ -577,46 +516,50 @@
         }
       });
 
-      // 🔄 BOTÓN DE MOSTRAR CAJA DE PREGUNTAS Y REFUTACIÓN
-      btnRefute.addEventListener('click', () => {
-        if (refuteBox.style.display === 'block') {
-          refuteBox.style.display = 'none';
-        } else {
-          refuteBox.style.display = 'block';
-          refuteQuestion.focus();
+      // 🔄 REFUTACIÓN DIRECTA AL BACKEND (ENDPOINT /refute)
+      btnRefute.addEventListener('click', async () => {
+        const currentAnalysis = analysisReport.innerText;
+        const t = langMap[currentLang];
+
+        if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("⚡")) {
+          return alert(t.noAnalysisAlert);
         }
-      });
 
-      // 📩 ENVIAR PREGUNTA DE REFUTACIÓN
-      btnSendRefutation.addEventListener('click', async () => {
-        const questionText = refuteQuestion.value.trim();
-        if (!questionText) return;
-
-        const originalReport = analysisReport.innerText;
-        analysisReport.innerText += `\n\n----------------------------------------\n❓ [QUESTION/CHALLENGE] : ${questionText}\n⚡ [ANALYSE REVISÉE EN COURS...]`;
-        refuteQuestion.value = '';
+        btnRefute.disabled = true;
+        btnRefute.innerText = t.refuting;
 
         try {
-          const response = await fetch(`${API_BASE_URL}/analyze`, {
+          const response = await fetch(`${API_BASE_URL}/refute`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              text: `RAPPORT PRÉCÉDENT:\n${originalReport}\n\nQUESTION DU CLIENT:\n${questionText}`,
+              analysis: currentAnalysis,
+              text: lastAnalyzedText,
               lang: currentLang
             })
           });
+
           const data = await response.json();
-          analysisReport.innerText += `\n\n💡 [RÉPONSE & COMPLÉMENT]:\n${data.analysis || data.report}`;
+          const refutationText = data.refutation || data.reply || '';
+
+          if (refutationText) {
+            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationText}`;
+          }
         } catch (e) {
-          analysisReport.innerText += `\n\n❌ [ERREUR]: Impossible d'analyser la réjection.`;
+          alert(currentLang === 'es' ? "Error al procesar la refutación." : "Erreur lors du traitement de la réfutation.");
+        } finally {
+          btnRefute.disabled = false;
+          btnRefute.innerText = t.refuteBtn;
         }
       });
 
-      // 📄 EXPORTAR PDF FORENSE
+      // 📄 EXPORTAR PDF MEJORADO
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport.innerText;
+        const t = langMap[currentLang];
+
         if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
-          return alert('Aucun rapport valide à exporter.');
+          return alert(t.noExportAlert);
         }
 
         const { jsPDF } = window.jspdf;
@@ -630,6 +573,7 @@
 
         const cleanText = reportText.replace(/\*\*/g, '').trim();
 
+        // Encabezado Cyber Top Bar
         doc.setFillColor(0, 240, 255);
         doc.rect(0, 0, pageWidth, 3, 'F');
         cursorY += 6;
@@ -639,6 +583,7 @@
         doc.setTextColor(3, 10, 18);
         doc.text("POLETHIC FRANCE — BUREAU D'AUDIT COGNITIF", margin, cursorY);
 
+        // Badge confidencial
         doc.setDrawColor(220, 38, 38);
         doc.setLineWidth(0.5);
         doc.rect(pageWidth - margin - 48, cursorY - 4, 48, 10);
@@ -698,7 +643,7 @@
           let trimmed = line.trim();
           if (!trimmed) { cursorY += 2; return; }
 
-          const isHeader = /^(CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE COGNITIF|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION)/i.test(trimmed);
+          const isHeader = /^(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE COGNITIF|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION|DÉFI DU BIAIS)/i.test(trimmed);
 
           if (isHeader) {
             if (cursorY > pageHeight - 30) { doc.addPage(); cursorY = margin + 5; }
@@ -715,11 +660,11 @@
             doc.setFontSize(8.5);
             doc.setTextColor(30, 41, 59);
 
-            let isBullet = trimmed.startsWith('-');
+            let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
             let indent = isBullet ? margin + 4 : margin;
             let printWidth = isBullet ? contentWidth - 4 : contentWidth;
 
-            if (isBullet) trimmed = "• " + trimmed.substring(1).trim();
+            if (isBullet) trimmed = "• " + trimmed.replace(/^[-•]\s*/, '');
 
             const splitLines = doc.splitTextToSize(trimmed, printWidth);
 
@@ -748,15 +693,14 @@
         doc.save(`RAPPORT_FORENSE_${currentScoreLetter}_${auditId}.pdf`);
       });
 
-      // 🗑️ Purga
+      // 🗑️ PURGAR
       btnPurge.addEventListener('click', () => {
         userInput.value = '';
         userFile.value = '';
-        refuteQuestion.value = '';
         fileNameDisplay.innerText = langMap[currentLang].fileBtn;
         resultsPanel.style.display = 'none';
-        refuteBox.style.display = 'none';
         stopEthicSpinner();
+        lastAnalyzedText = "";
       });
     });
   </script>
