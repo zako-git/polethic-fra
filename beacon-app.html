@@ -798,16 +798,21 @@ const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLE
         doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
       });
 
-      // 🗑️ PURGAR
-      btnPurge.addEventListener('click', () => {
-        userInput.value = '';
-        userFile.value = '';
-        fileNameDisplay.innerText = langMap[currentLang].fileBtn;
-        resultsPanel.style.display = 'none';
-        stopEthicSpinner();
-        lastAnalyzedText = "";
-      });
-    });
-  </script>
-</body>
-</html>
+    // 🗑️ PURGAR
+btnPurge.addEventListener('click', () => {
+  userInput.value = '';
+  userFile.value = '';
+  fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+  
+  // Limpiar el informe y vaciar las tarjetitas
+  analysisReport.innerText = '';
+  if (detectedFlags) detectedFlags.innerHTML = '';
+
+  // Resetear el badge
+  ethicScore.innerText = 'Ethic-Score™: -';
+  ethicScore.style.backgroundColor = 'transparent';
+
+  resultsPanel.style.display = 'none';
+  stopEthicSpinner();
+  lastAnalyzedText = "";
+});
