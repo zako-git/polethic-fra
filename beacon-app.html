@@ -421,131 +421,197 @@
         }
       });
 
-      // 📄 GENERADOR PDF RÉPLICA MODELO OFICIAL POLETHIC
+      // GENERACIÓN DE PDF - ESTILO FORENSE / PERICIAL ELEGANTE
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport.innerText;
-        if (!reportText || reportText.includes("En attente")) return alert('Aucun rapport.');
+        if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
+          return alert('Aucun rapport valide à exporter.');
+        }
 
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'mm', 'a4');
+        const doc = new jsPDF({
+          orientation: 'p',
+          unit: 'mm',
+          format: 'a4',
+          compress: true
+        });
+
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
         const margin = 18;
-        let cursorY = 18;
+        const contentWidth = pageWidth - (margin * 2);
+        let cursorY = margin;
 
-        // Formatear Fecha Actual
-        const now = new Date();
-        const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const formattedDate = now.toLocaleDateString('fr-FR', options).replace(':', 'h');
+        // Limpieza de caracteres Markdown o corruptos
+        const cleanText = reportText
+          .replace(/\*\*/g, '')
+          .replace(/[ØØYàSYOp]+/g, '')
+          .trim();
 
-        // 1. HEADER MODELO POLETHIC
+        // ----------------------------------------------------
+        // ENCABEZADO ESTILO AUDITORÍA FORENSE
+        // ----------------------------------------------------
+        // Banda de acento superior
+        doc.setFillColor(0, 240, 255);
+        doc.rect(0, 0, pageWidth, 3, 'F');
+
+        cursorY += 6;
+
+        // Titular Principal
+        doc.setFont("courier", "bold");
+        doc.setFontSize(13);
+        doc.setTextColor(3, 10, 18);
+        doc.text("POLETHIC FRANCE — BUREAU D'AUDIT COGNITIF", margin, cursorY);
+
+        // Stamp / Sello de Confidencialidad (Esquina Superior Derecha)
+        doc.setDrawColor(220, 38, 38);
+        doc.setLineWidth(0.5);
+        doc.rect(pageWidth - margin - 48, cursorY - 4, 48, 10);
+        doc.setFont("courier", "bold");
+        doc.setFontSize(7);
+        doc.setTextColor(220, 38, 38);
+        doc.text("EVALUATION FORENSIQUE", pageWidth - margin - 45, cursorY);
+        doc.text("DOCUMENT CONFIDENTIEL", pageWidth - margin - 45, cursorY + 4);
+
+        cursorY += 6;
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.setTextColor(15, 23, 42);
-        doc.text("RAPPORT D'AUDIT POLETHIC BEACON", margin, cursorY);
-        cursorY += 5;
-
-        doc.setFontSize(9);
-        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
         doc.setTextColor(100, 116, 139);
-        doc.text("OBSERVATOIRE & EXPERTISE MÉTACOMMUNICATIONNELLE", margin, cursorY);
+        doc.text("EXPERTISES METACOMMUNICATIONNELLES & PROTOCOLES D'INTEGRITE", margin, cursorY);
+
+        cursorY += 6;
+
+        // Línea divisoria técnica
+        doc.setDrawColor(203, 213, 225);
+        doc.setLineWidth(0.3);
+        doc.line(margin, cursorY, pageWidth - margin, cursorY);
+
         cursorY += 8;
 
-        // 2. BLOQUE DE STATUS Y SCORE
-        let scoreBg = [255, 153, 0]; // C Orange
-        if (currentScoreLetter === 'A') scoreBg = [0, 255, 136];
-        if (currentScoreLetter === 'B') scoreBg = [255, 230, 0];
-        if (currentScoreLetter === 'D') scoreBg = [255, 42, 109];
+        // ----------------------------------------------------
+        // FICHA DE METADATOS Y ETHIC-SCORE
+        // ----------------------------------------------------
+        const now = new Date();
+        const timestamp = now.toLocaleDateString('fr-FR', {
+          day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+        const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
-        // Caja Ethic Score
-        doc.setFillColor(...scoreBg);
-        doc.rect(margin, cursorY, 45, 8, 'F');
+        // Caja de Score
+        let scoreR = 234, scoreG = 179, scoreB = 8; // B (Amarillo)
+        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; } // Verde
+        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; } // Naranja
+        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }  // Rojo
+
+        // Fondo de la caja de Metadatos
+        doc.setFillColor(248, 250, 252);
+        doc.setDrawColor(226, 232, 240);
+        doc.rect(margin, cursorY, contentWidth, 22, 'FD');
+
+        // Indicador Ethic-Score
+        doc.setFillColor(scoreR, scoreG, scoreB);
+        doc.rect(margin + 3, cursorY + 3, 38, 16, 'F');
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(9);
-        doc.setTextColor(15, 23, 42);
-        doc.text(`ETHIC-SCORETM: ${currentScoreLetter}`, margin + 4, cursorY + 5.5);
+        doc.setFontSize(8);
+        doc.setTextColor(255, 255, 255);
+        doc.text("ETHIC-SCORE", margin + 6, cursorY + 8);
+        doc.setFontSize(14);
+        doc.text(`NIVEAU ${currentScoreLetter}`, margin + 6, cursorY + 15);
 
         // Metadatos
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(8.5);
-        doc.setTextColor(71, 85, 105);
-        doc.text(`DATE: ${formattedDate}`, margin + 55, cursorY + 5.5);
-        doc.text(`ID: BEACON-v2.6`, pageWidth - margin - 30, cursorY + 5.5);
+        doc.setFont("courier", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(51, 65, 85);
+        doc.text(`DOSSIER REF  : ${auditId}`, margin + 46, cursorY + 8);
+        doc.text(`HORODATAGE   : ${timestamp}`, margin + 46, cursorY + 13);
+        doc.text(`MOTEUR AUDIT : BEACON Core v2.6 / Protocol 2026`, margin + 46, cursorY + 18);
 
-        cursorY += 14;
+        cursorY += 28;
 
-        // Separador
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.4);
-        doc.line(margin, cursorY, pageWidth - margin, cursorY);
-        cursorY += 8;
-
-        // 3. RENDERIZADO DE CONTENIDO STRUCTURADO
-        const lines = reportText.split('\n');
+        // ----------------------------------------------------
+        // CUERPO DEL INFORME (SECCIONES Y LÍNEAS)
+        // ----------------------------------------------------
+        const lines = cleanText.split('\n');
 
         lines.forEach((line) => {
-          if (cursorY > pageHeight - 22) {
-            doc.addPage();
-            cursorY = 20;
-          }
-
-          let cleanLine = line.trim();
-          if (!cleanLine) {
-            cursorY += 3;
+          let trimmed = line.trim();
+          if (!trimmed) {
+            cursorY += 2;
             return;
           }
 
-          // Detección de Fases / Encabezados principales
-          if (cleanLine.match(/^(CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE COGNITIF|RECADRAGE CORTICAL|DÉFI DU BIAIS)/i) || cleanLine.startsWith('===') || cleanLine.startsWith('---')) {
-            if (cleanLine.startsWith('===') || cleanLine.startsWith('---')) return;
-            cursorY += 3;
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(10);
-            doc.setTextColor(15, 23, 42);
-            doc.text(cleanLine.toUpperCase(), margin, cursorY);
-            cursorY += 6;
-          } 
-          // Sub-etiquetas en negrita (ej: "- Type de Texte:", "Intention vs Réalité:")
-          else if (cleanLine.includes(':') && !cleanLine.startsWith('http')) {
-            doc.setFont("helvetica", "bold");
+          // Detección de títulos de fase (Encabezados forenses)
+          const isHeader = /^(CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE COGNITIF|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION)/i.test(trimmed);
+
+          if (isHeader) {
+            if (cursorY > pageHeight - 30) {
+              doc.addPage();
+              cursorY = margin + 5;
+            }
+
+            cursorY += 4;
+            // Banner de la Fase
+            doc.setFillColor(15, 23, 42); // Gris/Azul Oscuro
+            doc.rect(margin, cursorY, contentWidth, 6, 'F');
+
+            doc.setFont("courier", "bold");
+            doc.setFontSize(8.5);
+            doc.setTextColor(0, 240, 255);
+            doc.text(`[+] ${trimmed.toUpperCase()}`, margin + 3, cursorY + 4.2);
+
+            cursorY += 9;
+          } else {
+            // Contenido normal / viñetas
+            doc.setFont("helvetica", "normal");
             doc.setFontSize(8.5);
             doc.setTextColor(30, 41, 59);
 
-            const splitLine = doc.splitTextToSize(cleanLine, pageWidth - (margin * 2));
-            splitLine.forEach((subLine) => {
-              if (cursorY > pageHeight - 22) { doc.addPage(); cursorY = 20; }
-              doc.text(subLine, margin, cursorY);
-              cursorY += 4.5;
-            });
-          } 
-          // Texto regular y viñetas
-          else {
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(8.5);
-            doc.setTextColor(51, 65, 85);
+            // Ajuste de sangría si empieza con guión
+            let isBullet = trimmed.startsWith('-');
+            let indent = isBullet ? margin + 4 : margin;
+            let printWidth = isBullet ? contentWidth - 4 : contentWidth;
 
-            const splitLine = doc.splitTextToSize(cleanLine, pageWidth - (margin * 2));
-            splitLine.forEach((subLine) => {
-              if (cursorY > pageHeight - 22) { doc.addPage(); cursorY = 20; }
-              doc.text(subLine, margin, cursorY);
+            if (isBullet) {
+              trimmed = "• " + trimmed.substring(1).trim();
+            }
+
+            const splitLines = doc.splitTextToSize(trimmed, printWidth);
+
+            splitLines.forEach((subLine) => {
+              if (cursorY > pageHeight - 22) {
+                doc.addPage();
+                cursorY = margin + 5;
+              }
+              doc.text(subLine, indent, cursorY);
               cursorY += 4.2;
             });
           }
         });
 
-        // 4. FOOTER AUTOMÁTICO EN TODAS LAS PÁGINAS
+        // ----------------------------------------------------
+        // PIE DE PÁGINA PERICIAL (APLICA A TODAS LAS PÁGINAS)
+        // ----------------------------------------------------
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
           doc.setPage(i);
-          doc.setDrawColor(226, 232, 240);
+
+          // Línea divisoria de pie
+          doc.setDrawColor(203, 213, 225);
+          doc.setLineWidth(0.3);
           doc.line(margin, pageHeight - 14, pageWidth - margin, pageHeight - 14);
 
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(7.5);
+          // Texto pie
+          doc.setFont("courier", "normal");
+          doc.setFontSize(7);
           doc.setTextColor(148, 163, 184);
-          doc.text("POLETHIC France Protection primaire, analyse de discours et d'intégrité cognitive.", margin, pageHeight - 8);
-          doc.text(`Page ${i} sur ${pageCount}`, pageWidth - margin - 18, pageHeight - 8);
+          doc.text("POLETHIC France — Organisme d'Autodéfense Cognitive & Protection Primraire", margin, pageHeight - 9);
+          doc.text(`HASH: ${Math.random().toString(36).substring(2, 10).toUpperCase()} | PAGE ${i}/${pageCount}`, pageWidth - margin - 45, pageHeight - 9);
         }
+
+        // Guardar archivo
+        doc.save(`RAPPORT_FORENSE_${currentScoreLetter}_${auditId}.pdf`);
+      });
 
         // Descargar PDF
         doc.save(`Rapport_Audit_BEACON_${currentScoreLetter}_${Date.now()}.pdf`);
