@@ -553,7 +553,8 @@
         }
       });
 
-    // 📄 EXPORTAR PDF (DISEÑO ESTÁNDAR INFORME CRIMINAL - TAMAÑOS 11PT Y 13PT NEGRITA)
+   
+// 📄 EXPORTAR PDF (DISEÑO ESTÁNDAR INFORME CRIMINAL - VERSIÓN CORREGIDA)
 btnPdf.addEventListener('click', () => {
   const reportText = analysisReport.innerText;
   const lang = currentLang || 'fr';
@@ -572,22 +573,46 @@ btnPdf.addEventListener('click', () => {
   const contentWidth = pageWidth - (margin * 2);
   let cursorY = margin;
 
-  // 1. Limpieza rigurosa de caracteres corruptos e invisibles
+  // 1. SANEADO POR LISTA BLANCA (fix definitivo para glyphs rotos tipo "þ"/"b")
+  // Las fuentes base de jsPDF (Helvetica/Courier) no soportan Unicode completo.
+  // En vez de bloquear símbolos uno a uno, solo dejamos pasar lo que SÍ se puede
+  // renderizar: letras, números, acentos fr/es, y puntuación estándar.
+  const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
+
   let cleanText = reportText
     .replace(/\*\*/g, '')
-    .replace(/[\u00FE\u00DEþØ=&%#@<>|~]/g, '')
-    .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+    .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
     .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
+    .replace(WHITELIST, '')
     .trim();
+
+  // --- HELPER: título de sección en negrita + SUBRAYADO real (no solo línea decorativa) ---
+  function printSectionHeader(text, x, y) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11.5); // antes 13 — reducido
+    doc.setTextColor(15, 23, 42);
+    doc.text(text, x, y);
+
+    const textWidth = doc.getTextWidth(text);
+    // Subrayado pegado al texto (lo que pedías, no solo la barra decorativa)
+    doc.setDrawColor(15, 23, 42);
+    doc.setLineWidth(0.35);
+    doc.line(x, y + 1, x + textWidth, y + 1);
+
+    // Barra de acento decorativa (se mantiene, pero más abajo y más sutil)
+    doc.setDrawColor(0, 200, 235);
+    doc.setLineWidth(0.6);
+    doc.line(x, y + 3, x + contentWidth, y + 3);
+  }
 
   // --- ENCABEZADO PRINCIPAL ---
   doc.setFont("courier", "bold");
-  doc.setFontSize(16);
+  doc.setFontSize(15); // antes 16
   doc.setTextColor(15, 23, 42);
   doc.text("POLETHIC BEACON", margin, cursorY + 2);
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
+  doc.setFontSize(8.5); // antes 9
   doc.setTextColor(0, 180, 216);
   doc.text("LABORATOIRE D'AUTODÉFENSE COGNITIVE", margin, cursorY + 7);
 
@@ -605,8 +630,8 @@ btnPdf.addEventListener('click', () => {
   const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
 
   const now = new Date();
-  const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', { 
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+  const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
   });
   const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
@@ -623,51 +648,40 @@ btnPdf.addEventListener('click', () => {
   doc.setFillColor(scoreR, scoreG, scoreB);
   doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
+  doc.setFontSize(7.5); // antes 8
   doc.setTextColor(255, 255, 255);
   doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
-  doc.setFontSize(13); // Tamaño 13 para la categoría
+  doc.setFontSize(12); // antes 13
   doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
 
   // Datos del expediente
   doc.setFont("courier", "bold");
-  doc.setFontSize(10);
+  doc.setFontSize(9.5); // antes 10
   doc.setTextColor(51, 65, 85);
   doc.text(`${refLabels[lang] || 'RÉFÉRENCE'}  : ${auditId}`, margin + 46, cursorY + 8);
   doc.text(`${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`, margin + 46, cursorY + 13);
 
   cursorY += 26;
 
-  // --- CUERPO DEL INFORME CON TIPOGRAFÍA ESTÁNDAR TIPO INFORME (11pt / 13pt) ---
+  // --- CUERPO DEL INFORME (tipografía reducida: 10pt cuerpo / 11.5pt títulos) ---
   const lines = cleanText.split('\n');
 
   lines.forEach((line) => {
-    let trimmed = line.replace(/[\u00FE\u00DEþ]/g, '').replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
-    
-    // Omitir líneas vacías o viñetas sueltas
-    if (!trimmed || trimmed === '•' || trimmed === '-') { 
-      cursorY += 2; 
-      return; 
+    let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
+
+    if (!trimmed || trimmed === '•' || trimmed === '-') {
+      cursorY += 2;
+      return;
     }
 
-    // REGEX TÍTULOS DE SECCIÓN
-    const isHeader = /^[-•\s]*(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|NÚCLEO DE HECHOS|CORE FACTS|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|DESMONTAJE COGNITIVO|DECONSTRUCTION|RECADRAGE CORTICAL|REENCUADRE CORTICAL|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|BIAS CHALLENGE)/i.test(trimmed);
+    const isHeader = /^[-•\s]*(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|NÚCLEO DE HECHOS|CORE FACTS|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|DESMONTAJE COGNITIVO|DECONSTRUCTION|RECADRAGE CORTICAL|REENCUADRE CORTICAL|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|BIAS CHALLENGE|RÉFUTATION COGNITIVE|REFUTACION COGNITIVA|COGNITIVE REFUTATION)/i.test(trimmed);
 
     if (isHeader) {
       if (cursorY > pageHeight - 30) { doc.addPage(); cursorY = margin + 5; }
       cursorY += 5;
 
       let headerText = trimmed.replace(/^[-•\s]+/, '').toUpperCase();
-
-      // TÍTULOS EN NEGRITA TAMAÑO 13
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(13);
-      doc.setTextColor(15, 23, 42);
-      doc.text(headerText, margin, cursorY);
-
-      doc.setDrawColor(0, 200, 235);
-      doc.setLineWidth(0.8);
-      doc.line(margin, cursorY + 2, margin + contentWidth, cursorY + 2);
+      printSectionHeader(headerText, margin, cursorY);
 
       cursorY += 9;
     } else {
@@ -676,7 +690,6 @@ btnPdf.addEventListener('click', () => {
 
       if (!cleanContent) return;
 
-      // Líneas con par "Etiqueta: Texto"
       let hasColonLabel = cleanContent.includes(':') && cleanContent.indexOf(':') < 40 && !/^\d+\./.test(cleanContent);
 
       if (hasColonLabel) {
@@ -689,22 +702,21 @@ btnPdf.addEventListener('click', () => {
 
         if (isBullet) {
           doc.setFont("helvetica", "normal");
-          doc.setFontSize(11); // Cuerpo tamaño 11
+          doc.setFontSize(10);
           doc.setTextColor(51, 65, 85);
           doc.text("• ", margin, cursorY);
         }
 
-        // ETIQUETA EN NEGRITA TAMAÑO 13
+        // ETIQUETA EN NEGRITA — antes 13pt (igual que los títulos, por eso se veía desproporcionado)
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(13);
+        doc.setFontSize(10);
         doc.setTextColor(15, 23, 42);
         doc.text(labelPart, indent, cursorY);
 
         let labelWidth = doc.getTextWidth(labelPart + " ");
-        
-        // VALOR / DESCRIPCIÓN EN NORMAL TAMAÑO 11
+
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(11);
+        doc.setFontSize(10); // antes 11
         doc.setTextColor(51, 65, 85);
 
         let maxValWidth = contentWidth - (indent - margin) - labelWidth;
@@ -712,21 +724,20 @@ btnPdf.addEventListener('click', () => {
 
         if (splitValue.length > 0) {
           doc.text(splitValue[0], indent + labelWidth, cursorY);
-          cursorY += 6;
+          cursorY += 5.5;
 
           for (let k = 1; k < splitValue.length; k++) {
             if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
             doc.text(splitValue[k], indent + 4, cursorY);
-            cursorY += 6;
+            cursorY += 5.5;
           }
         } else {
-          cursorY += 6;
+          cursorY += 5.5;
         }
         cursorY += 1.5;
       } else {
-        // CUERPO DE TEXTO GENERAL EN NORMAL TAMAÑO 11
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(11);
+        doc.setFontSize(10); // antes 11
         doc.setTextColor(51, 65, 85);
 
         let indent = isBullet ? margin + 5 : margin;
@@ -738,14 +749,14 @@ btnPdf.addEventListener('click', () => {
         splitLines.forEach((subLine) => {
           if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
           doc.text(subLine, indent, cursorY);
-          cursorY += 6; // Espaciado cómodo de línea para fuente 11pt
+          cursorY += 5.5; // antes 6
         });
         cursorY += 1.5;
       }
     }
   });
 
-  // --- PIE DE PÁGINA ADAPTADO ---
+  // --- PIE DE PÁGINA ---
   const footerLabels = {
     fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
     es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
