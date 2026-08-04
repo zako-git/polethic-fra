@@ -594,11 +594,7 @@ btnPdf.addEventListener('click', () => {
     doc.text(text, x, y);
 
     const textWidth = doc.getTextWidth(text);
-    // Subrayado pegado al texto (lo que pedías, no solo la barra decorativa)
-    doc.setDrawColor(15, 23, 42);
-    doc.setLineWidth(0.35);
-    doc.line(x, y + 1, x + textWidth, y + 1);
-
+    
     // Barra de acento decorativa (se mantiene, pero más abajo y más sutil)
     doc.setDrawColor(0, 200, 235);
     doc.setLineWidth(0.6);
@@ -624,6 +620,11 @@ btnPdf.addEventListener('click', () => {
   cursorY += 8;
 
   // --- BLOQUE FICHA DE AUDITORÍA ---
+  const subHeaderLabels = {
+  fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
+  es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
+  en: "COGNITIVE SELF-DEFENSE LABORATORY"
+};
   const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
   const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
   const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
