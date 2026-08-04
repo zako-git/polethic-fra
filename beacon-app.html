@@ -554,149 +554,167 @@
       });
 
      // 📄 EXPORTAR PDF (DISEÑO POLETHIC BEACON - ELEGANTE Y DEPURADO)
-      btnPdf.addEventListener('click', () => {
-        const reportText = analysisReport.innerText;
-        const t = langMap[currentLang];
+btnPdf.addEventListener('click', () => {
+  const reportText = analysisReport.innerText;
+  const t = langMap[currentLang];
 
-        if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
-          return alert(t.noExportAlert);
-        }
+  if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
+    return alert(t.noExportAlert);
+  }
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
 
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 18;
-        const contentWidth = pageWidth - (margin * 2);
-        let cursorY = margin;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 18;
+  const contentWidth = pageWidth - (margin * 2);
+  let cursorY = margin;
 
-        // 1. Limpieza rigurosa de caracteres corruptos y Markdown
-        let cleanText = reportText
-          .replace(/\*\*/g, '')
-          .replace(/[Ø=&%#@<>|~]/g, '')
-          .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
-          .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
-          .trim();
+  // 1. Limpieza rigurosa de caracteres corruptos, invisibles y Markdown
+  let cleanText = reportText
+    .replace(/\*\*/g, '')
+    .replace(/[Ø=&%#@<>|~þ]/g, '') // Eliminado caracter extraño 'þ'
+    .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+    .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
+    .trim();
 
-        // --- ENCABEZADO ELEGANTE POLETHIC BEACON ---
-        doc.setFont("courier", "bold");
-        doc.setFontSize(16);
-        doc.setTextColor(15, 23, 42); // Azul oscuro elegante
-        doc.text("POLETHIC BEACON", margin, cursorY + 2);
+  // --- ENCABEZADO ELEGANTE POLETHIC BEACON ---
+  doc.setFont("courier", "bold");
+  doc.setFontSize(16);
+  doc.setTextColor(15, 23, 42); // Azul oscuro elegante
+  doc.text("POLETHIC BEACON", margin, cursorY + 2);
 
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(0, 180, 216); // Azul clarito / Cyan
+  doc.text("LABORATOIRE D'AUTODÉFENSE COGNITIVE", margin, cursorY + 7);
+
+  // Línea fina divisoria superior
+  cursorY += 12;
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.4);
+  doc.line(margin, cursorY, pageWidth - margin, cursorY);
+
+  cursorY += 8;
+
+  // --- BLOQUE FICHA DE AUDITORÍA ---
+  const now = new Date();
+  const timestamp = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+
+  let scoreR = 234, scoreG = 179, scoreB = 8;
+  if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
+  if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
+  if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
+
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(226, 232, 240);
+  doc.roundedRect(margin, cursorY, contentWidth, 20, 2, 2, 'FD');
+
+  // Insignia Ethic-Score
+  doc.setFillColor(scoreR, scoreG, scoreB);
+  doc.roundedRect(margin + 3, cursorY + 3, 36, 14, 1.5, 1.5, 'F');
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(255, 255, 255);
+  doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
+  doc.setFontSize(12);
+  doc.text(`NIVEAU ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
+
+  // Datos del expediente
+  doc.setFont("courier", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(51, 65, 85);
+  doc.text(`RÉFÉRENCE  : ${auditId}`, margin + 44, cursorY + 8);
+  doc.text(`HORODATAGE : ${timestamp}`, margin + 44, cursorY + 13);
+
+  cursorY += 26;
+
+  // --- CUERPO DEL INFORME ---
+  const lines = cleanText.split('\n');
+
+  lines.forEach((line) => {
+    // Limpieza profunda de espacios normales e invisibles (\u00A0, \u200B)
+    let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
+    if (!trimmed) { cursorY += 3; return; }
+
+    // REGEX MEJORADA PARA ENCABEZADOS PRINCIPALES
+    const isHeader = /^(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE|DEMONTAGE|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION|DÉFI DU BIAIS|DEFI DU BIAIS)/i.test(trimmed);
+
+    if (isHeader) {
+      if (cursorY > pageHeight - 30) { doc.addPage(); cursorY = margin + 5; }
+      cursorY += 4;
+
+      // Título principal en oscuro
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(15, 23, 42);
+      doc.text(trimmed.toUpperCase(), margin, cursorY);
+
+      // Subrayado destacado en azul cyan
+      doc.setDrawColor(0, 200, 235);
+      doc.setLineWidth(0.8);
+      doc.line(margin, cursorY + 1.5, margin + contentWidth, cursorY + 1.5);
+
+      cursorY += 7;
+    } else {
+      // DETECCION DE SUB-ETIQUETAS INTERNAS (Risque, Remarque, Diagnostic, etc.)
+      let isSubLabel = /^(Risque|Remarque|Diagnostic synthétique final|Type de Texte|Objectif de l'Émetteur|Stratégie Rhétorique|Intention vs Réalité)/i.test(trimmed);
+      let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
+
+      if (isSubLabel && !isBullet) {
+        if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(8);
-        doc.setTextColor(0, 180, 216); // Azul clarito / Cyan
-        doc.text("LABORATOIRE D'AUTODÉFENSE COGNITIVE", margin, cursorY + 7);
+        doc.setFontSize(8.5);
+        doc.setTextColor(15, 23, 42);
 
-        // Línea fina divisoria superior
-        cursorY += 12;
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.4);
-        doc.line(margin, cursorY, pageWidth - margin, cursorY);
-
-        cursorY += 8;
-
-        // --- BLOQUE FICHA DE AUDITORÍA ---
-        const now = new Date();
-        const timestamp = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-        const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
-
-        let scoreR = 234, scoreG = 179, scoreB = 8;
-        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
-        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
-        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
-
-        doc.setFillColor(248, 250, 252);
-        doc.setDrawColor(226, 232, 240);
-        doc.roundedRect(margin, cursorY, contentWidth, 20, 2, 2, 'FD');
-
-        // Insignia Ethic-Score
-        doc.setFillColor(scoreR, scoreG, scoreB);
-        doc.roundedRect(margin + 3, cursorY + 3, 36, 14, 1.5, 1.5, 'F');
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(7);
-        doc.setTextColor(255, 255, 255);
-        doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
-        doc.setFontSize(12);
-        doc.text(`NIVEAU ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
-
-        // Datos del expediente
-        doc.setFont("courier", "normal");
-        doc.setFontSize(8);
-        doc.setTextColor(51, 65, 85);
-        doc.text(`RÉFÉRENCE  : ${auditId}`, margin + 44, cursorY + 8);
-        doc.text(`HORODATAGE : ${timestamp}`, margin + 44, cursorY + 13);
-
-        cursorY += 26;
-
-        // --- CUERPO DEL INFORME CON ENCABEZADOS SUBRAYADOS EN AZUL CLARITO ---
-        const lines = cleanText.split('\n');
-
-        lines.forEach((line) => {
-          let trimmed = line.trim();
-          if (!trimmed) { cursorY += 3; return; }
-
-         const isHeader = /^(PHASE\s*\|CLASSIFICATION|NOYAU DE FAITS|DEMONTAGE COGNITIF|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION|DEFI DU BIAIS)/i.test(trimmed) 
-                || /CLASSIFICATION\s*\(Phase\s*0\)/i.test(trimmed)
-                || /DÉMONTAGE\s*COGNITIF\s*\(Phase\s*2\)/i.test(trimmed);
-
-  if (isHeader) {
-    if (cursorY > pageHeight - 30) { doc.addPage(); cursorY = margin + 5; }
-    cursorY += 4;
-
-            // Título de sección en oscuro
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(10);
-            doc.setTextColor(15, 23, 42);
-            doc.text(trimmed.toUpperCase(), margin, cursorY);
-
-            // Subrayado destacado en azul clarito elegante (#00f0ff / cyan)
-            doc.setDrawColor(0, 200, 235);
-            doc.setLineWidth(0.8);
-            doc.line(margin, cursorY + 1.5, margin + contentWidth, cursorY + 1.5);
-
-            cursorY += 7;
-          } else {
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(8.5);
-            doc.setTextColor(51, 65, 85);
-
-            let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
-            let indent = isBullet ? margin + 4 : margin;
-            let printWidth = isBullet ? contentWidth - 4 : contentWidth;
-
-            if (isBullet) trimmed = "• " + trimmed.replace(/^[-•]\s*/, '');
-
-            const splitLines = doc.splitTextToSize(trimmed, printWidth);
-
-            splitLines.forEach((subLine) => {
-              if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
-              doc.text(subLine, indent, cursorY);
-              cursorY += 4.5;
-            });
-            cursorY += 1;
-          }
+        const splitLines = doc.splitTextToSize(trimmed, contentWidth);
+        splitLines.forEach((subLine) => {
+          doc.text(subLine, margin, cursorY);
+          cursorY += 4.5;
         });
+        cursorY += 1.5;
+      } else {
+        // Texto estándar o viñetas
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8.5);
+        doc.setTextColor(51, 65, 85);
 
-        // --- PIE DE PÁGINA LIMPIO Y DISCRETO ---
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-          doc.setPage(i);
-          doc.setDrawColor(226, 232, 240);
-          doc.setLineWidth(0.3);
-          doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+        let indent = isBullet ? margin + 4 : margin;
+        let printWidth = isBullet ? contentWidth - 4 : contentWidth;
 
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(7);
-          doc.setTextColor(148, 163, 184);
-          doc.text("POLETHIC BEACON — Analyse et autodéfense cognitive", margin, pageHeight - 7);
-          doc.text(`Page ${i} / ${pageCount}`, pageWidth - margin - 15, pageHeight - 7);
-        }
+        if (isBullet) trimmed = "• " + trimmed.replace(/^[-•]\s*/, '');
 
-        doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
-      });
+        const splitLines = doc.splitTextToSize(trimmed, printWidth);
+
+        splitLines.forEach((subLine) => {
+          if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
+          doc.text(subLine, indent, cursorY);
+          cursorY += 4.5;
+        });
+        cursorY += 1;
+      }
+    }
+  });
+
+  // --- PIE DE PÁGINA ---
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.3);
+    doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+    doc.text("POLETHIC BEACON — Analyse et autodéfense cognitive", margin, pageHeight - 7);
+    doc.text(`Page ${i} / ${pageCount}`, pageWidth - margin - 15, pageHeight - 7);
+  }
+
+  doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
+});
 
       // 🗑️ PURGAR
       btnPurge.addEventListener('click', () => {
