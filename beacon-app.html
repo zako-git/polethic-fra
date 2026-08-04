@@ -619,11 +619,12 @@ btnPdf.addEventListener('click', () => {
 
   cursorY += 8;
 
-  // --- BLOQUE FICHA DE AUDITORÍA ---
+  // --- DICCIONARIOS MULTILINGÜES PARA ENCABEZADO Y FICHA ---
+  const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
   const subHeaderLabels = {
-  fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
-  es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
-  en: "COGNITIVE SELF-DEFENSE LABORATORY"
+    fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
+    es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
+    en: "COGNITIVE SELF-DEFENSE LABORATORY"
 };
   const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
   const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
