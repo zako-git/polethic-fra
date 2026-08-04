@@ -572,10 +572,10 @@ btnPdf.addEventListener('click', () => {
   const contentWidth = pageWidth - (margin * 2);
   let cursorY = margin;
 
-  // 1. Limpieza rigurosa de caracteres corruptos, invisibles y Markdown
+  // 1. Limpieza rigurosa de caracteres corruptos, invisibles, símbolos extraños (þ, \u00FE) y Markdown
   let cleanText = reportText
     .replace(/\*\*/g, '')
-    .replace(/[Ø=&%#@<>|~þ]/g, '')
+    .replace(/[\u00FE\u00DEþØ=&%#@<>|~]/g, '')
     .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
     .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
     .trim();
@@ -598,7 +598,7 @@ btnPdf.addEventListener('click', () => {
 
   cursorY += 8;
 
-  // --- BLOQUE FICHA DE AUDITORÍA ADAPTADO A IDIOMAS ---
+  // --- BLOQUE FICHA DE AUDITORÍA ---
   const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
   const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
   const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
@@ -638,58 +638,97 @@ btnPdf.addEventListener('click', () => {
 
   cursorY += 26;
 
-  // --- CUERPO DEL INFORME CON REGEX TRILINGÜE ---
+  // --- CUERPO DEL INFORME CON DETECCIÓN PRECISA DE SECCIONES ---
   const lines = cleanText.split('\n');
 
   lines.forEach((line) => {
-    let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
+    // Limpieza de espacios invisibles y caracteres parásitos al inicio/final
+    let trimmed = line.replace(/^[\s\u00A0\u200B\u00FE\u00DEþ]+|[\s\u00A0\u200B\u00FE\u00DEþ]+$/g, '');
     if (!trimmed) { cursorY += 3; return; }
 
-    // REGEX MULTILINGÜE (FR / ES / EN) PARA TÍTULOS PRINCIPALES
-    const isHeader = /(PHASE|FASE|CLASSIFICATION|CLASIFICACIÓN|NOYAU DE FAITS|NÚCLEO DE HECHOS|CORE FACTS|DÉMONTAGE|DESMONTAJE|DECONSTRUCTION|RECADRAGE|REENCUADRE|REFRAMING|DIAGNOSTIC|DIAGNÓSTICO|RECOMMANDATION|RECOMENDACIÓN|RECOMMENDATION|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE)/i.test(trimmed);
+    // REGEX DE TÍTULOS PRINCIPALES (Exige estar al inicio o tras una viñeta/número)
+    const isHeader = /^[-•\s]*(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|NÚCLEO DE HECHOS|CORE FACTS|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|DESMONTAJE COGNITIVO|DECONSTRUCTION|RECADRAGE CORTICAL|REENCUADRE CORTICAL|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|BIAS CHALLENGE)/i.test(trimmed);
 
     if (isHeader) {
       if (cursorY > pageHeight - 30) { doc.addPage(); cursorY = margin + 5; }
       cursorY += 4;
 
+      // Limpiar viñetas si las tenía el título original
+      let headerText = trimmed.replace(/^[-•\s]+/, '').toUpperCase();
+
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(15, 23, 42);
-      doc.text(trimmed.toUpperCase(), margin, cursorY);
+      doc.text(headerText, margin, cursorY);
 
+      // Subrayado destacado azul cyan
       doc.setDrawColor(0, 200, 235);
       doc.setLineWidth(0.8);
       doc.line(margin, cursorY + 1.5, margin + contentWidth, cursorY + 1.5);
 
       cursorY += 7;
     } else {
-      // REGEX MULTILINGÜE PARA SUB-ETIQUETAS INTERNAS
-      let isSubLabel = /^(Risque|Riesgo|Risk|Remarque|Nota|Remark|Diagnostic|Diagnóstico|Type de Texte|Tipo de Texto|Text Type|Objectif|Objetivo|Objective|Stratégie|Estrategia|Strategy|Intention|Intención|Intent)/i.test(trimmed);
       let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
+      let cleanContent = isBullet ? trimmed.replace(/^[-•]\s*/, '') : trimmed;
+      
+      // Comprobar si la línea contiene un par "Etiqueta: Texto" (ej. "Type de Texte: ...", "Risque: ...")
+      let hasColonLabel = cleanContent.includes(':') && cleanContent.indexOf(':') < 40;
 
-      if (isSubLabel && !isBullet) {
+      if (hasColonLabel) {
         if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
+
+        let indent = isBullet ? margin + 4 : margin;
+        let colonIndex = cleanContent.indexOf(':');
+        let labelPart = cleanContent.substring(0, colonIndex + 1);
+        let valuePart = cleanContent.substring(colonIndex + 1);
+
+        // Imprimir viñeta si la hay
+        if (isBullet) {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(8.5);
+          doc.setTextColor(51, 65, 85);
+          doc.text("• ", margin, cursorY);
+        }
+
+        // Imprimir Etiqueta en NEGRITA
         doc.setFont("helvetica", "bold");
         doc.setFontSize(8.5);
         doc.setTextColor(15, 23, 42);
+        doc.text(labelPart, indent, cursorY);
 
-        const splitLines = doc.splitTextToSize(trimmed, contentWidth);
-        splitLines.forEach((subLine) => {
-          doc.text(subLine, margin, cursorY);
+        let labelWidth = doc.getTextWidth(labelPart);
+        
+        // Imprimir el Resto del Texto en NORMAL
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(51, 65, 85);
+
+        const splitValue = doc.splitTextToSize(valuePart, contentWidth - (indent - margin) - labelWidth);
+
+        if (splitValue.length > 0) {
+          doc.text(splitValue[0], indent + labelWidth, cursorY);
           cursorY += 4.5;
-        });
-        cursorY += 1.5;
+
+          // Si el texto del valor ocupa más de una línea, envolver con sangría
+          for (let k = 1; k < splitValue.length; k++) {
+            if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
+            doc.text(splitValue[k], indent + 4, cursorY);
+            cursorY += 4.5;
+          }
+        } else {
+          cursorY += 4.5;
+        }
+        cursorY += 1;
       } else {
+        // Texto normal o viñeta común sin dos puntos
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8.5);
         doc.setTextColor(51, 65, 85);
 
         let indent = isBullet ? margin + 4 : margin;
         let printWidth = isBullet ? contentWidth - 4 : contentWidth;
+        let printText = isBullet ? "• " + cleanContent : cleanContent;
 
-        if (isBullet) trimmed = "• " + trimmed.replace(/^[-•]\s*/, '');
-
-        const splitLines = doc.splitTextToSize(trimmed, printWidth);
+        const splitLines = doc.splitTextToSize(printText, printWidth);
 
         splitLines.forEach((subLine) => {
           if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
