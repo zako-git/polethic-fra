@@ -553,13 +553,14 @@
         }
       });
 
-     // 📄 EXPORTAR PDF (DISEÑO POLETHIC BEACON - ELEGANTE Y DEPURADO)
+    // 📄 EXPORTAR PDF (DISEÑO POLETHIC BEACON - MULTILINGÜE Y DEPURADO)
 btnPdf.addEventListener('click', () => {
   const reportText = analysisReport.innerText;
-  const t = langMap[currentLang];
+  const lang = currentLang || 'fr';
+  const t = langMap[lang] || langMap['fr'];
 
-  if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
-    return alert(t.noExportAlert);
+  if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur") || reportText.includes("Waiting") || reportText.includes("En espera")) {
+    return alert(t.noExportAlert || "No report available");
   }
 
   const { jsPDF } = window.jspdf;
@@ -574,7 +575,7 @@ btnPdf.addEventListener('click', () => {
   // 1. Limpieza rigurosa de caracteres corruptos, invisibles y Markdown
   let cleanText = reportText
     .replace(/\*\*/g, '')
-    .replace(/[Ø=&%#@<>|~þ]/g, '') // Eliminado caracter extraño 'þ'
+    .replace(/[Ø=&%#@<>|~þ]/g, '')
     .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
     .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
     .trim();
@@ -582,15 +583,14 @@ btnPdf.addEventListener('click', () => {
   // --- ENCABEZADO ELEGANTE POLETHIC BEACON ---
   doc.setFont("courier", "bold");
   doc.setFontSize(16);
-  doc.setTextColor(15, 23, 42); // Azul oscuro elegante
+  doc.setTextColor(15, 23, 42);
   doc.text("POLETHIC BEACON", margin, cursorY + 2);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
-  doc.setTextColor(0, 180, 216); // Azul clarito / Cyan
+  doc.setTextColor(0, 180, 216);
   doc.text("LABORATOIRE D'AUTODÉFENSE COGNITIVE", margin, cursorY + 7);
 
-  // Línea fina divisoria superior
   cursorY += 12;
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.4);
@@ -598,9 +598,16 @@ btnPdf.addEventListener('click', () => {
 
   cursorY += 8;
 
-  // --- BLOQUE FICHA DE AUDITORÍA ---
+  // --- BLOQUE FICHA DE AUDITORÍA ADAPTADO A IDIOMAS ---
+  const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
+  const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
+  const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
+  const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
+
   const now = new Date();
-  const timestamp = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', { 
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+  });
   const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
   let scoreR = 234, scoreG = 179, scoreB = 8;
@@ -620,47 +627,44 @@ btnPdf.addEventListener('click', () => {
   doc.setTextColor(255, 255, 255);
   doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
   doc.setFontSize(12);
-  doc.text(`NIVEAU ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
+  doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
 
   // Datos del expediente
   doc.setFont("courier", "normal");
   doc.setFontSize(8);
   doc.setTextColor(51, 65, 85);
-  doc.text(`RÉFÉRENCE  : ${auditId}`, margin + 44, cursorY + 8);
-  doc.text(`HORODATAGE : ${timestamp}`, margin + 44, cursorY + 13);
+  doc.text(`${refLabels[lang] || 'RÉFÉRENCE'}  : ${auditId}`, margin + 44, cursorY + 8);
+  doc.text(`${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`, margin + 44, cursorY + 13);
 
   cursorY += 26;
 
-  // --- CUERPO DEL INFORME ---
+  // --- CUERPO DEL INFORME CON REGEX TRILINGÜE ---
   const lines = cleanText.split('\n');
 
   lines.forEach((line) => {
-    // Limpieza profunda de espacios normales e invisibles (\u00A0, \u200B)
     let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
     if (!trimmed) { cursorY += 3; return; }
 
-    // REGEX MEJORADA PARA ENCABEZADOS PRINCIPALES
-    const isHeader = /^(PHASE\s*\d|CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE|DEMONTAGE|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION|DÉFI DU BIAIS|DEFI DU BIAIS)/i.test(trimmed);
+    // REGEX MULTILINGÜE (FR / ES / EN) PARA TÍTULOS PRINCIPALES
+    const isHeader = /(PHASE|FASE|CLASSIFICATION|CLASIFICACIÓN|NOYAU DE FAITS|NÚCLEO DE HECHOS|CORE FACTS|DÉMONTAGE|DESMONTAJE|DECONSTRUCTION|RECADRAGE|REENCUADRE|REFRAMING|DIAGNOSTIC|DIAGNÓSTICO|RECOMMANDATION|RECOMENDACIÓN|RECOMMENDATION|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE)/i.test(trimmed);
 
     if (isHeader) {
       if (cursorY > pageHeight - 30) { doc.addPage(); cursorY = margin + 5; }
       cursorY += 4;
 
-      // Título principal en oscuro
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(15, 23, 42);
       doc.text(trimmed.toUpperCase(), margin, cursorY);
 
-      // Subrayado destacado en azul cyan
       doc.setDrawColor(0, 200, 235);
       doc.setLineWidth(0.8);
       doc.line(margin, cursorY + 1.5, margin + contentWidth, cursorY + 1.5);
 
       cursorY += 7;
     } else {
-      // DETECCION DE SUB-ETIQUETAS INTERNAS (Risque, Remarque, Diagnostic, etc.)
-      let isSubLabel = /^(Risque|Remarque|Diagnostic synthétique final|Type de Texte|Objectif de l'Émetteur|Stratégie Rhétorique|Intention vs Réalité)/i.test(trimmed);
+      // REGEX MULTILINGÜE PARA SUB-ETIQUETAS INTERNAS
+      let isSubLabel = /^(Risque|Riesgo|Risk|Remarque|Nota|Remark|Diagnostic|Diagnóstico|Type de Texte|Tipo de Texto|Text Type|Objectif|Objetivo|Objective|Stratégie|Estrategia|Strategy|Intention|Intención|Intent)/i.test(trimmed);
       let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
 
       if (isSubLabel && !isBullet) {
@@ -676,7 +680,6 @@ btnPdf.addEventListener('click', () => {
         });
         cursorY += 1.5;
       } else {
-        // Texto estándar o viñetas
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8.5);
         doc.setTextColor(51, 65, 85);
@@ -698,7 +701,13 @@ btnPdf.addEventListener('click', () => {
     }
   });
 
-  // --- PIE DE PÁGINA ---
+  // --- PIE DE PÁGINA ADAPTADO ---
+  const footerLabels = {
+    fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
+    es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
+    en: "POLETHIC BEACON — Analysis and cognitive self-defense"
+  };
+
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
@@ -709,7 +718,7 @@ btnPdf.addEventListener('click', () => {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
     doc.setTextColor(148, 163, 184);
-    doc.text("POLETHIC BEACON — Analyse et autodéfense cognitive", margin, pageHeight - 7);
+    doc.text(footerLabels[lang] || footerLabels['fr'], margin, pageHeight - 7);
     doc.text(`Page ${i} / ${pageCount}`, pageWidth - margin - 15, pageHeight - 7);
   }
 
