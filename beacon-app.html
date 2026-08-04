@@ -620,31 +620,31 @@ btnPdf.addEventListener('click', () => {
   cursorY += 8;
 
   // --- DICCIONARIOS MULTILINGÜES PARA ENCABEZADO Y FICHA ---
-  const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
-  const subHeaderLabels = {
-    fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
-    es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
-    en: "COGNITIVE SELF-DEFENSE LABORATORY"
+const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
+const subHeaderLabels = {
+  fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
+  es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
+  en: "COGNITIVE SELF-DEFENSE LABORATORY"
 };
-  const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
-  const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
-  const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
-  const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
+// Linea duplicada eliminada
+const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
+const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
+const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
 
-  const now = new Date();
-  const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', {
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-  });
-  const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+const now = new Date();
+const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', {
+  day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+});
+const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
-  let scoreR = 234, scoreG = 179, scoreB = 8;
-  if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
-  if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
-  if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
+let scoreR = 234, scoreG = 179, scoreB = 8;
+if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
+if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
+if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
 
-  doc.setFillColor(248, 250, 252);
-  doc.setDrawColor(226, 232, 240);
-  doc.roundedRect(margin, cursorY, contentWidth, 20, 2, 2, 'FD');
+doc.setFillColor(248, 250, 252);
+doc.setDrawColor(226, 232, 240);
+doc.roundedRect(margin, cursorY, contentWidth, 20, 2, 2, 'FD');
 
   // Insignia Ethic-Score
   doc.setFillColor(scoreR, scoreG, scoreB);
