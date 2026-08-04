@@ -1,3 +1,563 @@
+ /* ==========================================
+ESTO ES LA PRUEBA DE BEACON_APP CORRECTO
+ /* ==========================================
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEACON LAB | POLETHIC France</title>
+
+  <!-- Librería jsPDF para generación de PDF profesional -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    /* ==========================================
+       ESTILOS CYBER TOTAL (INTERFAZ BEACON)
+       ========================================== */
+    :root {
+      --cyber-cyan: #00f0ff;
+      --cyber-green: #00ff88;
+      --cyber-red: #ff2a6d;
+      --cyber-yellow: #ffe600;
+      --cyber-bg: #061526; /* Fondo base */
+      --cyber-card-bg: rgba(15, 23, 42, 0.85);
+      --font-cyber: 'Courier New', Courier, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--cyber-bg);
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      /* FONDO Y ESTRELLAS BRILLANTES */
+      background-image: 
+        radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, rgba(0, 240, 255, 0.9), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 160px 120px, rgba(0, 255, 136, 0.8), rgba(0,0,0,0)),
+        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.22) 0%, transparent 70%);
+      background-attachment: fixed;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+      background: rgba(6, 21, 38, 0.92);
+      padding: 15px 0;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    .header-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo-title {
+      font-family: var(--font-cyber);
+      color: var(--cyber-cyan);
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+
+    .nav-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+
+    .nav-btn {
+      color: #a0aec0;
+      text-decoration: none;
+      font-family: var(--font-cyber);
+      font-size: 0.85rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      color: var(--cyber-cyan);
+      text-shadow: 0 0 8px var(--cyber-cyan);
+    }
+
+    .lang-selector {
+      font-family: var(--font-cyber);
+      font-size: 0.85rem;
+      color: #a0aec0;
+    }
+
+    .lang-btn { color: #a0aec0; text-decoration: none; cursor: pointer; transition: all 0.2s; padding: 0 2px; }
+    .lang-btn:hover { color: #fff; }
+    .lang-btn.active { color: var(--cyber-cyan); font-weight: bold; text-shadow: 0 0 6px var(--cyber-cyan); }
+
+    .beacon-title-block { text-align: center; margin: 40px 0 25px 0; }
+
+    .hero-app-title {
+      font-family: var(--font-cyber);
+      font-size: 2.5rem;
+      color: #ffffff;
+      text-shadow: 0 0 15px var(--cyber-cyan);
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      color: var(--cyber-cyan);
+      font-family: var(--font-cyber);
+      font-size: 0.9rem;
+      margin-top: 6px;
+      letter-spacing: 1px;
+      opacity: 0.95;
+    }
+
+    .drop-zone {
+      background: var(--cyber-card-bg);
+      border: 1px solid var(--cyber-cyan);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 850px;
+      margin: 0 auto 30px auto;
+      backdrop-filter: blur(8px);
+    }
+
+    textarea#user-input {
+      width: 100%;
+      height: 140px;
+      background: rgba(1, 6, 12, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      border-radius: 6px;
+      color: var(--cyber-green);
+      font-family: var(--font-cyber);
+      font-size: 0.95rem;
+      padding: 12px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .input-actions-bar { display: flex; align-items: center; gap: 12px; margin-top: 15px; }
+
+    .file-upload-btn {
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      padding: 12px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-cyber);
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-beacon-primary {
+      flex-grow: 1;
+      background: transparent;
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      font-family: var(--font-cyber);
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-beacon-primary:hover {
+      background: var(--cyber-cyan);
+      color: #030a12;
+      box-shadow: 0 0 25px var(--cyber-cyan);
+    }
+
+    .status-bar {
+      margin-top: 15px;
+      font-family: var(--font-cyber);
+      font-size: 0.75rem;
+      color: var(--cyber-green);
+    }
+
+    .results-card {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid var(--cyber-green);
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.25);
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 850px;
+      margin: 0 auto 40px auto;
+      display: none;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 255, 136, 0.25);
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+    }
+
+    .ethic-score-badge {
+      background: var(--cyber-cyan);
+      color: #030a12;
+      font-family: var(--font-cyber);
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 6px 14px;
+      border-radius: 4px;
+    }
+
+    .report-box {
+      background: rgba(0, 0, 0, 0.65);
+      border-left: 3px solid var(--cyber-green);
+      padding: 15px;
+      color: #d0e0e0;
+      font-family: var(--font-cyber);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+
+    .btn-action-refute, .btn-action-pdf, .btn-action-purge {
+      background: transparent;
+      font-family: var(--font-cyber);
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-refute { border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow); }
+    .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; }
+
+    .btn-action-pdf { border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); }
+    .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; }
+
+    .btn-action-purge { border: 1px solid var(--cyber-red); color: var(--cyber-red); }
+    .btn-action-purge:hover { background: var(--cyber-red); color: #fff; }
+
+    .flags-container { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .flag-badge {
+      font-family: var(--font-cyber);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 3px;
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      background: rgba(0, 240, 255, 0.1);
+    }
+
+    footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.15); text-align: center; }
+    .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.6); }
+    .shield-title { font-family: var(--font-cyber); color: var(--cyber-green); font-weight: bold; font-size: 0.95rem; }
+    .shield-disclaimer { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
+    .copyright { font-family: var(--font-cyber); font-size: 0.75rem; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <!-- CABECERA -->
+  <header>
+    <div class="container header-layout">
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn" data-key="nav-home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav-obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav-psico">PSICOMUSÉE</a>
+        <a href="beacon-app.html" class="nav-btn active">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav-cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav-contact">CONTACT</a>
+      </nav>
+      <!-- TRES LENGUAS FUNCIONALES -->
+      <div class="lang-selector">
+        <a class="lang-btn active" id="btn-fr">FR</a><span>|</span>
+        <a class="lang-btn" id="btn-es">ES</a><span>|</span>
+        <a class="lang-btn" id="btn-en">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="container">
+    <div class="beacon-title-block">
+      <h1 class="hero-app-title">POLETHIC BEACON</h1>
+      <p class="subtitle" id="txt-subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
+    </div>
+
+    <section class="drop-zone" id="drop-zone">
+      <textarea id="user-input" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
+      <div class="input-actions-bar">
+        <label for="user-file" class="file-upload-btn">
+          📁 <span id="file-name-display">Joindre / Glisser un fichier</span>
+        </label>
+        <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
+        <button id="btn-analyze" class="btn-beacon-primary">⚡ BEACON-IZE</button>
+      </div>
+      <div class="status-bar"><span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span></div>
+    </section>
+
+    <!-- RESULTADOS Y ACCIONES DE ANÁLISIS -->
+    <section id="results-panel" class="results-card">
+      <div class="results-header">
+        <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
+        <div id="detected-flags-container" class="flags-container">
+          <span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>
+        </div>
+      </div>
+
+      <div class="analysis-body">
+        <div id="analysis-report" class="report-box">En attente d'analyse...</div>
+      </div>
+
+      <div class="results-actions">
+        <button id="btn-refute" class="btn-action-refute">🔄 RÉFUTER / CHALLENGER</button>
+        <button id="btn-pdf" class="btn-action-pdf">📄 EXPORTER EN PDF</button>
+        <button id="btn-purge" class="btn-action-purge">🗑️ PURGER</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-shield">
+        <div class="shield-title" id="txt-shield-title">Bouclier de Protection Professionnelle</div>
+        <p class="shield-disclaimer" id="txt-shield-desc">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+      </div>
+      <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+
+      const btnAnalyze = document.getElementById('btn-analyze');
+      const userInput = document.getElementById('user-input');
+      const userFile = document.getElementById('user-file');
+      const fileNameDisplay = document.getElementById('file-name-display');
+      const resultsPanel = document.getElementById('results-panel');
+      const analysisReport = document.getElementById('analysis-report');
+      const ethicScore = document.getElementById('ethic-score');
+      const detectedFlags = document.getElementById('detected-flags-container');
+
+      const btnRefute = document.getElementById('btn-refute');
+      const btnPdf = document.getElementById('btn-pdf');
+      const btnPurge = document.getElementById('btn-purge');
+
+      const btnFr = document.getElementById('btn-fr');
+      const btnEs = document.getElementById('btn-es');
+      const btnEn = document.getElementById('btn-en');
+
+      let currentLang = 'fr';
+      let currentScoreLetter = 'C';
+      let ethicSpinnerInterval = null;
+      let lastAnalyzedText = "";
+
+      // Idiomas
+      const langMap = {
+        fr: {
+          subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
+          placeholder: "Collez du texte ou glissez-déposez un fichier PDF/Image ici...",
+          fileBtn: "Joindre / Glisser un fichier",
+          analyzeBtn: "⚡ BEACON-IZE",
+          status: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
+          refuteBtn: "🔄 RÉFUTER / CHALLENGER",
+          refuting: "⏳ GÉNÉRATION DU DÉFI...",
+          pdfBtn: "📄 EXPORTER EN PDF",
+          purgeBtn: "🗑️ PURGER",
+          shieldTitle: "Bouclier de Protection Professionnelle",
+          shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          noAnalysisAlert: "Effectuez d'abord une analyse valide avant de lancer une réfutation.",
+          noExportAlert: "Aucun rapport valide à exporter."
+        },
+        es: {
+          subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
+          placeholder: "Pegue texto o arrastre un archivo PDF/Imagen aquí...",
+          fileBtn: "Adjuntar / Arrastrar archivo",
+          analyzeBtn: "⚡ BEACON-IZE",
+          status: "● MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
+          refuteBtn: "🔄 REFUTAR / DESAFIAR",
+          refuting: "⏳ GENERANDO REFUTACIÓN...",
+          pdfBtn: "📄 EXPORTAR A PDF",
+          purgeBtn: "🗑️ PURGAR",
+          shieldTitle: "Escudo de Protección Profesional",
+          shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          noAnalysisAlert: "Realice primero un análisis válido antes de refutar.",
+          noExportAlert: "No hay un informe válido para exportar."
+        },
+        en: {
+          subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
+          placeholder: "Paste text or drag and drop a PDF/Image file here...",
+          fileBtn: "Attach / Drag file",
+          analyzeBtn: "⚡ BEACON-IZE",
+          status: "● ENGINE READY | SYSTEM ONLINE (2026)",
+          refuteBtn: "🔄 REFUTE / CHALLENGE",
+          refuting: "⏳ GENERATING CHALLENGE...",
+          pdfBtn: "📄 EXPORT TO PDF",
+          purgeBtn: "🗑️ PURGE",
+          shieldTitle: "Professional Protection Shield",
+          shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          noAnalysisAlert: "Perform a valid analysis first before refuting.",
+          noExportAlert: "No valid report to export."
+        }
+      };
+
+      function changeLanguage(lang) {
+        currentLang = lang;
+        [btnFr, btnEs, btnEn].forEach(b => b.classList.remove('active'));
+        if (lang === 'fr') btnFr.classList.add('active');
+        if (lang === 'es') btnEs.classList.add('active');
+        if (lang === 'en') btnEn.classList.add('active');
+
+        const t = langMap[lang];
+        document.getElementById('txt-subtitle').innerText = t.subtitle;
+        userInput.placeholder = t.placeholder;
+        if (userFile.files.length === 0) fileNameDisplay.innerText = t.fileBtn;
+        btnAnalyze.innerText = t.analyzeBtn;
+        document.getElementById('txt-status').innerText = t.status;
+        btnRefute.innerText = t.refuteBtn;
+        btnPdf.innerText = t.pdfBtn;
+        btnPurge.innerText = t.purgeBtn;
+        document.getElementById('txt-shield-title').innerText = t.shieldTitle;
+        document.getElementById('txt-shield-desc').innerText = t.shieldDesc;
+      }
+
+      btnFr.addEventListener('click', () => changeLanguage('fr'));
+      btnEs.addEventListener('click', () => changeLanguage('es'));
+      btnEn.addEventListener('click', () => changeLanguage('en'));
+
+      userFile.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          fileNameDisplay.innerText = e.target.files[0].name;
+        } else {
+          fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+        }
+      });
+
+      function startEthicSpinner() {
+        const letters = ['A', 'B', 'C', 'D', 'S', 'X'];
+        const colors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d'];
+        if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
+        ethicSpinnerInterval = setInterval(() => {
+          const l = letters[Math.floor(Math.random() * letters.length)];
+          const c = colors[Math.floor(Math.random() * colors.length)];
+          ethicScore.innerText = `Ethic-Score™: ${l}`;
+          ethicScore.style.backgroundColor = c;
+        }, 90);
+      }
+
+      function stopEthicSpinner() {
+        if (ethicSpinnerInterval) {
+          clearInterval(ethicSpinnerInterval);
+          ethicSpinnerInterval = null;
+        }
+      }
+
+      function applyEthicBadge(score) {
+        stopEthicSpinner();
+        let letter = 'C';
+        let color = '#ff9900';
+        if (typeof score === 'string') letter = score.toUpperCase();
+        if (letter === 'A') color = '#00ff88';
+        if (letter === 'B') color = '#ffe600';
+        if (letter === 'C') color = '#ff9900';
+        if (letter === 'D') color = '#ff2a6d';
+
+        currentScoreLetter = letter;
+        ethicScore.innerText = `Ethic-Score™: ${letter}`;
+        ethicScore.style.backgroundColor = color;
+      }
+
+      function renderFlags(flagsArray) {
+        if (!detectedFlags) return;
+        detectedFlags.innerHTML = '';
+        let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
+        (flags || ['ANALYSE']).forEach(f => {
+          const span = document.createElement('span');
+          span.className = 'flag-badge';
+          span.innerText = f.trim().toUpperCase();
+          detectedFlags.appendChild(span);
+        });
+      }
+
+      // ⚡ Análisis Inicial
+      btnAnalyze.addEventListener('click', async () => {
+        const text = userInput.value.trim();
+        if (!text && userFile.files.length === 0) {
+          return alert(currentLang === 'es' ? 'Por favor ingrese texto o adjunte un archivo.' : 'Veuillez entrer du texte ou joindre un fichier.');
+        }
+
+        lastAnalyzedText = text;
+        btnAnalyze.disabled = true;
+        resultsPanel.style.display = 'block';
+        analysisReport.innerText = currentLang === 'es' ? '⚡ Análisis en proceso...' : '⚡ Analyse en cours...';
+        startEthicSpinner();
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, lang: currentLang })
+          });
+          const data = await response.json();
+          applyEthicBadge(data.ethic_letter || 'C');
+          analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
+          renderFlags(data.detected_flags || ['SIGNAL']);
+        } catch (e) {
+          applyEthicBadge('C');
+          analysisReport.innerText = currentLang === 'es' ? "Error de conexión con el servidor." : "Erreur de connexion avec le serveur d'analyse.";
+        } finally {
+          btnAnalyze.disabled = false;
+        }
+      });
+
+      // 🔄 REFUTACIÓN DIRECTA AL BACKEND (ENDPOINT /refute)
+      btnRefute.addEventListener('click', async () => {
+        const currentAnalysis = analysisReport.innerText;
+        const t = langMap[currentLang];
+
+        if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("⚡")) {
+          return alert(t.noAnalysisAlert);
+        }
+
+        btnRefute.disabled = true;
+        btnRefute.innerText = t.refuting;
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/refute`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              analysis: currentAnalysis,
+              text: lastAnalyzedText,
+              lang: currentLang
+            })
+          });
+
+          const data = await response.json();
+          const refutationText = data.refutation || data.reply || '';
+
+          if (refutationText) {
+            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationText}`;
+          }
+        } catch (e) {
+          alert(currentLang === 'es' ? "Error al procesar la refutación." : "Erreur lors du traitement de la réfutation.");
+        } finally {
+          btnRefute.disabled = false;
+          btnRefute.innerText = t.refuteBtn;
+        }
+      });
+
 
 // 📄 EXPORTAR PDF (DISEÑO ESTÁNDAR INFORME CRIMINAL - VERSIÓN CORREGIDA)
 btnPdf.addEventListener('click', () => {
@@ -224,3 +784,16 @@ btnPdf.addEventListener('click', () => {
 
   doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
 });
+      // 🗑️ PURGAR
+      btnPurge.addEventListener('click', () => {
+        userInput.value = '';
+        userFile.value = '';
+        fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+        resultsPanel.style.display = 'none';
+        stopEthicSpinner();
+        lastAnalyzedText = "";
+      });
+    });
+  </script>
+</body>
+</html>
