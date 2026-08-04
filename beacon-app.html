@@ -458,7 +458,16 @@
         }
       }
 
-      function applyEthicBadge(score) {
+      // 1. DICCIONARIO DE FLAGS POR NOTA
+      const FLAGS_BY_SCORE = {
+        'A': ['FACTUEL', 'TRANSPARENT', 'DESCRIPTIF', 'SANS RISQUE'],
+        'B': ['PERSUASIF', 'MARKETING', 'BIAIS LEGER', 'PROMESSE'],
+        'C': ['MANIPULATION', 'AMBIGUÏTÉ', 'PSEUDO-SCIENCE', 'RETORIQUE'],
+        'D': ['RISQUE SECTAIRE', 'EMPRISE', 'ISOLLEMENT', 'DANGER COGNITIF']
+      };
+
+      // 2. APLICAR BADGE Y TARJETAS
+      function applyEthicBadge(score, customFlags) {
         stopEthicSpinner();
         let letter = 'C';
         let color = '#ff9900';
@@ -471,8 +480,16 @@
         currentScoreLetter = letter;
         ethicScore.innerText = `Ethic-Score™: ${letter}`;
         ethicScore.style.backgroundColor = color;
+
+        // Si el backend envía etiquetas las usa; si no, toma las del diccionario
+        const flagsToRender = (customFlags && customFlags.length > 0) 
+          ? customFlags 
+          : (FLAGS_BY_SCORE[letter] || FLAGS_BY_SCORE['C']);
+
+        renderFlags(flagsToRender);
       }
 
+      // 3. RENDERIZAR TARJETAS (Sólo una declaración)
       function renderFlags(flagsArray) {
         if (!detectedFlags) return;
         detectedFlags.innerHTML = '';
@@ -505,9 +522,11 @@
             body: JSON.stringify({ text, lang: currentLang })
           });
           const data = await response.json();
-          applyEthicBadge(data.ethic_letter || 'C');
+          
+          // Le pasamos a applyEthicBadge tanto la nota como los flags recibidos
+          applyEthicBadge(data.ethic_letter || 'C', data.detected_flags);
           analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
-          renderFlags(data.detected_flags || ['SIGNAL']);
+          
         } catch (e) {
           applyEthicBadge('C');
           analysisReport.innerText = currentLang === 'es' ? "Error de conexión con el servidor." : "Erreur de connexion avec le serveur d'analyse.";
