@@ -17,7 +17,7 @@
       --cyber-green: #00ff88;
       --cyber-red: #ff2a6d;
       --cyber-yellow: #ffe600;
-      --cyber-bg: #030a12;
+      --cyber-bg: #061526; /* Fondo base ligeramente más claro que el resto de páginas */
       --cyber-card-bg: rgba(15, 23, 42, 0.85);
       --font-cyber: 'Courier New', Courier, monospace;
     }
@@ -29,17 +29,19 @@
       color: #e0e0e0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
+      /* FONDO Y ESTRELLAS MÁS BRILLANTES Y VISIBLES */
       background-image: 
-        radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 40px 70px, rgba(0, 240, 255, 0.8), rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 90px 40px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 60%);
+        radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, rgba(0, 240, 255, 0.9), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 160px 120px, rgba(0, 255, 136, 0.8), rgba(0,0,0,0)),
+        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.22) 0%, transparent 70%);
       background-attachment: fixed;
     }
 
     header {
-      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-      background: rgba(3, 10, 18, 0.9);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+      background: rgba(6, 21, 38, 0.92);
       padding: 15px 0;
     }
 
@@ -83,7 +85,7 @@
       color: #a0aec0;
     }
 
-    .lang-btn { color: #a0aec0; text-decoration: none; cursor: pointer; transition: all 0.2s; }
+    .lang-btn { color: #a0aec0; text-decoration: none; cursor: pointer; transition: all 0.2s; padding: 0 2px; }
     .lang-btn:hover { color: #fff; }
     .lang-btn.active { color: var(--cyber-cyan); font-weight: bold; text-shadow: 0 0 6px var(--cyber-cyan); }
 
@@ -93,7 +95,7 @@
       font-family: var(--font-cyber);
       font-size: 2.5rem;
       color: #ffffff;
-      text-shadow: 0 0 12px var(--cyber-cyan);
+      text-shadow: 0 0 15px var(--cyber-cyan);
       letter-spacing: 3px;
     }
 
@@ -103,13 +105,13 @@
       font-size: 0.9rem;
       margin-top: 6px;
       letter-spacing: 1px;
-      opacity: 0.9;
+      opacity: 0.95;
     }
 
     .drop-zone {
       background: var(--cyber-card-bg);
       border: 1px solid var(--cyber-cyan);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
       border-radius: 12px;
       padding: 25px;
       max-width: 850px;
@@ -121,8 +123,8 @@
     textarea#user-input {
       width: 100%;
       height: 140px;
-      background: rgba(1, 6, 12, 0.8);
-      border: 1px solid rgba(0, 240, 255, 0.3);
+      background: rgba(1, 6, 12, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.4);
       border-radius: 6px;
       color: var(--cyber-green);
       font-family: var(--font-cyber);
@@ -135,7 +137,7 @@
     .input-actions-bar { display: flex; align-items: center; gap: 12px; margin-top: 15px; }
 
     .file-upload-btn {
-      background: rgba(0, 240, 255, 0.08);
+      background: rgba(0, 240, 255, 0.12);
       border: 1px solid var(--cyber-cyan);
       color: var(--cyber-cyan);
       padding: 12px 18px;
@@ -177,9 +179,9 @@
     }
 
     .results-card {
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.92);
       border: 1px solid var(--cyber-green);
-      box-shadow: 0 0 25px rgba(0, 255, 136, 0.2);
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.25);
       border-radius: 12px;
       padding: 25px;
       max-width: 850px;
@@ -207,7 +209,7 @@
     }
 
     .report-box {
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.65);
       border-left: 3px solid var(--cyber-green);
       padding: 15px;
       color: #d0e0e0;
@@ -251,8 +253,8 @@
       background: rgba(0, 240, 255, 0.1);
     }
 
-    footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.1); text-align: center; }
-    .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.5); }
+    footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.15); text-align: center; }
+    .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.6); }
     .shield-title { font-family: var(--font-cyber); color: var(--cyber-green); font-weight: bold; font-size: 0.95rem; }
     .shield-disclaimer { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
     .copyright { font-family: var(--font-cyber); font-size: 0.75rem; color: #64748b; }
@@ -272,10 +274,11 @@
         <a href="notre-cap.html" class="nav-btn" data-key="nav-cap">NOTRE CAP</a>
         <a href="contact.html" class="nav-btn" data-key="nav-contact">CONTACT</a>
       </nav>
+      <!-- TRES LENGUAS FUNCIONALES -->
       <div class="lang-selector">
-        <a href="#" class="lang-btn active" id="btn-fr">FR</a><span>|</span>
-        <a href="#" class="lang-btn" id="btn-es">ES</a><span>|</span>
-        <a href="#" class="lang-btn" id="btn-en">EN</a>
+        <a class="lang-btn active" id="btn-fr">FR</a><span>|</span>
+        <a class="lang-btn" id="btn-es">ES</a><span>|</span>
+        <a class="lang-btn" id="btn-en">EN</a>
       </div>
     </div>
   </header>
@@ -327,7 +330,7 @@
     </div>
   </footer>
 
-  <!-- LÓGICA DE APLICACIÓN Y MOTOR DE GENERACIÓN PDF STRUCTURADO -->
+  <!-- LÓGICA COMPLETA Y CORREGIDA -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
@@ -344,9 +347,88 @@
       const btnPdf = document.getElementById('btn-pdf');
       const btnPurge = document.getElementById('btn-purge');
 
+      const btnFr = document.getElementById('btn-fr');
+      const btnEs = document.getElementById('btn-es');
+      const btnEn = document.getElementById('btn-en');
+
       let currentLang = 'fr';
       let currentScoreLetter = 'C';
       let ethicSpinnerInterval = null;
+
+      // --------------------------------------------------
+      // CAMBIO DE IDIOMAS (FR / ES / EN)
+      // --------------------------------------------------
+      const langMap = {
+        fr: {
+          subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
+          placeholder: "Collez du texte ou glissez-déposez un fichier PDF/Image ici...",
+          fileBtn: "Joindre / Glisser un fichier",
+          analyzeBtn: "⚡ BEACON-IZE",
+          status: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
+          refuteBtn: "🔄 RÉFUTER / CHALLENGER",
+          pdfBtn: "📄 EXPORTER EN PDF",
+          purgeBtn: "🗑️ PURGER",
+          shieldTitle: "Bouclier de Protection Professionnelle",
+          shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique."
+        },
+        es: {
+          subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
+          placeholder: "Pegue texto o arrastre un archivo PDF/Imagen aquí...",
+          fileBtn: "Adjuntar / Arrastrar archivo",
+          analyzeBtn: "⚡ BEACON-IZE",
+          status: "● MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
+          refuteBtn: "🔄 REFUTAR / DESAFIAR",
+          pdfBtn: "📄 EXPORTAR A PDF",
+          purgeBtn: "🗑️ PURGAR",
+          shieldTitle: "Escudo de Protección Profesional",
+          shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica."
+        },
+        en: {
+          subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
+          placeholder: "Paste text or drag and drop a PDF/Image file here...",
+          fileBtn: "Attach / Drag file",
+          analyzeBtn: "⚡ BEACON-IZE",
+          status: "● ENGINE READY | SYSTEM ONLINE (2026)",
+          refuteBtn: "🔄 REFUTE / CHALLENGE",
+          pdfBtn: "📄 EXPORT TO PDF",
+          purgeBtn: "🗑️ PURGE",
+          shieldTitle: "Professional Protection Shield",
+          shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation."
+        }
+      };
+
+      function changeLanguage(lang) {
+        currentLang = lang;
+        [btnFr, btnEs, btnEn].forEach(b => b.classList.remove('active'));
+        if (lang === 'fr') btnFr.classList.add('active');
+        if (lang === 'es') btnEs.classList.add('active');
+        if (lang === 'en') btnEn.classList.add('active');
+
+        const t = langMap[lang];
+        document.getElementById('txt-subtitle').innerText = t.subtitle;
+        userInput.placeholder = t.placeholder;
+        if (userFile.files.length === 0) fileNameDisplay.innerText = t.fileBtn;
+        btnAnalyze.innerText = t.analyzeBtn;
+        document.getElementById('txt-status').innerText = t.status;
+        btnRefute.innerText = t.refuteBtn;
+        btnPdf.innerText = t.pdfBtn;
+        btnPurge.innerText = t.purgeBtn;
+        document.getElementById('txt-shield-title').innerText = t.shieldTitle;
+        document.getElementById('txt-shield-desc').innerText = t.shieldDesc;
+      }
+
+      btnFr.addEventListener('click', () => changeLanguage('fr'));
+      btnEs.addEventListener('click', () => changeLanguage('es'));
+      btnEn.addEventListener('click', () => changeLanguage('en'));
+
+      // Selector de archivo
+      userFile.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          fileNameDisplay.innerText = e.target.files[0].name;
+        } else {
+          fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+        }
+      });
 
       function startEthicSpinner() {
         const letters = ['A', 'B', 'C', 'D', 'S', 'X'];
@@ -394,13 +476,16 @@
         });
       }
 
+      // Solicitud de Análisis Principal
       btnAnalyze.addEventListener('click', async () => {
         const text = userInput.value.trim();
-        if (!text) return alert('Veuillez entrer du texte.');
+        if (!text && userFile.files.length === 0) {
+          return alert(currentLang === 'es' ? 'Por favor ingrese texto o adjunte un archivo.' : 'Veuillez entrer du texte ou joindre un fichier.');
+        }
 
         btnAnalyze.disabled = true;
         resultsPanel.style.display = 'block';
-        analysisReport.innerText = '⚡ Analyse en cours...';
+        analysisReport.innerText = currentLang === 'es' ? '⚡ Análisis en proceso...' : '⚡ Analyse en cours...';
         startEthicSpinner();
 
         try {
@@ -415,13 +500,28 @@
           renderFlags(data.detected_flags || ['SIGNAL']);
         } catch (e) {
           applyEthicBadge('C');
-          analysisReport.innerText = "Erreur de connexion.";
+          analysisReport.innerText = currentLang === 'es' ? "Error de conexión con el servidor." : "Erreur de connexion avec le serveur d'analyse.";
         } finally {
           btnAnalyze.disabled = false;
         }
       });
 
-      // GENERACIÓN DE PDF - ESTILO FORENSE / PERICIAL ELEGANTE
+      // 🔄 BOTÓN DE REFUTAR FUNCIONAL
+      btnRefute.addEventListener('click', () => {
+        const currentReport = analysisReport.innerText.trim();
+        if (!currentReport || currentReport.includes("En attente") || currentReport.includes("Analyse en cours")) {
+          return alert(currentLang === 'es' ? "Primero ejecute un análisis antes de refutar." : "Veuillez d'abord exécuter une analyse.");
+        }
+
+        const refutePrompt = currentLang === 'es'
+          ? `[SOLICITUD DE DESAFÍO Y REFUTACIÓN COGNITIVA]:\nAnalice críticamente el siguiente informe previo para identificar sesgos, inconsistencias o falacias no detectadas previamente:\n\n--- INFORME ANTERIOR ---\n${currentReport}`
+          : `[REQUÊTE DE CONTESTATION ET DÉFI COGNITIF]:\nAnalyse contradictoire demandée. Examinez le rapport précédent pour déceler tout biais ou faille non détectée:\n\n--- RAPPORT PRÉCÉDENT ---\n${currentReport}`;
+
+        userInput.value = refutePrompt;
+        btnAnalyze.click();
+      });
+
+      // 📄 GENERACIÓN DE PDF FORENSE (SIN ERRORES DE LETRAS / ACENTOS)
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport.innerText;
         if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
@@ -442,28 +542,21 @@
         const contentWidth = pageWidth - (margin * 2);
         let cursorY = margin;
 
-        // Limpieza de caracteres Markdown o corruptos
-        const cleanText = reportText
-          .replace(/\*\*/g, '')
-          .replace(/[ØØYàSYOp]+/g, '')
-          .trim();
+        // Limpieza limpia de marcadores sin alterar caracteres especiales ni tildes
+        const cleanText = reportText.replace(/\*\*/g, '').trim();
 
-        // ----------------------------------------------------
-        // ENCABEZADO ESTILO AUDITORÍA FORENSE
-        // ----------------------------------------------------
-        // Banda de acento superior
+        // Encabezado
         doc.setFillColor(0, 240, 255);
         doc.rect(0, 0, pageWidth, 3, 'F');
 
         cursorY += 6;
 
-        // Titular Principal
         doc.setFont("courier", "bold");
-        doc.setFontSize(13);
+        doc.setFontSize(12);
         doc.setTextColor(3, 10, 18);
         doc.text("POLETHIC FRANCE — BUREAU D'AUDIT COGNITIF", margin, cursorY);
 
-        // Stamp / Sello de Confidencialidad (Esquina Superior Derecha)
+        // Sello Forense
         doc.setDrawColor(220, 38, 38);
         doc.setLineWidth(0.5);
         doc.rect(pageWidth - margin - 48, cursorY - 4, 48, 10);
@@ -480,17 +573,13 @@
         doc.text("EXPERTISES METACOMMUNICATIONNELLES & PROTOCOLES D'INTEGRITE", margin, cursorY);
 
         cursorY += 6;
-
-        // Línea divisoria técnica
         doc.setDrawColor(203, 213, 225);
         doc.setLineWidth(0.3);
         doc.line(margin, cursorY, pageWidth - margin, cursorY);
 
         cursorY += 8;
 
-        // ----------------------------------------------------
-        // FICHA DE METADATOS Y ETHIC-SCORE
-        // ----------------------------------------------------
+        // Ficha de Metadatos
         const now = new Date();
         const timestamp = now.toLocaleDateString('fr-FR', {
           day: '2-digit', month: '2-digit', year: 'numeric',
@@ -498,18 +587,15 @@
         });
         const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
-        // Caja de Score
-        let scoreR = 234, scoreG = 179, scoreB = 8; // B (Amarillo)
-        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; } // Verde
-        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; } // Naranja
-        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }  // Rojo
+        let scoreR = 234, scoreG = 179, scoreB = 8;
+        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
+        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
+        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
 
-        // Fondo de la caja de Metadatos
         doc.setFillColor(248, 250, 252);
         doc.setDrawColor(226, 232, 240);
         doc.rect(margin, cursorY, contentWidth, 22, 'FD');
 
-        // Indicador Ethic-Score
         doc.setFillColor(scoreR, scoreG, scoreB);
         doc.rect(margin + 3, cursorY + 3, 38, 16, 'F');
         doc.setFont("helvetica", "bold");
@@ -519,7 +605,6 @@
         doc.setFontSize(14);
         doc.text(`NIVEAU ${currentScoreLetter}`, margin + 6, cursorY + 15);
 
-        // Metadatos
         doc.setFont("courier", "normal");
         doc.setFontSize(8);
         doc.setTextColor(51, 65, 85);
@@ -529,9 +614,7 @@
 
         cursorY += 28;
 
-        // ----------------------------------------------------
-        // CUERPO DEL INFORME (SECCIONES Y LÍNEAS)
-        // ----------------------------------------------------
+        // Cuerpo del Informe
         const lines = cleanText.split('\n');
 
         lines.forEach((line) => {
@@ -541,7 +624,6 @@
             return;
           }
 
-          // Detección de títulos de fase (Encabezados forenses)
           const isHeader = /^(CLASSIFICATION|NOYAU DE FAITS|DÉMONTAGE COGNITIF|RECADRAGE CORTICAL|DIAGNOSTIC|RECOMMANDATION)/i.test(trimmed);
 
           if (isHeader) {
@@ -551,8 +633,7 @@
             }
 
             cursorY += 4;
-            // Banner de la Fase
-            doc.setFillColor(15, 23, 42); // Gris/Azul Oscuro
+            doc.setFillColor(15, 23, 42);
             doc.rect(margin, cursorY, contentWidth, 6, 'F');
 
             doc.setFont("courier", "bold");
@@ -562,12 +643,10 @@
 
             cursorY += 9;
           } else {
-            // Contenido normal / viñetas
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8.5);
             doc.setTextColor(30, 41, 59);
 
-            // Ajuste de sangría si empieza con guión
             let isBullet = trimmed.startsWith('-');
             let indent = isBullet ? margin + 4 : margin;
             let printWidth = isBullet ? contentWidth - 4 : contentWidth;
@@ -589,36 +668,30 @@
           }
         });
 
-        // ----------------------------------------------------
-        // PIE DE PÁGINA PERICIAL (APLICA A TODAS LAS PÁGINAS)
-        // ----------------------------------------------------
+        // Pie de página en todas las páginas
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
           doc.setPage(i);
-
-          // Línea divisoria de pie
           doc.setDrawColor(203, 213, 225);
           doc.setLineWidth(0.3);
           doc.line(margin, pageHeight - 14, pageWidth - margin, pageHeight - 14);
 
-          // Texto pie
           doc.setFont("courier", "normal");
           doc.setFontSize(7);
           doc.setTextColor(148, 163, 184);
-          doc.text("POLETHIC France — Organisme d'Autodéfense Cognitive & Protection Primraire", margin, pageHeight - 9);
-          doc.text(`HASH: ${Math.random().toString(36).substring(2, 10).toUpperCase()} | PAGE ${i}/${pageCount}`, pageWidth - margin - 45, pageHeight - 9);
+          doc.text("POLETHIC France — Organisme d'Autodéfense Cognitive & Protection Primaire", margin, pageHeight - 9);
+          doc.text(`HASH: ${Math.random().toString(36).substring(2, 10).toUpperCase()} | PAGE ${i}/${pageCount}`, pageWidth - margin - 55, pageHeight - 9);
         }
 
-        // Guardar archivo
+        // Descarga directa
         doc.save(`RAPPORT_FORENSE_${currentScoreLetter}_${auditId}.pdf`);
       });
 
-        // Descargar PDF
-        doc.save(`Rapport_Audit_BEACON_${currentScoreLetter}_${Date.now()}.pdf`);
-      });
-
+      // Botón Purgar
       btnPurge.addEventListener('click', () => {
         userInput.value = '';
+        userFile.value = '';
+        fileNameDisplay.innerText = langMap[currentLang].fileBtn;
         resultsPanel.style.display = 'none';
         stopEthicSpinner();
       });
