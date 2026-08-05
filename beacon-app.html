@@ -3,84 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BEACON LAB | POLETHIC France</title>
-
-  <!-- Librería jsPDF para generación de PDF profesional -->
+  <title>POLETHIC BEACON — Cognitive Self-Defense Laboratory</title>
+  
+  <!-- Dependencias externas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<!-- PDF.js: Para leer archivos PDF en el navegador -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-<!-- Tesseract.js: Para extraer texto de imágenes y capturas de pantalla (OCR) -->
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
-    /* ==========================================
-       ESTILOS CYBER TOTAL (INTERFAZ BEACON)
-       ========================================== */
     :root {
+      --bg-dark: #0a0e17;
+      --panel-bg: rgba(15, 23, 42, 0.85);
       --cyber-cyan: #00f0ff;
-      --cyber-green: #00ff88;
-      --cyber-red: #ff2a6d;
-      --cyber-yellow: #ffe600;
-      --cyber-bg: #061526;
-      --cyber-card-bg: rgba(15, 23, 42, 0.85);
-      --font-cyber: 'Courier New', Courier, monospace;
+      --cyber-blue: #0077ff;
+      --cyber-red: #ff0055;
+      --cyber-green: #00ff66;
+      --cyber-amber: #ffaa00;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-color: rgba(0, 240, 255, 0.2);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
 
     body {
-      background-color: var(--cyber-bg);
-      color: #e0e0e0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
       min-height: 100vh;
-      position: relative;
       overflow-x: hidden;
-      background-image: 
-        radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 40px 70px, rgba(0, 240, 255, 0.9), rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 160px 120px, rgba(0, 255, 136, 0.8), rgba(0,0,0,0)),
-        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.22) 0%, transparent 70%);
-      background-attachment: fixed;
+      position: relative;
     }
 
-    /* CAPA DE ESTRELLAS ANIMADAS */
     #stars-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
       z-index: 0;
+      pointer-events: none;
     }
 
     .star {
       position: absolute;
-      background-color: #ffffff;
+      background: white;
       border-radius: 50%;
+      opacity: 0.5;
       animation: twinkle linear infinite;
     }
 
     @keyframes twinkle {
-      0%, 100% { opacity: 0.2; transform: scale(0.8); }
-      50% { opacity: 1; transform: scale(1.2); }
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.8; }
     }
 
-    header, main, footer {
+    .app-container {
       position: relative;
       z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
     }
 
     header {
-      border-bottom: 1px solid rgba(0, 240, 255, 0.3);
-      background: rgba(6, 21, 38, 0.92);
-      padding: 15px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 30px;
     }
 
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .logo-zone {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-    .header-layout {
+    .logo-title {
+      font-family: monospace;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--cyber-cyan);
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+
+    .lang-selector {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-lang {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .btn-lang.active, .btn-lang:hover {
+      color: var(--cyber-cyan);
+      border-color: var(--cyber-cyan);
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      background: rgba(10, 14, 23, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-main);
+      padding: 15px;
+      font-size: 1rem;
+      resize: vertical;
+      margin-bottom: 15px;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--cyber-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+
+    .input-controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -88,982 +151,480 @@
       gap: 15px;
     }
 
-    .logo-title {
-      font-family: var(--font-cyber);
-      color: var(--cyber-cyan);
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 1.2rem;
-      letter-spacing: 2px;
+    .file-input-wrapper {
+      position: relative;
     }
 
-    .nav-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
-
-    .nav-btn {
-      color: #a0aec0;
-      text-decoration: none;
-      font-family: var(--font-cyber);
-      font-size: 0.85rem;
-      transition: color 0.2s ease;
-    }
-
-    .nav-btn:hover, .nav-btn.active {
-      color: var(--cyber-cyan);
-      text-shadow: 0 0 8px var(--cyber-cyan);
-    }
-
-    .lang-selector {
-      font-family: var(--font-cyber);
-      font-size: 0.85rem;
-      color: #a0aec0;
-    }
-
-    .lang-btn { color: #a0aec0; text-decoration: none; cursor: pointer; transition: all 0.2s; padding: 0 2px; }
-    .lang-btn:hover { color: #fff; }
-    .lang-btn.active { color: var(--cyber-cyan); font-weight: bold; text-shadow: 0 0 6px var(--cyber-cyan); }
-
-    .beacon-title-block { text-align: center; margin: 40px 0 25px 0; }
-
-    .hero-app-title {
-      font-family: var(--font-cyber);
-      font-size: 2.5rem;
-      color: #ffffff;
-      text-shadow: 0 0 15px var(--cyber-cyan);
-      letter-spacing: 3px;
-    }
-
-    .subtitle {
-      color: var(--cyber-cyan);
-      font-family: var(--font-cyber);
-      font-size: 0.9rem;
-      margin-top: 6px;
-      letter-spacing: 1px;
-      opacity: 0.95;
-    }
-
-    .drop-zone {
-      background: var(--cyber-card-bg);
-      border: 1px solid var(--cyber-cyan);
-      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
-      border-radius: 12px;
-      padding: 25px;
-      max-width: 850px;
-      margin: 0 auto 30px auto;
-      backdrop-filter: blur(8px);
-    }
-
-    textarea#user-input {
-      width: 100%;
-      height: 140px;
-      background: rgba(1, 6, 12, 0.85);
-      border: 1px solid rgba(0, 240, 255, 0.4);
-      border-radius: 6px;
-      color: var(--cyber-green);
-      font-family: var(--font-cyber);
-      font-size: 0.95rem;
-      padding: 12px;
-      resize: vertical;
-      outline: none;
-    }
-
-    .input-actions-bar { display: flex; align-items: center; gap: 12px; margin-top: 15px; }
-
-    .file-upload-btn {
-      background: rgba(0, 240, 255, 0.12);
-      border: 1px solid var(--cyber-cyan);
-      color: var(--cyber-cyan);
-      padding: 12px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-family: var(--font-cyber);
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-beacon-primary {
-      flex-grow: 1;
-      background: transparent;
-      border: 1px solid var(--cyber-cyan);
-      color: var(--cyber-cyan);
-      font-family: var(--font-cyber);
-      font-weight: bold;
-      font-size: 1rem;
-      padding: 12px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      letter-spacing: 2px;
-      transition: all 0.3s ease;
-    }
-
-    .btn-beacon-primary:hover {
-      background: var(--cyber-cyan);
-      color: #030a12;
-      box-shadow: 0 0 25px var(--cyber-cyan);
-    }
-
-    .status-bar {
-      margin-top: 15px;
-      font-family: var(--font-cyber);
-      font-size: 0.75rem;
-      color: var(--cyber-green);
-    }
-
-    .results-card {
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid var(--cyber-green);
-      box-shadow: 0 0 25px rgba(0, 255, 136, 0.25);
-      border-radius: 12px;
-      padding: 25px;
-      max-width: 850px;
-      margin: 0 auto 40px auto;
+    .file-input-wrapper input[type="file"] {
       display: none;
     }
 
+    .btn-file {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+
+    .btn-file:hover {
+      background: var(--cyber-cyan);
+      color: var(--bg-dark);
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--cyber-cyan);
+      color: var(--bg-dark);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: #33f3ff;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+    }
+
+    .btn-danger {
+      background: rgba(255, 0, 85, 0.2);
+      border: 1px solid var(--cyber-red);
+      color: var(--cyber-red);
+    }
+
+    .btn-danger:hover {
+      background: var(--cyber-red);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: rgba(0, 119, 255, 0.2);
+      border: 1px solid var(--cyber-blue);
+      color: var(--cyber-blue);
+    }
+
+    .btn-secondary:hover {
+      background: var(--cyber-blue);
+      color: white;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Targeta de Resultados */
     .results-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(0, 255, 136, 0.25);
-      padding-bottom: 12px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .ethic-score-badge {
-      background: var(--cyber-cyan);
-      color: #030a12;
-      font-family: var(--font-cyber);
-      font-weight: bold;
-      font-size: 1.1rem;
-      padding: 6px 14px;
+    .ethic-badge {
+      padding: 6px 12px;
       border-radius: 4px;
-    }
-
-    .report-box {
-  background: rgba(0, 0, 0, 0.65);
-  border-left: 3px solid var(--cyber-green);
-  padding: 15px;
-  color: #d0e0e0;
-  font-family: var(--font-cyber);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  /* --- AÑADES ESTAS 3 LÍNEAS AQUÍ --- */
-  max-height: 500px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--cyber-cyan) rgba(0,0,0,0.5);
-}
-
-    .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-
-    .btn-action-refute, .btn-action-pdf, .btn-action-purge {
-      background: transparent;
-      font-family: var(--font-cyber);
-      padding: 10px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
       font-weight: bold;
-      transition: all 0.2s ease;
+      font-family: monospace;
+      background: var(--cyber-cyan);
+      color: var(--bg-dark);
     }
-
-    .btn-action-refute { border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow); }
-    .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; }
-
-    .btn-action-pdf { border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); }
-    .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; }
-
-    .btn-action-purge { border: 1px solid var(--cyber-red); color: var(--cyber-red); }
-    .btn-action-purge:hover { background: var(--cyber-red); color: #fff; }
-
-    .flags-container { display: flex; gap: 8px; flex-wrap: wrap; }
 
     .flag-badge {
-      font-family: var(--font-cyber);
-      font-size: 0.75rem;
-      padding: 4px 10px;
+      display: inline-block;
+      padding: 4px 8px;
+      margin: 2px;
       border-radius: 3px;
-      border: 1px solid var(--cyber-cyan);
-      color: var(--cyber-cyan);
-      background: rgba(0, 240, 255, 0.1);
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.15); text-align: center; }
-    .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.6); }
-    .shield-title { font-family: var(--font-cyber); color: var(--cyber-green); font-weight: bold; font-size: 0.95rem; }
-    .shield-disclaimer { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
-    .copyright { font-family: var(--font-cyber); font-size: 0.75rem; color: #64748b; }
+    .report-content {
+      white-space: pre-wrap;
+      line-height: 1.6;
+      font-family: 'Courier New', Courier, monospace;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border-radius: 6px;
+      border-left: 3px solid var(--cyber-cyan);
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .status-bar {
+      margin-top: 15px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--cyber-cyan);
+    }
   </style>
 </head>
+<body>
 
-  <body>
-
-  <!-- CAPA DE ESTRELLAS DE FONDO -->
   <div id="stars-container"></div>
 
-  <!-- CABECERA -->
-  <header>
-    <div class="container header-layout">
-      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
-      <nav class="nav-buttons" aria-label="Navigation principale">
-        <a href="index.html" class="nav-btn" data-key="nav-home">ACCUEIL</a>
-        <a href="observatoire.html" class="nav-btn" data-key="nav-obs">L'OBSERVATOIRE</a>
-        <a href="psicomusee.html" class="nav-btn" data-key="nav-psico">PSICOMUSÉE</a>
-        <a href="beacon-app.html" class="nav-btn active" aria-current="page">BEACON LAB</a>
-        <a href="notre-cap.html" class="nav-btn" data-key="nav-cap">NOTRE CAP</a>
-        <a href="contact.html" class="nav-btn" data-key="nav-contact">CONTACT</a>
-      </nav>
-
-      <!-- TRES LENGUAS FUNCIONALES -->
-      <div class="lang-selector" aria-label="Sélecteur de langue">
-        <button type="button" class="lang-btn active" id="btn-fr">FR</button><span>|</span>
-        <button type="button" class="lang-btn" id="btn-es">ES</button><span>|</span>
-        <button type="button" class="lang-btn" id="btn-en">EN</button>
+  <div class="app-container">
+    <header>
+      <div class="logo-zone">
+        <div class="logo-title">POLETHIC BEACON</div>
       </div>
-    </div>
-  </header>
+      <div class="lang-selector">
+        <button class="btn-lang active" data-lang="fr">FR</button>
+        <button class="btn-lang" data-lang="es">ES</button>
+        <button class="btn-lang" data-lang="en">EN</button>
+      </div>
+    </header>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="container">
-    <div class="beacon-title-block">
-      <h1 class="hero-app-title">POLETHIC BEACON</h1>
-      <p class="subtitle" id="txt-subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
-    </div>
-
-    <!-- ZONA DE CARGA Y ENTRADA DE DATOS -->
-    <section class="drop-zone" id="drop-zone" aria-label="Zone d'analyse de contenu">
-      <textarea id="user-input" aria-label="Texte, lien ou contenu à analyser" placeholder="Collez du texte, un lien YouTube ou glissez-déposez un fichier PDF/Image ici..."></textarea>
-      
-      <div class="input-actions-bar">
-        <label for="user-file" class="file-upload-btn" tabindex="0">
-          📂 <span id="file-name-display">Joindre / Glisser un fichier</span>
-        </label>
-        <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
+    <main>
+      <section class="panel input-panel">
+        <textarea id="user-input" placeholder="Collez votre texte, lien YouTube ou téléchargez un documento ici..."></textarea>
         
-        <button type="button" id="btn-analyze" class="btn-beacon-primary">⚡ BEACON-IZE</button>
-      </div>
-      
-      <div class="status-bar" aria-live="polite">
-        <span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span>
-      </div>
-    </section>
+        <div class="input-controls">
+          <div class="file-input-wrapper">
+            <label for="user-file" class="btn-file" id="lbl-file">Fichier / File</label>
+            <input type="file" id="user-file" accept="image/*,application/pdf">
+            <span id="file-name" style="margin-left: 10px; font-size: 0.85rem; color: var(--text-muted);"></span>
+          </div>
 
-    <!-- RESULTADOS Y ACCIONES DE ANÁLISIS -->
-    <section id="results-panel" class="results-card" aria-label="Résultats de l'analyse">
-      <div class="results-header">
-        <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
-        <div id="detected-flags-container" class="flags-container">
-          <span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>
+          <div class="action-btns">
+            <button id="btn-purge" class="btn btn-danger">Purge</button>
+            <button id="btn-analyze" class="btn btn-primary">Analyser</button>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="analysis-body">
-        <div id="analysis-report" class="report-box" aria-live="polite">En attente d'analyse...</div>
-      </div>
+      <section class="panel results-panel" id="results-panel" style="display: none;">
+        <div class="results-header">
+          <div id="ethic-score" class="ethic-badge">Ethic-Score™: --</div>
+          <div id="detected-flags">
+            <span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>
+          </div>
+        </div>
 
-      <div class="results-actions">
-        <button type="button" id="btn-refute" class="btn-action-refute">🔄 RÉFUTER / CHALLENGER</button>
-        <button type="button" id="btn-pdf" class="btn-action-pdf">📄 EXPORTER EN PDF</button>
-        <button type="button" id="btn-purge" class="btn-action-purge">🗑️ PURGER</button>
-      </div>
-    </section>
-  </main>
+        <div id="analysis-report" class="report-content">En attente d'analyse...</div>
 
-  <footer>
-    <div class="container">
-      <div class="footer-shield">
-        <div class="shield-title" id="txt-shield-title">Bouclier de Protection Professionnelle</div>
-        <p class="shield-disclaimer" id="txt-shield-desc">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
-      </div>
-      <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
-    </div>
-  </footer>
+        <div class="input-controls" style="margin-top: 20px;">
+          <button id="btn-refute" class="btn btn-secondary">Refutar / Défi</button>
+          <button id="btn-pdf" class="btn btn-primary">Export PDF</button>
+        </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+        <div class="status-bar" id="txt-status">● SYSTEM ONLINE</div>
+      </section>
+    </main>
+  </div>
 
-    // GENERADOR DE ESTRELLAS DINÁMICO
-    function generateStars(count = 40) {
-      const container = document.getElementById('stars-container');
-      if (!container) return;
-      container.innerHTML = '';
-      for (let i = 0; i < count; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        const size = Math.random() * 2.5 + 1;
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        star.style.top = `${Math.random() * 100}%`;
-        star.style.left = `${Math.random() * 100}%`;
-        star.style.animationDuration = `${Math.random() * 3 + 2}s`;
-        star.style.animationDelay = `${Math.random() * 3}s`;
-        container.appendChild(star);
-      }
+  <script>
+    // Configurar Worker de PDF.js
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
-    generateStars();
 
-    const btnAnalyze = document.getElementById('btn-analyze');
-    const userInput = document.getElementById('user-input');
-    const userFile = document.getElementById('user-file');
-    const fileNameDisplay = document.getElementById('file-name-display');
-    const resultsPanel = document.getElementById('results-panel');
-    const analysisReport = document.getElementById('analysis-report');
-    const ethicScore = document.getElementById('ethic-score');
-    const detectedFlags = document.getElementById('detected-flags-container');
+    const API_BASE_URL = 'https://polethic-beacon.onrender.com'; // Ajusta según la URL real de Render
 
-    const btnRefute = document.getElementById('btn-refute');
-    const btnPdf = document.getElementById('btn-pdf');
-    const btnPurge = document.getElementById('btn-purge');
-
-    const btnFr = document.getElementById('btn-fr');
-    const btnEs = document.getElementById('btn-es');
-    const btnEn = document.getElementById('btn-en');
-
-    let currentLang = 'fr';
-    let currentScoreLetter = 'C';
-    let ethicSpinnerInterval = null;
-    let lastAnalyzedText = "";
-
-    // Diccionario Trilingüe
+    // Idiomas
     const langMap = {
       fr: {
-        subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
-        placeholder: "Collez du texte, un lien YouTube ou glissez-déposez un fichier PDF/Image ici...",
-        fileBtn: "Joindre / Glisser un fichier",
-        analyzeBtn: "⚡ BEACON-IZE",
-        status: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
-        refuteBtn: "🔄 RÉFUTER / CHALLENGER",
-        refuting: "⏳ GÉNÉRATION DU DÉFI...",
-        pdfBtn: "📄 EXPORTER EN PDF",
-        purgeBtn: "🗑️ PURGER",
-        shieldTitle: "Bouclier de Protection Professionnelle",
-        shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
-        noAnalysisAlert: "Effectuez d'abord une analyse valide avant de lancer une réfutation.",
-        noExportAlert: "Aucun rapport valide à exporter."
+        fileBtn: 'Fichier / File',
+        noAnalysisAlert: "Aucune analyse disponible pour la réfutation.",
+        refuting: "Réfutation en cours...",
+        refuteBtn: "Réfuter / Défi",
+        noExportAlert: "Aucun rapport disponible à exporter."
       },
       es: {
-        subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
-        placeholder: "Pegue texto, un enlace o arrastre un archivo PDF/Imagen aquí...",
-        fileBtn: "Adjuntar / Arrastrar archivo",
-        analyzeBtn: "⚡ BEACON-IZE",
-        status: "● MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
-        refuteBtn: "🔄 REFUTAR / DESAFIAR",
-        refuting: "⏳ GENERANDO REFUTACIÓN...",
-        pdfBtn: "📄 EXPORTAR A PDF",
-        purgeBtn: "🗑️ PURGAR",
-        shieldTitle: "Escudo de Protección Profesional",
-        shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
-        noAnalysisAlert: "Realice primero un análisis válido antes de refutar.",
-        noExportAlert: "No hay un informe válido para exportar."
+        fileBtn: 'Archivo / File',
+        noAnalysisAlert: "No hay un análisis disponible para refutar.",
+        refuting: "Refutando...",
+        refuteBtn: "Refutar / Défi",
+        noExportAlert: "No hay informe disponible para exportar."
       },
       en: {
-        subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
-        placeholder: "Paste text, link, or drag and drop a PDF/Image file here...",
-        fileBtn: "Attach / Drag file",
-        analyzeBtn: "⚡ BEACON-IZE",
-        status: "● ENGINE READY | SYSTEM ONLINE (2026)",
-        refuteBtn: "🔄 REFUTE / CHALLENGE",
-        refuting: "⏳ GENERATING CHALLENGE...",
-        pdfBtn: "📄 EXPORT TO PDF",
-        purgeBtn: "🗑️ PURGE",
-        shieldTitle: "Professional Protection Shield",
-        shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation.",
-        noAnalysisAlert: "Perform a valid analysis first before refuting.",
-        noExportAlert: "No valid report to export."
+        fileBtn: 'File / Upload',
+        noAnalysisAlert: "No analysis available to refute.",
+        refuting: "Refuting...",
+        refuteBtn: "Refute / Challenge",
+        noExportAlert: "No report available for export."
       }
     };
 
-    function changeLanguage(lang) {
-      currentLang = lang;
-      // Actualizar atributo global del documento para lectores de pantalla y SEO
-      document.documentElement.lang = lang;
+    let currentLang = 'fr';
+    let lastAnalyzedText = "";
+    let currentScoreLetter = 'C';
+    let spinnerInterval = null;
 
-      [btnFr, btnEs, btnEn].forEach(b => b.classList.remove('active'));
-      if (lang === 'fr') btnFr.classList.add('active');
-      if (lang === 'es') btnEs.classList.add('active');
-      if (lang === 'en') btnEn.classList.add('active');
+    document.addEventListener('DOMContentLoaded', () => {
+      // Elementos del DOM
+      const userInput = document.getElementById('user-input');
+      const userFile = document.getElementById('user-file');
+      const fileNameDisplay = document.getElementById('file-name');
+      const btnAnalyze = document.getElementById('btn-analyze');
+      const btnPurge = document.getElementById('btn-purge');
+      const btnRefute = document.getElementById('btn-refute');
+      const btnPdf = document.getElementById('btn-pdf');
+      const resultsPanel = document.getElementById('results-panel');
+      const analysisReport = document.getElementById('analysis-report');
+      const ethicScore = document.getElementById('ethic-score');
+      const detectedFlags = document.getElementById('detected-flags');
 
-      const t = langMap[lang];
-      document.getElementById('txt-subtitle').innerText = t.subtitle;
-      userInput.placeholder = t.placeholder;
-      if (userFile.files.length === 0) fileNameDisplay.innerText = t.fileBtn;
-      btnAnalyze.innerText = t.analyzeBtn;
-      document.getElementById('txt-status').innerText = t.status;
-      btnRefute.innerText = t.refuteBtn;
-      btnPdf.innerText = t.pdfBtn;
-      btnPurge.innerText = t.purgeBtn;
-      document.getElementById('txt-shield-title').innerText = t.shieldTitle;
-      document.getElementById('txt-shield-desc').innerText = t.shieldDesc;
-    }
+      // Generar Fondo de Estrellas
+      function generateStars() {
+        const container = document.getElementById('stars-container');
+        if (!container) return;
+        container.innerHTML = '';
+        for (let i = 0; i < 80; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          star.style.width = `${Math.random() * 3}px`;
+          star.style.height = star.style.width;
+          star.style.left = `${Math.random() * 100}%`;
+          star.style.top = `${Math.random() * 100}%`;
+          star.style.animationDuration = `${2 + Math.random() * 3}s`;
+          container.appendChild(star);
+        }
+      }
+      generateStars();
 
-    btnFr.addEventListener('click', () => changeLanguage('fr'));
-    btnEs.addEventListener('click', () => changeLanguage('es'));
-    btnEn.addEventListener('click', () => changeLanguage('en'));
+      // Cambio de Idioma
+      document.querySelectorAll('.btn-lang').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.btn-lang').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          currentLang = e.target.getAttribute('data-lang');
+          document.getElementById('lbl-file').innerText = langMap[currentLang].fileBtn;
+        });
+      });
 
-    // Accesibilidad: Abrir explorador de archivos al presionar Enter/Espacio en el label
-    const fileLabel = document.querySelector('label[for="user-file"]');
-    if (fileLabel) {
-      fileLabel.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          userFile.click();
+      // Selector de Archivo
+      userFile.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          fileNameDisplay.innerText = e.target.files[0].name;
+        } else {
+          fileNameDisplay.innerText = '';
         }
       });
-    }
 
-    userFile.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        fileNameDisplay.innerText = e.target.files[0].name;
-      } else {
-        fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+      // Animación de Carga (Spinner Ethic)
+      function startEthicSpinner() {
+        let frames = ['[  =  ]', '[ ==  ]', '[ === ]', '[  == ]'];
+        let idx = 0;
+        spinnerInterval = setInterval(() => {
+          ethicScore.innerText = `Ethic-Score™: ${frames[idx % frames.length]}`;
+          idx++;
+        }, 200);
       }
-    });
 
-    function startEthicSpinner() {
-      const letters = ['A', 'B', 'C', 'D', 'S', 'X'];
-      const colors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d'];
-      if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
-      ethicSpinnerInterval = setInterval(() => {
-        const l = letters[Math.floor(Math.random() * letters.length)];
-        const c = colors[Math.floor(Math.random() * colors.length)];
-        ethicScore.innerText = `Ethic-Score™: ${l}`;
-        ethicScore.style.backgroundColor = c;
-      }, 90);
-    }
-
-    function stopEthicSpinner() {
-      if (ethicSpinnerInterval) {
-        clearInterval(ethicSpinnerInterval);
-        ethicSpinnerInterval = null;
+      function stopEthicSpinner() {
+        if (spinnerInterval) clearInterval(spinnerInterval);
       }
-    }
 
- // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
-const FLAGS_BY_SCORE = {
-  es: {
-    'A': ['FACTUAL', 'TRANSPARENTE', 'DESCRIPTIVO', 'SIN RIESGO'],
-    'B': ['PERSUASIVO', 'MARKETING', 'SESGO LEVE', 'PROMESA'],
-    'C': ['MANIPULACIÓN', 'AMBIGÜEDAD', 'PSEUDOCIENCIA', 'RETÓRICA'],
-    'D': ['RIESGO SECTARIO', 'INFLUENCIA', 'AISLAMIENTO', 'PELIGRO COGNITIVO']
-  },
-  fr: {
-    'A': ['FACTUEL', 'TRANSPARENT', 'DESCRIPTIF', 'SANS RISQUE'],
-    'B': ['PERSUASIF', 'MARKETING', 'BIAIS LEGER', 'PROMESSE'],
-    'C': ['MANIPULATION', 'AMBIGUÏTÉ', 'PSEUDO-SCIENCE', 'RHÉTORIQUE'],
-    'D': ['RISQUE SECTAIRE', 'EMPRISE', 'ISOLEMENT', 'DANGER COGNITIF']
-  },
-  en: {
-    'A': ['FACTUAL', 'TRANSPARENT', 'DESCRIPTIVE', 'LOW RISK'],
-    'B': ['PERSUASIVE', 'MARKETING', 'LIGHT BIAS', 'PROMISE'],
-    'C': ['MANIPULATION', 'AMBIGUITY', 'PSEUDOSCIENCE', 'RHETORIC'],
-    'D': ['CULTIC RISK', 'COERCION', 'ISOLATION', 'DANGER']
-  }
-};
+      function applyEthicBadge(score, flags = []) {
+        stopEthicSpinner();
+        currentScoreLetter = score || 'C';
+        ethicScore.innerText = `Ethic-Score™: ${currentScoreLetter}`;
 
-// 2. DICCIONARIO DE TRADUCCIÓN DE CLAVES DEL BACKEND
-const FLAG_DICTIONARY = {
-  'fakenews': { es: 'NOTICIA FALSA', fr: 'FAUX BRUIT', en: 'FAKE NEWS' },
-  'myth': { es: 'MITO', fr: 'MYTHE', en: 'MYTH' },
-  'bluff': { es: 'MARKETING / HYPE', fr: 'BLUFF / HYPE', en: 'BLUFF / HYPE' },
-  'coercion': { es: 'COERCIÓN', fr: 'COERCITION', en: 'COERCION' },
-  'dogma': { es: 'DOGMA', fr: 'DOGME', en: 'DOGMA' },
-  'pseudoscience': { es: 'PSEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
-  'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
-  'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
-  'persuasif': { es: 'PERSUASIVO', fr: 'PERSUASIF', en: 'PERSUASIVE' },
-  'marketing': { es: 'MARKETING', fr: 'MARKETING', en: 'MARKETING' },
-  'biais leger': { es: 'SESGO LEVE', fr: 'BIAIS LÉGER', en: 'LIGHT BIAS' },
-  'promesse': { es: 'PROMESA', fr: 'PROMESSE', en: 'PROMISE' }
-};
+        let colorMap = {
+          'A': 'var(--cyber-green)',
+          'B': 'var(--cyber-cyan)',
+          'C': 'var(--cyber-amber)',
+          'D': 'var(--cyber-red)'
+        };
+        ethicScore.style.backgroundColor = colorMap[currentScoreLetter] || 'var(--cyber-amber)';
 
-function applyEthicBadge(score, customFlags) {
-  stopEthicSpinner();
-  let letter = 'C';
-  let color = '#ff9900';
-  if (typeof score === 'string') letter = score.toUpperCase();
-  if (letter === 'A') color = '#00ff88';
-  if (letter === 'B') color = '#ffe600';
-  if (letter === 'C') color = '#ff9900';
-  if (letter === 'D') color = '#ff2a6d';
-
-  currentScoreLetter = letter;
-  ethicScore.innerText = `Ethic-Score™: ${letter}`;
-  ethicScore.style.backgroundColor = color;
-
-  const lang = (typeof currentLang !== 'undefined' && FLAGS_BY_SCORE[currentLang]) ? currentLang : 'fr';
-
-  const flagsToRender = (customFlags && customFlags.length > 0) 
-    ? customFlags 
-    : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
-
-  renderFlags(flagsToRender);
-}
-
-function renderFlags(flagsArray) {
-  if (!detectedFlags) return;
-  detectedFlags.innerHTML = '';
-  
-  let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
-  const lang = (typeof currentLang !== 'undefined') ? currentLang : 'fr';
-
-  (flags || ['ANALYSE']).forEach(f => {
-    const rawKey = f.trim().toLowerCase();
-    
-    let displayLabel = f.trim().toUpperCase();
-    if (FLAG_DICTIONARY[rawKey] && FLAG_DICTIONARY[rawKey][lang]) {
-      displayLabel = FLAG_DICTIONARY[rawKey][lang];
-    }
-
-    const span = document.createElement('span');
-    span.className = 'flag-badge';
-    span.innerText = displayLabel;
-    detectedFlags.appendChild(span);
-  });
-}
-
-// 🛠️ FUNCIONES AUXILIARES DE PROCESAMIENTO
-function extractYouTubeID(url) {
-  const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-  const match = url.match(regex);
-  return match ? match[1] : null;
-}
-
-async function extractTextFromImage(file) {
-  document.getElementById('txt-status').innerText = "● LECTURE OCR DE L'IMAGE EN COURS...";
-  const ret = await Tesseract.recognize(file, 'fra+spa+eng');
-  return ret.data.text;
-}
-
-async function extractTextFromPDF(file) {
-  document.getElementById('txt-status').innerText = '● EXTRACTION DU TEXTE DU PDF...';
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  let fullText = '';
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    const strings = content.items.map(item => item.str);
-    fullText += strings.join(' ') + '\n';
-  }
-  return fullText;
-}
-
-// ⚡ ESCUCHADOR ÚNICO DE ANÁLISIS
-btnAnalyze.addEventListener('click', async () => {
-  let textToAnalyze = userInput.value.trim();
-  const file = userFile.files[0];
-
-  if (!textToAnalyze && !file) {
-    const errorMsg = {
-      es: 'Por favor ingrese texto, una URL de YouTube o adjunte un archivo.',
-      fr: 'Veuillez entrer du texte, un lien YouTube ou joindre un fichier.',
-      en: 'Please enter text, a YouTube link or attach a file.'
-    };
-    return alert(errorMsg[currentLang] || errorMsg.fr);
-  }
-
-  btnAnalyze.disabled = true;
-  resultsPanel.style.display = 'block';
-  startEthicSpinner();
-
-  try {
-    // 1. Si hay un archivo adjunto (Imagen o PDF)
-    if (file) {
-      if (file.type.startsWith('image/')) {
-        textToAnalyze = await extractTextFromImage(file);
-      } else if (file.type === 'application/pdf') {
-        textToAnalyze = await extractTextFromPDF(file);
+        if (detectedFlags && Array.isArray(flags)) {
+          detectedFlags.innerHTML = flags.map(f => `<span class="flag-badge">${f}</span>`).join('');
+        }
       }
-    } 
-    // 2. Si es un enlace de YouTube
-    else if (extractYouTubeID(textToAnalyze)) {
-      const videoId = extractYouTubeID(textToAnalyze);
-      document.getElementById('txt-status').innerText = `● RÉCUPÉRATION DU TRANSCRIPT YOUTUBE (${videoId})...`;
-      
-      const ytResponse = await fetch(`${API_BASE_URL}/transcript?videoId=${videoId}`);
-      const ytData = await ytResponse.json();
-      textToAnalyze = ytData.fullText || ytData.text;
-    }
 
-    // Reflejar el texto procesado en la caja de texto
-    userInput.value = textToAnalyze;
-    lastAnalyzedText = textToAnalyze;
-
-    // 3. Enviar el texto limpio final al backend
-    document.getElementById('txt-status').innerText = '● ANALYSE EN COURS...';
-    const response = await fetch(`${API_BASE_URL}/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: textToAnalyze, lang: currentLang })
-    });
-    const data = await response.json();
-
-    const flagsReceived = data.flags || data.detected_flags;
-    applyEthicBadge(data.ethic_letter || 'C', flagsReceived);
-    analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
-    document.getElementById('txt-status').innerText = '● ANALYSE TERMINÉE | SYSTEM ONLINE';
-
-  } catch (e) {
-    applyEthicBadge('C');
-    const serverErrMsg = {
-      es: 'Error al procesar el archivo o la conexión.',
-      fr: "Erreur lors du traitement du fichier ou de la connexion.",
-      en: 'Error processing file or connection.'
-    };
-    analysisReport.innerText = serverErrMsg[currentLang] || serverErrMsg.fr;
-    document.getElementById('txt-status').innerText = '● ERREUR SYSTEME';
-  } finally {
-    btnAnalyze.disabled = false;
-  }
-});
-
-      // 🔄 REFUTACIÓN DIRECTA
-btnRefute.addEventListener('click', async () => {
-  const currentAnalysis = analysisReport ? analysisReport.innerText : '';
-  const t = (typeof langMap !== 'undefined' && langMap[currentLang]) ? langMap[currentLang] : {};
-
-  if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("⚡")) {
-    return alert(t.noAnalysisAlert || "No hay un análisis disponible para refutar.");
-  }
-
-  btnRefute.disabled = true;
-  btnRefute.innerText = t.refuting || "Refutando...";
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/refute`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        analysis: currentAnalysis,
-        text: typeof lastAnalyzedText !== 'undefined' ? lastAnalyzedText : '',
-        lang: currentLang
-      })
-    });
-
-    const data = await response.json();
-    const refutationText = data.refutation || data.reply || '';
-
-    if (refutationText) {
-      analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationText}`;
-    }
-  } catch (e) {
-    alert(currentLang === 'es' ? "Error al procesar la refutación." : "Erreur lors du traitement de la réfutation.");
-  } finally {
-    btnRefute.disabled = false;
-    btnRefute.innerText = t.refuteBtn || "Refutar / Défi";
-  }
-});
-
-// 📄 EXPORTAR PDF CON FLAGS E IDIOMA
-btnPdf.addEventListener('click', () => {
-  const reportText = analysisReport ? analysisReport.innerText : '';
-  const lang = currentLang || 'fr';
-  const t = (typeof langMap !== 'undefined' && langMap[lang]) ? langMap[lang] : {};
-
-  if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur") || reportText.includes("Waiting") || reportText.includes("En espera")) {
-    return alert(t.noExportAlert || "No report available");
-  }
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
-
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 18;
-  const contentWidth = pageWidth - (margin * 2);
-  let cursorY = margin;
-
-  const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
-
-  let cleanText = reportText
-    .replace(/\*\*/g, '')
-    .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
-    .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
-    .replace(WHITELIST, '')
-    .trim();
-
-  const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
-  const subHeaderLabels = {
-    fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
-    es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
-    en: "COGNITIVE SELF-DEFENSE LABORATORY"
-  };
-  const refLabels = { fr: 'RÉF', es: 'REF', en: 'REF' };
-  const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
-  const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
-  const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
-
-  function printSectionHeader(text, x, y) {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11.5);
-    doc.setTextColor(15, 23, 42);
-    doc.text(text, x, y);
-
-    doc.setDrawColor(0, 200, 235);
-    doc.setLineWidth(0.6);
-    doc.line(x, y + 3, x + contentWidth, y + 3);
-  }
-
-  // --- ENCABEZADO OFICIAL ---
-  doc.setFont("courier", "bold");
-  doc.setFontSize(15);
-  doc.setTextColor(15, 23, 42);
-  doc.text("POLETHIC BEACON", margin, cursorY + 2);
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.5);
-  doc.setTextColor(0, 180, 216);
-  doc.text(subHeaderLabels[lang] || subHeaderLabels['fr'], margin, cursorY + 7);
-
-  cursorY += 12;
-  doc.setDrawColor(226, 232, 240);
-  doc.setLineWidth(0.4);
-  doc.line(margin, cursorY, pageWidth - margin, cursorY);
-
-  cursorY += 8;
-
-  const now = new Date();
-  const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', {
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-  });
-  const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
-
-  // Coordenadas de color dinámicas según Score
-  const scoreLetter = typeof currentScoreLetter !== 'undefined' ? currentScoreLetter : 'C';
-  let scoreR = 234, scoreG = 179, scoreB = 8; // B (Amarillo)
-  if (scoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; } // Verde
-  if (scoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; } // Naranja
-  if (scoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; } // Rojo
-
-  // Obtener los elementos de las flags impresos actualmente en la pantalla
-  const flagElements = detectedFlags 
-    ? Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim())
-    : [];
-
-  // Calculamos la altura de la tarjeta según si hay flags o no
-  const cardHeight = flagElements.length > 0 ? 32 : 20;
-
-  // Tarjeta principal de la métrica
-  doc.setFillColor(248, 250, 252);
-  doc.setDrawColor(226, 232, 240);
-  doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
-
-  // Badge de Ethic Score
-  doc.setFillColor(scoreR, scoreG, scoreB);
-  doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.5);
-  doc.setTextColor(255, 255, 255);
-  doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
-  doc.setFontSize(12);
-  doc.text(`${levelLabels[lang] || 'NIVEAU'} ${scoreLetter}`, margin + 5, cursorY + 13.5);
-
-  // Metadatos de la sesión
-  doc.setFont("courier", "bold");
-  doc.setFontSize(9.5);
-  doc.setTextColor(51, 65, 85);
-
-  const refText = `${refLabels[lang] || 'RÉFÉRENCE'} : ${auditId}`;
-  const dateText = `${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`;
-  doc.text(refText, margin + 46, cursorY + 8);
-  doc.text(dateText, margin + 46, cursorY + 13);
-
-  // 🏷️ IMPRESIÓN DINÁMICA DE FLAGS EN EL PDF
-  if (flagElements.length > 0) {
-    doc.setDrawColor(226, 232, 240);
-    doc.setLineWidth(0.3);
-    doc.line(margin + 3, cursorY + 19, margin + contentWidth - 3, cursorY + 19);
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(7.5);
-    doc.setTextColor(100, 116, 139);
-    doc.text(`${flagsHeaderLabels[lang] || 'INDICATEURS'}:`, margin + 5, cursorY + 26);
-
-    let flagX = margin + 30;
-    flagElements.forEach(flagText => {
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(7);
-      const textWidth = doc.getTextWidth(flagText);
-      const badgeWidth = textWidth + 6;
-
-      // Si sobrepasa la tarjeta, corta para evitar salirse del margen
-      if (flagX + badgeWidth < margin + contentWidth - 3) {
-        doc.setFillColor(226, 232, 240);
-        doc.roundedRect(flagX, cursorY + 22, badgeWidth, 5.5, 1, 1, 'F');
-        doc.setTextColor(15, 23, 42);
-        doc.text(flagText, flagX + 3, cursorY + 26);
-        flagX += badgeWidth + 3;
+      // Funciones de Extracción Local (OCR & PDF)
+      async function extractTextFromImage(file) {
+        document.getElementById('txt-status').innerText = '● LECTURE OCR (TESSERACT)...';
+        const worker = await Tesseract.createWorker(currentLang === 'es' ? 'spa' : (currentLang === 'fr' ? 'fra' : 'eng'));
+        const ret = await worker.recognize(file);
+        await worker.terminate();
+        return ret.data.text;
       }
-    });
-  }
 
-  cursorY += cardHeight + 10;
+      async function extractTextFromPDF(file) {
+        document.getElementById('txt-status').innerText = '● EXTRACTION PDF...';
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          fullText += content.items.map(item => item.str).join(' ') + '\n';
+        }
+        return fullText;
+      }
 
-  // --- CUERPO DEL INFORME CON SALTO DE PÁGINA DUAL ---
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9.5);
-  doc.setTextColor(30, 41, 59);
+      function extractYouTubeID(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+      }
 
-  const splitText = doc.splitTextToSize(cleanText, contentWidth);
-  
-  splitText.forEach((line) => {
-    if (cursorY + 7 > pageHeight - margin) {
-      doc.addPage();
-      cursorY = margin;
-    }
-    doc.text(line, margin, cursorY);
-    cursorY += 5;
-  });
+      // ⚡ ANALIZAR
+      btnAnalyze.addEventListener('click', async () => {
+        let textToAnalyze = userInput.value.trim();
+        const file = userFile.files[0];
 
-  // Guardar archivo PDF generado
-  doc.save(`Polethic_Beacon_Audit_${auditId}.pdf`);
-});
+        if (!textToAnalyze && !file) {
+          return alert("Por favor ingrese texto, una URL de YouTube o un archivo.");
+        }
 
-        // --- PROCESAMIENTO DEL CUERPO DEL INFORME ---
-        const lines = cleanText.split('\n');
+        btnAnalyze.disabled = true;
+        resultsPanel.style.display = 'block';
+        startEthicSpinner();
 
-        lines.forEach((line) => {
-          let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
-
-          if (!trimmed || trimmed === '•' || trimmed === '=' || trimmed.startsWith('===')) {
-            cursorY += 2;
-            return;
-          }
-
-          const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE CORTICAL|RECADRAGE CORTICAL|CORTICAL REFRAMING|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE|RÉFUTATION COGNITIVE|REFUTACION COGNITIVA|COGNITIVE REFUTATION)/i.test(trimmed);
-
-          if (isHeader) {
-            if (cursorY > pageHeight - 25) { doc.addPage(); cursorY = margin + 5; }
-            cursorY += 5;
-
-            let headerText = trimmed.replace(/^[-•\s=]+/, '').toUpperCase();
-            printSectionHeader(headerText, margin, cursorY);
-
-            cursorY += 9;
-          } else {
-            let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
-            let cleanContent = isBullet ? trimmed.replace(/^[-•]\s*/, '').trim() : trimmed;
-
-            if (!cleanContent) return;
-
-            let hasColonLabel = cleanContent.includes(':') && cleanContent.indexOf(':') < 40 && !/^\d+[\.\)]/.test(cleanContent);
-
-            if (hasColonLabel) {
-              if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
-
-              let indent = isBullet ? margin + 5 : margin;
-              let colonIndex = cleanContent.indexOf(':');
-              let labelPart = cleanContent.substring(0, colonIndex + 1);
-              let valuePart = cleanContent.substring(colonIndex + 1).trim();
-
-              if (isBullet) {
-                doc.setFont("helvetica", "normal");
-                doc.setFontSize(10);
-                doc.setTextColor(51, 65, 85);
-                doc.text("• ", margin, cursorY);
-              }
-
-              doc.setFont("helvetica", "bold");
-              doc.setFontSize(10);
-              doc.setTextColor(15, 23, 42);
-              doc.text(labelPart, indent, cursorY);
-
-              let labelWidth = doc.getTextWidth(labelPart + " ");
-
-              doc.setFont("helvetica", "normal");
-              doc.setFontSize(10);
-              doc.setTextColor(51, 65, 85);
-
-              let maxValWidth = contentWidth - (indent - margin) - labelWidth;
-              const splitValue = doc.splitTextToSize(valuePart, maxValWidth);
-
-              if (splitValue.length > 0) {
-                doc.text(splitValue[0], indent + labelWidth, cursorY);
-                cursorY += 5.5;
-
-                for (let k = 1; k < splitValue.length; k++) {
-                  if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
-                  doc.text(splitValue[k], indent + 4, cursorY);
-                  cursorY += 5.5;
-                }
-              } else {
-                cursorY += 5.5;
-              }
-              cursorY += 1.5;
-            } else {
-              doc.setFont("helvetica", "normal");
-              doc.setFontSize(10);
-              doc.setTextColor(51, 65, 85);
-
-              let indent = isBullet ? margin + 5 : margin;
-              let printWidth = isBullet ? contentWidth - 5 : contentWidth;
-              let printText = isBullet ? "• " + cleanContent : cleanContent;
-
-              const splitLines = doc.splitTextToSize(printText, printWidth);
-
-              splitLines.forEach((subLine) => {
-                if (cursorY > pageHeight - 18) { doc.addPage(); cursorY = margin + 5; }
-                doc.text(subLine, indent, cursorY);
-                cursorY += 5.5;
-              });
-              cursorY += 1.5;
+        try {
+          if (file) {
+            if (file.type.startsWith('image/')) {
+              textToAnalyze = await extractTextFromImage(file);
+            } else if (file.type === 'application/pdf') {
+              textToAnalyze = await extractTextFromPDF(file);
             }
+          } else if (extractYouTubeID(textToAnalyze)) {
+            const videoId = extractYouTubeID(textToAnalyze);
+            document.getElementById('txt-status').innerText = `● YOUTUBE TRANSCRIPT (${videoId})...`;
+            const ytResponse = await fetch(`${API_BASE_URL}/transcript?videoId=${videoId}`);
+            if (!ytResponse.ok) throw new Error(`YouTube API Error: ${ytResponse.status}`);
+            const ytData = await ytResponse.json();
+            textToAnalyze = ytData.fullText || ytData.text || ytData.transcript;
           }
+
+          if (!textToAnalyze) throw new Error("No se pudo extraer texto.");
+
+          userInput.value = textToAnalyze;
+          lastAnalyzedText = textToAnalyze;
+
+          document.getElementById('txt-status').innerText = '● CONNECTING TO BACKEND...';
+
+          const response = await fetch(`${API_BASE_URL}/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: textToAnalyze, lang: currentLang })
+          });
+
+          if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+          const data = await response.json();
+          const flagsReceived = data.flags || data.detected_flags || [];
+          const scoreReceived = data.ethic_letter || data.score || 'C';
+          const reportText = data.analysis || data.report || 'Analyse terminée.';
+
+          applyEthicBadge(scoreReceived, flagsReceived);
+          analysisReport.innerText = reportText;
+          document.getElementById('txt-status').innerText = '● ANALYSE TERMINÉE | SYSTEM ONLINE';
+
+        } catch (e) {
+          console.error(e);
+          applyEthicBadge('C');
+          analysisReport.innerText = `⚠️ Error:\n${e.message}\n\nSi Render estuvo inactivo, espere 30s y reintente.`;
+          document.getElementById('txt-status').innerText = '● ERREUR SYSTEME';
+        } finally {
+          btnAnalyze.disabled = false;
+        }
+      });
+
+      // 🔄 REFUTAR
+      btnRefute.addEventListener('click', async () => {
+        const currentAnalysis = analysisReport ? analysisReport.innerText : '';
+        const t = langMap[currentLang] || langMap.fr;
+
+        if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur")) {
+          return alert(t.noAnalysisAlert);
+        }
+
+        btnRefute.disabled = true;
+        btnRefute.innerText = t.refuting;
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/refute`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ analysis: currentAnalysis, text: lastAnalyzedText, lang: currentLang })
+          });
+
+          if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+          const data = await response.json();
+          const refutationText = data.refutation || data.reply || '';
+
+          if (refutationText) {
+            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationText}`;
+          }
+        } catch (e) {
+          alert("Erreur lors du traitement de la réfutation.");
+        } finally {
+          btnRefute.disabled = false;
+          btnRefute.innerText = t.refuteBtn;
+        }
+      });
+
+      // 📄 EXPORTAR PDF
+      btnPdf.addEventListener('click', () => {
+        const reportText = analysisReport ? analysisReport.innerText : '';
+        if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
+          return alert("No hay informe disponible para exportar.");
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 18;
+        const contentWidth = pageWidth - (margin * 2);
+        let cursorY = margin;
+
+        let cleanText = reportText.replace(/\*\*/g, '').trim();
+
+        doc.setFont("courier", "bold");
+        doc.setFontSize(15);
+        doc.text("POLETHIC BEACON", margin, cursorY + 2);
+
+        cursorY += 15;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9.5);
+
+        const splitText = doc.splitTextToSize(cleanText, contentWidth);
+        splitText.forEach((line) => {
+          if (cursorY + 7 > pageHeight - margin) {
+            doc.addPage();
+            cursorY = margin;
+          }
+          doc.text(line, margin, cursorY);
+          cursorY += 5;
         });
 
-        // --- PIE DE PÁGINA ---
-        const footerLabels = {
-          fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
-          es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
-          en: "POLETHIC BEACON — Analysis and cognitive self-defense"
-        };
-
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-          doc.setPage(i);
-          doc.setDrawColor(226, 232, 240);
-          doc.setLineWidth(0.3);
-          doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
-
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(8);
-          doc.setTextColor(148, 163, 184);
-          doc.text(footerLabels[lang] || footerLabels['fr'], margin, pageHeight - 7);
-          doc.text(`Page ${i} / ${pageCount}`, pageWidth - margin - 15, pageHeight - 7);
-        }
-
-        doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
+        doc.save(`Rapport_Beacon_${currentScoreLetter}.pdf`);
       });
 
-      // 🗑️ PURGAR (Limpiar interfaz)
+      // 🗑️ PURGAR
       btnPurge.addEventListener('click', () => {
         userInput.value = '';
         userFile.value = '';
-        fileNameDisplay.innerText = langMap[currentLang].fileBtn;
-        
-        const resetText = {
-          es: 'En espera de análisis...',
-          fr: 'En attente d\'analyse...',
-          en: 'Waiting for analysis...'
-        };
-        analysisReport.innerText = resetText[currentLang] || resetText.fr;
-
-        const readyText = {
-          es: 'ANÁLISIS LISTO',
-          fr: 'ANALYSE PRÊTE',
-          en: 'ANALYSIS READY'
-        };
-        if (detectedFlags) {
-          detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText[currentLang] || readyText.fr}</span>`;
-        }
-
+        fileNameDisplay.innerText = '';
+        analysisReport.innerText = 'En attente d\'analyse...';
+        detectedFlags.innerHTML = '<span class="flag-badge">ANALYSE PRÊTE</span>';
         stopEthicSpinner();
         ethicScore.innerText = 'Ethic-Score™: --';
         ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
-        
         resultsPanel.style.display = 'none';
         lastAnalyzedText = "";
       });
