@@ -721,183 +721,206 @@ btnAnalyze.addEventListener('click', async () => {
 });
 
       // 🔄 REFUTACIÓN DIRECTA
-      btnRefute.addEventListener('click', async () => {
-        const currentAnalysis = analysisReport.innerText;
-        const t = langMap[currentLang];
+btnRefute.addEventListener('click', async () => {
+  const currentAnalysis = analysisReport ? analysisReport.innerText : '';
+  const t = (typeof langMap !== 'undefined' && langMap[currentLang]) ? langMap[currentLang] : {};
 
-        if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("⚡")) {
-          return alert(t.noAnalysisAlert);
-        }
+  if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("⚡")) {
+    return alert(t.noAnalysisAlert || "No hay un análisis disponible para refutar.");
+  }
 
-        btnRefute.disabled = true;
-        btnRefute.innerText = t.refuting;
+  btnRefute.disabled = true;
+  btnRefute.innerText = t.refuting || "Refutando...";
 
-        try {
-          const response = await fetch(`${API_BASE_URL}/refute`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              analysis: currentAnalysis,
-              text: lastAnalyzedText,
-              lang: currentLang
-            })
-          });
+  try {
+    const response = await fetch(`${API_BASE_URL}/refute`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        analysis: currentAnalysis,
+        text: typeof lastAnalyzedText !== 'undefined' ? lastAnalyzedText : '',
+        lang: currentLang
+      })
+    });
 
-          const data = await response.json();
-          const refutationText = data.refutation || data.reply || '';
+    const data = await response.json();
+    const refutationText = data.refutation || data.reply || '';
 
-          if (refutationText) {
-            analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationText}`;
-          }
-        } catch (e) {
-          alert(currentLang === 'es' ? "Error al procesar la refutación." : "Erreur lors du traitement de la réfutation.");
-        } finally {
-          btnRefute.disabled = false;
-          btnRefute.innerText = t.refuteBtn;
-        }
-      });
+    if (refutationText) {
+      analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationText}`;
+    }
+  } catch (e) {
+    alert(currentLang === 'es' ? "Error al procesar la refutación." : "Erreur lors du traitement de la réfutation.");
+  } finally {
+    btnRefute.disabled = false;
+    btnRefute.innerText = t.refuteBtn || "Refutar / Défi";
+  }
+});
 
-     // 📄 EXPORTAR PDF CON FLAGS E IDIOMA
-      btnPdf.addEventListener('click', () => {
-        const reportText = analysisReport.innerText;
-        const lang = currentLang || 'fr';
-        const t = langMap[lang] || langMap['fr'];
+// 📄 EXPORTAR PDF CON FLAGS E IDIOMA
+btnPdf.addEventListener('click', () => {
+  const reportText = analysisReport ? analysisReport.innerText : '';
+  const lang = currentLang || 'fr';
+  const t = (typeof langMap !== 'undefined' && langMap[lang]) ? langMap[lang] : {};
 
-        if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur") || reportText.includes("Waiting") || reportText.includes("En espera")) {
-          return alert(t.noExportAlert || "No report available");
-        }
+  if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur") || reportText.includes("Waiting") || reportText.includes("En espera")) {
+    return alert(t.noExportAlert || "No report available");
+  }
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
 
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 18;
-        const contentWidth = pageWidth - (margin * 2);
-        let cursorY = margin;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 18;
+  const contentWidth = pageWidth - (margin * 2);
+  let cursorY = margin;
 
-        const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
+  const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
 
-        let cleanText = reportText
-          .replace(/\*\*/g, '')
-          .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
-          .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
-          .replace(WHITELIST, '')
-          .trim();
+  let cleanText = reportText
+    .replace(/\*\*/g, '')
+    .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+    .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
+    .replace(WHITELIST, '')
+    .trim();
 
-        const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
-        const subHeaderLabels = {
-          fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
-          es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
-          en: "COGNITIVE SELF-DEFENSE LABORATORY"
-        };
-        const refLabels = { fr: 'RÉF', es: 'REF', en: 'REF' };
-        const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
-        const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
-        const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
+  const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
+  const subHeaderLabels = {
+    fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
+    es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
+    en: "COGNITIVE SELF-DEFENSE LABORATORY"
+  };
+  const refLabels = { fr: 'RÉF', es: 'REF', en: 'REF' };
+  const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
+  const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
+  const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
 
-        function printSectionHeader(text, x, y) {
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(11.5);
-          doc.setTextColor(15, 23, 42);
-          doc.text(text, x, y);
+  function printSectionHeader(text, x, y) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11.5);
+    doc.setTextColor(15, 23, 42);
+    doc.text(text, x, y);
 
-          doc.setDrawColor(0, 200, 235);
-          doc.setLineWidth(0.6);
-          doc.line(x, y + 3, x + contentWidth, y + 3);
-        }
+    doc.setDrawColor(0, 200, 235);
+    doc.setLineWidth(0.6);
+    doc.line(x, y + 3, x + contentWidth, y + 3);
+  }
 
-        // --- ENCABEZADO OFICIAL ---
-        doc.setFont("courier", "bold");
-        doc.setFontSize(15);
+  // --- ENCABEZADO OFICIAL ---
+  doc.setFont("courier", "bold");
+  doc.setFontSize(15);
+  doc.setTextColor(15, 23, 42);
+  doc.text("POLETHIC BEACON", margin, cursorY + 2);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8.5);
+  doc.setTextColor(0, 180, 216);
+  doc.text(subHeaderLabels[lang] || subHeaderLabels['fr'], margin, cursorY + 7);
+
+  cursorY += 12;
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.4);
+  doc.line(margin, cursorY, pageWidth - margin, cursorY);
+
+  cursorY += 8;
+
+  const now = new Date();
+  const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+  const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+
+  // Coordenadas de color dinámicas según Score
+  const scoreLetter = typeof currentScoreLetter !== 'undefined' ? currentScoreLetter : 'C';
+  let scoreR = 234, scoreG = 179, scoreB = 8; // B (Amarillo)
+  if (scoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; } // Verde
+  if (scoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; } // Naranja
+  if (scoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; } // Rojo
+
+  // Obtener los elementos de las flags impresos actualmente en la pantalla
+  const flagElements = detectedFlags 
+    ? Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim())
+    : [];
+
+  // Calculamos la altura de la tarjeta según si hay flags o no
+  const cardHeight = flagElements.length > 0 ? 32 : 20;
+
+  // Tarjeta principal de la métrica
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(226, 232, 240);
+  doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
+
+  // Badge de Ethic Score
+  doc.setFillColor(scoreR, scoreG, scoreB);
+  doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.setTextColor(255, 255, 255);
+  doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
+  doc.setFontSize(12);
+  doc.text(`${levelLabels[lang] || 'NIVEAU'} ${scoreLetter}`, margin + 5, cursorY + 13.5);
+
+  // Metadatos de la sesión
+  doc.setFont("courier", "bold");
+  doc.setFontSize(9.5);
+  doc.setTextColor(51, 65, 85);
+
+  const refText = `${refLabels[lang] || 'RÉFÉRENCE'} : ${auditId}`;
+  const dateText = `${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`;
+  doc.text(refText, margin + 46, cursorY + 8);
+  doc.text(dateText, margin + 46, cursorY + 13);
+
+  // 🏷️ IMPRESIÓN DINÁMICA DE FLAGS EN EL PDF
+  if (flagElements.length > 0) {
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.3);
+    doc.line(margin + 3, cursorY + 19, margin + contentWidth - 3, cursorY + 19);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`${flagsHeaderLabels[lang] || 'INDICATEURS'}:`, margin + 5, cursorY + 26);
+
+    let flagX = margin + 30;
+    flagElements.forEach(flagText => {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7);
+      const textWidth = doc.getTextWidth(flagText);
+      const badgeWidth = textWidth + 6;
+
+      // Si sobrepasa la tarjeta, corta para evitar salirse del margen
+      if (flagX + badgeWidth < margin + contentWidth - 3) {
+        doc.setFillColor(226, 232, 240);
+        doc.roundedRect(flagX, cursorY + 22, badgeWidth, 5.5, 1, 1, 'F');
         doc.setTextColor(15, 23, 42);
-        doc.text("POLETHIC BEACON", margin, cursorY + 2);
+        doc.text(flagText, flagX + 3, cursorY + 26);
+        flagX += badgeWidth + 3;
+      }
+    });
+  }
 
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(8.5);
-        doc.setTextColor(0, 180, 216);
-        doc.text(subHeaderLabels[lang] || subHeaderLabels['fr'], margin, cursorY + 7);
+  cursorY += cardHeight + 10;
 
-        cursorY += 12;
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.4);
-        doc.line(margin, cursorY, pageWidth - margin, cursorY);
+  // --- CUERPO DEL INFORME CON SALTO DE PÁGINA DUAL ---
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.5);
+  doc.setTextColor(30, 41, 59);
 
-        cursorY += 8;
+  const splitText = doc.splitTextToSize(cleanText, contentWidth);
+  
+  splitText.forEach((line) => {
+    if (cursorY + 7 > pageHeight - margin) {
+      doc.addPage();
+      cursorY = margin;
+    }
+    doc.text(line, margin, cursorY);
+    cursorY += 5;
+  });
 
-        const now = new Date();
-        const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', {
-          day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-        });
-        const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
-
-        // Coordenadas de color dinámicas según Score
-        let scoreR = 234, scoreG = 179, scoreB = 8; // B (Amarillo)
-        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; } // Verde
-        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; } // Naranja
-        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; } // Rojo
-
-        // Obtener los elementos de las flags impresos actualmente en la pantalla
-        const flagElements = Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim());
-
-        // Calculamos la altura de la tarjeta según si hay flags o no
-        const cardHeight = flagElements.length > 0 ? 32 : 20;
-
-        // Tarjeta principal de la métrica
-        doc.setFillColor(248, 250, 252);
-        doc.setDrawColor(226, 232, 240);
-        doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
-
-        // Badge de Ethic Score
-        doc.setFillColor(scoreR, scoreG, scoreB);
-        doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(7.5);
-        doc.setTextColor(255, 255, 255);
-        doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
-        doc.setFontSize(12);
-        doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
-
-        // Metadatos de la sesión
-        doc.setFont("courier", "bold");
-        doc.setFontSize(9.5);
-        doc.setTextColor(51, 65, 85);
-
-        const refText = `${refLabels[lang] || 'RÉFÉRENCE'} : ${auditId}`;
-        const dateText = `${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`;
-        doc.text(refText, margin + 46, cursorY + 8);
-        doc.text(dateText, margin + 46, cursorY + 13);
-
-        // 🏷️ IMPRESIÓN DINÁMICA DE FLAGS EN EL PDF
-        if (flagElements.length > 0) {
-          doc.setDrawColor(226, 232, 240);
-          doc.setLineWidth(0.3);
-          doc.line(margin + 3, cursorY + 19, margin + contentWidth - 3, cursorY + 19);
-
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(7.5);
-          doc.setTextColor(100, 116, 139);
-          doc.text(`${flagsHeaderLabels[lang] || 'INDICATEURS'}:`, margin + 5, cursorY + 26);
-
-          let flagX = margin + 30;
-          flagElements.forEach(flagText => {
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(7);
-            const textWidth = doc.getTextWidth(flagText);
-            const badgeWidth = textWidth + 6;
-
-            // Si sobrepasa la tarjeta, corta para evitar salirse del margen
-            if (flagX + badgeWidth < margin + contentWidth - 3) {
-              doc.setFillColor(226, 232, 240);
-              doc.roundedRect(flagX, cursorY + 22, badgeWidth, 5.5, 1, 1, 'F');
-              doc.setTextColor(15, 23, 42);
-              doc.text(flagText, flagX + 3, cursorY + 26);
-              flagX += badgeWidth + 3;
-            }
-          });
-        }
-
-        cursorY += cardHeight + 6;
+  // Guardar archivo PDF generado
+  doc.save(`Polethic_Beacon_Audit_${auditId}.pdf`);
+});
 
         // --- PROCESAMIENTO DEL CUERPO DEL INFORME ---
         const lines = cleanText.split('\n');
