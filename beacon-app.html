@@ -510,7 +510,7 @@
         }
       }
 
-      // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
+    // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
 const FLAGS_BY_SCORE = {
   es: {
     'A': ['FACTUAL', 'TRANSPARENTE', 'DESCRIPTIVO', 'SIN RIESGO'],
@@ -534,7 +534,6 @@ const FLAGS_BY_SCORE = {
 
 // 2. DICCIONARIO DE TRADUCCIÓN DE CLAVES DEL BACKEND
 const FLAG_DICTIONARY = {
-  // Claves técnicas del backend -> Traducciones
   'fakenews': { es: 'NOTICIA FALSA', fr: 'FAUX BRUIT', en: 'FAKE NEWS' },
   'myth': { es: 'MITO', fr: 'MYTHE', en: 'MYTH' },
   'bluff': { es: 'MARKETING / HYPE', fr: 'BLUFF / HYPE', en: 'BLUFF / HYPE' },
@@ -543,8 +542,6 @@ const FLAG_DICTIONARY = {
   'pseudoscience': { es: 'SEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
   'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
   'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
-  
-  // Compatibilidad con respuestas en francés antiguo
   'persuasif': { es: 'PERSUASIVO', fr: 'PERSUASIF', en: 'PERSUASIVE' },
   'marketing': { es: 'MARKETING', fr: 'MARKETING', en: 'MARKETING' },
   'biais leger': { es: 'SESGO LEVE', fr: 'BIAIS LÉGER', en: 'LIGHT BIAS' },
@@ -565,10 +562,8 @@ function applyEthicBadge(score, customFlags) {
   ethicScore.innerText = `Ethic-Score™: ${letter}`;
   ethicScore.style.backgroundColor = color;
 
-  // Idioma actual seguro (por defecto 'fr' si no existe)
   const lang = (typeof currentLang !== 'undefined' && FLAGS_BY_SCORE[currentLang]) ? currentLang : 'fr';
 
-  // Si vienen customFlags usarlas, si no tomar las de fallback según idioma
   const flagsToRender = (customFlags && customFlags.length > 0) 
     ? customFlags 
     : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
@@ -586,8 +581,6 @@ function renderFlags(flagsArray) {
   (flags || ['ANALYSE']).forEach(f => {
     const rawKey = f.trim().toLowerCase();
     
-    // Si la etiqueta existe en el diccionario, se traduce al idioma seleccionado.
-    // Si no, se muestra en mayúsculas como viene.
     let displayLabel = f.trim().toUpperCase();
     if (FLAG_DICTIONARY[rawKey] && FLAG_DICTIONARY[rawKey][lang]) {
       displayLabel = FLAG_DICTIONARY[rawKey][lang];
@@ -600,7 +593,7 @@ function renderFlags(flagsArray) {
   });
 }
 
-// ⚡ Análisis Inicial
+// ⚡ Análisis Inicial (Versión Única e Integrada)
 btnAnalyze.addEventListener('click', async () => {
   const text = userInput.value.trim();
   if (!text && userFile.files.length === 0) {
@@ -632,7 +625,6 @@ btnAnalyze.addEventListener('click', async () => {
     });
     const data = await response.json();
     
-    // Corregido: lee data.flags o data.detected_flags
     const flagsReceived = data.flags || data.detected_flags;
     
     applyEthicBadge(data.ethic_letter || 'C', flagsReceived);
@@ -650,38 +642,6 @@ btnAnalyze.addEventListener('click', async () => {
     btnAnalyze.disabled = false;
   }
 });
-
-      // ⚡ Análisis Inicial
-      btnAnalyze.addEventListener('click', async () => {
-        const text = userInput.value.trim();
-        if (!text && userFile.files.length === 0) {
-          return alert(currentLang === 'es' ? 'Por favor ingrese texto o adjunte un archivo.' : 'Veuillez entrer du texte ou joindre un fichier.');
-        }
-
-        lastAnalyzedText = text;
-        btnAnalyze.disabled = true;
-        resultsPanel.style.display = 'block';
-        analysisReport.innerText = currentLang === 'es' ? '⚡ Análisis en proceso...' : '⚡ Analyse en cours...';
-        startEthicSpinner();
-
-        try {
-          const response = await fetch(`${API_BASE_URL}/analyze`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, lang: currentLang })
-          });
-          const data = await response.json();
-          
-          applyEthicBadge(data.ethic_letter || 'C', data.detected_flags);
-          analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
-          
-        } catch (e) {
-          applyEthicBadge('C');
-          analysisReport.innerText = currentLang === 'es' ? "Error de conexión con el servidor." : "Erreur de connexion avec le serveur d'analyse.";
-        } finally {
-          btnAnalyze.disabled = false;
-        }
-      });
 
       // 🔄 REFUTACIÓN DIRECTA
       btnRefute.addEventListener('click', async () => {
