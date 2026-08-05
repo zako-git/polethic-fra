@@ -510,45 +510,146 @@
         }
       }
 
-      const FLAGS_BY_SCORE = {
-        'A': ['FACTUEL', 'TRANSPARENT', 'DESCRIPTIF', 'SANS RISQUE'],
-        'B': ['PERSUASIF', 'MARKETING', 'BIAIS LEGER', 'PROMESSE'],
-        'C': ['MANIPULATION', 'AMBIGUÏTÉ', 'PSEUDO-SCIENCE', 'RETORIQUE'],
-        'D': ['RISQUE SECTAIRE', 'EMPRISE', 'ISOLLEMENT', 'DANGER COGNITIF']
-      };
+      // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
+const FLAGS_BY_SCORE = {
+  es: {
+    'A': ['FACTUAL', 'TRANSPARENTE', 'DESCRIPTIVO', 'SIN RIESGO'],
+    'B': ['PERSUASIVO', 'MARKETING', 'SESGO LEVE', 'PROMESA'],
+    'C': ['MANIPULACIÓN', 'AMBIGÜEDAD', 'SEUDOCIENCIA', 'RETÓRICA'],
+    'D': ['RIESGO SECTARIO', 'INFLUENCIA', 'AISLAMIENTO', 'PELIGRO COGNITIVO']
+  },
+  fr: {
+    'A': ['FACTUEL', 'TRANSPARENT', 'DESCRIPTIF', 'SANS RISQUE'],
+    'B': ['PERSUASIF', 'MARKETING', 'BIAIS LEGER', 'PROMESSE'],
+    'C': ['MANIPULATION', 'AMBIGUÏTÉ', 'PSEUDO-SCIENCE', 'RHÉTORIQUE'],
+    'D': ['RISQUE SECTAIRE', 'EMPRISE', 'ISOLEMENT', 'DANGER COGNITIF']
+  },
+  en: {
+    'A': ['FACTUAL', 'TRANSPARENT', 'DESCRIPTIVE', 'LOW RISK'],
+    'B': ['PERSUASIVE', 'MARKETING', 'LIGHT BIAS', 'PROMISE'],
+    'C': ['MANIPULATION', 'AMBIGUITY', 'PSEUDOSCIENCE', 'RHETORIC'],
+    'D': ['CULTIC RISK', 'COERCION', 'ISOLATION', 'DANGER']
+  }
+};
 
-      function applyEthicBadge(score, customFlags) {
-        stopEthicSpinner();
-        let letter = 'C';
-        let color = '#ff9900';
-        if (typeof score === 'string') letter = score.toUpperCase();
-        if (letter === 'A') color = '#00ff88';
-        if (letter === 'B') color = '#ffe600';
-        if (letter === 'C') color = '#ff9900';
-        if (letter === 'D') color = '#ff2a6d';
+// 2. DICCIONARIO DE TRADUCCIÓN DE CLAVES DEL BACKEND
+const FLAG_DICTIONARY = {
+  // Claves técnicas del backend -> Traducciones
+  'fakenews': { es: 'NOTICIA FALSA', fr: 'FAUX BRUIT', en: 'FAKE NEWS' },
+  'myth': { es: 'MITO', fr: 'MYTHE', en: 'MYTH' },
+  'bluff': { es: 'MARKETING / HYPE', fr: 'BLUFF / HYPE', en: 'BLUFF / HYPE' },
+  'coercion': { es: 'COERCIÓN', fr: 'COERCITION', en: 'COERCION' },
+  'dogma': { es: 'DOGMA', fr: 'DOGME', en: 'DOGMA' },
+  'pseudoscience': { es: 'SEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
+  'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
+  'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
+  
+  // Compatibilidad con respuestas en francés antiguo
+  'persuasif': { es: 'PERSUASIVO', fr: 'PERSUASIF', en: 'PERSUASIVE' },
+  'marketing': { es: 'MARKETING', fr: 'MARKETING', en: 'MARKETING' },
+  'biais leger': { es: 'SESGO LEVE', fr: 'BIAIS LÉGER', en: 'LIGHT BIAS' },
+  'promesse': { es: 'PROMESA', fr: 'PROMESSE', en: 'PROMISE' }
+};
 
-        currentScoreLetter = letter;
-        ethicScore.innerText = `Ethic-Score™: ${letter}`;
-        ethicScore.style.backgroundColor = color;
+function applyEthicBadge(score, customFlags) {
+  stopEthicSpinner();
+  let letter = 'C';
+  let color = '#ff9900';
+  if (typeof score === 'string') letter = score.toUpperCase();
+  if (letter === 'A') color = '#00ff88';
+  if (letter === 'B') color = '#ffe600';
+  if (letter === 'C') color = '#ff9900';
+  if (letter === 'D') color = '#ff2a6d';
 
-        const flagsToRender = (customFlags && customFlags.length > 0) 
-          ? customFlags 
-          : (FLAGS_BY_SCORE[letter] || FLAGS_BY_SCORE['C']);
+  currentScoreLetter = letter;
+  ethicScore.innerText = `Ethic-Score™: ${letter}`;
+  ethicScore.style.backgroundColor = color;
 
-        renderFlags(flagsToRender);
-      }
+  // Idioma actual seguro (por defecto 'fr' si no existe)
+  const lang = (typeof currentLang !== 'undefined' && FLAGS_BY_SCORE[currentLang]) ? currentLang : 'fr';
 
-      function renderFlags(flagsArray) {
-        if (!detectedFlags) return;
-        detectedFlags.innerHTML = '';
-        let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
-        (flags || ['ANALYSE']).forEach(f => {
-          const span = document.createElement('span');
-          span.className = 'flag-badge';
-          span.innerText = f.trim().toUpperCase();
-          detectedFlags.appendChild(span);
-        });
-      }
+  // Si vienen customFlags usarlas, si no tomar las de fallback según idioma
+  const flagsToRender = (customFlags && customFlags.length > 0) 
+    ? customFlags 
+    : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
+
+  renderFlags(flagsToRender);
+}
+
+function renderFlags(flagsArray) {
+  if (!detectedFlags) return;
+  detectedFlags.innerHTML = '';
+  
+  let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
+  const lang = (typeof currentLang !== 'undefined') ? currentLang : 'fr';
+
+  (flags || ['ANALYSE']).forEach(f => {
+    const rawKey = f.trim().toLowerCase();
+    
+    // Si la etiqueta existe en el diccionario, se traduce al idioma seleccionado.
+    // Si no, se muestra en mayúsculas como viene.
+    let displayLabel = f.trim().toUpperCase();
+    if (FLAG_DICTIONARY[rawKey] && FLAG_DICTIONARY[rawKey][lang]) {
+      displayLabel = FLAG_DICTIONARY[rawKey][lang];
+    }
+
+    const span = document.createElement('span');
+    span.className = 'flag-badge';
+    span.innerText = displayLabel;
+    detectedFlags.appendChild(span);
+  });
+}
+
+// ⚡ Análisis Inicial
+btnAnalyze.addEventListener('click', async () => {
+  const text = userInput.value.trim();
+  if (!text && userFile.files.length === 0) {
+    const errorMsg = {
+      es: 'Por favor ingrese texto o adjunte un archivo.',
+      fr: 'Veuillez entrer du texte ou joindre un fichier.',
+      en: 'Please enter text or attach a file.'
+    };
+    return alert(errorMsg[currentLang] || errorMsg.fr);
+  }
+
+  lastAnalyzedText = text;
+  btnAnalyze.disabled = true;
+  resultsPanel.style.display = 'block';
+
+  const loadingMsg = {
+    es: '⚡ Análisis en proceso...',
+    fr: '⚡ Analyse en cours...',
+    en: '⚡ Analysis in progress...'
+  };
+  analysisReport.innerText = loadingMsg[currentLang] || loadingMsg.fr;
+  startEthicSpinner();
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, lang: currentLang })
+    });
+    const data = await response.json();
+    
+    // Corregido: lee data.flags o data.detected_flags
+    const flagsReceived = data.flags || data.detected_flags;
+    
+    applyEthicBadge(data.ethic_letter || 'C', flagsReceived);
+    analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
+    
+  } catch (e) {
+    applyEthicBadge('C');
+    const serverErrMsg = {
+      es: 'Error de conexión con el servidor.',
+      fr: "Erreur de connexion avec le serveur d'analyse.",
+      en: 'Server connection error.'
+    };
+    analysisReport.innerText = serverErrMsg[currentLang] || serverErrMsg.fr;
+  } finally {
+    btnAnalyze.disabled = false;
+  }
+});
 
       // ⚡ Análisis Inicial
       btnAnalyze.addEventListener('click', async () => {
