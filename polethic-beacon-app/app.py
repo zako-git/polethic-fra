@@ -3,6 +3,8 @@ import re
 import sqlite3
 import io
 import unicodedata
+import requests
+from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from huggingface_hub import InferenceClient
@@ -73,6 +75,41 @@ def extract_transcript(url):
         return " ".join([t['text'] for t in transcript])
     except Exception as e:
         print(f"[extract_transcript] error: {e}")
+        return None
+
+
+# =====================================================================
+# 🌐 EXTRACCIÓN DE TEXTO DESDE SITIOS WEB (NUEVA FUNCIÓN)
+# =====================================================================
+def extract_web_content(url):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Eliminamos elementos que generan ruido (código, navegación, scripts, anuncios)
+        for element in soup(["script", "style", "nav", "footer", "header", "noscript", "svg", "iframe"]):
+            element.extract()
+
+        # Extraemos párrafos y encabezados de manera prioritaria
+        paragraphs = soup.find_all(['p', 'h1', 'h2', 'h3', 'li'])
+        extracted_text = " ".join([p.get_text().strip() for p in paragraphs if p.get_text().strip()])
+
+        # Si no encontró párrafos estructurados, extrae todo el texto limpio
+        if not extracted_text:
+            extracted_text = soup.get_text(separator=' ')
+
+        # Limpieza de espacios múltiples y saltos de línea excesivos
+        clean_text = ' '.join(extracted_text.split())
+
+        # Limitamos a 4000 caracteres para no saturar el prompt del LLM
+        return clean_text[:4000]
+    except Exception as e:
+        print(f"[extract_web_content] error: {e}")
         return None
 
 
@@ -271,8 +308,8 @@ def is_heading_line(original_line):
 def analyze():
     try:
         data = request.get_json() or {}
-        text = data.get("text", "")
-        url = data.get("url", "")
+        text = data.get("text", "").strip()
+        url = data.get("url", "").strip()
         lang = str(data.get("lang", "fr")).lower()
 
         if lang not in TEMPLATES:
@@ -281,14 +318,23 @@ def analyze():
         content_to_analyze = text
         source_type = "text"
 
-        if url:
-            transcript = extract_transcript(url)
-            if transcript:
-                content_to_analyze = transcript
-                source_type = "youtube"
+        # 1. Si viene una URL en el campo 'url' o pegada directamente en el recuadro de texto:
+        target_url = url if url else (text if text.startswith("http://") or text.startswith("https://") else "")
 
-        if not content_to_analyze.strip():
-            return jsonify({"error": "No content to analyze."}), 400
+        if target_url:
+            if "youtube.com" in target_url or "youtu.be" in target_url:
+                transcript = extract_transcript(target_url)
+                if transcript:
+                    content_to_analyze = transcript
+                    source_type = "youtube"
+            else:
+                web_text = extract_web_content(target_url)
+                if web_text:
+                    content_to_analyze = web_text
+                    source_type = "web"
+
+        if not content_to_analyze or not content_to_analyze.strip():
+            return jsonify({"error": "No content could be extracted or analyzed from this source."}), 400
 
         # Reglas locales
         local_penalty, local_flags = apply_local_rules(content_to_analyze)
