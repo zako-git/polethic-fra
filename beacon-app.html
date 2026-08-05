@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>POLETHIC BEACON — Cognitive Self-Defense Laboratory</title>
   
-  <!-- Dependencias externas -->
+  <!-- Librerías Externas CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -227,7 +227,6 @@
       cursor: not-allowed;
     }
 
-    /* Targeta de Resultados */
     .results-header {
       display: flex;
       justify-content: space-between;
@@ -294,7 +293,7 @@
 
     <main>
       <section class="panel input-panel">
-        <textarea id="user-input" placeholder="Collez votre texte, lien YouTube ou téléchargez un documento ici..."></textarea>
+        <textarea id="user-input" placeholder="Collez votre texte, lien YouTube ou téléchargez un fichier ici..."></textarea>
         
         <div class="input-controls">
           <div class="file-input-wrapper">
@@ -336,9 +335,8 @@
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
 
-    const API_BASE_URL = 'https://polethic-beacon.onrender.com'; // Ajusta según la URL real de Render
+    const API_BASE_URL = 'https://polethic-beacon.onrender.com';
 
-    // Idiomas
     const langMap = {
       fr: {
         fileBtn: 'Fichier / File',
@@ -369,7 +367,6 @@
     let spinnerInterval = null;
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Elementos del DOM
       const userInput = document.getElementById('user-input');
       const userFile = document.getElementById('user-file');
       const fileNameDisplay = document.getElementById('file-name');
@@ -382,7 +379,6 @@
       const ethicScore = document.getElementById('ethic-score');
       const detectedFlags = document.getElementById('detected-flags');
 
-      // Generar Fondo de Estrellas
       function generateStars() {
         const container = document.getElementById('stars-container');
         if (!container) return;
@@ -400,7 +396,6 @@
       }
       generateStars();
 
-      // Cambio de Idioma
       document.querySelectorAll('.btn-lang').forEach(btn => {
         btn.addEventListener('click', (e) => {
           document.querySelectorAll('.btn-lang').forEach(b => b.classList.remove('active'));
@@ -410,7 +405,6 @@
         });
       });
 
-      // Selector de Archivo
       userFile.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
           fileNameDisplay.innerText = e.target.files[0].name;
@@ -419,7 +413,6 @@
         }
       });
 
-      // Animación de Carga (Spinner Ethic)
       function startEthicSpinner() {
         let frames = ['[  =  ]', '[ ==  ]', '[ === ]', '[  == ]'];
         let idx = 0;
@@ -451,7 +444,6 @@
         }
       }
 
-      // Funciones de Extracción Local (OCR & PDF)
       async function extractTextFromImage(file) {
         document.getElementById('txt-status').innerText = '● LECTURE OCR (TESSERACT)...';
         const worker = await Tesseract.createWorker(currentLang === 'es' ? 'spa' : (currentLang === 'fr' ? 'fra' : 'eng'));
@@ -485,7 +477,12 @@
         const file = userFile.files[0];
 
         if (!textToAnalyze && !file) {
-          return alert("Por favor ingrese texto, una URL de YouTube o un archivo.");
+          const errorMsg = {
+            es: 'Por favor ingrese texto, una URL de YouTube o adjunte un archivo.',
+            fr: 'Veuillez entrer du texte, un lien YouTube ou joindre un fichier.',
+            en: 'Please enter text, a YouTube link or attach a file.'
+          };
+          return alert(errorMsg[currentLang] || errorMsg.fr);
         }
 
         btnAnalyze.disabled = true;
@@ -501,131 +498,397 @@
             }
           } else if (extractYouTubeID(textToAnalyze)) {
             const videoId = extractYouTubeID(textToAnalyze);
-            document.getElementById('txt-status').innerText = `● YOUTUBE TRANSCRIPT (${videoId})...`;
+            document.getElementById('txt-status').innerText = `● RÉCUPÉRATION DU TRANSCRIPT YOUTUBE (${videoId})...`;
+            
             const ytResponse = await fetch(`${API_BASE_URL}/transcript?videoId=${videoId}`);
             if (!ytResponse.ok) throw new Error(`YouTube API Error: ${ytResponse.status}`);
             const ytData = await ytResponse.json();
             textToAnalyze = ytData.fullText || ytData.text || ytData.transcript;
           }
 
-          if (!textToAnalyze) throw new Error("No se pudo extraer texto.");
+          if (!textToAnalyze) {
+            throw new Error("No se pudo extraer texto del archivo o enlace proporcionado.");
+          }
 
           userInput.value = textToAnalyze;
           lastAnalyzedText = textToAnalyze;
 
-          document.getElementById('txt-status').innerText = '● CONNECTING TO BACKEND...';
-
+          document.getElementById('txt-status').innerText = '● CONNECTING TO BEACON BACKEND (RENDER)...';
+          
           const response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: textToAnalyze, lang: currentLang })
+            body: JSON.stringify({ 
+              text: textToAnalyze, 
+              prompt: textToAnalyze,
+              lang: currentLang 
+            })
           });
 
-          if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`HTTP Error ${response.status}: ${response.statusText}`);
+          }
 
           const data = await response.json();
-          const flagsReceived = data.flags || data.detected_flags || [];
-          const scoreReceived = data.ethic_letter || data.score || 'C';
-          const reportText = data.analysis || data.report || 'Analyse terminée.';
+
+          const flagsReceived = data.flags || data.detected_flags || data.categories;
+          const scoreReceived = data.ethic_letter || data.score || data.ethic_score || 'C';
+          const reportText = data.analysis || data.report || data.response || data.result || 'Analyse terminée.';
 
           applyEthicBadge(scoreReceived, flagsReceived);
           analysisReport.innerText = reportText;
           document.getElementById('txt-status').innerText = '● ANALYSE TERMINÉE | SYSTEM ONLINE';
 
         } catch (e) {
-          console.error(e);
+          console.error("Error en POLETHIC BEACON:", e);
           applyEthicBadge('C');
-          analysisReport.innerText = `⚠️ Error:\n${e.message}\n\nSi Render estuvo inactivo, espere 30s y reintente.`;
-          document.getElementById('txt-status').innerText = '● ERREUR SYSTEME';
+          analysisReport.innerText = `⚠️ Error de conexión / processing:\n${e.message}\n\nNota: Si el servidor en Render estuvo inactivo, puede tardar hasta 1 minuto en encender. Por favor, reintente en 30 segundos.`;
+          document.getElementById('txt-status').innerText = '● ERREUR SYSTEME / BACKEND OFFLINE';
         } finally {
           btnAnalyze.disabled = false;
         }
       });
 
-      // 🔄 REFUTAR
+      // 🔄 REFUTACIÓN DIRECTA
       btnRefute.addEventListener('click', async () => {
         const currentAnalysis = analysisReport ? analysisReport.innerText : '';
-        const t = langMap[currentLang] || langMap.fr;
+        const t = (typeof langMap !== 'undefined' && langMap[currentLang]) ? langMap[currentLang] : {};
 
-        if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur")) {
-          return alert(t.noAnalysisAlert);
+        if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("⚡")) {
+          return alert(t.noAnalysisAlert || "No hay un análisis disponible para refutar.");
         }
 
         btnRefute.disabled = true;
-        btnRefute.innerText = t.refuting;
+        btnRefute.innerText = t.refuting || "Refutando...";
 
         try {
           const response = await fetch(`${API_BASE_URL}/refute`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ analysis: currentAnalysis, text: lastAnalyzedText, lang: currentLang })
+            body: JSON.stringify({
+              analysis: currentAnalysis,
+              text: typeof lastAnalyzedText !== 'undefined' ? lastAnalyzedText : '',
+              lang: currentLang
+            })
           });
 
-          if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+          }
 
           const data = await response.json();
-          const refutationText = data.refutation || data.reply || '';
+          const refutationText = data.refutation || data.reply || data.response || '';
 
           if (refutationText) {
             analysisReport.innerText += `\n\n========================================\n🔥 DÉFI DU BIAIS (RÉFUTATION COGNITIVE):\n========================================\n${refutationText}`;
           }
         } catch (e) {
-          alert("Erreur lors du traitement de la réfutation.");
+          console.error("Error en Refute:", e);
+          alert(currentLang === 'es' ? "Error al procesar la refutación. Verifique la conexión." : "Erreur lors du traitement de la réfutation.");
         } finally {
           btnRefute.disabled = false;
-          btnRefute.innerText = t.refuteBtn;
+          btnRefute.innerText = t.refuteBtn || "Refutar / Défi";
         }
       });
 
-      // 📄 EXPORTAR PDF
+      // 📄 EXPORTAR PDF COMPLETO Y MAQUETADO
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport ? analysisReport.innerText : '';
-        if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
-          return alert("No hay informe disponible para exportar.");
+        const lang = currentLang || 'fr';
+        const t = (typeof langMap !== 'undefined' && langMap[lang]) ? langMap[lang] : {};
+
+        if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur") || reportText.includes("Waiting") || reportText.includes("En espera")) {
+          return alert(t.noExportAlert || "No report available");
         }
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
+
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
         const margin = 18;
         const contentWidth = pageWidth - (margin * 2);
         let cursorY = margin;
 
-        let cleanText = reportText.replace(/\*\*/g, '').trim();
+        const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
 
+        let cleanText = reportText
+          .replace(/\*\*/g, '')
+          .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+          .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
+          .replace(WHITELIST, '')
+          .trim();
+
+        const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
+        const subHeaderLabels = {
+          fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
+          es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
+          en: "COGNITIVE SELF-DEFENSE LABORATORY"
+        };
+        const refLabels = { fr: 'RÉF', es: 'REF', en: 'REF' };
+        const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
+        const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
+        const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
+
+        function printSectionHeader(text, x, y) {
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(11.5);
+          doc.setTextColor(15, 23, 42);
+          doc.text(text, x, y);
+
+          doc.setDrawColor(0, 200, 235);
+          doc.setLineWidth(0.6);
+          doc.line(x, y + 3, x + contentWidth, y + 3);
+        }
+
+        // ENCABEZADO OFICIAL
         doc.setFont("courier", "bold");
         doc.setFontSize(15);
+        doc.setTextColor(15, 23, 42);
         doc.text("POLETHIC BEACON", margin, cursorY + 2);
 
-        cursorY += 15;
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(9.5);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8.5);
+        doc.setTextColor(0, 180, 216);
+        doc.text(subHeaderLabels[lang] || subHeaderLabels['fr'], margin, cursorY + 7);
 
-        const splitText = doc.splitTextToSize(cleanText, contentWidth);
-        splitText.forEach((line) => {
-          if (cursorY + 7 > pageHeight - margin) {
-            doc.addPage();
-            cursorY = margin;
+        cursorY += 12;
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.4);
+        doc.line(margin, cursorY, pageWidth - margin, cursorY);
+
+        cursorY += 8;
+
+        const now = new Date();
+        const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', {
+          day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+
+        const scoreLetter = typeof currentScoreLetter !== 'undefined' ? currentScoreLetter : 'C';
+        let scoreR = 234, scoreG = 179, scoreB = 8;
+        if (scoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
+        if (scoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
+        if (scoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
+
+        const flagElements = (typeof detectedFlags !== 'undefined' && detectedFlags)
+          ? Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim())
+          : [];
+
+        const cardHeight = flagElements.length > 0 ? 32 : 20;
+
+        // Tarjeta principal
+        doc.setFillColor(248, 250, 252);
+        doc.setDrawColor(226, 232, 240);
+        doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
+
+        // Badge Ethic Score
+        doc.setFillColor(scoreR, scoreG, scoreB);
+        doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.5);
+        doc.setTextColor(255, 255, 255);
+        doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
+        doc.setFontSize(12);
+        doc.text(`${levelLabels[lang] || 'NIVEAU'} ${scoreLetter}`, margin + 5, cursorY + 13.5);
+
+        // Metadatos
+        doc.setFont("courier", "bold");
+        doc.setFontSize(9.5);
+        doc.setTextColor(51, 65, 85);
+
+        const refText = `${refLabels[lang] || 'RÉFÉRENCE'} : ${auditId}`;
+        const dateText = `${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`;
+        doc.text(refText, margin + 46, cursorY + 8);
+        doc.text(dateText, margin + 46, cursorY + 13);
+
+        // Banderas / Flags
+        if (flagElements.length > 0) {
+          doc.setDrawColor(226, 232, 240);
+          doc.setLineWidth(0.3);
+          doc.line(margin + 3, cursorY + 19, margin + contentWidth - 3, cursorY + 19);
+
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(7.5);
+          doc.setTextColor(100, 116, 139);
+          doc.text(`${flagsHeaderLabels[lang] || 'INDICATEURS'}:`, margin + 5, cursorY + 26);
+
+          let flagX = margin + 30;
+          flagElements.forEach(flagText => {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(7);
+            const textWidth = doc.getTextWidth(flagText);
+            const badgeWidth = textWidth + 6;
+
+            if (flagX + badgeWidth < margin + contentWidth - 3) {
+              doc.setFillColor(226, 232, 240);
+              doc.roundedRect(flagX, cursorY + 22, badgeWidth, 5.5, 1, 1, 'F');
+              doc.setTextColor(15, 23, 42);
+              doc.text(flagText, flagX + 3, cursorY + 26);
+              flagX += badgeWidth + 3;
+            }
+          });
+        }
+
+        cursorY += cardHeight + 10;
+
+        // Procesamiento e Impresión Estructurada
+        const lines = cleanText.split('\n');
+
+        lines.forEach((line) => {
+          let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
+
+          if (!trimmed || trimmed === '•' || trimmed === '=' || trimmed.startsWith('===')) {
+            cursorY += 2;
+            return;
           }
-          doc.text(line, margin, cursorY);
-          cursorY += 5;
+
+          const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE CORTICAL|RECADRAGE CORTICAL|CORTICAL REFRAMING|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE|RÉFUTATION COGNITIVE|REFUTACION COGNITIVA|COGNITIVE REFUTATION)/i.test(trimmed);
+
+          if (isHeader) {
+            if (cursorY > pageHeight - 25) { doc.addPage(); cursorY = margin + 5; }
+            cursorY += 5;
+
+            let headerText = trimmed.replace(/^[-•\s=]+/, '').toUpperCase();
+            printSectionHeader(headerText, margin, cursorY);
+
+            cursorY += 9;
+          } else {
+            let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
+            let cleanContent = isBullet ? trimmed.replace(/^[-•]\s*/, '').trim() : trimmed;
+
+            if (!cleanContent) return;
+
+            let hasColonLabel = cleanContent.includes(':') && cleanContent.indexOf(':') < 40 && !/^\d+[\.\)]/.test(cleanContent);
+
+            if (hasColonLabel) {
+              if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
+
+              let indent = isBullet ? margin + 5 : margin;
+              let colonIndex = cleanContent.indexOf(':');
+              let labelPart = cleanContent.substring(0, colonIndex + 1);
+              let valuePart = cleanContent.substring(colonIndex + 1).trim();
+
+              if (isBullet) {
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(10);
+                doc.setTextColor(51, 65, 85);
+                doc.text("• ", margin, cursorY);
+              }
+
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.setTextColor(15, 23, 42);
+              doc.text(labelPart, indent, cursorY);
+
+              let labelWidth = doc.getTextWidth(labelPart + " ");
+
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
+              doc.setTextColor(51, 65, 85);
+
+              let maxValWidth = contentWidth - (indent - margin) - labelWidth;
+              const splitValue = doc.splitTextToSize(valuePart, maxValWidth);
+
+              if (splitValue.length > 0) {
+                doc.text(splitValue[0], indent + labelWidth, cursorY);
+                cursorY += 5.5;
+
+                for (let k = 1; k < splitValue.length; k++) {
+                  if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
+                  doc.text(splitValue[k], indent + 4, cursorY);
+                  cursorY += 5.5;
+                }
+              } else {
+                cursorY += 5.5;
+              }
+              cursorY += 1.5;
+            } else {
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
+              doc.setTextColor(51, 65, 85);
+
+              let indent = isBullet ? margin + 5 : margin;
+              let printWidth = isBullet ? contentWidth - 5 : contentWidth;
+              let printText = isBullet ? "• " + cleanContent : cleanContent;
+
+              const splitLines = doc.splitTextToSize(printText, printWidth);
+
+              splitLines.forEach((subLine) => {
+                if (cursorY > pageHeight - 18) { doc.addPage(); cursorY = margin + 5; }
+                doc.text(subLine, indent, cursorY);
+                cursorY += 5.5;
+              });
+              cursorY += 1.5;
+            }
+          }
         });
 
-        doc.save(`Rapport_Beacon_${currentScoreLetter}.pdf`);
+        // Pie de Página
+        const footerLabels = {
+          fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
+          es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
+          en: "POLETHIC BEACON — Analysis and cognitive self-defense"
+        };
+
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setDrawColor(226, 232, 240);
+          doc.setLineWidth(0.3);
+          doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(8);
+          doc.setTextColor(148, 163, 184);
+          doc.text(footerLabels[lang] || footerLabels['fr'], margin, pageHeight - 7);
+          doc.text(`Page ${i} / ${pageCount}`, pageWidth - margin - 15, pageHeight - 7);
+        }
+
+        doc.save(`RAPPORT_BEACON_${scoreLetter}_${auditId}.pdf`);
       });
 
-      // 🗑️ PURGAR
+      // 🗑️ PURGAR (Limpiar interfaz)
       btnPurge.addEventListener('click', () => {
         userInput.value = '';
         userFile.value = '';
-        fileNameDisplay.innerText = '';
-        analysisReport.innerText = 'En attente d\'analyse...';
-        detectedFlags.innerHTML = '<span class="flag-badge">ANALYSE PRÊTE</span>';
+        
+        if (typeof fileNameDisplay !== 'undefined' && fileNameDisplay) {
+          const fileBtnText = (typeof langMap !== 'undefined' && langMap[currentLang] && langMap[currentLang].fileBtn) 
+            ? langMap[currentLang].fileBtn 
+            : 'Fichier / File';
+          fileNameDisplay.innerText = fileBtnText;
+        }
+        
+        const resetText = {
+          es: 'En espera de análisis...',
+          fr: 'En attente d\'analyse...',
+          en: 'Waiting for analysis...'
+        };
+        if (analysisReport) {
+          analysisReport.innerText = resetText[currentLang] || resetText.fr;
+        }
+
+        const readyText = {
+          es: 'ANÁLISIS LISTO',
+          fr: 'ANALYSE PRÊTE',
+          en: 'ANALYSIS READY'
+        };
+        if (detectedFlags) {
+          detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText[currentLang] || readyText.fr}</span>`;
+        }
+
         stopEthicSpinner();
-        ethicScore.innerText = 'Ethic-Score™: --';
-        ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
-        resultsPanel.style.display = 'none';
+        
+        if (ethicScore) {
+          ethicScore.innerText = 'Ethic-Score™: --';
+          ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
+        }
+        
+        if (resultsPanel) {
+          resultsPanel.style.display = 'none';
+        }
+        
         lastAnalyzedText = "";
       });
     });
