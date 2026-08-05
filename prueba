@@ -17,7 +17,7 @@
       --cyber-green: #00ff88;
       --cyber-red: #ff2a6d;
       --cyber-yellow: #ffe600;
-      --cyber-bg: #061526; /* Fondo base */
+      --cyber-bg: #061526;
       --cyber-card-bg: rgba(15, 23, 42, 0.85);
       --font-cyber: 'Courier New', Courier, monospace;
     }
@@ -29,7 +29,8 @@
       color: #e0e0e0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
-      /* FONDO Y ESTRELLAS BRILLANTES */
+      position: relative;
+      overflow-x: hidden;
       background-image: 
         radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
         radial-gradient(2px 2px at 40px 70px, rgba(0, 240, 255, 0.9), rgba(0,0,0,0)),
@@ -37,6 +38,34 @@
         radial-gradient(1.5px 1.5px at 160px 120px, rgba(0, 255, 136, 0.8), rgba(0,0,0,0)),
         radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.22) 0%, transparent 70%);
       background-attachment: fixed;
+    }
+
+    /* CAPA DE ESTRELLAS ANIMADAS */
+    #stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 50%;
+      animation: twinkle linear infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    header, main, footer {
+      position: relative;
+      z-index: 1;
     }
 
     header {
@@ -261,6 +290,9 @@
 </head>
 <body>
 
+  <!-- CAPA DE ESTRELLAS DE FONDO -->
+  <div id="stars-container"></div>
+
   <!-- CABECERA -->
   <header>
     <div class="container header-layout">
@@ -335,6 +367,26 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+
+      // GENERADOR DE ESTRELLAS DINÁMICO
+      function generateStars(count = 40) {
+        const container = document.getElementById('stars-container');
+        if (!container) return;
+        container.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          const size = Math.random() * 2.5 + 1;
+          star.style.width = `${size}px`;
+          star.style.height = `${size}px`;
+          star.style.top = `${Math.random() * 100}%`;
+          star.style.left = `${Math.random() * 100}%`;
+          star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+          star.style.animationDelay = `${Math.random() * 3}s`;
+          container.appendChild(star);
+        }
+      }
+      generateStars();
 
       const btnAnalyze = document.getElementById('btn-analyze');
       const userInput = document.getElementById('user-input');
@@ -458,65 +510,140 @@
         }
       }
 
-      function applyEthicBadge(score) {
-        stopEthicSpinner();
-        let letter = 'C';
-        let color = '#ff9900';
-        if (typeof score === 'string') letter = score.toUpperCase();
-        if (letter === 'A') color = '#00ff88';
-        if (letter === 'B') color = '#ffe600';
-        if (letter === 'C') color = '#ff9900';
-        if (letter === 'D') color = '#ff2a6d';
+    // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
+const FLAGS_BY_SCORE = {
+  es: {
+    'A': ['FACTUAL', 'TRANSPARENTE', 'DESCRIPTIVO', 'SIN RIESGO'],
+    'B': ['PERSUASIVO', 'MARKETING', 'SESGO LEVE', 'PROMESA'],
+    'C': ['MANIPULACIÓN', 'AMBIGÜEDAD', 'PSEUDOCIENCIA', 'RETÓRICA'],
+    'D': ['RIESGO SECTARIO', 'INFLUENCIA', 'AISLAMIENTO', 'PELIGRO COGNITIVO']
+  },
+  fr: {
+    'A': ['FACTUEL', 'TRANSPARENT', 'DESCRIPTIF', 'SANS RISQUE'],
+    'B': ['PERSUASIF', 'MARKETING', 'BIAIS LEGER', 'PROMESSE'],
+    'C': ['MANIPULATION', 'AMBIGUÏTÉ', 'PSEUDO-SCIENCE', 'RHÉTORIQUE'],
+    'D': ['RISQUE SECTAIRE', 'EMPRISE', 'ISOLEMENT', 'DANGER COGNITIF']
+  },
+  en: {
+    'A': ['FACTUAL', 'TRANSPARENT', 'DESCRIPTIVE', 'LOW RISK'],
+    'B': ['PERSUASIVE', 'MARKETING', 'LIGHT BIAS', 'PROMISE'],
+    'C': ['MANIPULATION', 'AMBIGUITY', 'PSEUDOSCIENCE', 'RHETORIC'],
+    'D': ['CULTIC RISK', 'COERCION', 'ISOLATION', 'DANGER']
+  }
+};
 
-        currentScoreLetter = letter;
-        ethicScore.innerText = `Ethic-Score™: ${letter}`;
-        ethicScore.style.backgroundColor = color;
-      }
+// 2. DICCIONARIO DE TRADUCCIÓN DE CLAVES DEL BACKEND
+const FLAG_DICTIONARY = {
+  'fakenews': { es: 'NOTICIA FALSA', fr: 'FAUX BRUIT', en: 'FAKE NEWS' },
+  'myth': { es: 'MITO', fr: 'MYTHE', en: 'MYTH' },
+  'bluff': { es: 'MARKETING / HYPE', fr: 'BLUFF / HYPE', en: 'BLUFF / HYPE' },
+  'coercion': { es: 'COERCIÓN', fr: 'COERCITION', en: 'COERCION' },
+  'dogma': { es: 'DOGMA', fr: 'DOGME', en: 'DOGMA' },
+  'pseudoscience': { es: 'PSEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
+  'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
+  'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
+  'persuasif': { es: 'PERSUASIVO', fr: 'PERSUASIF', en: 'PERSUASIVE' },
+  'marketing': { es: 'MARKETING', fr: 'MARKETING', en: 'MARKETING' },
+  'biais leger': { es: 'SESGO LEVE', fr: 'BIAIS LÉGER', en: 'LIGHT BIAS' },
+  'promesse': { es: 'PROMESA', fr: 'PROMESSE', en: 'PROMISE' }
+};
 
-      function renderFlags(flagsArray) {
-        if (!detectedFlags) return;
-        detectedFlags.innerHTML = '';
-        let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
-        (flags || ['ANALYSE']).forEach(f => {
-          const span = document.createElement('span');
-          span.className = 'flag-badge';
-          span.innerText = f.trim().toUpperCase();
-          detectedFlags.appendChild(span);
-        });
-      }
+function applyEthicBadge(score, customFlags) {
+  stopEthicSpinner();
+  let letter = 'C';
+  let color = '#ff9900';
+  if (typeof score === 'string') letter = score.toUpperCase();
+  if (letter === 'A') color = '#00ff88';
+  if (letter === 'B') color = '#ffe600';
+  if (letter === 'C') color = '#ff9900';
+  if (letter === 'D') color = '#ff2a6d';
 
-      // ⚡ Análisis Inicial
-      btnAnalyze.addEventListener('click', async () => {
-        const text = userInput.value.trim();
-        if (!text && userFile.files.length === 0) {
-          return alert(currentLang === 'es' ? 'Por favor ingrese texto o adjunte un archivo.' : 'Veuillez entrer du texte ou joindre un fichier.');
-        }
+  currentScoreLetter = letter;
+  ethicScore.innerText = `Ethic-Score™: ${letter}`;
+  ethicScore.style.backgroundColor = color;
 
-        lastAnalyzedText = text;
-        btnAnalyze.disabled = true;
-        resultsPanel.style.display = 'block';
-        analysisReport.innerText = currentLang === 'es' ? '⚡ Análisis en proceso...' : '⚡ Analyse en cours...';
-        startEthicSpinner();
+  const lang = (typeof currentLang !== 'undefined' && FLAGS_BY_SCORE[currentLang]) ? currentLang : 'fr';
 
-        try {
-          const response = await fetch(`${API_BASE_URL}/analyze`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, lang: currentLang })
-          });
-          const data = await response.json();
-          applyEthicBadge(data.ethic_letter || 'C');
-          analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
-          renderFlags(data.detected_flags || ['SIGNAL']);
-        } catch (e) {
-          applyEthicBadge('C');
-          analysisReport.innerText = currentLang === 'es' ? "Error de conexión con el servidor." : "Erreur de connexion avec le serveur d'analyse.";
-        } finally {
-          btnAnalyze.disabled = false;
-        }
-      });
+  const flagsToRender = (customFlags && customFlags.length > 0) 
+    ? customFlags 
+    : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
 
-      // 🔄 REFUTACIÓN DIRECTA AL BACKEND (ENDPOINT /refute)
+  renderFlags(flagsToRender);
+}
+
+function renderFlags(flagsArray) {
+  if (!detectedFlags) return;
+  detectedFlags.innerHTML = '';
+  
+  let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
+  const lang = (typeof currentLang !== 'undefined') ? currentLang : 'fr';
+
+  (flags || ['ANALYSE']).forEach(f => {
+    const rawKey = f.trim().toLowerCase();
+    
+    let displayLabel = f.trim().toUpperCase();
+    if (FLAG_DICTIONARY[rawKey] && FLAG_DICTIONARY[rawKey][lang]) {
+      displayLabel = FLAG_DICTIONARY[rawKey][lang];
+    }
+
+    const span = document.createElement('span');
+    span.className = 'flag-badge';
+    span.innerText = displayLabel;
+    detectedFlags.appendChild(span);
+  });
+}
+
+// ⚡ Análisis Inicial (Versión Única e Integrada)
+btnAnalyze.addEventListener('click', async () => {
+  const text = userInput.value.trim();
+  if (!text && userFile.files.length === 0) {
+    const errorMsg = {
+      es: 'Por favor ingrese texto o adjunte un archivo.',
+      fr: 'Veuillez entrer du texte ou joindre un fichier.',
+      en: 'Please enter text or attach a file.'
+    };
+    return alert(errorMsg[currentLang] || errorMsg.fr);
+  }
+
+  lastAnalyzedText = text;
+  btnAnalyze.disabled = true;
+  resultsPanel.style.display = 'block';
+
+  const loadingMsg = {
+    es: '⚡ Análisis en proceso...',
+    fr: '⚡ Analyse en cours...',
+    en: '⚡ Analysis in progress...'
+  };
+  analysisReport.innerText = loadingMsg[currentLang] || loadingMsg.fr;
+  startEthicSpinner();
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, lang: currentLang })
+    });
+    const data = await response.json();
+    
+    const flagsReceived = data.flags || data.detected_flags;
+    
+    applyEthicBadge(data.ethic_letter || 'C', flagsReceived);
+    analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
+    
+  } catch (e) {
+    applyEthicBadge('C');
+    const serverErrMsg = {
+      es: 'Error de conexión con el servidor.',
+      fr: "Erreur de connexion avec le serveur d'analyse.",
+      en: 'Server connection error.'
+    };
+    analysisReport.innerText = serverErrMsg[currentLang] || serverErrMsg.fr;
+  } finally {
+    btnAnalyze.disabled = false;
+  }
+});
+
+      // 🔄 REFUTACIÓN DIRECTA
       btnRefute.addEventListener('click', async () => {
         const currentAnalysis = analysisReport.innerText;
         const t = langMap[currentLang];
@@ -553,7 +680,7 @@
         }
       });
 
-      // 📄 EXPORTAR PDF (DISEÑO ESTÁNDAR INFORME CRIMINAL - VERSIÓN MULTILINGÜE CORREGIDA)
+     // 📄 EXPORTAR PDF CON FLAGS E IDIOMA
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport.innerText;
         const lang = currentLang || 'fr';
@@ -572,7 +699,6 @@
         const contentWidth = pageWidth - (margin * 2);
         let cursorY = margin;
 
-        // 1. SANEADO POR LISTA BLANCA (caracteres válidos para PDF en helvetica)
         const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
 
         let cleanText = reportText
@@ -582,18 +708,17 @@
           .replace(WHITELIST, '')
           .trim();
 
-        // DICCIONARIOS MULTILINGÜES PARA ENCABEZADO Y FICHA
         const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
         const subHeaderLabels = {
           fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
           es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
           en: "COGNITIVE SELF-DEFENSE LABORATORY"
         };
-        const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
+        const refLabels = { fr: 'RÉF', es: 'REF', en: 'REF' };
         const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
         const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
+        const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
 
-        // --- HELPER: Título de sección en negrita + subrayado decorativo ---
         function printSectionHeader(text, x, y) {
           doc.setFont("helvetica", "bold");
           doc.setFontSize(11.5);
@@ -605,7 +730,7 @@
           doc.line(x, y + 3, x + contentWidth, y + 3);
         }
 
-        // --- ENCABEZADO PRINCIPAL MULTILINGÜE ---
+        // --- ENCABEZADO OFICIAL ---
         doc.setFont("courier", "bold");
         doc.setFontSize(15);
         doc.setTextColor(15, 23, 42);
@@ -629,16 +754,24 @@
         });
         const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
-        let scoreR = 234, scoreG = 179, scoreB = 8;
-        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
-        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
-        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
+        // Coordenadas de color dinámicas según Score
+        let scoreR = 234, scoreG = 179, scoreB = 8; // B (Amarillo)
+        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; } // Verde
+        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; } // Naranja
+        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; } // Rojo
 
+        // Obtener los elementos de las flags impresos actualmente en la pantalla
+        const flagElements = Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim());
+
+        // Calculamos la altura de la tarjeta según si hay flags o no
+        const cardHeight = flagElements.length > 0 ? 32 : 20;
+
+        // Tarjeta principal de la métrica
         doc.setFillColor(248, 250, 252);
         doc.setDrawColor(226, 232, 240);
-        doc.roundedRect(margin, cursorY, contentWidth, 20, 2, 2, 'FD');
+        doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
 
-        // Insignia Ethic-Score
+        // Badge de Ethic Score
         doc.setFillColor(scoreR, scoreG, scoreB);
         doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
         doc.setFont("helvetica", "bold");
@@ -648,20 +781,48 @@
         doc.setFontSize(12);
         doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
 
-        // Datos del expediente
+        // Metadatos de la sesión
         doc.setFont("courier", "bold");
         doc.setFontSize(9.5);
         doc.setTextColor(51, 65, 85);
 
-        // Concatenación para evitar saltos no deseados de línea en el label "REFERENCIA :"
         const refText = `${refLabels[lang] || 'RÉFÉRENCE'} : ${auditId}`;
         const dateText = `${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`;
         doc.text(refText, margin + 46, cursorY + 8);
         doc.text(dateText, margin + 46, cursorY + 13);
 
-        cursorY += 26;
+        // 🏷️ IMPRESIÓN DINÁMICA DE FLAGS EN EL PDF
+        if (flagElements.length > 0) {
+          doc.setDrawColor(226, 232, 240);
+          doc.setLineWidth(0.3);
+          doc.line(margin + 3, cursorY + 19, margin + contentWidth - 3, cursorY + 19);
 
-        // --- CUERPO DEL INFORME ---
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(7.5);
+          doc.setTextColor(100, 116, 139);
+          doc.text(`${flagsHeaderLabels[lang] || 'INDICATEURS'}:`, margin + 5, cursorY + 26);
+
+          let flagX = margin + 30;
+          flagElements.forEach(flagText => {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(7);
+            const textWidth = doc.getTextWidth(flagText);
+            const badgeWidth = textWidth + 6;
+
+            // Si sobrepasa la tarjeta, corta para evitar salirse del margen
+            if (flagX + badgeWidth < margin + contentWidth - 3) {
+              doc.setFillColor(226, 232, 240);
+              doc.roundedRect(flagX, cursorY + 22, badgeWidth, 5.5, 1, 1, 'F');
+              doc.setTextColor(15, 23, 42);
+              doc.text(flagText, flagX + 3, cursorY + 26);
+              flagX += badgeWidth + 3;
+            }
+          });
+        }
+
+        cursorY += cardHeight + 6;
+
+        // --- PROCESAMIENTO DEL CUERPO DEL INFORME ---
         const lines = cleanText.split('\n');
 
         lines.forEach((line) => {
@@ -672,8 +833,7 @@
             return;
           }
 
-          // EXPRESIÓN REGULAR CORREGIDA Y FLEXIBILIZADA:
-const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE CORTICAL|RECADRAGE CORTICAL|CORTICAL REFRAMING|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE|RÉFUTATION COGNITIVE|REFUTACION COGNITIVA|COGNITIVE REFUTATION)/i.test(trimmed);
+          const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE CORTICAL|RECADRAGE CORTICAL|CORTICAL REFRAMING|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE|RÉFUTATION COGNITIVE|REFUTACION COGNITIVA|COGNITIVE REFUTATION)/i.test(trimmed);
 
           if (isHeader) {
             if (cursorY > pageHeight - 25) { doc.addPage(); cursorY = margin + 5; }
@@ -745,7 +905,6 @@ const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLE
               const splitLines = doc.splitTextToSize(printText, printWidth);
 
               splitLines.forEach((subLine) => {
-                // Control de altura estricto antes de escribir para no invadir el footer
                 if (cursorY > pageHeight - 18) { doc.addPage(); cursorY = margin + 5; }
                 doc.text(subLine, indent, cursorY);
                 cursorY += 5.5;
@@ -779,13 +938,33 @@ const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLE
         doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
       });
 
-      // 🗑️ PURGAR
+      // 🗑️ PURGAR (Limpiar interfaz)
       btnPurge.addEventListener('click', () => {
         userInput.value = '';
         userFile.value = '';
         fileNameDisplay.innerText = langMap[currentLang].fileBtn;
-        resultsPanel.style.display = 'none';
+        
+        const resetText = {
+          es: 'En espera de análisis...',
+          fr: 'En attente d\'analyse...',
+          en: 'Waiting for analysis...'
+        };
+        analysisReport.innerText = resetText[currentLang] || resetText.fr;
+
+        const readyText = {
+          es: 'ANÁLISIS LISTO',
+          fr: 'ANALYSE PRÊTE',
+          en: 'ANALYSIS READY'
+        };
+        if (detectedFlags) {
+          detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText[currentLang] || readyText.fr}</span>`;
+        }
+
         stopEthicSpinner();
+        ethicScore.innerText = 'Ethic-Score™: --';
+        ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
+        
+        resultsPanel.style.display = 'none';
         lastAnalyzedText = "";
       });
     });
