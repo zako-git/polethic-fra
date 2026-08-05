@@ -11,64 +11,64 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 
 # =====================================================================
-# DICCIONARIOS DE TRADUCCIÓN DE FLAGS SEGÚN EL IDIOMA
+# DICCIONARIOS Y FUNCIONES AUXILIARES PARA EL PDF
 # =====================================================================
 FLAG_TRANSLATIONS = {
     "es": {
-        "fakenews": "NOTICIA FALSA",
-        "myth": "MITO",
-        "bluff": "MARQUETING / HYPE",
-        "coercion": "COERCION",
-        "dogma": "DOGMA",
-        "pseudoscience": "SEUDOCIENCIA",
-        "authority_transfer": "TRANSFERENCIA AUTORIDAD",
-        "psnc": "SESGO COGNITIVO",
-        "persuasif": "PERSUASIVO",
-        "marketing": "MARKETING",
-        "biais leger": "SESGO LEVE",
+        "fakenews": "NOTICIA FALSA", "myth": "MITO", "bluff": "MARKETING / HYPE",
+        "coercion": "COERCION", "dogma": "DOGMA", "pseudoscience": "SEUDOCIENCIA",
+        "authority_transfer": "TRANSFERENCIA AUTORIDAD", "psnc": "SESGO COGNITIVO",
+        "persuasif": "PERSUASIVO", "marketing": "MARKETING", "biais leger": "SESGO LEVE",
         "promesse": "PROMESA"
     },
     "fr": {
-        "fakenews": "FAUX BRUIT",
-        "myth": "MYTHE",
-        "bluff": "BLUFF / HYPE",
-        "coercion": "COERCITION",
-        "dogma": "DOGME",
-        "pseudoscience": "PSEUDOSCIENCE",
-        "authority_transfer": "TRANSFERT D'AUTORITÉ",
-        "psnc": "BIAIS COGNITIF",
-        "persuasif": "PERSUASIF",
-        "marketing": "MARKETING",
-        "biais leger": "BIAIS LÉGER",
+        "fakenews": "FAUX BRUIT", "myth": "MYTHE", "bluff": "BLUFF / HYPE",
+        "coercion": "COERCITION", "dogma": "DOGME", "pseudoscience": "PSEUDOSCIENCE",
+        "authority_transfer": "TRANSFERT D'AUTORITÉ", "psnc": "BIAIS COGNITIF",
+        "persuasif": "PERSUASIF", "marketing": "MARKETING", "biais leger": "BIAIS LÉGER",
         "promesse": "PROMESSE"
     },
     "en": {
-        "fakenews": "FAKE NEWS",
-        "myth": "MYTH",
-        "bluff": "BLUFF / HYPE",
-        "coercion": "COERCION",
-        "dogma": "DOGMA",
-        "pseudoscience": "PSEUDOSCIENCE",
-        "authority_transfer": "AUTHORITY TRANSFER",
-        "psnc": "COGNITIVE BIAS",
-        "persuasif": "PERSUASIVE",
-        "marketing": "MARKETING",
-        "biais leger": "LIGHT BIAS",
+        "fakenews": "FAKE NEWS", "myth": "MYTH", "bluff": "BLUFF / HYPE",
+        "coercion": "COERCION", "dogma": "DOGMA", "pseudoscience": "PSEUDOSCIENCE",
+        "authority_transfer": "AUTHORITY TRANSFER", "psnc": "COGNITIVE BIAS",
+        "persuasif": "PERSUASIVE", "marketing": "MARKETING", "biais leger": "LIGHT BIAS",
         "promesse": "PROMISE"
     }
 }
 
-def translate_flags(flags_list, lang="fr"):
-    lang_dict = FLAG_TRANSLATIONS.get(lang.lower(), FLAG_TRANSLATIONS["fr"])
-    translated = []
-    for f in flags_list:
-        clean_f = f.strip().lower()
-        translated.append(lang_dict.get(clean_f, f.strip().upper()))
-    return translated
+def get_ethic_letter(score):
+    """Calcula la letra del Ethic-Score según el rango numérico"""
+    if score >= 85: return "A"
+    if score >= 65: return "B"
+    if score >= 40: return "C"
+    return "D"
 
+def translate_flags(flags_list, lang="fr"):
+    """Traduce la lista de alertas/flags al idioma seleccionado"""
+    lang_dict = FLAG_TRANSLATIONS.get(lang.lower(), FLAG_TRANSLATIONS["fr"])
+    return [lang_dict.get(f.strip().lower(), f.strip().upper()) for f in flags_list]
+
+def sanitize_for_pdf(text):
+    """Limpia caracteres Markdown y asegura compatibilidad UTF-8 en ReportLab"""
+    if not text: return ""
+    text = text.replace("**", "").replace("<", "&lt;").replace(">", "&gt;")
+    normalized = unicodedata.normalize('NFKD', text)
+    return normalized.encode('ascii', 'ignore').decode('utf-8')
+
+def is_heading_line(line):
+    """Detecta si una línea del informe debe actuar como un título/encabezado"""
+    line_upper = line.strip().upper()
+    keywords = [
+        "FASE", "PHASE", "NÚCLEO DE HECHOS", "NOYAU DE FAITS", "CORE FACTS",
+        "DESMONTAJE COGNITIVO", "DÉMONTAGE COGNITIF", "COGNITIVE DECONSTRUCTION",
+        "REENCUADRE CORTICAL", "RECADRAGE CORTICAL", "CORTICAL REFRAMING",
+        "DÉFI DU BIAIS", "RÉFUTATION COGNITIVE", "DESAFÍO DEL SESGO"
+    ]
+    return any(kw in line_upper for kw in keywords) or line_upper.startswith("===")
 
 # =====================================================================
-# ENDPOINT UPDATE: /export_pdf (INCLUYE CUADRO CON FECHA, REF Y FLAGS)
+# ENDPOINT: /export_pdf (GENERADOR DE INFORME PDF EN MEMORIA)
 # =====================================================================
 @app.route("/export_pdf", methods=["POST"])
 def export_pdf():
@@ -111,14 +111,8 @@ def export_pdf():
         bg_card = colors.HexColor("#f8fafc")
         text_dark = colors.HexColor("#0f172a")
 
-        if ethic_letter == "A":
-            score_color = colors.HexColor("#059669")
-        elif ethic_letter == "B":
-            score_color = colors.HexColor("#d97706")
-        elif ethic_letter == "C":
-            score_color = colors.HexColor("#ea580c")
-        else:
-            score_color = colors.HexColor("#dc2626")
+        score_colors = {"A": "#059669", "B": "#d97706", "C": "#ea580c", "D": "#dc2626"}
+        score_color = colors.HexColor(score_colors.get(ethic_letter, "#dc2626"))
 
         # Estilos de texto
         header_title_style = ParagraphStyle(
@@ -133,9 +127,6 @@ def export_pdf():
         score_box_style = ParagraphStyle(
             'ScoreBox', fontName='Helvetica-Bold', fontSize=16, leading=18, textColor=score_color, alignment=1
         )
-        flag_chip_style = ParagraphStyle(
-            'FlagChip', fontName='Helvetica-Bold', fontSize=7.5, leading=9, textColor=colors.HexColor("#0f172a")
-        )
         heading_style = ParagraphStyle(
             'SectionHeading', fontName='Helvetica-Bold', fontSize=10.5, leading=14, textColor=text_dark, spaceBefore=10, spaceAfter=4
         )
@@ -148,12 +139,12 @@ def export_pdf():
         story.append(Paragraph("LABORATORIO DE AUTODEFENSA COGNITIVA", header_sub_style))
         story.append(Spacer(1, 10))
 
-        # 2. Formatear botones de Flags para el PDF
+        # 2. Formatear etiquetas de Flags para el PDF
         flags_html = " ".join([
             f'<font color="#0284c7"><b>[ {f} ]</b></font>' for f in translated_flags
         ]) if translated_flags else "<i>Sin alertas específicas</i>"
 
-        # 3. Construcción del Cuadrado de Meta-Información (Cuadro Ethic-Score + Referencia + Flags)
+        # 3. Cuadro de Meta-Información (Score + Referencia + Flags)
         meta_text = (
             f"<b>REFERENCIA:</b> {ref_id}<br/>"
             f"<b>FECHA Y HORA:</b> {current_time_str}<br/>"
