@@ -297,7 +297,8 @@
     .copyright { font-family: var(--font-cyber); font-size: 0.75rem; color: #64748b; }
   </style>
 </head>
-<body>
+
+  <body>
 
   <!-- CAPA DE ESTRELLAS DE FONDO -->
   <div id="stars-container"></div>
@@ -306,44 +307,51 @@
   <header>
     <div class="container header-layout">
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
-      <nav class="nav-buttons">
+      <nav class="nav-buttons" aria-label="Navigation principale">
         <a href="index.html" class="nav-btn" data-key="nav-home">ACCUEIL</a>
         <a href="observatoire.html" class="nav-btn" data-key="nav-obs">L'OBSERVATOIRE</a>
         <a href="psicomusee.html" class="nav-btn" data-key="nav-psico">PSICOMUSÉE</a>
-        <a href="beacon-app.html" class="nav-btn active">BEACON LAB</a>
+        <a href="beacon-app.html" class="nav-btn active" aria-current="page">BEACON LAB</a>
         <a href="notre-cap.html" class="nav-btn" data-key="nav-cap">NOTRE CAP</a>
         <a href="contact.html" class="nav-btn" data-key="nav-contact">CONTACT</a>
       </nav>
+
       <!-- TRES LENGUAS FUNCIONALES -->
-      <div class="lang-selector">
-        <a class="lang-btn active" id="btn-fr">FR</a><span>|</span>
-        <a class="lang-btn" id="btn-es">ES</a><span>|</span>
-        <a class="lang-btn" id="btn-en">EN</a>
+      <div class="lang-selector" aria-label="Sélecteur de langue">
+        <button type="button" class="lang-btn active" id="btn-fr">FR</button><span>|</span>
+        <button type="button" class="lang-btn" id="btn-es">ES</button><span>|</span>
+        <button type="button" class="lang-btn" id="btn-en">EN</button>
       </div>
     </div>
   </header>
 
-  <!-- CONTENIDO -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="container">
     <div class="beacon-title-block">
       <h1 class="hero-app-title">POLETHIC BEACON</h1>
       <p class="subtitle" id="txt-subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
     </div>
 
-    <section class="drop-zone" id="drop-zone">
-  <textarea id="user-input" placeholder="Collez du texte, un lien YouTube ou glissez-déposez un fichier PDF/Image ici..."></textarea>
-  <div class="input-actions-bar">
-    <label for="user-file" class="file-upload-btn">
-      📂 <span id="file-name-display">Joindre / Glisser un fichier</span>
-    </label>
-    <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
-    <button id="btn-analyze" class="btn-beacon-primary">⚡ BEACON-IZE</button>
-  </div>
-  <div class="status-bar"><span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span></div>
-</section>
+    <!-- ZONA DE CARGA Y ENTRADA DE DATOS -->
+    <section class="drop-zone" id="drop-zone" aria-label="Zone d'analyse de contenu">
+      <textarea id="user-input" aria-label="Texte, lien ou contenu à analyser" placeholder="Collez du texte, un lien YouTube ou glissez-déposez un fichier PDF/Image ici..."></textarea>
+      
+      <div class="input-actions-bar">
+        <label for="user-file" class="file-upload-btn" tabindex="0">
+          📂 <span id="file-name-display">Joindre / Glisser un fichier</span>
+        </label>
+        <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
+        
+        <button type="button" id="btn-analyze" class="btn-beacon-primary">⚡ BEACON-IZE</button>
+      </div>
+      
+      <div class="status-bar" aria-live="polite">
+        <span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span>
+      </div>
+    </section>
 
     <!-- RESULTADOS Y ACCIONES DE ANÁLISIS -->
-    <section id="results-panel" class="results-card">
+    <section id="results-panel" class="results-card" aria-label="Résultats de l'analyse">
       <div class="results-header">
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
         <div id="detected-flags-container" class="flags-container">
@@ -352,13 +360,13 @@
       </div>
 
       <div class="analysis-body">
-        <div id="analysis-report" class="report-box">En attente d'analyse...</div>
+        <div id="analysis-report" class="report-box" aria-live="polite">En attente d'analyse...</div>
       </div>
 
       <div class="results-actions">
-        <button id="btn-refute" class="btn-action-refute">🔄 RÉFUTER / CHALLENGER</button>
-        <button id="btn-pdf" class="btn-action-pdf">📄 EXPORTER EN PDF</button>
-        <button id="btn-purge" class="btn-action-purge">🗑️ PURGER</button>
+        <button type="button" id="btn-refute" class="btn-action-refute">🔄 RÉFUTER / CHALLENGER</button>
+        <button type="button" id="btn-pdf" class="btn-action-pdf">📄 EXPORTER EN PDF</button>
+        <button type="button" id="btn-purge" class="btn-action-purge">🗑️ PURGER</button>
       </div>
     </section>
   </main>
