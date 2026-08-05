@@ -519,7 +519,7 @@
         }
       }
 
-    // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
+   // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
 const FLAGS_BY_SCORE = {
   es: {
     'A': ['FACTUAL', 'TRANSPARENTE', 'DESCRIPTIVO', 'SIN RIESGO'],
@@ -602,27 +602,23 @@ function renderFlags(flagsArray) {
   });
 }
 
-// ⚡ Análisis Inicial (Versión Única e Integrada)
-btnAnalyze.addEventListener('click', async () => {
-  // A. Helper para extraer ID de YouTube
+// 🛠️ HELPER FUNCTIONS (Extraídas correctamente al scope general)
 function extractYouTubeID(url) {
   const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
   const match = url.match(regex);
   return match ? match[1] : null;
 }
 
-// B. Extraer texto de imágenes (Capturas de redes sociales / OCR)
 async function extractTextFromImage(file) {
-  document.getElementById('txt-status').innerText = '● LECTURE OCR DE L\'IMAGE EN COURS...';
+  document.getElementById('txt-status').innerText = "● LECTURE OCR DE L'IMAGE EN COURS...";
   const worker = await Tesseract.createWorker(['fra', 'spa', 'eng']);
   const ret = await worker.recognize(file);
   await worker.terminate();
   return ret.data.text;
 }
 
-// C. Extraer texto de archivos PDF
 async function extractTextFromPDF(file) {
-  document.getElementById('txt-status').innerText = '● EXTRACTION DU TEXTE DU PDF...';
+  document.getElementById('txt-status').innerText = "● EXTRACTION DU TEXTE DU PDF...";
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   let fullText = '';
@@ -635,7 +631,7 @@ async function extractTextFromPDF(file) {
   return fullText;
 }
 
-// D. Event Listener unificado para el botón BEACON-IZE
+// ⚡ EVENT LISTENER ÚNICO PARA EL BOTÓN BEACON-IZE
 btnAnalyze.addEventListener('click', async () => {
   let textToAnalyze = userInput.value.trim();
   const file = userFile.files[0];
@@ -651,6 +647,13 @@ btnAnalyze.addEventListener('click', async () => {
 
   btnAnalyze.disabled = true;
   resultsPanel.style.display = 'block';
+  
+  const loadingMsg = {
+    es: '⚡ Análisis en proceso...',
+    fr: '⚡ Analyse en cours...',
+    en: '⚡ Analysis in progress...'
+  };
+  analysisReport.innerText = loadingMsg[currentLang] || loadingMsg.fr;
   startEthicSpinner();
 
   try {
@@ -672,11 +675,11 @@ btnAnalyze.addEventListener('click', async () => {
       textToAnalyze = ytData.fullText || ytData.text;
     }
 
-    // Reflejar el texto procesado en la caja de texto para que sea visible y exportable a PDF
+    // Reflejar el texto procesado en el textarea
     userInput.value = textToAnalyze;
     lastAnalyzedText = textToAnalyze;
 
-    // 3. Enviar el texto limpio final al backend para el análisis en 4 Fases
+    // 3. Petición POST al backend
     document.getElementById('txt-status').innerText = '● ANALYSE EN COURS...';
     const response = await fetch(`${API_BASE_URL}/analyze`, {
       method: 'POST',
@@ -692,63 +695,15 @@ btnAnalyze.addEventListener('click', async () => {
   } catch (e) {
     applyEthicBadge('C');
     const serverErrMsg = {
-      es: 'Error al procesar el archivo o la conexión.',
-      fr: "Erreur lors du traitement du fichier ou de la connexion.",
-      en: 'Error processing file or connection.'
+      es: 'Error al procesar el archivo o la conexión con el servidor.',
+      fr: "Erreur lors du traitement du fichier ou de la connexion avec le serveur.",
+      en: 'Error processing file or connecting to the server.'
     };
     analysisReport.innerText = serverErrMsg[currentLang] || serverErrMsg.fr;
   } finally {
     btnAnalyze.disabled = false;
   }
 });
-  const text = userInput.value.trim();
-  if (!text && userFile.files.length === 0) {
-    const errorMsg = {
-      es: 'Por favor ingrese texto o adjunte un archivo.',
-      fr: 'Veuillez entrer du texte ou joindre un fichier.',
-      en: 'Please enter text or attach a file.'
-    };
-    return alert(errorMsg[currentLang] || errorMsg.fr);
-  }
-
-  lastAnalyzedText = text;
-  btnAnalyze.disabled = true;
-  resultsPanel.style.display = 'block';
-
-  const loadingMsg = {
-    es: '⚡ Análisis en proceso...',
-    fr: '⚡ Analyse en cours...',
-    en: '⚡ Analysis in progress...'
-  };
-  analysisReport.innerText = loadingMsg[currentLang] || loadingMsg.fr;
-  startEthicSpinner();
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, lang: currentLang })
-    });
-    const data = await response.json();
-    
-    const flagsReceived = data.flags || data.detected_flags;
-    
-    applyEthicBadge(data.ethic_letter || 'C', flagsReceived);
-    analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
-    
-  } catch (e) {
-    applyEthicBadge('C');
-    const serverErrMsg = {
-      es: 'Error de conexión con el servidor.',
-      fr: "Erreur de connexion avec le serveur d'analyse.",
-      en: 'Server connection error.'
-    };
-    analysisReport.innerText = serverErrMsg[currentLang] || serverErrMsg.fr;
-  } finally {
-    btnAnalyze.disabled = false;
-  }
-});
-
       // 🔄 REFUTACIÓN DIRECTA
       btnRefute.addEventListener('click', async () => {
         const currentAnalysis = analysisReport.innerText;
