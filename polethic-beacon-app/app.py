@@ -16,8 +16,8 @@ from reportlab.lib import colors
 FLAG_TRANSLATIONS = {
     "es": {
         "fakenews": "NOTICIA FALSA", "myth": "MITO", "bluff": "MARKETING / HYPE",
-        "coercion": "COERCION", "dogma": "DOGMA", "pseudoscience": "SEUDOCIENCIA",
-        "authority_transfer": "TRANSFERENCIA AUTORIDAD", "psnc": "SESGO COGNITIVO",
+        "coercion": "COERCION", "dogma": "DOGMA", "pseudosciencia": "PSEUDOCIENCIA",
+        "authority_transfer": "TRANSFERENCIA AUTORIDAD": "SESGO COGNITIVO",
         "persuasif": "PERSUASIVO", "marketing": "MARKETING", "biais leger": "SESGO LEVE",
         "promesse": "PROMESA"
     },
