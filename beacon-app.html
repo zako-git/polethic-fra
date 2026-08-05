@@ -708,7 +708,7 @@
     });
 
     // =====================================================================
-    //  EXPORTACIÓN A PDF
+    //  EXPORTACIÓN A PDF (CON ENCABEZADOS SUBRAYADOS Y TÍTULOS CORREGIDOS)
     // =====================================================================
     btnPdf.addEventListener('click', () => {
       const reportText = analysisReport.innerText;
@@ -730,10 +730,15 @@
 
       const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
 
+      // 1. Limpieza de texto y corrección forzada del punto 3
       let cleanText = reportText
         .replace(/\*\*/g, '')
         .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
         .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
+        // Eliminar "ET LIMBIQUE" / "Y LÍMBICO"
+        .replace(/DÉMONTEMENT COGNITIF ET LIMBIQUE/gi, 'DÉMONTEMENT COGNITIF')
+        .replace(/DESMONTAJE COGNITIVO Y LÍMBICO/gi, 'DESMONTAJE COGNITIVO')
+        .replace(/COGNITIVE AND LIMBIC DECONSTRUCTION/gi, 'COGNITIVE DECONSTRUCTION')
         .replace(WHITELIST, '')
         .trim();
 
@@ -748,18 +753,25 @@
       const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
       const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
 
+      // 🎨 FUNCIÓN PARA DIBUJAR LOS ENCABEZADOS SUBRAYADOS EN AZUL CLARO
       function printSectionHeader(text, x, y) {
+        // Fondo azul claro de destaque (cyan pastel)
+        doc.setFillColor(224, 247, 250); 
+        doc.roundedRect(x - 2, y - 5, contentWidth + 4, 8, 1, 1, 'F');
+
+        // Texto del Encabezado
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(11.5);
-        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(11);
+        doc.setTextColor(6, 21, 38); // Texto azul oscuro para gran contraste
         doc.text(text, x, y);
 
-        doc.setDrawColor(0, 200, 235);
-        doc.setLineWidth(0.6);
-        doc.line(x, y + 3, x + contentWidth, y + 3);
+        // Línea de acento azul cyan brillante justo debajo
+        doc.setDrawColor(0, 180, 216);
+        doc.setLineWidth(0.8);
+        doc.line(x - 2, y + 3, x + contentWidth + 2, y + 3);
       }
 
-      // Encabezado
+      // --- CABECERA ---
       doc.setFont("courier", "bold");
       doc.setFontSize(15);
       doc.setTextColor(15, 23, 42);
@@ -791,6 +803,7 @@
       const flagElements = Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim());
       const cardHeight = flagElements.length > 0 ? 32 : 20;
 
+      // Tarjeta de Ethic-Score
       doc.setFillColor(248, 250, 252);
       doc.setDrawColor(226, 232, 240);
       doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
@@ -837,8 +850,9 @@
         });
       }
 
-      cursorY += cardHeight + 6;
+      cursorY += cardHeight + 8;
 
+      // --- PROCESAMIENTO Y DIBUJO DEL CONTENIDO ---
       const lines = cleanText.split('\n');
       lines.forEach((line) => {
         let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
@@ -847,14 +861,15 @@
           return;
         }
 
-        const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE CORTICAL|RECADRAGE CORTICAL|CORTICAL REFRAMING|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE|RÉFUTATION COGNITIVE|REFUTACION COGNITIVA|COGNITIVE REFUTATION)/i.test(trimmed);
+        // Detección de títulos/encabezados de fase
+        const isHeader = /^[-•\s=]*(1\.|2\.|3\.|4\.|PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTEMENT COGNITIF|DEMONTEMENT COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE|RECADRAGE|REDONNEMENT|DÉFI DU BIAIS|DESAFÍO DEL SESGO|BIAS CHALLENGE)/i.test(trimmed);
 
         if (isHeader) {
           if (cursorY > pageHeight - 25) { doc.addPage(); cursorY = margin + 5; }
-          cursorY += 5;
+          cursorY += 4;
           let headerText = trimmed.replace(/^[-•\s=]+/, '').toUpperCase();
           printSectionHeader(headerText, margin, cursorY);
-          cursorY += 9;
+          cursorY += 10;
         } else {
           let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
           let cleanContent = isBullet ? trimmed.replace(/^[-•]\s*/, '').trim() : trimmed;
@@ -921,6 +936,7 @@
         }
       });
 
+      // Pie de página
       const footerLabels = {
         fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
         es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
@@ -943,7 +959,6 @@
 
       doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
     });
-
     // =====================================================================
     //  PURGAR INTERFAZ
     // =====================================================================
