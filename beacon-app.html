@@ -7,7 +7,11 @@
 
   <!-- Librería jsPDF para generación de PDF profesional -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- PDF.js: Para leer archivos PDF en el navegador -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
+<!-- Tesseract.js: Para extraer texto de imágenes y capturas de pantalla (OCR) -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     /* ==========================================
        ESTILOS CYBER TOTAL (INTERFAZ BEACON)
@@ -595,6 +599,103 @@ function renderFlags(flagsArray) {
 
 // ⚡ Análisis Inicial (Versión Única e Integrada)
 btnAnalyze.addEventListener('click', async () => {
+  // A. Helper para extraer ID de YouTube
+function extractYouTubeID(url) {
+  const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
+
+// B. Extraer texto de imágenes (Capturas de redes sociales / OCR)
+async function extractTextFromImage(file) {
+  document.getElementById('txt-status').innerText = '● LECTURE OCR DE L\'IMAGE EN COURS...';
+  const worker = await Tesseract.createWorker(['fra', 'spa', 'eng']);
+  const ret = await worker.recognize(file);
+  await worker.terminate();
+  return ret.data.text;
+}
+
+// C. Extraer texto de archivos PDF
+async function extractTextFromPDF(file) {
+  document.getElementById('txt-status').innerText = '● EXTRACTION DU TEXTE DU PDF...';
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const strings = content.items.map(item => item.str);
+    fullText += strings.join(' ') + '\n';
+  }
+  return fullText;
+}
+
+// D. Event Listener unificado para el botón BEACON-IZE
+btnAnalyze.addEventListener('click', async () => {
+  let textToAnalyze = userInput.value.trim();
+  const file = userFile.files[0];
+
+  if (!textToAnalyze && !file) {
+    const errorMsg = {
+      es: 'Por favor ingrese texto, una URL de YouTube o adjunte un archivo.',
+      fr: 'Veuillez entrer du texte, un lien YouTube ou joindre un fichier.',
+      en: 'Please enter text, a YouTube link or attach a file.'
+    };
+    return alert(errorMsg[currentLang] || errorMsg.fr);
+  }
+
+  btnAnalyze.disabled = true;
+  resultsPanel.style.display = 'block';
+  startEthicSpinner();
+
+  try {
+    // 1. Si hay un archivo adjunto (Imagen o PDF)
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        textToAnalyze = await extractTextFromImage(file);
+      } else if (file.type === 'application/pdf') {
+        textToAnalyze = await extractTextFromPDF(file);
+      }
+    } 
+    // 2. Si es un enlace de YouTube
+    else if (extractYouTubeID(textToAnalyze)) {
+      const videoId = extractYouTubeID(textToAnalyze);
+      document.getElementById('txt-status').innerText = `● RÉCUPÉRATION DU TRANSCRIPT YOUTUBE (${videoId})...`;
+      
+      const ytResponse = await fetch(`${API_BASE_URL}/transcript?videoId=${videoId}`);
+      const ytData = await ytResponse.json();
+      textToAnalyze = ytData.fullText || ytData.text;
+    }
+
+    // Reflejar el texto procesado en la caja de texto para que sea visible y exportable a PDF
+    userInput.value = textToAnalyze;
+    lastAnalyzedText = textToAnalyze;
+
+    // 3. Enviar el texto limpio final al backend para el análisis en 4 Fases
+    document.getElementById('txt-status').innerText = '● ANALYSE EN COURS...';
+    const response = await fetch(`${API_BASE_URL}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: textToAnalyze, lang: currentLang })
+    });
+    const data = await response.json();
+
+    const flagsReceived = data.flags || data.detected_flags;
+    applyEthicBadge(data.ethic_letter || 'C', flagsReceived);
+    analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
+
+  } catch (e) {
+    applyEthicBadge('C');
+    const serverErrMsg = {
+      es: 'Error al procesar el archivo o la conexión.',
+      fr: "Erreur lors du traitement du fichier ou de la connexion.",
+      en: 'Error processing file or connection.'
+    };
+    analysisReport.innerText = serverErrMsg[currentLang] || serverErrMsg.fr;
+  } finally {
+    btnAnalyze.disabled = false;
+  }
+});
   const text = userInput.value.trim();
   if (!text && userFile.files.length === 0) {
     const errorMsg = {
