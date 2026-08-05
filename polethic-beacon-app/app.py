@@ -12,6 +12,10 @@ from huggingface_hub import InferenceClient
 from youtube_transcript_api import YouTubeTranscriptApi
 from dotenv import load_dotenv
 
+# --- Procesamiento de imágenes (OCR) ---
+from PIL import Image
+import pytesseract
+
 # --- ReportLab para exportación PDF profesional ---
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
@@ -25,9 +29,12 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 DATABASE_NAME = "beacon.db"
 
-# Token de Hugging Face
+# Token de Hugging Face y Cliente Inference
 HF_TOKEN = os.environ.get("HF_TOKEN")
 client = InferenceClient(api_key=HF_TOKEN) if HF_TOKEN else None
+
+# Modelo recomendado para análisis lingüístico y forense profundo
+MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
 
 # =====================================================================
 # DICCIONARIO DE TRADUCCIÓN DE BANDERAS/FLAGS SEGÚN EL IDIOMA
@@ -37,7 +44,7 @@ FLAG_TRANSLATIONS = {
         "fakenews": "NOTICIA FALSA",
         "myth": "MITO",
         "bluff": "MARKETING / HYPE",
-        "coercion": "COERCION",
+        "coercion": "COERCIÓN",
         "dogma": "DOGMA",
         "pseudoscience": "PSEUDOCIENCIA",
         "authority_transfer": "TRANSFERENCIA AUTORIDAD",
@@ -102,8 +109,19 @@ def init_db():
         print(f"[init_db] Warning: {e}")
 
 # =====================================================================
-# EXTRACCIÓN DE CONTENIDO (YOUTUBE Y WEB)
+# EXTRACCIÓN DE CONTENIDO (OCR, YOUTUBE Y WEB)
 # =====================================================================
+def extract_text_from_image(image_bytes):
+    """ Extrae texto de imágenes usando pytesseract (FR, ES, EN) """
+    try:
+        image = Image.open(io.BytesIO(image_bytes))
+        # Extrae texto evaluando los tres idiomas principales
+        extracted = pytesseract.image_to_string(image, lang='fra+spa+eng')
+        return extracted.strip()
+    except Exception as e:
+        print(f"[extract_text_from_image error]: {e}")
+        return None
+
 def extract_transcript(url):
     try:
         if "youtu.be/" in url:
@@ -120,7 +138,7 @@ def extract_transcript(url):
 def extract_web_content(url):
     try:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
@@ -195,21 +213,19 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
         print(f"[save_audit] error: {e}")
 
 # =====================================================================
-# TEMPLATES DE PROMPTS Y PLANTILLAS
+# TEMPLATES DE PROMPTS Y PLANTILLAS FORENSES
 # =====================================================================
 TEMPLATES = {
     "fr": {
         "system": (
             "Vous êtes POLETHIC BEACON, un moteur d'analyse métacognitive et forensique avancé.\n"
-            "Votre objectif est d'exécuter un pipeline d'analyse obligatoire en 4 phases.\n\n"
-            "RÈGLE LINGUISTIQUE ABSOLUE : Rédigez l'INTÉGRALITÉ de la réponse et des titres EN FRANÇAIS.\n\n"
-            "INTERDICTION ABSOLUE : N'utilisez JAMAIS les mots 'LIMBIQUE' ni 'ET LIMBIQUE' dans les titres ou le texte.\n\n"
-            "DIRECTIVES D'ÉVALUATION STRICTES :\n"
-            "- TARTE ROUGE / RISQUE ÉLEVÉ (Grade D, Score 76 à 100) : Attribution OBLIGATOIRE si le texte promeut des thérapies non conventionnelles ou approches à risque de dérive sectaire (ex: Constellations familiales / Bert Hellinger, mémoire cellulaire, ésotérisme), que ce soit dans la santé ou appliquées aux entreprises, au coaching et au leadership.\n"
-            "- ORGANISMES DE VIGILANCE : Mentionnez systématiquement que ces pratiques font l'objet d'une vigilance accrue par des organismes officiels (ex: MIVILUDES en France) en raison des risques de dérive sectaire, d'emprise et de sujection psychologique.\n"
-            "- RISQUE MODÉRÉ (Grade B-C, Score 26 à 75) : Si le texte présente des biais rhétoriques majeurs, de l'exagération commerciale ou du blanchiment de langage sans dérive ésotérique/sectaire.\n"
-            "- RISQUE MINIME (Grade A, Score 0 à 25) : CV propre, texte informatif ou factuel sans coercition ni affirmations trompeuses.\n"
-            "- NE JAMAIS INVENTER de biais non présents dans le texte.\n\n"
+            "Votre objectif est d'exécuter une déconstruction chirurgicale du texte pour éliminer le bruit rhétorique, le langage vendeur, le blanchiment sémantique et les biais.\n\n"
+            "RÈGLE LINGUISTIQUE ABSOLUE : Rédigez l'INTÉGRALITÉ de la réponse et des titres STRICTEMENT EN FRANÇAIS.\n\n"
+            "DIRECTIVES D'ÉVALUATION FORENSIQUE :\n"
+            "- CRITÉRES DE RISQUE ÉLEVÉ (Grade D, Score 76 à 100) : Attribution OBLIGATOIRE si le texte promeut des thérapies non conventionnelles, approches ésotériques ou risques de dérive sectaire (ex: Constellations familiales, mémoire cellulaire, pseudo-coaching quantique) appliquées à la santé ou aux entreprises.\n"
+            "- ORGANISMES DE VIGILANCE : Mentionnez systématiquement que ces pratiques font l'objet d'une vigilance par des organismes officiels (ex: MIVILUDES en France).\n"
+            "- RISQUE MODÉRÉ (Grade B-C, Score 26 à 75) : Si le texte présente des biais rhétoriques majeurs, de l'exagération commerciale ou du blanchiment de langage sans dérive sectaire.\n"
+            "- RISQUE MINIME (Grade A, Score 0 à 25) : Texte factuel, scientifique, informatif ou neutre.\n\n"
             "FORMAT DE SORTIE IMPÉRATIF (RESPECTEZ EXATEMENT CES TITRES) :\n\n"
             "🏷️ **CLASSIFICATION (Phase 0)**\n"
             "- Type de Texte:\n"
@@ -218,30 +234,28 @@ TEMPLATES = {
             "- Données et affirmations filtrées sans bruit:\n\n"
             "🧠 **DÉMONTAGE COGNITIF (Phase 2)**\n"
             "- Stratégie Rhétorique / Déclencheur Détecté:\n"
-            "- Intention vs Réalité (Analyse de blanchiment / appropriation de langage):\n\n"
+            "- Intention vs Réalité (Analyse du blanchiment de langage et appropriation technique):\n\n"
             "🚀 **RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**\n"
             "- Diagnostic synthétique final et évaluation objective du risque:\n\n"
             "<flags>[Liste séparée par des virgules parmi: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
-            "<score>[Note entière de 0 à 100, ex: 85 pour Grade D]</score>"
+            "<score>[Note entière de 0 à 100]</score>"
         ),
         "refute_fallback": (
-            "1. PREUVE CLINIQUE / ÉMPIRIQUE : Quelles études contrôlées démontrent l'efficacité de cette approche face aux méthodes scientifiques conventionnelles ?\n"
-            "2. CADRE DÉRIVE SECTAIRE : Comment garantissez-vous l'absence de sujection psychologique ou d'influence ésotérique sur les participants ?\n"
-            "3. MESURE DE L'EFFICACITÉ : Quels indicateurs objectifs et vérifiables permettent de mesurer les résultats réels ?"
+            "1. PREUVE CLINIQUE / ÉMPIRIQUE : Quelles études contrôlées démontrent l'efficacité de cette approche ?\n"
+            "2. CADRE DE VIGILANCE : Comment garantissez-vous l'absence de sujection psychologique ou d'influence ésotérique ?\n"
+            "3. MESURE DE L'EFFICACITÉ : Quels indicateurs objectifs permettent de mesurer les résultats réels ?"
         )
     },
     "es": {
         "system": (
             "Eres POLETHIC BEACON, un motor de análisis metacognitivo y forense avanzado.\n"
-            "Tu objetivo es ejecutar un pipeline obligatorio de análisis en 4 fases.\n\n"
-            "REGLA LINGÜÍSTICA ABSOLUTA: Escribe la TOTALIDAD de la respuesta y los títulos EN ESPAÑOL.\n\n"
-            "PROHIBICIÓN ABSOLUTA: NUNCA utilices las palabras 'LÍMBICO' ni 'Y LÍMBICO' en los títulos o el texto.\n\n"
-            "DIRECTRICES DE EVALUACIÓN STRICTAS:\n"
-            "- TARJETA ROJA / RIESGO ALTO (Grado D, Score 76 a 100): Asignación OBLIGATORIA si el texto promueve terapias no convencionales con riesgo de deriva sectaria (ej: Constelaciones familiares / Bert Hellinger, memoria celular, esoterismo), ya sea en salud o aplicadas a empresas, coaching y liderazgo.\n"
-            "- ORGANISMOS DE VIGILANCIA: Señala explícitamente que estas prácticas están sometidas a la vigilancia de organismos oficiales (ej: MIVILUDES en Francia) debido al riesgo documentado de deriva sectaria, manipulación y sujeción psicológica.\n"
-            "- RIESGO MODERADO (Grado B-C, Score 26 a 75): Si el texto presenta sesgos retóricos mayores, exageración comercial o blanqueamiento de lenguaje sin deriva esotérica/sectaria.\n"
-            "- RIESGO MÍNIMO (Grado A, Score 0 a 25): CV limpio, texto informativo o factual sin coerción ni afirmaciones engañosas.\n"
-            "- NO INVENTAR sesgos no presentes en el texto.\n\n"
+            "Tu objetivo es ejecutar una deconstrucción quirúrgica del texto para eliminar el ruido retórico, lenguaje de ventas, blanqueamiento semántico y sesgos.\n\n"
+            "REGLA LINGÜÍSTICA ABSOLUTA: Escribe la TOTALIDAD de la respuesta y los títulos STRICTAMENTE EN ESPAÑOL.\n\n"
+            "DIRECTRICES DE EVALUACIÓN FORENSE:\n"
+            "- CRITERIOS DE RIESGO ALTO (Grado D, Score 76 a 100): Asignación OBLIGATORIA si promueve terapias no convencionales, esoterismo o riesgo de deriva sectaria (ej: Constelaciones familiares, memoria celular, pseudo-coaching cuántico).\n"
+            "- ORGANISMOS DE VIGILANCIA: Señala explícitamente si la práctica está sometida a vigilancia por organismos oficiales (ej: MIVILUDES u organismos de salud pública).\n"
+            "- RIESGO MODERADO (Grado B-C, Score 26 a 75): Si presenta sesgos retóricos mayores, exageración comercial o blanqueamiento de lenguaje.\n"
+            "- RIESGO MÍNIMO (Grado A, Score 0 a 25): Texto puramente factual, científico o informativo.\n\n"
             "FORMATO DE SALIDA OBLIGATORIO (RESPETA EXACTAMENTE ESTOS TÍTULOS):\n\n"
             "🏷️ **CLASIFICACIÓN (Fase 0)**\n"
             "- Tipo de Texto:\n"
@@ -250,30 +264,28 @@ TEMPLATES = {
             "- Datos y afirmaciones filtradas sin ruido:\n\n"
             "🧠 **DESMONTAJE COGNITIVO (Fase 2)**\n"
             "- Estrategia Retórica / Gatillo Detectado:\n"
-            "- Intención vs. Realidad (Análisis de blanqueamiento / apropiación de lenguaje):\n\n"
+            "- Intención vs. Realidad (Análisis de blanqueamiento de lenguaje y apropiación técnica):\n\n"
             "🚀 **REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
             "- Diagnóstico sintético final y valoración objetiva de riesgo:\n\n"
             "<flags>[Lista separada por comas de: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
-            "<score>[Número entero de 0 a 100, ej: 85 para Grado D]</score>"
+            "<score>[Número entero de 0 a 100]</score>"
         ),
         "refute_fallback": (
-            "1. EVIDENCIA EMPÍRICA: ¿Qué estudios controlados respaldan la efectividad de este enfoque frente a la gestión/psicología convencional?\n"
-            "2. RIESGO SECTARIO: ¿Cómo se garantiza la ausencia de manipulación psicológica o doctrina esotérica en los participantes?\n"
+            "1. EVIDENCIA EMPÍRICA: ¿Qué estudios controlados respaldan la efectividad de este enfoque?\n"
+            "2. RIESGO SECTARIO: ¿Cómo se garantiza la ausencia de manipulación psicológica o doctrina esotérica?\n"
             "3. MEDICIÓN DE RESULTADOS: ¿Bajo qué indicadores métricos y objetivos se evalúa el impacto real?"
         )
     },
     "en": {
         "system": (
             "You are POLETHIC BEACON, an advanced forensic metacognitive analysis engine.\n"
-            "Your objective is to execute a mandatory 4-phase analysis pipeline.\n\n"
-            "ABSOLUTE LANGUAGE RULE: Write the ENTIRE response and section titles IN ENGLISH.\n\n"
-            "ABSOLUTE PROHIBITION: NEVER use the words 'LIMBIC' or 'AND LIMBIC' in titles or text.\n\n"
-            "STRICT EVALUATION DIRECTIVES:\n"
-            "- RED CARD / HIGH RISK (Grade D, Score 76 to 100): MANDATORY assignment if the text promotes unconventional therapies with high risk of cultic deviance (e.g., Family Constellations / Bert Hellinger, cellular memory, esotericism), whether in healthcare or applied to corporate settings, coaching, and leadership.\n"
-            "- MONITORING AGENCIES: Highlight that these practices are closely monitored by official state agencies (e.g., MIVILUDES in France) due to documented risks of cultic deviance and psychological manipulation.\n"
-            "- MODERATE RISK (Grade B-C, Score 26 to 75): If the text presents major rhetorical biases, commercial hype, or language laundering without esoteric/cultic deviance.\n"
-            "- MINIMAL RISK (Grade A, Score 0 to 25): Clean CV, purely factual or informative text without coercion or misleading claims.\n"
-            "- NEVER INVENT biases not present in the input text.\n\n"
+            "Your objective is to execute a surgical text deconstruction to eliminate rhetorical noise, sales hype, language laundering, and cognitive bias.\n\n"
+            "ABSOLUTE LANGUAGE RULE: Write the ENTIRE response and section titles STRICTLY IN ENGLISH.\n\n"
+            "FORENSIC EVALUATION DIRECTIVES:\n"
+            "- HIGH RISK CRITERIA (Grade D, Score 76 to 100): MANDATORY assignment if promoting unconventional therapies, esotericism, or cultic deviance risks (e.g., Family Constellations, cellular memory, quantum coaching).\n"
+            "- STATE AGENCIES: Explicitly highlight if practices are monitored by official state agencies (e.g., MIVILUDES).\n"
+            "- MODERATE RISK (Grade B-C, Score 26 to 75): If presenting major rhetorical biases, hype, or language laundering.\n"
+            "- MINIMAL RISK (Grade A, Score 0 to 25): Purely factual, scientific, or informative text.\n\n"
             "MANDATORY OUTPUT FORMAT (RESPECT THESE TITLES EXACTLY):\n\n"
             "🏷️ **CLASSIFICATION (Phase 0)**\n"
             "- Text Type:\n"
@@ -282,16 +294,16 @@ TEMPLATES = {
             "- Noise-filtered data and claims:\n\n"
             "🧠 **COGNITIVE DECONSTRUCTION (Phase 2)**\n"
             "- Rhetorical Strategy / Trigger Detected:\n"
-            "- Intent vs. Reality (Language laundering / appropriation analysis):\n\n"
+            "- Intent vs. Reality (Language laundering and technical appropriation analysis):\n\n"
             "🚀 **CORTICAL REFRAMING & STRATEGY (Phase 3)**\n"
             "- Final synthetic diagnosis and objective risk assessment:\n\n"
             "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
-            "<score>[Integer from 0 to 100, e.g., 85 for Grade D]</score>"
+            "<score>[Integer from 0 to 100]</score>"
         ),
         "refute_fallback": (
-            "1. EMPIRICAL EVIDENCE: What controlled studies demonstrate the effectiveness of this approach compared to conventional scientific methods?\n"
-            "2. CULTIC RISK SAFEGUARD: How do you guarantee the absence of psychological coercion or esoteric doctrine on participants?\n"
-            "3. PERFORMANCE METRICS: Which objective and verifiable metrics are used to evaluate real-world outcomes?"
+            "1. EMPIRICAL EVIDENCE: What controlled studies demonstrate the effectiveness of this approach?\n"
+            "2. CULTIC RISK SAFEGUARD: How do you guarantee the absence of psychological coercion or esoteric doctrine?\n"
+            "3. PERFORMANCE METRICS: Which objective metrics are used to evaluate real-world outcomes?"
         )
     }
 }
@@ -323,10 +335,12 @@ def sanitize_for_pdf(text):
     return text.strip()
 
 def is_heading_line(original_line):
-    line_clean = original_line.strip().upper()
+    # Limpiamos emojis y markdown antes de verificar si es un encabezado
+    line_clean = _EMOJI_PATTERN.sub("", original_line).replace("**", "").strip().upper()
     keywords = ["CLASSIFICATION", "NOYAU DE FAITS", "DÉMONTAGE COGNITIF", 
-                "RECADRAGE CORTICAL", "CLASIFICACIÓN", "NÚCLEO DE HECHOS", "DESMONTAJE"]
-    return any(kw in line_clean for kw in keywords) or line_clean.startswith("1.") or line_clean.startswith("2.") or line_clean.startswith("3.") or line_clean.startswith("4.")
+                "RECADRAGE CORTICAL", "CLASIFICACIÓN", "NÚCLEO DE HECHOS", 
+                "DESMONTAJE COGNITIVO", "REENCUADRE CORTICAL", "COGNITIVE DECONSTRUCTION"]
+    return any(kw in line_clean for kw in keywords) or line_clean.startswith("PHASE")
 
 # =====================================================================
 # ENDPOINTS DE LA API
@@ -336,30 +350,44 @@ def is_heading_line(original_line):
 @app.route("/api/analyze", methods=["POST"])
 def analyze():
     try:
-        data = request.get_json() or {}
-        text = data.get("text", "").strip()
-        url = data.get("url", "").strip()
-        lang = str(data.get("lang", "fr")).lower()
+        content_to_analyze = ""
+        source_type = "text"
+        lang = "fr"
+
+        # 1. Entrada mediante Form-Data (Capturas de Pantalla / Imágenes)
+        if 'image' in request.files or 'file' in request.files:
+            uploaded_file = request.files.get('image') or request.files.get('file')
+            image_bytes = uploaded_file.read()
+            extracted_text = extract_text_from_image(image_bytes)
+            if extracted_text:
+                content_to_analyze = extracted_text
+                source_type = "image"
+            lang = str(request.form.get("lang", "fr")).lower()
+
+        # 2. Entrada JSON convencional (Texto plano, URLs Web, Links de YouTube)
+        else:
+            data = request.get_json() or {}
+            text = data.get("text", "").strip()
+            url = data.get("url", "").strip()
+            lang = str(data.get("lang", "fr")).lower()
+
+            content_to_analyze = text
+            target_url = url if url else (text if text.startswith("http://") or text.startswith("https://") else "")
+
+            if target_url:
+                if "youtube.com" in target_url or "youtu.be" in target_url:
+                    transcript = extract_transcript(target_url)
+                    if transcript:
+                        content_to_analyze = transcript
+                        source_type = "youtube"
+                else:
+                    web_text = extract_web_content(target_url)
+                    if web_text:
+                        content_to_analyze = web_text
+                        source_type = "web"
 
         if lang not in TEMPLATES:
             lang = "fr"
-
-        content_to_analyze = text
-        source_type = "text"
-
-        target_url = url if url else (text if text.startswith("http://") or text.startswith("https://") else "")
-
-        if target_url:
-            if "youtube.com" in target_url or "youtu.be" in target_url:
-                transcript = extract_transcript(target_url)
-                if transcript:
-                    content_to_analyze = transcript
-                    source_type = "youtube"
-            else:
-                web_text = extract_web_content(target_url)
-                if web_text:
-                    content_to_analyze = web_text
-                    source_type = "web"
 
         if not content_to_analyze or not content_to_analyze.strip():
             return jsonify({"error": "No content could be extracted or analyzed from this source."}), 400
@@ -371,12 +399,12 @@ def analyze():
         if client:
             try:
                 response = client.chat.completions.create(
-                    model="Qwen/Qwen2.5-Coder-32B-Instruct",
+                    model=MODEL_ID,
                     messages=[
                         {"role": "system", "content": template["system"]},
                         {"role": "user", "content": content_to_analyze}
                     ],
-                    max_tokens=1000
+                    max_tokens=1200
                 )
                 analysis_text = response.choices[0].message.content
             except Exception as hf_err:
@@ -433,10 +461,10 @@ def refute():
                 f"Génère exactement 3 questions chirurgicales de réfutation méthodologique "
                 f"basées UNIQUEMENT sur les affirmations du texte ci-dessus.\n"
                 f"INTERDICTION ABSOLUE d'inventer des termes absents du texte.\n"
-                f"Rédige la réponse 100% dans la langue du code : '{lang.upper()}'."
+                f"Rédige la réponse 100% dans la langue demandée : '{lang.upper()}'."
             )
             response = client.chat.completions.create(
-                model="Qwen/Qwen2.5-Coder-32B-Instruct",
+                model=MODEL_ID,
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=450
             )
@@ -462,7 +490,7 @@ def export_pdf():
         current_time_str = datetime.now().strftime("%d/%m/%Y %H:%M")
 
         if not raw_analysis.strip():
-            return jsonify({"error": "No hay análisis para exportar."}), 400
+            return jsonify({"error": "No analysis available to export."}), 400
 
         try:
             digits = re.sub(r"[^\d]", "", str(raw_score))
@@ -516,10 +544,10 @@ def export_pdf():
             'ReportBody', fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#334155")
         )
 
-        lbl_lab = "LABORATOIRE D'AUTODÉFENSE COGNITIVE" if lang == "fr" else "LABORATORIO DE AUTODEFENSA COGNITIVA"
-        lbl_ref = "RÉF :" if lang == "fr" else "REFERENCIA:"
-        lbl_date = "HORODATAGE :" if lang == "fr" else "FECHA Y HORA:"
-        lbl_flags = "INDICATEURS :" if lang == "fr" else "ALERTAS / FLAGS:"
+        lbl_lab = "LABORATOIRE D'AUTODÉFENSE COGNITIVE" if lang == "fr" else ("LABORATORIO DE AUTODEFENSA COGNITIVA" if lang == "es" else "COGNITIVE SELF-DEFENSE LABORATORY")
+        lbl_ref = "RÉF :" if lang == "fr" else "REF:"
+        lbl_date = "HORODATAGE :" if lang == "fr" else "TIMESTAMP:"
+        lbl_flags = "INDICATEURS :" if lang == "fr" else "INDICATORS:"
 
         story.append(Paragraph("POLETHIC BEACON", header_title_style))
         story.append(Paragraph(lbl_lab, header_sub_style))
