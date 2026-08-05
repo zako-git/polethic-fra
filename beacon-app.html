@@ -680,7 +680,7 @@ btnAnalyze.addEventListener('click', async () => {
         }
       });
 
-      // 📄 EXPORTAR PDF
+     // 📄 EXPORTAR PDF CON FLAGS E IDIOMA
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport.innerText;
         const lang = currentLang || 'fr';
@@ -717,6 +717,7 @@ btnAnalyze.addEventListener('click', async () => {
         const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
         const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
         const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
+        const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
 
         function printSectionHeader(text, x, y) {
           doc.setFont("helvetica", "bold");
@@ -729,6 +730,7 @@ btnAnalyze.addEventListener('click', async () => {
           doc.line(x, y + 3, x + contentWidth, y + 3);
         }
 
+        // --- ENCABEZADO OFICIAL ---
         doc.setFont("courier", "bold");
         doc.setFontSize(15);
         doc.setTextColor(15, 23, 42);
@@ -752,15 +754,24 @@ btnAnalyze.addEventListener('click', async () => {
         });
         const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
-        let scoreR = 234, scoreG = 179, scoreB = 8;
-        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
-        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
-        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
+        // Coordenadas de color dinámicas según Score
+        let scoreR = 234, scoreG = 179, scoreB = 8; // B (Amarillo)
+        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; } // Verde
+        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; } // Naranja
+        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; } // Rojo
 
+        // Obtener los elementos de las flags impresos actualmente en la pantalla
+        const flagElements = Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim());
+
+        // Calculamos la altura de la tarjeta según si hay flags o no
+        const cardHeight = flagElements.length > 0 ? 32 : 20;
+
+        // Tarjeta principal de la métrica
         doc.setFillColor(248, 250, 252);
         doc.setDrawColor(226, 232, 240);
-        doc.roundedRect(margin, cursorY, contentWidth, 20, 2, 2, 'FD');
+        doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
 
+        // Badge de Ethic Score
         doc.setFillColor(scoreR, scoreG, scoreB);
         doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
         doc.setFont("helvetica", "bold");
@@ -770,6 +781,7 @@ btnAnalyze.addEventListener('click', async () => {
         doc.setFontSize(12);
         doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
 
+        // Metadatos de la sesión
         doc.setFont("courier", "bold");
         doc.setFontSize(9.5);
         doc.setTextColor(51, 65, 85);
@@ -779,8 +791,38 @@ btnAnalyze.addEventListener('click', async () => {
         doc.text(refText, margin + 46, cursorY + 8);
         doc.text(dateText, margin + 46, cursorY + 13);
 
-        cursorY += 26;
+        // 🏷️ IMPRESIÓN DINÁMICA DE FLAGS EN EL PDF
+        if (flagElements.length > 0) {
+          doc.setDrawColor(226, 232, 240);
+          doc.setLineWidth(0.3);
+          doc.line(margin + 3, cursorY + 19, margin + contentWidth - 3, cursorY + 19);
 
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(7.5);
+          doc.setTextColor(100, 116, 139);
+          doc.text(`${flagsHeaderLabels[lang] || 'INDICATEURS'}:`, margin + 5, cursorY + 26);
+
+          let flagX = margin + 30;
+          flagElements.forEach(flagText => {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(7);
+            const textWidth = doc.getTextWidth(flagText);
+            const badgeWidth = textWidth + 6;
+
+            // Si sobrepasa la tarjeta, corta para evitar salirse del margen
+            if (flagX + badgeWidth < margin + contentWidth - 3) {
+              doc.setFillColor(226, 232, 240);
+              doc.roundedRect(flagX, cursorY + 22, badgeWidth, 5.5, 1, 1, 'F');
+              doc.setTextColor(15, 23, 42);
+              doc.text(flagText, flagX + 3, cursorY + 26);
+              flagX += badgeWidth + 3;
+            }
+          });
+        }
+
+        cursorY += cardHeight + 6;
+
+        // --- PROCESAMIENTO DEL CUERPO DEL INFORME ---
         const lines = cleanText.split('\n');
 
         lines.forEach((line) => {
@@ -872,6 +914,7 @@ btnAnalyze.addEventListener('click', async () => {
           }
         });
 
+        // --- PIE DE PÁGINA ---
         const footerLabels = {
           fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
           es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
@@ -895,20 +938,34 @@ btnAnalyze.addEventListener('click', async () => {
         doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
       });
 
-      // 🗑️ PURGAR (Completado y cerrado correctamente)
+      // 🗑️ PURGAR (Limpiar interfaz)
       btnPurge.addEventListener('click', () => {
         userInput.value = '';
         userFile.value = '';
         fileNameDisplay.innerText = langMap[currentLang].fileBtn;
         
-        analysisReport.innerText = 'En attente d\'analyse...';
-        if (detectedFlags) detectedFlags.innerHTML = '<span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>';
+        const resetText = {
+          es: 'En espera de análisis...',
+          fr: 'En attente d\'analyse...',
+          en: 'Waiting for analysis...'
+        };
+        analysisReport.innerText = resetText[currentLang] || resetText.fr;
+
+        const readyText = {
+          es: 'ANÁLISIS LISTO',
+          fr: 'ANALYSE PRÊTE',
+          en: 'ANALYSIS READY'
+        };
+        if (detectedFlags) {
+          detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText[currentLang] || readyText.fr}</span>`;
+        }
 
         stopEthicSpinner();
         ethicScore.innerText = 'Ethic-Score™: --';
         ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
         
         resultsPanel.style.display = 'none';
+        lastAnalyzedText = "";
       });
     });
   </script>
