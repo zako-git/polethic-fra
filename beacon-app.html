@@ -7,7 +7,11 @@
 
   <!-- Librería jsPDF para generación de PDF profesional -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- PDF.js: Para leer archivos PDF en el navegador -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
+<!-- Tesseract.js: Para extraer texto de imágenes y capturas de pantalla (OCR) -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     /* ==========================================
        ESTILOS CYBER TOTAL (INTERFAZ BEACON)
@@ -237,15 +241,20 @@
     }
 
     .report-box {
-      background: rgba(0, 0, 0, 0.65);
-      border-left: 3px solid var(--cyber-green);
-      padding: 15px;
-      color: #d0e0e0;
-      font-family: var(--font-cyber);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
+  background: rgba(0, 0, 0, 0.65);
+  border-left: 3px solid var(--cyber-green);
+  padding: 15px;
+  color: #d0e0e0;
+  font-family: var(--font-cyber);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  /* --- AÑADES ESTAS 3 LÍNEAS AQUÍ --- */
+  max-height: 500px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cyber-cyan) rgba(0,0,0,0.5);
+}
 
     .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 
@@ -322,16 +331,16 @@
     </div>
 
     <section class="drop-zone" id="drop-zone">
-      <textarea id="user-input" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
-      <div class="input-actions-bar">
-        <label for="user-file" class="file-upload-btn">
-          📁 <span id="file-name-display">Joindre / Glisser un fichier</span>
-        </label>
-        <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
-        <button id="btn-analyze" class="btn-beacon-primary">⚡ BEACON-IZE</button>
-      </div>
-      <div class="status-bar"><span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span></div>
-    </section>
+  <textarea id="user-input" placeholder="Collez du texte, un lien YouTube ou glissez-déposez un fichier PDF/Image ici..."></textarea>
+  <div class="input-actions-bar">
+    <label for="user-file" class="file-upload-btn">
+      📂 <span id="file-name-display">Joindre / Glisser un fichier</span>
+    </label>
+    <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
+    <button id="btn-analyze" class="btn-beacon-primary">⚡ BEACON-IZE</button>
+  </div>
+  <div class="status-bar"><span id="txt-status">● MOTEUR PRÊT | SYSTEM ONLINE (2026)</span></div>
+</section>
 
     <!-- RESULTADOS Y ACCIONES DE ANÁLISIS -->
     <section id="results-panel" class="results-card">
@@ -510,12 +519,12 @@
         }
       }
 
-      // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
+    // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
 const FLAGS_BY_SCORE = {
   es: {
     'A': ['FACTUAL', 'TRANSPARENTE', 'DESCRIPTIVO', 'SIN RIESGO'],
     'B': ['PERSUASIVO', 'MARKETING', 'SESGO LEVE', 'PROMESA'],
-    'C': ['MANIPULACIÓN', 'AMBIGÜEDAD', 'SEUDOCIENCIA', 'RETÓRICA'],
+    'C': ['MANIPULACIÓN', 'AMBIGÜEDAD', 'PSEUDOCIENCIA', 'RETÓRICA'],
     'D': ['RIESGO SECTARIO', 'INFLUENCIA', 'AISLAMIENTO', 'PELIGRO COGNITIVO']
   },
   fr: {
@@ -534,17 +543,14 @@ const FLAGS_BY_SCORE = {
 
 // 2. DICCIONARIO DE TRADUCCIÓN DE CLAVES DEL BACKEND
 const FLAG_DICTIONARY = {
-  // Claves técnicas del backend -> Traducciones
   'fakenews': { es: 'NOTICIA FALSA', fr: 'FAUX BRUIT', en: 'FAKE NEWS' },
   'myth': { es: 'MITO', fr: 'MYTHE', en: 'MYTH' },
   'bluff': { es: 'MARKETING / HYPE', fr: 'BLUFF / HYPE', en: 'BLUFF / HYPE' },
   'coercion': { es: 'COERCIÓN', fr: 'COERCITION', en: 'COERCION' },
   'dogma': { es: 'DOGMA', fr: 'DOGME', en: 'DOGMA' },
-  'pseudoscience': { es: 'SEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
+  'pseudoscience': { es: 'PSEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
   'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
   'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
-  
-  // Compatibilidad con respuestas en francés antiguo
   'persuasif': { es: 'PERSUASIVO', fr: 'PERSUASIF', en: 'PERSUASIVE' },
   'marketing': { es: 'MARKETING', fr: 'MARKETING', en: 'MARKETING' },
   'biais leger': { es: 'SESGO LEVE', fr: 'BIAIS LÉGER', en: 'LIGHT BIAS' },
@@ -565,10 +571,8 @@ function applyEthicBadge(score, customFlags) {
   ethicScore.innerText = `Ethic-Score™: ${letter}`;
   ethicScore.style.backgroundColor = color;
 
-  // Idioma actual seguro (por defecto 'fr' si no existe)
   const lang = (typeof currentLang !== 'undefined' && FLAGS_BY_SCORE[currentLang]) ? currentLang : 'fr';
 
-  // Si vienen customFlags usarlas, si no tomar las de fallback según idioma
   const flagsToRender = (customFlags && customFlags.length > 0) 
     ? customFlags 
     : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
@@ -586,8 +590,6 @@ function renderFlags(flagsArray) {
   (flags || ['ANALYSE']).forEach(f => {
     const rawKey = f.trim().toLowerCase();
     
-    // Si la etiqueta existe en el diccionario, se traduce al idioma seleccionado.
-    // Si no, se muestra en mayúsculas como viene.
     let displayLabel = f.trim().toUpperCase();
     if (FLAG_DICTIONARY[rawKey] && FLAG_DICTIONARY[rawKey][lang]) {
       displayLabel = FLAG_DICTIONARY[rawKey][lang];
@@ -600,8 +602,105 @@ function renderFlags(flagsArray) {
   });
 }
 
-// ⚡ Análisis Inicial
+// ⚡ Análisis Inicial (Versión Única e Integrada)
 btnAnalyze.addEventListener('click', async () => {
+  // A. Helper para extraer ID de YouTube
+function extractYouTubeID(url) {
+  const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
+
+// B. Extraer texto de imágenes (Capturas de redes sociales / OCR)
+async function extractTextFromImage(file) {
+  document.getElementById('txt-status').innerText = '● LECTURE OCR DE L\'IMAGE EN COURS...';
+  const worker = await Tesseract.createWorker(['fra', 'spa', 'eng']);
+  const ret = await worker.recognize(file);
+  await worker.terminate();
+  return ret.data.text;
+}
+
+// C. Extraer texto de archivos PDF
+async function extractTextFromPDF(file) {
+  document.getElementById('txt-status').innerText = '● EXTRACTION DU TEXTE DU PDF...';
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const strings = content.items.map(item => item.str);
+    fullText += strings.join(' ') + '\n';
+  }
+  return fullText;
+}
+
+// D. Event Listener unificado para el botón BEACON-IZE
+btnAnalyze.addEventListener('click', async () => {
+  let textToAnalyze = userInput.value.trim();
+  const file = userFile.files[0];
+
+  if (!textToAnalyze && !file) {
+    const errorMsg = {
+      es: 'Por favor ingrese texto, una URL de YouTube o adjunte un archivo.',
+      fr: 'Veuillez entrer du texte, un lien YouTube ou joindre un fichier.',
+      en: 'Please enter text, a YouTube link or attach a file.'
+    };
+    return alert(errorMsg[currentLang] || errorMsg.fr);
+  }
+
+  btnAnalyze.disabled = true;
+  resultsPanel.style.display = 'block';
+  startEthicSpinner();
+
+  try {
+    // 1. Si hay un archivo adjunto (Imagen o PDF)
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        textToAnalyze = await extractTextFromImage(file);
+      } else if (file.type === 'application/pdf') {
+        textToAnalyze = await extractTextFromPDF(file);
+      }
+    } 
+    // 2. Si es un enlace de YouTube
+    else if (extractYouTubeID(textToAnalyze)) {
+      const videoId = extractYouTubeID(textToAnalyze);
+      document.getElementById('txt-status').innerText = `● RÉCUPÉRATION DU TRANSCRIPT YOUTUBE (${videoId})...`;
+      
+      const ytResponse = await fetch(`${API_BASE_URL}/transcript?videoId=${videoId}`);
+      const ytData = await ytResponse.json();
+      textToAnalyze = ytData.fullText || ytData.text;
+    }
+
+    // Reflejar el texto procesado en la caja de texto para que sea visible y exportable a PDF
+    userInput.value = textToAnalyze;
+    lastAnalyzedText = textToAnalyze;
+
+    // 3. Enviar el texto limpio final al backend para el análisis en 4 Fases
+    document.getElementById('txt-status').innerText = '● ANALYSE EN COURS...';
+    const response = await fetch(`${API_BASE_URL}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: textToAnalyze, lang: currentLang })
+    });
+    const data = await response.json();
+
+    const flagsReceived = data.flags || data.detected_flags;
+    applyEthicBadge(data.ethic_letter || 'C', flagsReceived);
+    analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
+
+  } catch (e) {
+    applyEthicBadge('C');
+    const serverErrMsg = {
+      es: 'Error al procesar el archivo o la conexión.',
+      fr: "Erreur lors du traitement du fichier ou de la connexion.",
+      en: 'Error processing file or connection.'
+    };
+    analysisReport.innerText = serverErrMsg[currentLang] || serverErrMsg.fr;
+  } finally {
+    btnAnalyze.disabled = false;
+  }
+});
   const text = userInput.value.trim();
   if (!text && userFile.files.length === 0) {
     const errorMsg = {
@@ -632,7 +731,6 @@ btnAnalyze.addEventListener('click', async () => {
     });
     const data = await response.json();
     
-    // Corregido: lee data.flags o data.detected_flags
     const flagsReceived = data.flags || data.detected_flags;
     
     applyEthicBadge(data.ethic_letter || 'C', flagsReceived);
@@ -650,38 +748,6 @@ btnAnalyze.addEventListener('click', async () => {
     btnAnalyze.disabled = false;
   }
 });
-
-      // ⚡ Análisis Inicial
-      btnAnalyze.addEventListener('click', async () => {
-        const text = userInput.value.trim();
-        if (!text && userFile.files.length === 0) {
-          return alert(currentLang === 'es' ? 'Por favor ingrese texto o adjunte un archivo.' : 'Veuillez entrer du texte ou joindre un fichier.');
-        }
-
-        lastAnalyzedText = text;
-        btnAnalyze.disabled = true;
-        resultsPanel.style.display = 'block';
-        analysisReport.innerText = currentLang === 'es' ? '⚡ Análisis en proceso...' : '⚡ Analyse en cours...';
-        startEthicSpinner();
-
-        try {
-          const response = await fetch(`${API_BASE_URL}/analyze`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, lang: currentLang })
-          });
-          const data = await response.json();
-          
-          applyEthicBadge(data.ethic_letter || 'C', data.detected_flags);
-          analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
-          
-        } catch (e) {
-          applyEthicBadge('C');
-          analysisReport.innerText = currentLang === 'es' ? "Error de conexión con el servidor." : "Erreur de connexion avec le serveur d'analyse.";
-        } finally {
-          btnAnalyze.disabled = false;
-        }
-      });
 
       // 🔄 REFUTACIÓN DIRECTA
       btnRefute.addEventListener('click', async () => {
@@ -720,7 +786,7 @@ btnAnalyze.addEventListener('click', async () => {
         }
       });
 
-      // 📄 EXPORTAR PDF
+     // 📄 EXPORTAR PDF CON FLAGS E IDIOMA
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport.innerText;
         const lang = currentLang || 'fr';
@@ -754,9 +820,10 @@ btnAnalyze.addEventListener('click', async () => {
           es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
           en: "COGNITIVE SELF-DEFENSE LABORATORY"
         };
-        const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
+        const refLabels = { fr: 'RÉF', es: 'REF', en: 'REF' };
         const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
         const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
+        const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
 
         function printSectionHeader(text, x, y) {
           doc.setFont("helvetica", "bold");
@@ -769,6 +836,7 @@ btnAnalyze.addEventListener('click', async () => {
           doc.line(x, y + 3, x + contentWidth, y + 3);
         }
 
+        // --- ENCABEZADO OFICIAL ---
         doc.setFont("courier", "bold");
         doc.setFontSize(15);
         doc.setTextColor(15, 23, 42);
@@ -792,15 +860,24 @@ btnAnalyze.addEventListener('click', async () => {
         });
         const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
-        let scoreR = 234, scoreG = 179, scoreB = 8;
-        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
-        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
-        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
+        // Coordenadas de color dinámicas según Score
+        let scoreR = 234, scoreG = 179, scoreB = 8; // B (Amarillo)
+        if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; } // Verde
+        if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; } // Naranja
+        if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; } // Rojo
 
+        // Obtener los elementos de las flags impresos actualmente en la pantalla
+        const flagElements = Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim());
+
+        // Calculamos la altura de la tarjeta según si hay flags o no
+        const cardHeight = flagElements.length > 0 ? 32 : 20;
+
+        // Tarjeta principal de la métrica
         doc.setFillColor(248, 250, 252);
         doc.setDrawColor(226, 232, 240);
-        doc.roundedRect(margin, cursorY, contentWidth, 20, 2, 2, 'FD');
+        doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
 
+        // Badge de Ethic Score
         doc.setFillColor(scoreR, scoreG, scoreB);
         doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
         doc.setFont("helvetica", "bold");
@@ -810,6 +887,7 @@ btnAnalyze.addEventListener('click', async () => {
         doc.setFontSize(12);
         doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
 
+        // Metadatos de la sesión
         doc.setFont("courier", "bold");
         doc.setFontSize(9.5);
         doc.setTextColor(51, 65, 85);
@@ -819,8 +897,38 @@ btnAnalyze.addEventListener('click', async () => {
         doc.text(refText, margin + 46, cursorY + 8);
         doc.text(dateText, margin + 46, cursorY + 13);
 
-        cursorY += 26;
+        // 🏷️ IMPRESIÓN DINÁMICA DE FLAGS EN EL PDF
+        if (flagElements.length > 0) {
+          doc.setDrawColor(226, 232, 240);
+          doc.setLineWidth(0.3);
+          doc.line(margin + 3, cursorY + 19, margin + contentWidth - 3, cursorY + 19);
 
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(7.5);
+          doc.setTextColor(100, 116, 139);
+          doc.text(`${flagsHeaderLabels[lang] || 'INDICATEURS'}:`, margin + 5, cursorY + 26);
+
+          let flagX = margin + 30;
+          flagElements.forEach(flagText => {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(7);
+            const textWidth = doc.getTextWidth(flagText);
+            const badgeWidth = textWidth + 6;
+
+            // Si sobrepasa la tarjeta, corta para evitar salirse del margen
+            if (flagX + badgeWidth < margin + contentWidth - 3) {
+              doc.setFillColor(226, 232, 240);
+              doc.roundedRect(flagX, cursorY + 22, badgeWidth, 5.5, 1, 1, 'F');
+              doc.setTextColor(15, 23, 42);
+              doc.text(flagText, flagX + 3, cursorY + 26);
+              flagX += badgeWidth + 3;
+            }
+          });
+        }
+
+        cursorY += cardHeight + 6;
+
+        // --- PROCESAMIENTO DEL CUERPO DEL INFORME ---
         const lines = cleanText.split('\n');
 
         lines.forEach((line) => {
@@ -912,6 +1020,7 @@ btnAnalyze.addEventListener('click', async () => {
           }
         });
 
+        // --- PIE DE PÁGINA ---
         const footerLabels = {
           fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
           es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
@@ -935,20 +1044,34 @@ btnAnalyze.addEventListener('click', async () => {
         doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
       });
 
-      // 🗑️ PURGAR (Completado y cerrado correctamente)
+      // 🗑️ PURGAR (Limpiar interfaz)
       btnPurge.addEventListener('click', () => {
         userInput.value = '';
         userFile.value = '';
         fileNameDisplay.innerText = langMap[currentLang].fileBtn;
         
-        analysisReport.innerText = 'En attente d\'analyse...';
-        if (detectedFlags) detectedFlags.innerHTML = '<span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>';
+        const resetText = {
+          es: 'En espera de análisis...',
+          fr: 'En attente d\'analyse...',
+          en: 'Waiting for analysis...'
+        };
+        analysisReport.innerText = resetText[currentLang] || resetText.fr;
+
+        const readyText = {
+          es: 'ANÁLISIS LISTO',
+          fr: 'ANALYSE PRÊTE',
+          en: 'ANALYSIS READY'
+        };
+        if (detectedFlags) {
+          detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText[currentLang] || readyText.fr}</span>`;
+        }
 
         stopEthicSpinner();
         ethicScore.innerText = 'Ethic-Score™: --';
         ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
         
         resultsPanel.style.display = 'none';
+        lastAnalyzedText = "";
       });
     });
   </script>
