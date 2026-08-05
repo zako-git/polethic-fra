@@ -791,7 +791,7 @@ btnAnalyze.addEventListener('click', async () => {
         doc.setFontSize(9.5);
         doc.setTextColor(51, 65, 85);
 
-        const refText = `${refLabels[lang] || 'RÉFÉRENCE'} : ${auditId}`;
+        const refText = `${refLabels[lang] || 'RÉF'} : ${auditId}`;
         const dateText = `${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`;
         doc.text(refText, margin + 46, cursorY + 8);
         doc.text(dateText, margin + 46, cursorY + 13);
@@ -1001,7 +1001,7 @@ FLAG_TRANSLATIONS = {
         "bluff": "MARQUETING / HYPE",
         "coercion": "COERCION",
         "dogma": "DOGMA",
-        "pseudoscience": "SEUDOCIENCIA",
+        "pseudoscience": "PSEUDOCIENCIA",
         "authority_transfer": "TRANSFERENCIA AUTORIDAD",
         "psnc": "SESGO COGNITIVO",
         "persuasif": "PERSUASIVO",
