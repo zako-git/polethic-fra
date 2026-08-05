@@ -515,7 +515,7 @@ const FLAGS_BY_SCORE = {
   es: {
     'A': ['FACTUAL', 'TRANSPARENTE', 'DESCRIPTIVO', 'SIN RIESGO'],
     'B': ['PERSUASIVO', 'MARKETING', 'SESGO LEVE', 'PROMESA'],
-    'C': ['MANIPULACIÓN', 'AMBIGÜEDAD', 'SEUDOCIENCIA', 'RETÓRICA'],
+    'C': ['MANIPULACIÓN', 'AMBIGÜEDAD', 'PSEUDOCIENCIA', 'RETÓRICA'],
     'D': ['RIESGO SECTARIO', 'INFLUENCIA', 'AISLAMIENTO', 'PELIGRO COGNITIVO']
   },
   fr: {
@@ -539,7 +539,7 @@ const FLAG_DICTIONARY = {
   'bluff': { es: 'MARKETING / HYPE', fr: 'BLUFF / HYPE', en: 'BLUFF / HYPE' },
   'coercion': { es: 'COERCIÓN', fr: 'COERCITION', en: 'COERCION' },
   'dogma': { es: 'DOGMA', fr: 'DOGME', en: 'DOGMA' },
-  'pseudoscience': { es: 'SEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
+  'pseudoscience': { es: 'PSEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
   'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
   'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
   'persuasif': { es: 'PERSUASIVO', fr: 'PERSUASIF', en: 'PERSUASIVE' },
@@ -714,7 +714,7 @@ btnAnalyze.addEventListener('click', async () => {
           es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
           en: "COGNITIVE SELF-DEFENSE LABORATORY"
         };
-        const refLabels = { fr: 'RÉFÉRENCE', es: 'REFERENCIA', en: 'REFERENCE' };
+        const refLabels = { fr: 'RÉF', es: 'REF', en: 'REF' };
         const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
         const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
         const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
