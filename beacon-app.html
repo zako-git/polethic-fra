@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BEACON LAB | POLETHIC France</title>
 
-
   <!-- Librería jsPDF para generación de PDF profesional -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -18,7 +17,7 @@
       --cyber-green: #00ff88;
       --cyber-red: #ff2a6d;
       --cyber-yellow: #ffe600;
-      --cyber-bg: #061526; /* Fondo base */
+      --cyber-bg: #061526;
       --cyber-card-bg: rgba(15, 23, 42, 0.85);
       --font-cyber: 'Courier New', Courier, monospace;
     }
@@ -30,10 +29,8 @@
       color: #e0e0e0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
-      /* FONDO Y ESTRELLAS BRILLANTES */
-       <!-- CAPA DE ESTRELLAS DE FONDO -->
-  <div id="stars-container"></div>
-    
+      position: relative;
+      overflow-x: hidden;
       background-image: 
         radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
         radial-gradient(2px 2px at 40px 70px, rgba(0, 240, 255, 0.9), rgba(0,0,0,0)),
@@ -41,6 +38,34 @@
         radial-gradient(1.5px 1.5px at 160px 120px, rgba(0, 255, 136, 0.8), rgba(0,0,0,0)),
         radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.22) 0%, transparent 70%);
       background-attachment: fixed;
+    }
+
+    /* CAPA DE ESTRELLAS ANIMADAS */
+    #stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 50%;
+      animation: twinkle linear infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    header, main, footer {
+      position: relative;
+      z-index: 1;
     }
 
     header {
@@ -265,6 +290,9 @@
 </head>
 <body>
 
+  <!-- CAPA DE ESTRELLAS DE FONDO -->
+  <div id="stars-container"></div>
+
   <!-- CABECERA -->
   <header>
     <div class="container header-layout">
@@ -339,6 +367,26 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+
+      // GENERADOR DE ESTRELLAS DINÁMICO
+      function generateStars(count = 40) {
+        const container = document.getElementById('stars-container');
+        if (!container) return;
+        container.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          const size = Math.random() * 2.5 + 1;
+          star.style.width = `${size}px`;
+          star.style.height = `${size}px`;
+          star.style.top = `${Math.random() * 100}%`;
+          star.style.left = `${Math.random() * 100}%`;
+          star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+          star.style.animationDelay = `${Math.random() * 3}s`;
+          container.appendChild(star);
+        }
+      }
+      generateStars();
 
       const btnAnalyze = document.getElementById('btn-analyze');
       const userInput = document.getElementById('user-input');
@@ -462,7 +510,6 @@
         }
       }
 
-      // 1. DICCIONARIO DE FLAGS POR NOTA
       const FLAGS_BY_SCORE = {
         'A': ['FACTUEL', 'TRANSPARENT', 'DESCRIPTIF', 'SANS RISQUE'],
         'B': ['PERSUASIF', 'MARKETING', 'BIAIS LEGER', 'PROMESSE'],
@@ -470,7 +517,6 @@
         'D': ['RISQUE SECTAIRE', 'EMPRISE', 'ISOLLEMENT', 'DANGER COGNITIF']
       };
 
-      // 2. APLICAR BADGE Y TARJETAS
       function applyEthicBadge(score, customFlags) {
         stopEthicSpinner();
         let letter = 'C';
@@ -485,7 +531,6 @@
         ethicScore.innerText = `Ethic-Score™: ${letter}`;
         ethicScore.style.backgroundColor = color;
 
-        // Si el backend envía etiquetas las usa; si no, toma las del diccionario
         const flagsToRender = (customFlags && customFlags.length > 0) 
           ? customFlags 
           : (FLAGS_BY_SCORE[letter] || FLAGS_BY_SCORE['C']);
@@ -493,7 +538,6 @@
         renderFlags(flagsToRender);
       }
 
-      // 3. RENDERIZAR TARJETAS (Sólo una declaración)
       function renderFlags(flagsArray) {
         if (!detectedFlags) return;
         detectedFlags.innerHTML = '';
@@ -527,7 +571,6 @@
           });
           const data = await response.json();
           
-          // Le pasamos a applyEthicBadge tanto la nota como los flags recibidos
           applyEthicBadge(data.ethic_letter || 'C', data.detected_flags);
           analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
           
@@ -539,7 +582,7 @@
         }
       });
 
-      // 🔄 REFUTACIÓN DIRECTA AL BACKEND (ENDPOINT /refute)
+      // 🔄 REFUTACIÓN DIRECTA
       btnRefute.addEventListener('click', async () => {
         const currentAnalysis = analysisReport.innerText;
         const t = langMap[currentLang];
@@ -576,7 +619,7 @@
         }
       });
 
-      // 📄 EXPORTAR PDF (DISEÑO ESTÁNDAR INFORME CRIMINAL - VERSIÓN MULTILINGÜE CORREGIDA)
+      // 📄 EXPORTAR PDF
       btnPdf.addEventListener('click', () => {
         const reportText = analysisReport.innerText;
         const lang = currentLang || 'fr';
@@ -595,7 +638,6 @@
         const contentWidth = pageWidth - (margin * 2);
         let cursorY = margin;
 
-        // 1. SANEADO POR LISTA BLANCA (caracteres válidos para PDF en helvetica)
         const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
 
         let cleanText = reportText
@@ -605,7 +647,6 @@
           .replace(WHITELIST, '')
           .trim();
 
-        // DICCIONARIOS MULTILINGÜES PARA ENCABEZADO Y FICHA
         const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
         const subHeaderLabels = {
           fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
@@ -616,7 +657,6 @@
         const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
         const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
 
-        // --- HELPER: Título de sección en negrita + subrayado decorativo ---
         function printSectionHeader(text, x, y) {
           doc.setFont("helvetica", "bold");
           doc.setFontSize(11.5);
@@ -628,7 +668,6 @@
           doc.line(x, y + 3, x + contentWidth, y + 3);
         }
 
-        // --- ENCABEZADO PRINCIPAL MULTILINGÜE ---
         doc.setFont("courier", "bold");
         doc.setFontSize(15);
         doc.setTextColor(15, 23, 42);
@@ -661,7 +700,6 @@
         doc.setDrawColor(226, 232, 240);
         doc.roundedRect(margin, cursorY, contentWidth, 20, 2, 2, 'FD');
 
-        // Insignia Ethic-Score
         doc.setFillColor(scoreR, scoreG, scoreB);
         doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
         doc.setFont("helvetica", "bold");
@@ -671,12 +709,10 @@
         doc.setFontSize(12);
         doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
 
-        // Datos del expediente
         doc.setFont("courier", "bold");
         doc.setFontSize(9.5);
         doc.setTextColor(51, 65, 85);
 
-        // Concatenación para evitar saltos no deseados de línea en el label "REFERENCIA :"
         const refText = `${refLabels[lang] || 'RÉFÉRENCE'} : ${auditId}`;
         const dateText = `${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`;
         doc.text(refText, margin + 46, cursorY + 8);
@@ -684,7 +720,6 @@
 
         cursorY += 26;
 
-        // --- CUERPO DEL INFORME ---
         const lines = cleanText.split('\n');
 
         lines.forEach((line) => {
@@ -695,8 +730,7 @@
             return;
           }
 
-          // EXPRESIÓN REGULAR CORREGIDA Y FLEXIBILIZADA:
-const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE CORTICAL|RECADRAGE CORTICAL|CORTICAL REFRAMING|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE|RÉFUTATION COGNITIVE|REFUTACION COGNITIVA|COGNITIVE REFUTATION)/i.test(trimmed);
+          const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTAGE COGNITIF|DEMONTAGE COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE CORTICAL|RECADRAGE CORTICAL|CORTICAL REFRAMING|REFRAMING|DÉFI DU BIAIS|DEFI DU BIAIS|DESAFÍO DEL SESGO|DESAFIO DEL SESGO|BIAS CHALLENGE|RÉFUTATION COGNITIVE|REFUTACION COGNITIVA|COGNITIVE REFUTATION)/i.test(trimmed);
 
           if (isHeader) {
             if (cursorY > pageHeight - 25) { doc.addPage(); cursorY = margin + 5; }
@@ -768,7 +802,6 @@ const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLE
               const splitLines = doc.splitTextToSize(printText, printWidth);
 
               splitLines.forEach((subLine) => {
-                // Control de altura estricto antes de escribir para no invadir el footer
                 if (cursorY > pageHeight - 18) { doc.addPage(); cursorY = margin + 5; }
                 doc.text(subLine, indent, cursorY);
                 cursorY += 5.5;
@@ -778,7 +811,6 @@ const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLE
           }
         });
 
-        // --- PIE DE PÁGINA ---
         const footerLabels = {
           fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
           es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
@@ -802,26 +834,22 @@ const isHeader = /^[-•\s=]*(PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLE
         doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
       });
 
-   // 🗑️ PURGAR
+      // 🗑️ PURGAR (Completado y cerrado correctamente)
       btnPurge.addEventListener('click', () => {
         userInput.value = '';
         userFile.value = '';
         fileNameDisplay.innerText = langMap[currentLang].fileBtn;
         
-        // Limpiar el informe y vaciar las tarjetitas
-        analysisReport.innerText = '';
-        if (detectedFlags) detectedFlags.innerHTML = '';
+        analysisReport.innerText = 'En attente d\'analyse...';
+        if (detectedFlags) detectedFlags.innerHTML = '<span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>';
 
-        // Resetear el badge
-        ethicScore.innerText = 'Ethic-Score™: -';
-        ethicScore.style.backgroundColor = 'transparent';
-
-        resultsPanel.style.display = 'none';
         stopEthicSpinner();
-        lastAnalyzedText = "";
+        ethicScore.innerText = 'Ethic-Score™: --';
+        ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
+        
+        resultsPanel.style.display = 'none';
       });
-
-    }); // <-- CIERRE CORRECTO DE DOMContentLoaded
+    });
   </script>
 </body>
 </html>
