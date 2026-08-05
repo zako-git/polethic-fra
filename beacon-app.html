@@ -381,151 +381,165 @@
     </div>
   </footer>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
 
-      // GENERADOR DE ESTRELLAS DINÁMICO
-      function generateStars(count = 40) {
-        const container = document.getElementById('stars-container');
-        if (!container) return;
-        container.innerHTML = '';
-        for (let i = 0; i < count; i++) {
-          const star = document.createElement('div');
-          star.className = 'star';
-          const size = Math.random() * 2.5 + 1;
-          star.style.width = `${size}px`;
-          star.style.height = `${size}px`;
-          star.style.top = `${Math.random() * 100}%`;
-          star.style.left = `${Math.random() * 100}%`;
-          star.style.animationDuration = `${Math.random() * 3 + 2}s`;
-          star.style.animationDelay = `${Math.random() * 3}s`;
-          container.appendChild(star);
-        }
+    // GENERADOR DE ESTRELLAS DINÁMICO
+    function generateStars(count = 40) {
+      const container = document.getElementById('stars-container');
+      if (!container) return;
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.5 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        container.appendChild(star);
       }
-      generateStars();
+    }
+    generateStars();
 
-      const btnAnalyze = document.getElementById('btn-analyze');
-      const userInput = document.getElementById('user-input');
-      const userFile = document.getElementById('user-file');
-      const fileNameDisplay = document.getElementById('file-name-display');
-      const resultsPanel = document.getElementById('results-panel');
-      const analysisReport = document.getElementById('analysis-report');
-      const ethicScore = document.getElementById('ethic-score');
-      const detectedFlags = document.getElementById('detected-flags-container');
+    const btnAnalyze = document.getElementById('btn-analyze');
+    const userInput = document.getElementById('user-input');
+    const userFile = document.getElementById('user-file');
+    const fileNameDisplay = document.getElementById('file-name-display');
+    const resultsPanel = document.getElementById('results-panel');
+    const analysisReport = document.getElementById('analysis-report');
+    const ethicScore = document.getElementById('ethic-score');
+    const detectedFlags = document.getElementById('detected-flags-container');
 
-      const btnRefute = document.getElementById('btn-refute');
-      const btnPdf = document.getElementById('btn-pdf');
-      const btnPurge = document.getElementById('btn-purge');
+    const btnRefute = document.getElementById('btn-refute');
+    const btnPdf = document.getElementById('btn-pdf');
+    const btnPurge = document.getElementById('btn-purge');
 
-      const btnFr = document.getElementById('btn-fr');
-      const btnEs = document.getElementById('btn-es');
-      const btnEn = document.getElementById('btn-en');
+    const btnFr = document.getElementById('btn-fr');
+    const btnEs = document.getElementById('btn-es');
+    const btnEn = document.getElementById('btn-en');
 
-      let currentLang = 'fr';
-      let currentScoreLetter = 'C';
-      let ethicSpinnerInterval = null;
-      let lastAnalyzedText = "";
+    let currentLang = 'fr';
+    let currentScoreLetter = 'C';
+    let ethicSpinnerInterval = null;
+    let lastAnalyzedText = "";
 
-      // Idiomas
-      const langMap = {
-        fr: {
-          subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
-          placeholder: "Collez du texte ou glissez-déposez un fichier PDF/Image ici...",
-          fileBtn: "Joindre / Glisser un fichier",
-          analyzeBtn: "⚡ BEACON-IZE",
-          status: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
-          refuteBtn: "🔄 RÉFUTER / CHALLENGER",
-          refuting: "⏳ GÉNÉRATION DU DÉFI...",
-          pdfBtn: "📄 EXPORTER EN PDF",
-          purgeBtn: "🗑️ PURGER",
-          shieldTitle: "Bouclier de Protection Professionnelle",
-          shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
-          noAnalysisAlert: "Effectuez d'abord une analyse valide avant de lancer une réfutation.",
-          noExportAlert: "Aucun rapport valide à exporter."
-        },
-        es: {
-          subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
-          placeholder: "Pegue texto o arrastre un archivo PDF/Imagen aquí...",
-          fileBtn: "Adjuntar / Arrastrar archivo",
-          analyzeBtn: "⚡ BEACON-IZE",
-          status: "● MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
-          refuteBtn: "🔄 REFUTAR / DESAFIAR",
-          refuting: "⏳ GENERANDO REFUTACIÓN...",
-          pdfBtn: "📄 EXPORTAR A PDF",
-          purgeBtn: "🗑️ PURGAR",
-          shieldTitle: "Escudo de Protección Profesional",
-          shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
-          noAnalysisAlert: "Realice primero un análisis válido antes de refutar.",
-          noExportAlert: "No hay un informe válido para exportar."
-        },
-        en: {
-          subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
-          placeholder: "Paste text or drag and drop a PDF/Image file here...",
-          fileBtn: "Attach / Drag file",
-          analyzeBtn: "⚡ BEACON-IZE",
-          status: "● ENGINE READY | SYSTEM ONLINE (2026)",
-          refuteBtn: "🔄 REFUTE / CHALLENGE",
-          refuting: "⏳ GENERATING CHALLENGE...",
-          pdfBtn: "📄 EXPORT TO PDF",
-          purgeBtn: "🗑️ PURGE",
-          shieldTitle: "Professional Protection Shield",
-          shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation.",
-          noAnalysisAlert: "Perform a valid analysis first before refuting.",
-          noExportAlert: "No valid report to export."
-        }
-      };
-
-      function changeLanguage(lang) {
-        currentLang = lang;
-        [btnFr, btnEs, btnEn].forEach(b => b.classList.remove('active'));
-        if (lang === 'fr') btnFr.classList.add('active');
-        if (lang === 'es') btnEs.classList.add('active');
-        if (lang === 'en') btnEn.classList.add('active');
-
-        const t = langMap[lang];
-        document.getElementById('txt-subtitle').innerText = t.subtitle;
-        userInput.placeholder = t.placeholder;
-        if (userFile.files.length === 0) fileNameDisplay.innerText = t.fileBtn;
-        btnAnalyze.innerText = t.analyzeBtn;
-        document.getElementById('txt-status').innerText = t.status;
-        btnRefute.innerText = t.refuteBtn;
-        btnPdf.innerText = t.pdfBtn;
-        btnPurge.innerText = t.purgeBtn;
-        document.getElementById('txt-shield-title').innerText = t.shieldTitle;
-        document.getElementById('txt-shield-desc').innerText = t.shieldDesc;
+    // Diccionario Trilingüe
+    const langMap = {
+      fr: {
+        subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
+        placeholder: "Collez du texte, un lien YouTube ou glissez-déposez un fichier PDF/Image ici...",
+        fileBtn: "Joindre / Glisser un fichier",
+        analyzeBtn: "⚡ BEACON-IZE",
+        status: "● MOTEUR PRÊT | SYSTEM ONLINE (2026)",
+        refuteBtn: "🔄 RÉFUTER / CHALLENGER",
+        refuting: "⏳ GÉNÉRATION DU DÉFI...",
+        pdfBtn: "📄 EXPORTER EN PDF",
+        purgeBtn: "🗑️ PURGER",
+        shieldTitle: "Bouclier de Protection Professionnelle",
+        shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+        noAnalysisAlert: "Effectuez d'abord une analyse valide avant de lancer une réfutation.",
+        noExportAlert: "Aucun rapport valide à exporter."
+      },
+      es: {
+        subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
+        placeholder: "Pegue texto, un enlace o arrastre un archivo PDF/Imagen aquí...",
+        fileBtn: "Adjuntar / Arrastrar archivo",
+        analyzeBtn: "⚡ BEACON-IZE",
+        status: "● MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
+        refuteBtn: "🔄 REFUTAR / DESAFIAR",
+        refuting: "⏳ GENERANDO REFUTACIÓN...",
+        pdfBtn: "📄 EXPORTAR A PDF",
+        purgeBtn: "🗑️ PURGAR",
+        shieldTitle: "Escudo de Protección Profesional",
+        shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+        noAnalysisAlert: "Realice primero un análisis válido antes de refutar.",
+        noExportAlert: "No hay un informe válido para exportar."
+      },
+      en: {
+        subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
+        placeholder: "Paste text, link, or drag and drop a PDF/Image file here...",
+        fileBtn: "Attach / Drag file",
+        analyzeBtn: "⚡ BEACON-IZE",
+        status: "● ENGINE READY | SYSTEM ONLINE (2026)",
+        refuteBtn: "🔄 REFUTE / CHALLENGE",
+        refuting: "⏳ GENERATING CHALLENGE...",
+        pdfBtn: "📄 EXPORT TO PDF",
+        purgeBtn: "🗑️ PURGE",
+        shieldTitle: "Professional Protection Shield",
+        shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+        noAnalysisAlert: "Perform a valid analysis first before refuting.",
+        noExportAlert: "No valid report to export."
       }
+    };
 
-      btnFr.addEventListener('click', () => changeLanguage('fr'));
-      btnEs.addEventListener('click', () => changeLanguage('es'));
-      btnEn.addEventListener('click', () => changeLanguage('en'));
+    function changeLanguage(lang) {
+      currentLang = lang;
+      // Actualizar atributo global del documento para lectores de pantalla y SEO
+      document.documentElement.lang = lang;
 
-      userFile.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-          fileNameDisplay.innerText = e.target.files[0].name;
-        } else {
-          fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+      [btnFr, btnEs, btnEn].forEach(b => b.classList.remove('active'));
+      if (lang === 'fr') btnFr.classList.add('active');
+      if (lang === 'es') btnEs.classList.add('active');
+      if (lang === 'en') btnEn.classList.add('active');
+
+      const t = langMap[lang];
+      document.getElementById('txt-subtitle').innerText = t.subtitle;
+      userInput.placeholder = t.placeholder;
+      if (userFile.files.length === 0) fileNameDisplay.innerText = t.fileBtn;
+      btnAnalyze.innerText = t.analyzeBtn;
+      document.getElementById('txt-status').innerText = t.status;
+      btnRefute.innerText = t.refuteBtn;
+      btnPdf.innerText = t.pdfBtn;
+      btnPurge.innerText = t.purgeBtn;
+      document.getElementById('txt-shield-title').innerText = t.shieldTitle;
+      document.getElementById('txt-shield-desc').innerText = t.shieldDesc;
+    }
+
+    btnFr.addEventListener('click', () => changeLanguage('fr'));
+    btnEs.addEventListener('click', () => changeLanguage('es'));
+    btnEn.addEventListener('click', () => changeLanguage('en'));
+
+    // Accesibilidad: Abrir explorador de archivos al presionar Enter/Espacio en el label
+    const fileLabel = document.querySelector('label[for="user-file"]');
+    if (fileLabel) {
+      fileLabel.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          userFile.click();
         }
       });
+    }
 
-      function startEthicSpinner() {
-        const letters = ['A', 'B', 'C', 'D', 'S', 'X'];
-        const colors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d'];
-        if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
-        ethicSpinnerInterval = setInterval(() => {
-          const l = letters[Math.floor(Math.random() * letters.length)];
-          const c = colors[Math.floor(Math.random() * colors.length)];
-          ethicScore.innerText = `Ethic-Score™: ${l}`;
-          ethicScore.style.backgroundColor = c;
-        }, 90);
+    userFile.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        fileNameDisplay.innerText = e.target.files[0].name;
+      } else {
+        fileNameDisplay.innerText = langMap[currentLang].fileBtn;
       }
+    });
 
-      function stopEthicSpinner() {
-        if (ethicSpinnerInterval) {
-          clearInterval(ethicSpinnerInterval);
-          ethicSpinnerInterval = null;
-        }
+    function startEthicSpinner() {
+      const letters = ['A', 'B', 'C', 'D', 'S', 'X'];
+      const colors = ['#00ff88', '#ffe600', '#ff9900', '#ff2a6d'];
+      if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
+      ethicSpinnerInterval = setInterval(() => {
+        const l = letters[Math.floor(Math.random() * letters.length)];
+        const c = colors[Math.floor(Math.random() * colors.length)];
+        ethicScore.innerText = `Ethic-Score™: ${l}`;
+        ethicScore.style.backgroundColor = c;
+      }, 90);
+    }
+
+    function stopEthicSpinner() {
+      if (ethicSpinnerInterval) {
+        clearInterval(ethicSpinnerInterval);
+        ethicSpinnerInterval = null;
       }
+    }
 
     // 1. DICCIONARIO MULTILINGÜE DE FALLBACKS (Si el backend no envía flags)
 const FLAGS_BY_SCORE = {
