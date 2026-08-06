@@ -1,669 +1,461 @@
 import os
 import re
-import io
-import sqlite3
-import unicodedata
-import requests
+import json
 from datetime import datetime
-from bs4 import BeautifulSoup
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from huggingface_hub import InferenceClient
-from youtube_transcript_api import YouTubeTranscriptApi
-from dotenv import load_dotenv
-
-# --- Procesamiento de imágenes (OCR) ---
-from PIL import Image
-import pytesseract
-
-# --- ReportLab para exportación PDF profesional ---
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
-load_dotenv()
-
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 
-# Límite de seguridad para carga de imágenes/archivos (16 MB max)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-
-DATABASE_NAME = "beacon.db"
-
-# Token de Hugging Face y Cliente Inference
-HF_TOKEN = os.environ.get("HF_TOKEN")
-client = InferenceClient(api_key=HF_TOKEN) if HF_TOKEN else None
-
-# Modelo recomendado para análisis lingüístico y forense profundo
+# =====================================================================
+# CONFIGURACIÓN Y CLIENTE HUGGINGFACE
+# =====================================================================
+HF_TOKEN = os.environ.get("HF_TOKEN", "")
 MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
 
+client = None
+if HF_TOKEN:
+    try:
+        client = InferenceClient(token=HF_TOKEN)
+    except Exception as e:
+        print(f"[WARN] Error al inicializar HuggingFace Client: {e}")
+
+# Archivo local de almacenamiento de auditoría
+AUDIT_FILE = "beacon_audits.json"
+
 # =====================================================================
-# DICCIONARIO DE TRADUCCIÓN DE BANDERAS/FLAGS SEGÚN EL IDIOMA
+# DICCIONARIO DE ENCABEZADOS ESTRUCTURADOS SEGÚN EL IDIOMA
 # =====================================================================
-FLAG_TRANSLATIONS = {
-    "es": {
-        "fakenews": "NOTICIA FALSA",
-        "myth": "MITO",
-        "bluff": "MARKETING / HYPE",
-        "coercion": "COERCIÓN",
-        "dogma": "DOGMA",
-        "pseudoscience": "PSEUDOCIENCIA",
-        "authority_transfer": "TRANSFERENCIA AUTORIDAD",
-        "psnc": "SESGO COGNITIVO"
-    },
+SECTION_HEADERS = {
     "fr": {
-        "fakenews": "FAUX BRUIT",
-        "myth": "MYTHE",
-        "bluff": "BLUFF / HYPE",
-        "coercion": "COERCITION",
-        "dogma": "DOGME",
-        "pseudoscience": "PSEUDOSCIENCE",
-        "authority_transfer": "TRANSFERT D'AUTORITÉ",
-        "psnc": "BIAIS COGNITIF"
+        "h1": "**1. CLASSIFICATION (Phase 0)**",
+        "h2": "**2. NOYAU DE FAITS / PRÉMISSES (Phase 1)**",
+        "h3": "**3. DÉMONTAGE COGNITIF ET LIMBIQUE (Phase 2)**",
+        "h4": "**4. RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**"
+    },
+    "es": {
+        "h1": "**1. CLASIFICACIÓN (Fase 0)**",
+        "h2": "**2. NÚCLEO DE HECHOS / PREMISAS (Fase 1)**",
+        "h3": "**3. DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**",
+        "h4": "**4. REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**"
     },
     "en": {
-        "fakenews": "FAKE NEWS",
-        "myth": "MYTH",
-        "bluff": "BLUFF / HYPE",
-        "coercion": "COERCION",
-        "dogma": "DOGMA",
-        "pseudoscience": "PSEUDOSCIENCE",
-        "authority_transfer": "AUTHORITY TRANSFER",
-        "psnc": "COGNITIVE BIAS"
+        "h1": "**1. CLASSIFICATION (Phase 0)**",
+        "h2": "**2. CORE FACTS / PREMISES (Phase 1)**",
+        "h3": "**3. COGNITIVE AND LIMBIC DECONSTRUCTION (Phase 2)**",
+        "h4": "**4. CORTICAL REFRAMING & STRATEGY (Phase 3)**"
     }
 }
 
 # =====================================================================
-# BASE DE DATOS Y REGLAS LOCALES
-# =====================================================================
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_db():
-    try:
-        with get_db_connection() as conn:
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS local_rules (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    module_key TEXT NOT NULL,
-                    keyword TEXT NOT NULL,
-                    risk_category TEXT NOT NULL,
-                    penalty_points INTEGER NOT NULL
-                );
-            """)
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS audits (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    module_key TEXT,
-                    source_type TEXT,
-                    raw_content TEXT,
-                    ethic_score INTEGER,
-                    diagnostic_report TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                );
-            """)
-            conn.commit()
-    except Exception as e:
-        print(f"[init_db] Warning: {e}")
-
-# =====================================================================
-# EXTRACCIÓN DE CONTENIDO (OCR, YOUTUBE Y WEB)
-# =====================================================================
-def extract_text_from_image(image_bytes, lang='fra+spa+eng'):
-    """ Extrae texto de imágenes usando pytesseract de forma resiliente """
-    try:
-        image = Image.open(io.BytesIO(image_bytes))
-        extracted = pytesseract.image_to_string(image, lang=lang)
-        return extracted.strip()
-    except Exception as e:
-        print(f"[extract_text_from_image error]: {e}")
-        return None
-
-def extract_youtube_id(url):
-    """ Extrae de forma robusta el ID de YouTube de cualquier formato de URL """
-    pattern = r'(?:v=|\/([0-9A-Za-z_-]{11}).*|youtu\.be\/|\/embed\/|\/shorts\/)([0-9A-Za-z_-]{11})'
-    match = re.search(pattern, url)
-    if match:
-        return match.group(1) or match.group(2)
-    return None
-
-def extract_transcript(url):
-    """ Obtiene transcripciones de YouTube tolerando cualquier idioma disponible """
-    try:
-        video_id = extract_youtube_id(url)
-        if not video_id:
-            return None
-
-        # Intenta primero con idiomas específicos, si falla busca cualquier lista
-        try:
-            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['fr', 'es', 'en'])
-        except Exception:
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-            transcript = transcript_list.find_transcript(['fr', 'es', 'en', 'de', 'it', 'pt']).fetch()
-
-        return " ".join([t['text'] for t in transcript])
-    except Exception as e:
-        print(f"[extract_transcript] error: {e}")
-        return None
-
-def extract_web_content(url):
-    try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        for element in soup(["script", "style", "nav", "footer", "header", "noscript", "svg", "iframe"]):
-            element.extract()
-
-        paragraphs = soup.find_all(['p', 'h1', 'h2', 'h3', 'li'])
-        extracted_text = " ".join([p.get_text().strip() for p in paragraphs if p.get_text().strip()])
-
-        if not extracted_text:
-            extracted_text = soup.get_text(separator=' ')
-
-        clean_text = ' '.join(extracted_text.split())
-        return clean_text[:4000]
-    except Exception as e:
-        print(f"[extract_web_content] error: {e}")
-        return None
-
-def apply_local_rules(content):
-    flags = []
-    penalty_total = 0
-
-    if not content or not isinstance(content, str):
-        return penalty_total, flags
-
-    lowered_content = content.lower()
-
-    try:
-        with get_db_connection() as conn:
-            rules = conn.execute(
-                "SELECT keyword, risk_category, penalty_points FROM local_rules"
-            ).fetchall()
-
-            for rule in rules:
-                keyword_lower = rule["keyword"].lower()
-                if keyword_lower in lowered_content:
-                    penalty_total += rule["penalty_points"]
-                    flags.append(rule["risk_category"].lower())
-    except Exception as e:
-        print(f"[apply_local_rules] Warning/Skipped: {e}")
-
-    return penalty_total, list(set(flags))
-
-def get_ethic_letter(score):
-    if score <= 25:
-        return "A"
-    elif score <= 50:
-        return "B"
-    elif score <= 75:
-        return "C"
-    return "D"
-
-def translate_flags(flags_list, lang="fr"):
-    lang_dict = FLAG_TRANSLATIONS.get(lang.lower(), FLAG_TRANSLATIONS["fr"])
-    return [lang_dict.get(f.strip().lower(), f.strip().upper()) for f in flags_list]
-
-def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_report):
-    try:
-        with get_db_connection() as conn:
-            conn.execute(
-                """INSERT INTO audits (module_key, source_type, raw_content, ethic_score, diagnostic_report)
-                   VALUES (?, ?, ?, ?, ?)""",
-                (module_key, source_type, str(raw_content), ethic_score, diagnostic_report)
-            )
-            conn.commit()
-    except Exception as e:
-        print(f"[save_audit] error: {e}")
-
-# =====================================================================
-# TEMPLATES DE PROMPTS CON REGLAS DE IDIOMA ESTRICTAS
+# TEMPLATES DE PROMPTS 100% MONOLINGÜES
 # =====================================================================
 TEMPLATES = {
     "fr": {
         "system": (
-            "Vous êtes POLETHIC BEACON, un moteur d'analyse métacognitive et forensique avancé.\n"
-            "Votre objectif est d'exécuter une déconstruction chirurgicale du texte pour éliminer le bruit rhétorique, le langage vendeur, le blanchiment sémantique et les biais.\n\n"
-            "RÈGLE LINGUISTIQUE ABSOLUE ET STRICTE :\n"
-            "1. Traduisez TOUT le contenu d'entrée vers le FRANÇAIS avant d'analyser.\n"
-            "2. Rédigez 100% de la réponse, des titres et des sous-titres STRICTEMENT EN FRANÇAIS.\n"
-            "3. Il est INTERDIT de mélanger de l'espagnol, de l'anglais ou d'autres langues dans le résultat.\n\n"
-            "FORMAT DE SORTIE IMPÉRATIF (RESPECTEZ EXACTEMENT CES TITRES) :\n\n"
+            "Vous êtes POLETHIC BEACON, un moteur d'analyse métacognitive.\n"
+            "RÈGLE ABSOLUE: Vous devez répondre TOUT le texte (titres, sous-titres, explications) EXCLUSIVEMENT EN FRANÇAIS.\n"
+            "Il est STRICTEMENT INTERDIT de mettre des mots ou des titres en espagnol ou en anglais.\n\n"
+            "FORMAT DE SORTIE IMPÉRATIF ET OBLIGATOIRE :\n\n"
             "  **1. CLASSIFICATION (Phase 0)**\n"
-            "- Type de Texte:\n"
-            "- Objectif de l'Émetteur:\n\n"
+            "- Type de texte:\n"
+            "- Objectif de l'émetteur:\n\n"
             "  **2. NOYAU DE FAITS / PRÉMISSES (Phase 1)**\n"
-            "- Données et affirmations filtrées sans bruit (sans rhétorique):\n\n"
+            "- Données et affirmations filtrées sans bruit:\n\n"
             "  **3. DÉMONTAGE COGNITIF ET LIMBIQUE (Phase 2)**\n"
-            "- Déclencheur Émotionnel / Biais Détecté:\n"
-            "- Intention vs Réalité (Analyse du blanchiment de langage):\n\n"
+            "- Déclencheur émotionnel / Biais détecté:\n"
+            "- Intention vs Réalité (Analyse du langage):\n\n"
             "  **4. RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**\n"
             "- Diagnostic synthétique final et recommandation d'action:\n\n"
-            "<flags>[Liste séparée par des virgules parmi: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
-            "<score>[Note entière de 0 à 100]</score>"
+            "<flags>[Liste séparée par des virgules: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
+            "<score>[Nombre entier de 0 à 100]</score>"
         ),
-        "refute_fallback": (
-            "1. PREUVE CLINIQUE / ÉMPIRIQUE : Quelles études contrôlées démontrent l'efficacité de cette approche ?\n"
-            "2. CADRE DE VIGILANCE : Comment garantissez-vous l'absence de sujection psychologique ou d'influence ésotérique ?\n"
-            "3. MESURE DE L'EFFICACITÉ : Quels indicateurs objectifs permettent de mesurer les résultats réels ?"
+        "refute_prompt": (
+            "Générez exactement 3 questions chirurgicales, précises et incisives en FRANÇAIS "
+            "pour réfuter ou remettre en question l'argument principal du texte analysé."
         )
     },
     "es": {
         "system": (
-            "Eres POLETHIC BEACON, un motor de análisis metacognitivo y forense avanzado.\n"
-            "Tu objetivo es ejecutar una deconstrucción quirúrgica del texto para eliminar el ruido retórico, lenguaje de ventas, blanqueamiento semántico y sesgos.\n\n"
-            "REGLA LINGÜÍSTICA ABSOLUTA Y ESTRICTA:\n"
-            "1. Traduce TODO el contenido de entrada al ESPAÑOL antes de analizar.\n"
-            "2. Escribe el 100% de la respuesta, títulos y subtítulos STRICTAMENTE EN ESPAÑOL.\n"
-            "3. Está PROHIBIDO mezclar palabras en francés, inglés u otros idiomas en la respuesta.\n\n"
-            "FORMATO DE SALIDA OBLIGATORIO (RESPETA EXACTAMENTE ESTOS TÍTULOS):\n\n"
+            "Eres POLETHIC BEACON, un motor de análisis metacognitivo.\n"
+            "REGLA ABSOLUTA: Debes responder TODO el texto (títulos, subtítulos, explicaciones) EXCLUSIVAMENTE EN ESPAÑOL.\n"
+            "Está ESTRICTAMENTE PROHIBIDO usar palabras o títulos en francés o inglés.\n\n"
+            "FORMATO DE SALIDA IMPERATIVO Y OBLIGATORIO :\n\n"
             "  **1. CLASIFICACIÓN (Fase 0)**\n"
-            "- Tipo de Texto:\n"
-            "- Propósito del Emisor:\n\n"
+            "- Tipo de texto:\n"
+            "- Propósito del emisor:\n\n"
             "  **2. NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
-            "- Datos y afirmaciones filtradas sin ruido (sin retórica):\n\n"
+            "- Datos y afirmaciones filtradas sin ruido:\n\n"
             "  **3. DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
-            "- Disparador Emocional / Sesgo Detectado:\n"
-            "- Intención vs. Realidad (Análisis de blanqueamiento de lenguaje):\n\n"
+            "- Disparador emocional / Sesgo detectado:\n"
+            "- Intención vs Realidad (Análisis del lenguaje):\n\n"
             "  **4. REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
             "- Diagnóstico sintético final y recomendación de acción:\n\n"
-            "<flags>[Lista separada por comas de: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
+            "<flags>[Lista separada por comas: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
             "<score>[Número entero de 0 a 100]</score>"
         ),
-        "refute_fallback": (
-            "1. EVIDENCIA EMPÍRICA: ¿Qué estudios controlados respaldan la efectividad de este enfoque?\n"
-            "2. RIESGO SECTARIO: ¿Cómo se garantiza la ausencia de manipulación psicológica o doctrina esotérica?\n"
-            "3. MEDICIÓN DE RESULTADOS: ¿Bajo qué indicadores métricos y objetivos se evalúa el impacto real?"
+        "refute_prompt": (
+            "Genera exactamente 3 preguntas quirúrgicas, precisas e incisivas en ESPAÑOL "
+            "para refutar o poner a prueba la argumentación principal del texto analizado."
         )
     },
     "en": {
         "system": (
-            "You are POLETHIC BEACON, an advanced forensic metacognitive analysis engine.\n"
-            "Your objective is to execute a surgical text deconstruction to eliminate rhetorical noise, sales hype, language laundering, and cognitive bias.\n\n"
-            "ABSOLUTE STRICT LANGUAGE RULE:\n"
-            "1. Translate ALL input content into ENGLISH before analyzing.\n"
-            "2. Write 100% of the response, headers, and section titles STRICTLY IN ENGLISH.\n"
-            "3. It is STRICTLY FORBIDDEN to mix French, Spanish, or other languages in the output.\n\n"
-            "MANDATORY OUTPUT FORMAT (RESPECT THESE TITLES EXACTLY):\n\n"
+            "You are POLETHIC BEACON, a metacognitive analysis engine.\n"
+            "ABSOLUTE RULE: You MUST answer ALL text (titles, subtitles, explanations) EXCLUSIVELY IN ENGLISH.\n"
+            "It is STRICTLY FORBIDDEN to use Spanish or French words or headers.\n\n"
+            "MANDATORY OUTPUT FORMAT:\n\n"
             "  **1. CLASSIFICATION (Phase 0)**\n"
             "- Text Type:\n"
             "- Sender Purpose:\n\n"
             "  **2. CORE FACTS / PREMISES (Phase 1)**\n"
-            "- Noise-filtered data and claims (without rhetoric):\n\n"
+            "- Noise-filtered data:\n\n"
             "  **3. COGNITIVE AND LIMBIC DECONSTRUCTION (Phase 2)**\n"
             "- Emotional Trigger / Bias Detected:\n"
-            "- Intent vs. Reality (Language laundering analysis):\n\n"
+            "- Intent vs. Reality:\n\n"
             "  **4. CORTICAL REFRAMING & STRATEGY (Phase 3)**\n"
             "- Final synthetic diagnosis and action recommendation:\n\n"
-            "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
+            "<flags>[Comma-separated list: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
             "<score>[Integer from 0 to 100]</score>"
         ),
-        "refute_fallback": (
-            "1. EMPIRICAL EVIDENCE: What controlled studies demonstrate the effectiveness of this approach?\n"
-            "2. CULTIC RISK SAFEGUARD: How do you guarantee the absence of psychological coercion or esoteric doctrine?\n"
-            "3. PERFORMANCE METRICS: Which objective metrics are used to evaluate real-world outcomes?"
+        "refute_prompt": (
+            "Generate exactly 3 surgical, precise, and incisive questions in ENGLISH "
+            "to challenge or refute the main argument of the analyzed text."
         )
     }
 }
 
 # =====================================================================
-# SANITIZACIÓN Y DETECCIÓN PARA PDF
+# FUNCIONES AUXILIARES DE LIMPIEZA Y FORMATEO
 # =====================================================================
-_EMOJI_PATTERN = re.compile(
-    "["
-    "\U0001F300-\U0001FAFF"
-    "\U00002600-\U000027BF"
-    "\U0001F1E6-\U0001F1FF"
-    "\U0000FE0F"
-    "]+",
-    flags=re.UNICODE
-)
+def force_language_headings(analysis_text, target_lang="fr"):
+    """
+    Sustituye cualquier varianza de los 4 encabezados generados por la IA
+    por la versión canónica en el idioma solicitado.
+    """
+    lang = target_lang if target_lang in SECTION_HEADERS else "fr"
+    headers = SECTION_HEADERS[lang]
 
-def sanitize_for_pdf(text):
-    if not text:
-        return ""
-    text = _EMOJI_PATTERN.sub("", text)
-    text = "".join(
-        ch for ch in text
-        if unicodedata.category(ch)[0] != "C"
-        and (ord(ch) < 0x2500 or ch in "™")
-    )
-    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
-    return text.strip()
+    patterns = [
+        (r'\*\*?1\.\s*(CLASIFICACIÓN|CLASSIFICATION).*?\*\*?', headers["h1"]),
+        (r'\*\*?2\.\s*(NÚCLEO DE HECHOS|NOYAU DE FAITS|CORE FACTS).*?\*\*?', headers["h2"]),
+        (r'\*\*?3\.\s*(DESMONTAJE|DÉMONTAGE|COGNITIVE).*?\*\*?', headers["h3"]),
+        (r'\*\*?4\.\s*(REENCUADRE|RECADRAGE|CORTICAL).*?\*\*?', headers["h4"])
+    ]
+
+    clean_text = analysis_text
+    for pattern, correct_header in patterns:
+        clean_text = re.sub(pattern, correct_header, clean_text, flags=re.IGNORECASE)
+
+    return clean_text
+
+def get_ethic_letter(score):
+    if score >= 85:
+        return "A"
+    elif score >= 70:
+        return "B"
+    elif score >= 50:
+        return "C"
+    elif score >= 30:
+        return "D"
+    return "F"
 
 def is_heading_line(original_line):
-    """ Detecta si la línea corresponde a una de las 4 fases principales """
     if not original_line:
         return False
-    
-    line_clean = _EMOJI_PATTERN.sub("", original_line).replace("**", "").strip().upper()
-    
-    heading_keywords = [
-        "CLASIFICACIÓN", "CLASSIFICATION",
-        "NÚCLEO DE HECHOS", "NOYAU DE FAITS", "CORE FACTS",
-        "DESMONTAJE COGNITIVO", "DÉMONTAGE COGNITIF", "COGNITIVE DECONSTRUCTION",
-        "REENCUADRE CORTICAL", "RECADRAGE CORTICAL", "CORTICAL REFRAMING"
-    ]
-    
-    return any(kw in line_clean for kw in heading_keywords) or "PHASE" in line_clean or "FASE" in line_clean
+    line_upper = original_line.strip().upper()
+    return any(phase in line_upper for phase in [
+        "PHASE 0", "PHASE 1", "PHASE 2", "PHASE 3", 
+        "FASE 0", "FASE 1", "FASE 2", "FASE 3"
+    ])
+
+def save_audit(source_type, content_type, raw_text, score, analysis):
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "source_type": source_type,
+        "content_type": content_type,
+        "raw_text": raw_text[:200] + "...",
+        "score": score,
+        "analysis": analysis
+    }
+    data = []
+    if os.path.exists(AUDIT_FILE):
+        try:
+            with open(AUDIT_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            data = []
+    data.append(entry)
+    with open(AUDIT_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 # =====================================================================
-# ENDPOINTS DE LA API
+# ENDPOINT PRINCIPAL: /analyze
 # =====================================================================
-
 @app.route("/analyze", methods=["POST"])
-@app.route("/api/analyze", methods=["POST"])
 def analyze():
-    try:
-        content_to_analyze = ""
-        source_type = "text"
-        lang = "fr"
+    data = request.json or {}
+    content_to_analyze = data.get("text", "") or data.get("content", "")
+    source_type = data.get("sourceType", "text")
+    lang = data.get("lang", "fr").lower()
 
-        # 1. Entrada mediante Form-Data (Capturas / Imágenes)
-        if 'image' in request.files or 'file' in request.files:
-            uploaded_file = request.files.get('image') or request.files.get('file')
-            image_bytes = uploaded_file.read()
-            lang = str(request.form.get("lang", "fr")).lower()
-            
-            tess_lang = "spa" if lang == "es" else ("fra" if lang == "fr" else "eng")
-            extracted_text = extract_text_from_image(image_bytes, lang=f"{tess_lang}+eng")
-            
-            if extracted_text:
-                content_to_analyze = extracted_text
-                source_type = "image"
+    if not content_to_analyze:
+        return jsonify({"error": "No content provided"}), 400
 
-        # 2. Entrada JSON
-        else:
-            data = request.get_json() or {}
-            text = data.get("text", "").strip()
-            url = data.get("url", "").strip()
-            lang = str(data.get("lang", "fr")).lower()
+    template = TEMPLATES.get(lang, TEMPLATES["fr"])
+    analysis_text = ""
+    final_score = 50
+    final_flags = []
 
-            content_to_analyze = text
-            target_url = url if url else (text if text.startswith("http://") or text.startswith("https://") else "")
+    if client:
+        try:
+            lang_names = {"fr": "FRENCH", "es": "SPANISH", "en": "ENGLISH"}
+            target_lang_name = lang_names.get(lang, "FRENCH")
 
-            if target_url:
-                if "youtube.com" in target_url or "youtu.be" in target_url:
-                    transcript = extract_transcript(target_url)
-                    if transcript:
-                        content_to_analyze = transcript
-                        source_type = "youtube"
-                else:
-                    web_text = extract_web_content(target_url)
-                    if web_text:
-                        content_to_analyze = web_text
-                        source_type = "web"
-
-        if lang not in TEMPLATES:
-            lang = "fr"
-
-        if not content_to_analyze or not content_to_analyze.strip():
-            return jsonify({"error": "No content could be extracted or analyzed from this source."}), 400
-
-        local_penalty, local_flags = apply_local_rules(content_to_analyze)
-        template = TEMPLATES[lang]
-        analysis_text = ""
-
-        # DICCIONARIO DE IDIOMA TARGET
-        lang_names = {
-            "fr": "FRANÇAIS",
-            "es": "ESPAÑOL",
-            "en": "ENGLISH"
-        }
-        target_lang_name = lang_names.get(lang, "FRANÇAIS")
-
-        if client:
-            try:
-                # Instrucción estricta e imperativa para Llama-3.3-70B
-                user_prompt = (
-                    f"STRICT INSTRUCTION: Respond 100% IN {target_lang_name}.\n"
-                    f"All titles, phase labels, and extracted points MUST be strictly written in {target_lang_name}.\n\n"
-                    f"Content to analyze:\n{content_to_analyze}"
-                )
-
-                response = client.chat.completions.create(
-                    model=MODEL_ID,
-                    messages=[
-                        {"role": "system", "content": template["system"]},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    max_tokens=1200,
-                    temperature=0.1
-                )
-                analysis_text = response.choices[0].message.content
-            except Exception as hf_err:
-                print(f"[HF Error]: {hf_err}")
-                analysis_text = "Error connecting to LLM service."
-
-        score_match = re.search(r"<score>(\d+)</score>", analysis_text)
-        flags_match = re.search(r"<flags>(.*?)</flags>", analysis_text)
-
-        model_score = int(score_match.group(1)) if score_match else 0
-        model_flags = [f.strip() for f in flags_match.group(1).split(",")] if flags_match and flags_match.group(1) else []
-
-        final_score = min(100, model_score + local_penalty)
-        final_flags = list(set(model_flags + local_flags))
-
-        clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text, flags=re.DOTALL)
-        clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis, flags=re.DOTALL).strip()
-
-        ethic_letter = get_ethic_letter(final_score)
-        save_audit("CORE", source_type, content_to_analyze, final_score, clean_analysis)
-
-        return jsonify({
-            "analysis": clean_analysis,
-            "report": clean_analysis,
-            "score": final_score,
-            "numericScore": final_score,
-            "flags": final_flags,
-            "ethic_letter": ethic_letter,
-            "scoreLetter": ethic_letter
-        }), 200
-
-    except Exception as e:
-        print(f"[Analyze error]: {e}")
-        return jsonify({"error": str(e)}), 500
-
-@app.route("/refute", methods=["POST"])
-@app.route("/api/refute", methods=["POST"])
-def refute():
-    try:
-        data = request.get_json() or {}
-        analysis = data.get("analysis", "")
-        lang = str(data.get("lang", "fr")).lower()
-
-        if lang not in TEMPLATES:
-            lang = "fr"
-
-        if not analysis:
-            return jsonify({"refutation": "No content provided to counter-argue."}), 400
-
-        if client:
-            lang_name = "ESPAÑOL" if lang == "es" else ("FRANÇAIS" if lang == "fr" else "ENGLISH" if lang == "en")
-            prompt = (
-                f"Análisis previo:\n{analysis}\n\n"
-                f"INSTRUCCIÓN OBLIGATORIA:\n"
-                f"Genera exactamente 3 preguntas quirúrgicas de refutación metodológica basadas ÚNICAMENTE en el análisis anterior.\n"
-                f"REGLA DE IDIOMA ABSOLUTA: Responde 100% EN {lang_name}. Prohibido usar otros idiomas."
+            user_prompt = (
+                f"CRITICAL REQUIREMENT: WRITE EVERYTHING 100% IN {target_lang_name}.\n"
+                f"DO NOT MIX LANGUAGES. USE ONLY {target_lang_name} FOR HEADERS AND CONTENT.\n\n"
+                f"Content to analyze:\n{content_to_analyze}"
             )
+
             response = client.chat.completions.create(
                 model=MODEL_ID,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=450,
-                temperature=0.3
+                messages=[
+                    {"role": "system", "content": template["system"]},
+                    {"role": "user", "content": user_prompt}
+                ],
+                max_tokens=1200,
+                temperature=0.0  # Deterministico para evitar desviaciones de idioma
             )
-            refutation_text = response.choices[0].message.content.strip()
-        else:
-            refutation_text = TEMPLATES[lang]["refute_fallback"]
+            analysis_text = response.choices[0].message.content
+        except Exception as hf_err:
+            print(f"[HF Error]: {hf_err}")
+            analysis_text = "Error in LLM analysis service."
 
-        return jsonify({"refutation": refutation_text}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Extraer score y flags de la respuesta
+    score_match = re.search(r"<score>(\d+)</score>", analysis_text)
+    if score_match:
+        final_score = int(score_match.group(1))
 
-@app.route("/export_pdf", methods=["POST"])
-@app.route("/api/export_pdf", methods=["POST"])
-def export_pdf():
-    try:
-        data = request.get_json() or {}
-        raw_score = data.get("score", 0)
-        raw_analysis = (data.get("analysis") or "").replace("<br>", "\n").replace("<br/>", "\n")
-        raw_flags = data.get("flags", [])
-        lang = str(data.get("lang", "fr")).lower()
+    flags_match = re.search(r"<flags>(.*?)</flags>", analysis_text)
+    if flags_match:
+        final_flags = [f.strip() for f in flags_match.group(1).split(",") if f.strip()]
 
-        ref_id = data.get("reference", f"BEACON-2026-{datetime.now().strftime('%M%S%f')[:6]}")
-        current_time_str = datetime.now().strftime("%d/%m/%Y %H:%M")
+    # Limpiar tags XML del texto resultante
+    clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text, flags=re.DOTALL)
+    clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis, flags=re.DOTALL).strip()
 
-        if not raw_analysis.strip():
-            return jsonify({"error": "No analysis available to export."}), 400
+    # FORZAR ENCABEZADOS EN EL IDIOMA OBJETIVO
+    clean_analysis = force_language_headings(clean_analysis, target_lang=lang)
 
+    ethic_letter = get_ethic_letter(final_score)
+    save_audit("CORE", source_type, content_to_analyze, final_score, clean_analysis)
+
+    return jsonify({
+        "analysis": clean_analysis,
+        "report": clean_analysis,
+        "score": final_score,
+        "numericScore": final_score,
+        "flags": final_flags,
+        "ethic_letter": ethic_letter,
+        "scoreLetter": ethic_letter
+    }), 200
+
+# =====================================================================
+# ENDPOINT SEGUNDARIO: /challenge (Réfutation Cognitive)
+# =====================================================================
+@app.route("/challenge", methods=["POST"])
+def challenge():
+    data = request.json or {}
+    text_to_challenge = data.get("analysis", "") or data.get("text", "")
+    lang = data.get("lang", "fr").lower()
+
+    template = TEMPLATES.get(lang, TEMPLATES["fr"])
+    refutation_text = ""
+
+    if client and text_to_challenge:
         try:
-            digits = re.sub(r"[^\d]", "", str(raw_score))
-            numeric_score = int(digits) if digits else 0
-        except ValueError:
-            numeric_score = 0
+            response = client.chat.completions.create(
+                model=MODEL_ID,
+                messages=[
+                    {"role": "system", "content": "You are POLETHIC BEACON Metacognitive Refutation Engine."},
+                    {"role": "user", "content": f"{template['refute_prompt']}\n\nContext:\n{text_to_challenge}"}
+                ],
+                max_tokens=600,
+                temperature=0.2
+            )
+            refutation_text = response.choices[0].message.content
+        except Exception as err:
+            print(f"[Challenge Error]: {err}")
+            refutation_text = "Error generating refutation."
 
-        ethic_letter = data.get("ethic_letter") or get_ethic_letter(numeric_score)
-        translated_flags = translate_flags(raw_flags, lang)
+    return jsonify({"challenge": refutation_text}), 200
 
-        pdf_buffer = io.BytesIO()
-        doc = SimpleDocTemplate(
-            pdf_buffer,
-            pagesize=letter,
-            rightMargin=40, leftMargin=40,
-            topMargin=40, bottomMargin=40
-        )
+# =====================================================================
+# ENDPOINT PDF: /export_pdf
+# =====================================================================
+@app.route("/export_pdf", methods=["POST"])
+def export_pdf():
+    data = request.json or {}
+    analysis_text = data.get("analysis", "")
+    refutation_text = data.get("refutation", "")
+    score = data.get("score", 50)
+    flags = data.get("flags", [])
+    lang = data.get("lang", "fr").lower()
 
-        story = []
+    # Forzar el posprocesamiento de idioma en los encabezados
+    analysis_text = force_language_headings(analysis_text, target_lang=lang)
 
-        primary_blue = colors.HexColor("#0284c7")
-        border_color = colors.HexColor("#cbd5e1")
-        bg_card = colors.HexColor("#f8fafc")
-        bg_heading = colors.HexColor("#e0f2fe")
-        text_dark = colors.HexColor("#0f172a")
+    pdf_filename = f"RAPPORT_BEACON_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    pdf_path = os.path.join("/tmp", pdf_filename)
 
-        if ethic_letter == "A":
-            score_color = colors.HexColor("#059669")
-        elif ethic_letter == "B":
-            score_color = colors.HexColor("#d97706")
-        elif ethic_letter == "C":
-            score_color = colors.HexColor("#ea580c")
-        else:
-            score_color = colors.HexColor("#dc2626")
+    doc = SimpleDocTemplate(
+        pdf_path,
+        pagesize=letter,
+        rightMargin=36,
+        leftMargin=36,
+        topMargin=36,
+        bottomMargin=36
+    )
 
-        header_title_style = ParagraphStyle(
-            'HeaderTitle', fontName='Helvetica-Bold', fontSize=14, leading=18, textColor=primary_blue
-        )
-        header_sub_style = ParagraphStyle(
-            'HeaderSub', fontName='Helvetica-Bold', fontSize=8, leading=10, textColor=colors.HexColor("#64748b")
-        )
-        meta_label_style = ParagraphStyle(
-            'MetaLabel', fontName='Helvetica-Bold', fontSize=8, leading=11, textColor=colors.HexColor("#475569")
-        )
-        score_box_style = ParagraphStyle(
-            'ScoreBox', fontName='Helvetica-Bold', fontSize=15, leading=18, textColor=score_color, alignment=1
-        )
-        heading_style = ParagraphStyle(
-            'SectionHeading', fontName='Helvetica-Bold', fontSize=11, leading=14, textColor=primary_blue, spaceBefore=0, spaceAfter=0
-        )
-        body_style = ParagraphStyle(
-            'ReportBody', fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#334155")
-        )
-        bullet_style = ParagraphStyle(
-            'ReportBullet', fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#334155"), leftIndent=12
-        )
+    styles = getSampleStyleSheet()
 
-        lbl_lab = "LABORATOIRE D'AUTODÉFENSE COGNITIVE" if lang == "fr" else ("LABORATORIO DE AUTODEFENSA COGNITIVA" if lang == "es" else "COGNITIVE SELF-DEFENSE LABORATORY")
-        lbl_ref = "RÉF :" if lang == "fr" else "REF:"
-        lbl_date = "HORODATAGE :" if lang == "fr" else "TIMESTAMP:"
-        lbl_flags = "INDICATEURS :" if lang == "fr" else "INDICATORS:"
+    # Definición de Estilos Personalizados
+    style_header_title = ParagraphStyle('HeaderTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=18, leading=22, textColor=colors.HexColor("#00E5FF"))
+    style_header_sub = ParagraphStyle('HeaderSub', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=11, textColor=colors.HexColor("#00E5FF"))
+    style_meta = ParagraphStyle('MetaText', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, leading=12, textColor=colors.HexColor("#FFFFFF"))
+    style_heading = ParagraphStyle('Heading', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=11, leading=14, textColor=colors.HexColor("#00E5FF"), spaceBefore=10, spaceAfter=4)
+    style_body = ParagraphStyle('Body', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#D0D7DE"), spaceAfter=4)
+    style_bullet = ParagraphStyle('Bullet', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#D0D7DE"), leftIndent=12, firstLineIndent=-8, spaceAfter=2)
+    style_warn_title = ParagraphStyle('WarnTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, leading=11, textColor=colors.HexColor("#FFB703"))
+    style_warn_body = ParagraphStyle('WarnBody', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=11, textColor=colors.HexColor("#D0D7DE"))
+    style_footer = ParagraphStyle('Footer', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=10, textColor=colors.HexColor("#8B949E"), alignment=1)
 
-        story.append(Paragraph("POLETHIC BEACON", header_title_style))
-        story.append(Paragraph(lbl_lab, header_sub_style))
-        story.append(Spacer(1, 10))
+    # Textos multilenguaje para el PDF
+    disclaimers = {
+        "fr": {
+            "warn_title": "AVERTISSEMENT D'ANALYSE CRITIQUE ET DÉCONSTRUCTION",
+            "warn_body": "Ce module applique les principes de la logique formelle et de la méthode scientifique. Le résultat peut générer une dissonance cognitive. La plateforme n'est pas responsable de la friction émotionnelle résultant de cette analyse.",
+            "refute_title": "DÉFI DU BIAIS (RÉFUTATION COGNITIVE) :"
+        },
+        "es": {
+            "warn_title": "ADVERTENCIA DE ANÁLISIS CRÍTICO Y DECONSTRUCCIÓN",
+            "warn_body": "Este módulo aplica principios de lógica formal, exégesis histórica y método científico. El resultado puede generar disonancia cognitiva al cuestionar dogmas. La plataforma no se responsabiliza de la fricción emocional resultante.",
+            "refute_title": "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA) :"
+        },
+        "en": {
+            "warn_title": "CRITICAL ANALYSIS AND DECONSTRUCTION WARNING",
+            "warn_body": "This module applies principles of formal logic and scientific method. The result may cause cognitive dissonance. The platform is not responsible for emotional friction resulting from this analysis.",
+            "refute_title": "BIAS CHALLENGE (COGNITIVE REFUTATION) :"
+        }
+    }
+    disc = disclaimers.get(lang, disclaimers["fr"])
 
-        flags_html = " ".join([
-            f'<font color="#0284c7"><b>[ {f} ]</b></font>' for f in translated_flags
-        ]) if translated_flags else "<i>Aucun indicateur spécifique</i>"
+    story = []
 
-        meta_text = (
-            f"<b>{lbl_ref}</b> {ref_id}<br/>"
-            f"<b>{lbl_date}</b> {current_time_str}<br/>"
-            f"<b>{lbl_flags}</b> {flags_html}"
-        )
+    # Cabecera
+    story.append(Paragraph("POLETHIC BEACON", style_header_title))
+    story.append(Paragraph("LABORATOIRE D'AUTODÉFENSE COGNITIVE", style_header_sub))
+    story.append(Spacer(1, 10))
 
-        score_text = f"<b>ETHIC-SCORE</b><br/><font fontSize=20>NIVEAU {ethic_letter}</font><br/><font fontSize=9>({numeric_score}/100)</font>"
-
-        card_data = [
-            [Paragraph(score_text, score_box_style), Paragraph(meta_text, meta_label_style)]
+    # Tabla Metadatos
+    beacon_ref = f"BEACON-{datetime.now().year}-{int(datetime.now().timestamp()) % 1000000:06d}"
+    flags_str = ", ".join(flags).upper() if flags else "NONE"
+    
+    meta_data = [
+        [
+            Paragraph(f"ETHIC-SCORE: {score}/100 ({get_ethic_letter(score)})", style_meta),
+            Paragraph(f"NIVEAU: {get_ethic_letter(score)}", style_meta)
+        ],
+        [
+            Paragraph(f"RÉF: {beacon_ref}", style_meta),
+            Paragraph(f"HORODATAGE: {datetime.now().strftime('%d/%m/%Y %H:%M')}", style_meta)
+        ],
+        [
+            Paragraph(f"INDICATEURS: {flags_str}", style_meta),
+            Paragraph("", style_meta)
         ]
+    ]
+    t_meta = Table(meta_data, colWidths=[270, 270])
+    t_meta.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#0D1117")),
+        ('BOX', (0,0), (-1,-1), 1, colors.HexColor("#00E5FF")),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('PADDING', (0,0), (-1,-1), 6),
+    ]))
+    story.append(t_meta)
+    story.append(Spacer(1, 12))
 
-        card_table = Table(card_data, colWidths=[140, 390])
-        card_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, -1), bg_card),
-            ('BOX', (0, 0), (-1, -1), 1, border_color),
-            ('INNERGRID', (0, 0), (-1, -1), 0.5, border_color),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('PADDING', (0, 0), (-1, -1), 8),
+    # Procesamiento del cuerpo de texto
+    for line in analysis_text.split('\n'):
+        line_s = line.strip()
+        if not line_s:
+            continue
+        
+        # Limpieza de Markdown bold (**...**) para visualización limpia
+        clean_line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line_s)
+        
+        if is_heading_line(line_s):
+            heading_p = Paragraph(clean_line, style_heading)
+            t_head = Table([[heading_p]], colWidths=[540])
+            t_head.setStyle(TableStyle([
+                ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#161B22")),
+                ('LINELEFT', (0,0), (-1,-1), 3, colors.HexColor("#00E5FF")),
+                ('PADDING', (0,0), (-1,-1), 4),
+            ]))
+            story.append(Spacer(1, 6))
+            story.append(t_head)
+            story.append(Spacer(1, 4))
+        elif line_s.startswith(('-', '•', '*')):
+            item_text = re.sub(r'^[-•\*]\s*', '', clean_line)
+            story.append(Paragraph(f"• {item_text}", style_bullet))
+        else:
+            story.append(Paragraph(clean_line, style_body))
+
+    # Sección de Refutación Cognitive
+    if refutation_text:
+        story.append(Spacer(1, 10))
+        story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#FFB703"), spaceBefore=5, spaceAfter=10))
+        story.append(Paragraph(disc["refute_title"], style_heading))
+        
+        # Disclaimer Box
+        warn_content = [
+            Paragraph(disc["warn_title"], style_warn_title),
+            Spacer(1, 2),
+            Paragraph(disc["warn_body"], style_warn_body)
+        ]
+        t_warn = Table([[warn_content]], colWidths=[540])
+        t_warn.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#1A1400")),
+            ('BOX', (0,0), (-1,-1), 1, colors.HexColor("#FFB703")),
+            ('PADDING', (0,0), (-1,-1), 6),
         ]))
+        story.append(t_warn)
+        story.append(Spacer(1, 8))
 
-        story.append(card_table)
-        story.append(Spacer(1, 14))
+        for line in refutation_text.split('\n'):
+            line_s = line.strip()
+            if line_s:
+                clean_ref = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line_s)
+                story.append(Paragraph(clean_ref, style_body))
 
-        for raw_line in raw_analysis.split('\n'):
-            line_str = raw_line.strip()
-            if not line_str:
-                continue
+    story.append(Spacer(1, 15))
+    story.append(Paragraph("POLETHIC BEACON — Analyse et autodéfense cognitive", style_footer))
 
-            clean_line = sanitize_for_pdf(line_str)
-            if not clean_line:
-                continue
+    def background_canvas(canvas, doc):
+        canvas.saveState()
+        canvas.setFillColor(colors.HexColor("#050811"))
+        canvas.rect(0, 0, letter[0], letter[1], fill=1, stroke=0)
+        canvas.restoreState()
 
-            if is_heading_line(line_str):
-                story.append(Spacer(1, 8))
-                heading_table = Table([[Paragraph(f"<b>{clean_line.upper()}</b>", heading_style)]], colWidths=[530])
-                heading_table.setStyle(TableStyle([
-                    ('BACKGROUND', (0, 0), (-1, -1), bg_heading),
-                    ('BOX', (0, 0), (-1, -1), 0.5, primary_blue),
-                    ('PADDING', (0, 0), (-1, -1), 5),
-                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                ]))
-                story.append(heading_table)
-                story.append(Spacer(1, 6))
-            elif line_str.startswith("- ") or line_str.startswith("• "):
-                story.append(Paragraph(f"• {clean_line[2:]}", bullet_style))
-                story.append(Spacer(1, 2))
-            else:
-                story.append(Paragraph(clean_line, body_style))
-                story.append(Spacer(1, 3))
-
-        doc.build(story)
-        pdf_buffer.seek(0)
-
-        return send_file(
-            pdf_buffer,
-            mimetype='application/pdf',
-            as_attachment=True,
-            download_name=f'Audit_BEACON_{ethic_letter}_{ref_id}.pdf'
-        )
-    except Exception as e:
-        print(f"[export_pdf error]: {e}")
-        return jsonify({"error": str(e)}), 500
-
-# =====================================================================
-# INICIALIZACIÓN Y EJECUCIÓN
-# =====================================================================
-init_db()
+    doc.build(story, onFirstPage=background_canvas, onLaterPages=background_canvas)
+    return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=5000, debug=True)
