@@ -271,23 +271,22 @@ def analyze():
 # =====================================================================
 # ENDPOINT SECUNDARIO: /challenge (Réfutation Cognitive)
 # =====================================================================
-@app.route("/challenge", methods=["POST", "OPTIONS"])
+@app.route("/challenge", methods=["POST"])
 def challenge():
-    if request.method == "OPTIONS":
-        return jsonify({"status": "ok"}), 200
+    try:
+        data = request.get_json(silent=True) or {}   # silent=True evita el 400 crudo
+        text_to_challenge = data.get("analysis", "") or data.get("text", "")
+        lang = data.get("lang", "fr").lower()
 
-    data = request.json or {}
-    # ✅ Fallback inteligente de nombres de campo enviados desde el JS
-    text_to_challenge = data.get("analysis", "") or data.get("text", "") or data.get("content", "")
-    lang = data.get("lang", "fr").lower()
+        template = TEMPLATES.get(lang, TEMPLATES["fr"])
+        refutation_text = ""
 
-    if not text_to_challenge:
-        return jsonify({"error": "No text provided for refutation"}), 400
+        if not text_to_challenge:
+            return jsonify({"challenge": "", "error": "No analysis text provided."}), 200
 
-    template = TEMPLATES.get(lang, TEMPLATES["fr"])
-    refutation_text = ""
+        if not client:
+            return jsonify({"challenge": "", "error": "HF client not initialized (missing HF_TOKEN)."}), 200
 
-    if client:
         try:
             response = client.chat.completions.create(
                 model=MODEL_ID,
@@ -300,8 +299,14 @@ def challenge():
             )
             refutation_text = response.choices[0].message.content
         except Exception as err:
-            print(f"[Challenge Error]: {err}")
-            return jsonify({"error": f"Error generating refutation: {str(err)}"}), 500
+            print(f"[Challenge HF Error]: {err}")
+            return jsonify({"challenge": "", "error": f"HF inference failed: {err}"}), 502
+
+        return jsonify({"challenge": refutation_text}), 200
+
+    except Exception as outer_err:
+        print(f"[Challenge Route Error]: {outer_err}")
+        return jsonify({"challenge": "", "error": str(outer_err)}), 500
 
     # ✅ Devolver la propiedad "challenge" y compatibilidad con "refutation"
     return jsonify({
