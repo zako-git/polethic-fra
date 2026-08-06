@@ -11,7 +11,8 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
 app = Flask(__name__)
-CORS(app)
+# ✅ Habilitar CORS explícito para permitir peticiones AJAX desde cualquier origen
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # =====================================================================
 # CONFIGURACIÓN Y CLIENTE HUGGINGFACE
@@ -26,7 +27,6 @@ if HF_TOKEN:
     except Exception as e:
         print(f"[WARN] Error al inicializar HuggingFace Client: {e}")
 
-# Archivo local de almacenamiento de auditoría
 AUDIT_FILE = "beacon_audits.json"
 
 # =====================================================================
@@ -135,10 +135,6 @@ TEMPLATES = {
 # FUNCIONES AUXILIARES DE LIMPIEZA Y FORMATEO
 # =====================================================================
 def force_language_headings(analysis_text, target_lang="fr"):
-    """
-    Sustituye cualquier varianza de los 4 encabezados generados por la IA
-    por la versión canónica en el idioma solicitado.
-    """
     lang = target_lang if target_lang in SECTION_HEADERS else "fr"
     headers = SECTION_HEADERS[lang]
 
@@ -198,8 +194,11 @@ def save_audit(source_type, content_type, raw_text, score, analysis):
 # =====================================================================
 # ENDPOINT PRINCIPAL: /analyze
 # =====================================================================
-@app.route("/analyze", methods=["POST"])
+@app.route("/analyze", methods=["POST", "OPTIONS"])
 def analyze():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
     data = request.json or {}
     content_to_analyze = data.get("text", "") or data.get("content", "")
     source_type = data.get("sourceType", "text")
@@ -231,12 +230,14 @@ def analyze():
                     {"role": "user", "content": user_prompt}
                 ],
                 max_tokens=1200,
-                temperature=0.0  # Deterministico para evitar desviaciones de idioma
+                temperature=0.0
             )
             analysis_text = response.choices[0].message.content
         except Exception as hf_err:
             print(f"[HF Error]: {hf_err}")
-            analysis_text = "Error in LLM analysis service."
+            return jsonify({"error": f"Error in LLM analysis service: {str(hf_err)}"}), 500
+    else:
+        return jsonify({"error": "HF_TOKEN not configured on server"}), 500
 
     # Extraer score y flags de la respuesta
     score_match = re.search(r"<score>(\d+)</score>", analysis_text)
@@ -268,18 +269,25 @@ def analyze():
     }), 200
 
 # =====================================================================
-# ENDPOINT SEGUNDARIO: /challenge (Réfutation Cognitive)
+# ENDPOINT SECUNDARIO: /challenge (Réfutation Cognitive)
 # =====================================================================
-@app.route("/challenge", methods=["POST"])
+@app.route("/challenge", methods=["POST", "OPTIONS"])
 def challenge():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
     data = request.json or {}
-    text_to_challenge = data.get("analysis", "") or data.get("text", "")
+    # ✅ Fallback inteligente de nombres de campo enviados desde el JS
+    text_to_challenge = data.get("analysis", "") or data.get("text", "") or data.get("content", "")
     lang = data.get("lang", "fr").lower()
+
+    if not text_to_challenge:
+        return jsonify({"error": "No text provided for refutation"}), 400
 
     template = TEMPLATES.get(lang, TEMPLATES["fr"])
     refutation_text = ""
 
-    if client and text_to_challenge:
+    if client:
         try:
             response = client.chat.completions.create(
                 model=MODEL_ID,
@@ -293,15 +301,23 @@ def challenge():
             refutation_text = response.choices[0].message.content
         except Exception as err:
             print(f"[Challenge Error]: {err}")
-            refutation_text = "Error generating refutation."
+            return jsonify({"error": f"Error generating refutation: {str(err)}"}), 500
 
-    return jsonify({"challenge": refutation_text}), 200
+    # ✅ Devolver la propiedad "challenge" y compatibilidad con "refutation"
+    return jsonify({
+        "status": "success",
+        "challenge": refutation_text,
+        "refutation": refutation_text
+    }), 200
 
 # =====================================================================
 # ENDPOINT PDF: /export_pdf
 # =====================================================================
-@app.route("/export_pdf", methods=["POST"])
+@app.route("/export_pdf", methods=["POST", "OPTIONS"])
 def export_pdf():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
     data = request.json or {}
     analysis_text = data.get("analysis", "")
     refutation_text = data.get("refutation", "")
@@ -309,7 +325,6 @@ def export_pdf():
     flags = data.get("flags", [])
     lang = data.get("lang", "fr").lower()
 
-    # Forzar el posprocesamiento de idioma en los encabezados
     analysis_text = force_language_headings(analysis_text, target_lang=lang)
 
     pdf_filename = f"RAPPORT_BEACON_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
@@ -326,7 +341,6 @@ def export_pdf():
 
     styles = getSampleStyleSheet()
 
-    # Definición de Estilos Personalizados
     style_header_title = ParagraphStyle('HeaderTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=18, leading=22, textColor=colors.HexColor("#00E5FF"))
     style_header_sub = ParagraphStyle('HeaderSub', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=11, textColor=colors.HexColor("#00E5FF"))
     style_meta = ParagraphStyle('MetaText', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, leading=12, textColor=colors.HexColor("#FFFFFF"))
@@ -337,7 +351,6 @@ def export_pdf():
     style_warn_body = ParagraphStyle('WarnBody', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=11, textColor=colors.HexColor("#D0D7DE"))
     style_footer = ParagraphStyle('Footer', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=10, textColor=colors.HexColor("#8B949E"), alignment=1)
 
-    # Textos multilenguaje para el PDF
     disclaimers = {
         "fr": {
             "warn_title": "AVERTISSEMENT D'ANALYSE CRITIQUE ET DÉCONSTRUCTION",
@@ -359,12 +372,10 @@ def export_pdf():
 
     story = []
 
-    # Cabecera
     story.append(Paragraph("POLETHIC BEACON", style_header_title))
     story.append(Paragraph("LABORATOIRE D'AUTODÉFENSE COGNITIVE", style_header_sub))
     story.append(Spacer(1, 10))
 
-    # Tabla Metadatos
     beacon_ref = f"BEACON-{datetime.now().year}-{int(datetime.now().timestamp()) % 1000000:06d}"
     flags_str = ", ".join(flags).upper() if flags else "NONE"
     
@@ -392,13 +403,11 @@ def export_pdf():
     story.append(t_meta)
     story.append(Spacer(1, 12))
 
-    # Procesamiento del cuerpo de texto
     for line in analysis_text.split('\n'):
         line_s = line.strip()
         if not line_s:
             continue
         
-        # Limpieza de Markdown bold (**...**) para visualización limpia
         clean_line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line_s)
         
         if is_heading_line(line_s):
@@ -418,13 +427,11 @@ def export_pdf():
         else:
             story.append(Paragraph(clean_line, style_body))
 
-    # Sección de Refutación Cognitive
     if refutation_text:
         story.append(Spacer(1, 10))
         story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#FFB703"), spaceBefore=5, spaceAfter=10))
         story.append(Paragraph(disc["refute_title"], style_heading))
         
-        # Disclaimer Box
         warn_content = [
             Paragraph(disc["warn_title"], style_warn_title),
             Spacer(1, 2),
@@ -458,4 +465,5 @@ def export_pdf():
     return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
