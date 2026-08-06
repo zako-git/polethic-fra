@@ -686,14 +686,13 @@
         displayReportText(data.analysis || data.report || 'Analyse terminée.');
         
         } catch (e) {
-          console.error("[BEACON Challenge Error]:", e);
-          alert(`${t.refuteError}\n(${e.message})`);
-        }
+        console.error("[BEACON Challenge Error]:", e);
+        alert(`${t.refuteError}\n(${e.message})`);
         displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
-     .finally(() => {
+    } finally {
         btnAnalyze.disabled = false;
-    });
-
+    }
+});
    // =====================================================================
     //  REFUTACIÓN DIRECCIONADA (ENDPOINT /refute RESTAURADO)
     // =====================================================================
