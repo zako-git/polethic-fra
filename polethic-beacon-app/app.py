@@ -469,7 +469,7 @@ def refute():
             return jsonify({"refutation": "No content provided to counter-argue."}), 400
 
         if client:
-            lang_name = "ESPAÑOL" if lang == "es" else ("FRANÇAIS" if lang == "fr" else "ENGLISH")
+            lang_name = "ESPAÑOL" if lang == "es" else ("FRANÇAIS" if lang == "fr" else "ENGLISH" if lang == "en")
             prompt = (
                 f"Análisis previo:\n{analysis}\n\n"
                 f"INSTRUCCIÓN OBLIGATORIA:\n"
@@ -528,6 +528,7 @@ def export_pdf():
         primary_blue = colors.HexColor("#0284c7")
         border_color = colors.HexColor("#cbd5e1")
         bg_card = colors.HexColor("#f8fafc")
+        bg_heading = colors.HexColor("#e0f2fe") # Azul claro para los títulos de Fase
         text_dark = colors.HexColor("#0f172a")
 
         if ethic_letter == "A":
@@ -551,11 +552,16 @@ def export_pdf():
         score_box_style = ParagraphStyle(
             'ScoreBox', fontName='Helvetica-Bold', fontSize=15, leading=18, textColor=score_color, alignment=1
         )
+        
+        # Estilo mejorado para los títulos de Fase
         heading_style = ParagraphStyle(
-            'SectionHeading', fontName='Helvetica-Bold', fontSize=10.5, leading=14, textColor=text_dark, spaceBefore=10, spaceAfter=4
+            'SectionHeading', fontName='Helvetica-Bold', fontSize=11, leading=14, textColor=primary_blue, spaceBefore=0, spaceAfter=0
         )
         body_style = ParagraphStyle(
             'ReportBody', fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#334155")
+        )
+        bullet_style = ParagraphStyle(
+            'ReportBullet', fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#334155"), leftIndent=12
         )
 
         lbl_lab = "LABORATOIRE D'AUTODÉFENSE COGNITIVE" if lang == "fr" else ("LABORATORIO DE AUTODEFENSA COGNITIVA" if lang == "es" else "COGNITIVE SELF-DEFENSE LABORATORY")
@@ -595,6 +601,7 @@ def export_pdf():
         story.append(card_table)
         story.append(Spacer(1, 14))
 
+        # Procesamiento y formateo del reporte
         for raw_line in raw_analysis.split('\n'):
             line_str = raw_line.strip()
             if not line_str:
@@ -604,9 +611,24 @@ def export_pdf():
             if not clean_line:
                 continue
 
+            # Si es un Encabezado de Fase, lo encerramos en una banda visual
             if is_heading_line(line_str):
-                story.append(Paragraph(clean_line, heading_style))
+                story.append(Spacer(1, 8))
+                heading_table = Table([[Paragraph(f"<b>{clean_line.upper()}</b>", heading_style)]], colWidths=[530])
+                heading_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, -1), bg_heading),
+                    ('BOX', (0, 0), (-1, -1), 0.5, primary_blue),
+                    ('PADDING', (0, 0), (-1, -1), 5),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ]))
+                story.append(heading_table)
+                story.append(Spacer(1, 6))
+            elif line_str.startswith("- ") or line_str.startswith("• "):
+                # Viñetas
+                story.append(Paragraph(f"• {clean_line[2:]}", bullet_style))
+                story.append(Spacer(1, 2))
             else:
+                # Texto normal
                 story.append(Paragraph(clean_line, body_style))
                 story.append(Spacer(1, 3))
 
