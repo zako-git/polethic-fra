@@ -111,25 +111,31 @@ def init_db():
 # =====================================================================
 # EXTRACCIÓN DE CONTENIDO (OCR, YOUTUBE Y WEB)
 # =====================================================================
-def extract_text_from_image(image_bytes):
-    """ Extrae texto de imágenes usando pytesseract (FR, ES, EN) """
+def extract_text_from_image(image_bytes, lang='fra+spa+eng'):
+    """ Extrae texto de imágenes usando pytesseract de forma resiliente """
     try:
         image = Image.open(io.BytesIO(image_bytes))
-        # Extrae texto evaluando los tres idiomas principales
-        extracted = pytesseract.image_to_string(image, lang='fra+spa+eng')
+        extracted = pytesseract.image_to_string(image, lang=lang)
         return extracted.strip()
     except Exception as e:
         print(f"[extract_text_from_image error]: {e}")
         return None
 
 def extract_transcript(url):
+    """ Obtiene transcripciones de YouTube tolerando cualquier idioma disponible """
     try:
         if "youtu.be/" in url:
             video_id = url.split("youtu.be/")[1].split("?")[0]
         else:
             video_id = url.split("v=")[1].split("&")[0]
 
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['fr', 'es', 'en'])
+        # Intenta primero con idiomas específicos, si falla busca cualquier lista
+        try:
+            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['fr', 'es', 'en'])
+        except Exception:
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+            transcript = transcript_list.find_transcript(['fr', 'es', 'en', 'de', 'it', 'pt']).fetch()
+
         return " ".join([t['text'] for t in transcript])
     except Exception as e:
         print(f"[extract_transcript] error: {e}")
@@ -213,30 +219,28 @@ def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_rep
         print(f"[save_audit] error: {e}")
 
 # =====================================================================
-# TEMPLATES DE PROMPTS Y PLANTILLAS FORENSES
+# TEMPLATES DE PROMPTS CON REGLAS DE IDIOMA ESTRICTAS
 # =====================================================================
 TEMPLATES = {
     "fr": {
         "system": (
             "Vous êtes POLETHIC BEACON, un moteur d'analyse métacognitive et forensique avancé.\n"
             "Votre objectif est d'exécuter une déconstruction chirurgicale du texte pour éliminer le bruit rhétorique, le langage vendeur, le blanchiment sémantique et les biais.\n\n"
-            "RÈGLE LINGUISTIQUE ABSOLUE : Rédigez l'INTÉGRALITÉ de la réponse et des titres STRICTEMENT EN FRANÇAIS.\n\n"
-            "DIRECTIVES D'ÉVALUATION FORENSIQUE :\n"
-            "- CRITÉRES DE RISQUE ÉLEVÉ (Grade D, Score 76 à 100) : Attribution OBLIGATOIRE si le texte promeut des thérapies non conventionnelles, approches ésotériques ou risques de dérive sectaire (ex: Constellations familiales, mémoire cellulaire, pseudo-coaching quantique) appliquées à la santé ou aux entreprises.\n"
-            "- ORGANISMES DE VIGILANCE : Mentionnez systématiquement que ces pratiques font l'objet d'une vigilance par des organismes officiels (ex: MIVILUDES en France).\n"
-            "- RISQUE MODÉRÉ (Grade B-C, Score 26 à 75) : Si le texte présente des biais rhétoriques majeurs, de l'exagération commerciale ou du blanchiment de langage sans dérive sectaire.\n"
-            "- RISQUE MINIME (Grade A, Score 0 à 25) : Texte factuel, scientifique, informatif ou neutre.\n\n"
-            "FORMAT DE SORTIE IMPÉRATIF (RESPECTEZ EXATEMENT CES TITRES) :\n\n"
-            "🏷️ **CLASSIFICATION (Phase 0)**\n"
+            "RÈGLE LINGUISTIQUE ABSOLUE ET STRICTE :\n"
+            "1. Traduisez TOUT le contenu d'entrée vers le FRANÇAIS avant d'analyser.\n"
+            "2. Rédigez 100% de la réponse, des titres et des sous-titres STRICTEMENT EN FRANÇAIS.\n"
+            "3. Il est INTERDIT de mélanger de l'espagnol, de l'anglais ou d'autres langues dans le résultat.\n\n"
+            "FORMAT DE SORTIE IMPÉRATIF (RESPECTEZ EXACTEMENT CES TITRES) :\n\n"
+            " 🏷️ **1. CLASSIFICATION (Phase 0)**\n"
             "- Type de Texte:\n"
             "- Objectif de l'Émetteur:\n\n"
-            "📌 **NOYAU DE FAITS / PRÉMISSES (Phase 1)**\n"
-            "- Données et affirmations filtrées sans bruit:\n\n"
-            "🧠 **DÉMONTAGE COGNITIF (Phase 2)**\n"
-            "- Stratégie Rhétorique / Déclencheur Détecté:\n"
-            "- Intention vs Réalité (Analyse du blanchiment de langage et appropriation technique):\n\n"
-            "🚀 **RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**\n"
-            "- Diagnostic synthétique final et évaluation objective du risque:\n\n"
+            " 📌 **2. NOYAU DE FAITS / PRÉMISSES (Phase 1)**\n"
+            "- Données et affirmations filtrées sans bruit (sans rhétorique):\n\n"
+            " 🧠 **3. DÉMONTAGE COGNITIF ET LIMBIQUE (Phase 2)**\n"
+            "- Déclencheur Émotionnel / Biais Détecté:\n"
+            "- Intention vs Réalité (Analyse du blanchiment de langage):\n\n"
+            " 🚀 **4. RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**\n"
+            "- Diagnostic synthétique final et recommandation d'action:\n\n"
             "<flags>[Liste séparée par des virgules parmi: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
             "<score>[Note entière de 0 à 100]</score>"
         ),
@@ -250,23 +254,21 @@ TEMPLATES = {
         "system": (
             "Eres POLETHIC BEACON, un motor de análisis metacognitivo y forense avanzado.\n"
             "Tu objetivo es ejecutar una deconstrucción quirúrgica del texto para eliminar el ruido retórico, lenguaje de ventas, blanqueamiento semántico y sesgos.\n\n"
-            "REGLA LINGÜÍSTICA ABSOLUTA: Escribe la TOTALIDAD de la respuesta y los títulos STRICTAMENTE EN ESPAÑOL.\n\n"
-            "DIRECTRICES DE EVALUACIÓN FORENSE:\n"
-            "- CRITERIOS DE RIESGO ALTO (Grado D, Score 76 a 100): Asignación OBLIGATORIA si promueve terapias no convencionales, esoterismo o riesgo de deriva sectaria (ej: Constelaciones familiares, memoria celular, pseudo-coaching cuántico).\n"
-            "- ORGANISMOS DE VIGILANCIA: Señala explícitamente si la práctica está sometida a vigilancia por organismos oficiales (ej: MIVILUDES u organismos de salud pública).\n"
-            "- RIESGO MODERADO (Grado B-C, Score 26 a 75): Si presenta sesgos retóricos mayores, exageración comercial o blanqueamiento de lenguaje.\n"
-            "- RIESGO MÍNIMO (Grado A, Score 0 a 25): Texto puramente factual, científico o informativo.\n\n"
+            "REGLA LINGÜÍSTICA ABSOLUTA Y ESTRICTA:\n"
+            "1. Traduce TODO el contenido de entrada al ESPAÑOL antes de analizar.\n"
+            "2. Escribe el 100% de la respuesta, títulos y subtítulos STRICTAMENTE EN ESPAÑOL.\n"
+            "3. Está PROHIBIDO mezclar palabras en francés, inglés u otros idiomas en la respuesta.\n\n"
             "FORMATO DE SALIDA OBLIGATORIO (RESPETA EXACTAMENTE ESTOS TÍTULOS):\n\n"
-            "🏷️ **CLASIFICACIÓN (Fase 0)**\n"
+            " 🏷️ **1. CLASIFICACIÓN (Fase 0)**\n"
             "- Tipo de Texto:\n"
             "- Propósito del Emisor:\n\n"
-            "📌 **NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
-            "- Datos y afirmaciones filtradas sin ruido:\n\n"
-            "🧠 **DESMONTAJE COGNITIVO (Fase 2)**\n"
-            "- Estrategia Retórica / Gatillo Detectado:\n"
-            "- Intención vs. Realidad (Análisis de blanqueamiento de lenguaje y apropiación técnica):\n\n"
-            "🚀 **REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
-            "- Diagnóstico sintético final y valoración objetiva de riesgo:\n\n"
+            " 📌 **2. NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
+            "- Datos y afirmaciones filtradas sin ruido (sin retórica):\n\n"
+            " 🧠 **3. DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
+            "- Disparador Emocional / Sesgo Detectado:\n"
+            "- Intención vs. Realidad (Análisis de blanqueamiento de lenguaje):\n\n"
+            " 🚀 **4. REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
+            "- Diagnóstico sintético final y recomendación de acción:\n\n"
             "<flags>[Lista separada por comas de: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
             "<score>[Número entero de 0 a 100]</score>"
         ),
@@ -280,23 +282,21 @@ TEMPLATES = {
         "system": (
             "You are POLETHIC BEACON, an advanced forensic metacognitive analysis engine.\n"
             "Your objective is to execute a surgical text deconstruction to eliminate rhetorical noise, sales hype, language laundering, and cognitive bias.\n\n"
-            "ABSOLUTE LANGUAGE RULE: Write the ENTIRE response and section titles STRICTLY IN ENGLISH.\n\n"
-            "FORENSIC EVALUATION DIRECTIVES:\n"
-            "- HIGH RISK CRITERIA (Grade D, Score 76 to 100): MANDATORY assignment if promoting unconventional therapies, esotericism, or cultic deviance risks (e.g., Family Constellations, cellular memory, quantum coaching).\n"
-            "- STATE AGENCIES: Explicitly highlight if practices are monitored by official state agencies (e.g., MIVILUDES).\n"
-            "- MODERATE RISK (Grade B-C, Score 26 to 75): If presenting major rhetorical biases, hype, or language laundering.\n"
-            "- MINIMAL RISK (Grade A, Score 0 to 25): Purely factual, scientific, or informative text.\n\n"
+            "ABSOLUTE STRICT LANGUAGE RULE:\n"
+            "1. Translate ALL input content into ENGLISH before analyzing.\n"
+            "2. Write 100% of the response, headers, and section titles STRICTLY IN ENGLISH.\n"
+            "3. It is STRICTLY FORBIDDEN to mix French, Spanish, or other languages in the output.\n\n"
             "MANDATORY OUTPUT FORMAT (RESPECT THESE TITLES EXACTLY):\n\n"
-            "🏷️ **CLASSIFICATION (Phase 0)**\n"
+            " 🏷️ **1. CLASSIFICATION (Phase 0)**\n"
             "- Text Type:\n"
             "- Sender Purpose:\n\n"
-            "📌 **CORE FACTS / PREMISES (Phase 1)**\n"
-            "- Noise-filtered data and claims:\n\n"
-            "🧠 **COGNITIVE DECONSTRUCTION (Phase 2)**\n"
-            "- Rhetorical Strategy / Trigger Detected:\n"
-            "- Intent vs. Reality (Language laundering and technical appropriation analysis):\n\n"
-            "🚀 **CORTICAL REFRAMING & STRATEGY (Phase 3)**\n"
-            "- Final synthetic diagnosis and objective risk assessment:\n\n"
+            " 📌 **2. CORE FACTS / PREMISES (Phase 1)**\n"
+            "- Noise-filtered data and claims (without rhetoric):\n\n"
+            " 🧠 **3. COGNITIVE AND LIMBIC DECONSTRUCTION (Phase 2)**\n"
+            "- Emotional Trigger / Bias Detected:\n"
+            "- Intent vs. Reality (Language laundering analysis):\n\n"
+            " 🚀 **4. CORTICAL REFRAMING & STRATEGY (Phase 3)**\n"
+            "- Final synthetic diagnosis and action recommendation:\n\n"
             "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
             "<score>[Integer from 0 to 100]</score>"
         ),
@@ -309,7 +309,7 @@ TEMPLATES = {
 }
 
 # =====================================================================
-# SANITIZACIÓN Y DETECCIÓN DE ENCABEZADOS PARA PDF
+# SANITIZACIÓN Y DETECCIÓN PARA PDF
 # =====================================================================
 _EMOJI_PATTERN = re.compile(
     "["
@@ -335,7 +335,6 @@ def sanitize_for_pdf(text):
     return text.strip()
 
 def is_heading_line(original_line):
-    # Limpiamos emojis y markdown antes de verificar si es un encabezado
     line_clean = _EMOJI_PATTERN.sub("", original_line).replace("**", "").strip().upper()
     keywords = ["CLASSIFICATION", "NOYAU DE FAITS", "DÉMONTAGE COGNITIF", 
                 "RECADRAGE CORTICAL", "CLASIFICACIÓN", "NÚCLEO DE HECHOS", 
@@ -354,17 +353,21 @@ def analyze():
         source_type = "text"
         lang = "fr"
 
-        # 1. Entrada mediante Form-Data (Capturas de Pantalla / Imágenes)
+        # 1. Entrada mediante Form-Data (Capturas / Imágenes)
         if 'image' in request.files or 'file' in request.files:
             uploaded_file = request.files.get('image') or request.files.get('file')
             image_bytes = uploaded_file.read()
-            extracted_text = extract_text_from_image(image_bytes)
+            lang = str(request.form.get("lang", "fr")).lower()
+            
+            # Map simple de lenguaje para Tesseract
+            tess_lang = "spa" if lang == "es" else ("fra" if lang == "fr" else "eng")
+            extracted_text = extract_text_from_image(image_bytes, lang=f"{tess_lang}+eng")
+            
             if extracted_text:
                 content_to_analyze = extracted_text
                 source_type = "image"
-            lang = str(request.form.get("lang", "fr")).lower()
 
-        # 2. Entrada JSON convencional (Texto plano, URLs Web, Links de YouTube)
+        # 2. Entrada JSON
         else:
             data = request.get_json() or {}
             text = data.get("text", "").strip()
@@ -402,9 +405,10 @@ def analyze():
                     model=MODEL_ID,
                     messages=[
                         {"role": "system", "content": template["system"]},
-                        {"role": "user", "content": content_to_analyze}
+                        {"role": "user", "content": f"Idioma de respuesta deseado: {lang.upper()}\n\nTexto a analizar:\n{content_to_analyze}"}
                     ],
-                    max_tokens=1200
+                    max_tokens=1200,
+                    temperature=0.2 # Temperatura baja para prevenir divagaciones e idiomas mezclados
                 )
                 analysis_text = response.choices[0].message.content
             except Exception as hf_err:
@@ -415,13 +419,14 @@ def analyze():
         flags_match = re.search(r"<flags>(.*?)</flags>", analysis_text)
 
         model_score = int(score_match.group(1)) if score_match else 0
-        model_flags = [f.strip() for f in flags_match.group(1).split(",")] if flags_match else []
+        model_flags = [f.strip() for f in flags_match.group(1).split(",")] if flags_match and flags_match.group(1) else []
 
         final_score = min(100, model_score + local_penalty)
         final_flags = list(set(model_flags + local_flags))
 
-        clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text)
-        clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis).strip()
+        # Limpieza rigurosa de tags XML del texto resultante
+        clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text, flags=re.DOTALL)
+        clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis, flags=re.DOTALL).strip()
 
         ethic_letter = get_ethic_letter(final_score)
         save_audit("CORE", source_type, content_to_analyze, final_score, clean_analysis)
@@ -455,18 +460,18 @@ def refute():
             return jsonify({"refutation": "No content provided to counter-argue."}), 400
 
         if client:
+            lang_name = "ESPAÑOL" if lang == "es" else ("FRANÇAIS" if lang == "fr" else "ENGLISH")
             prompt = (
-                f"Analyse forensique préalable:\n{analysis}\n\n"
-                f"CONSIGNE IMPÉRATIVE:\n"
-                f"Génère exactement 3 questions chirurgicales de réfutation méthodologique "
-                f"basées UNIQUEMENT sur les affirmations du texte ci-dessus.\n"
-                f"INTERDICTION ABSOLUE d'inventer des termes absents du texte.\n"
-                f"Rédige la réponse 100% dans la langue demandée : '{lang.upper()}'."
+                f"Análisis previo:\n{analysis}\n\n"
+                f"INSTRUCCIÓN OBLIGATORIA:\n"
+                f"Genera exactamente 3 preguntas quirúrgicas de refutación metodológica basadas ÚNICAMENTE en el análisis anterior.\n"
+                f"REGLA DE IDIOMA ABSOLUTA: Responde 100% EN {lang_name}. Prohibido usar otros idiomas."
             )
             response = client.chat.completions.create(
                 model=MODEL_ID,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=450
+                max_tokens=450,
+                temperature=0.3
             )
             refutation_text = response.choices[0].message.content.strip()
         else:
