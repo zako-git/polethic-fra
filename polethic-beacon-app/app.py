@@ -18,7 +18,7 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 # CONFIGURACIÓN Y CLIENTE HUGGINGFACE
 # =====================================================================
 HF_TOKEN = os.environ.get("HF_TOKEN", "")
-MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
+MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
 
 client = None
 if HF_TOKEN:
