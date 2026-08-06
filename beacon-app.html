@@ -676,7 +676,7 @@
             body: JSON.stringify({ text, lang: currentLang })
           });
         }
-
+ 
         if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
         const data = await response.json();
