@@ -698,8 +698,8 @@
       }
     });
 
-    // =====================================================================
-    //  REFUTACIÓN DIRECCIONADA (CORREGIDO PARA CONEXIÓN ESTABLE)
+   // =====================================================================
+    //  REFUTACIÓN DIRECCIONADA (ENDPOINT /refute RESTAURADO)
     // =====================================================================
     btnRefute.addEventListener('click', async () => {
       const currentAnalysis = rawAnalysisMarkdown || analysisReport.innerText;
@@ -713,7 +713,8 @@
       btnRefute.innerText = t.refuting;
 
       try {
-        const response = await fetch(`${API_BASE_URL}/challenge`, {
+        // Volvemos al endpoint exacto que tiene configurado tu backend: /refute
+        const response = await fetch(`${API_BASE_URL}/refute`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -727,12 +728,11 @@
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP Status ${response.status}`);
+          throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
-        // ✅ Acepta cualquiera de las claves devueltas por el servidor
-        const refutationText = data.challenge || data.refutation || data.reply || '';
+        const refutationText = data.refutation || data.challenge || data.reply || '';
 
         if (refutationText) {
           currentRefutationText = refutationText;
@@ -755,7 +755,6 @@
         btnRefute.innerText = t.refuteBtn;
       }
     });
-
     // =====================================================================
     //  EXPORTACIÓN A PDF (NATIVA DESDE BACKEND O FRONTEND)
     // =====================================================================
