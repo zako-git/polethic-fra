@@ -271,7 +271,7 @@ def analyze():
 # =====================================================================
 # ENDPOINT SECUNDARIO: /challenge (Réfutation Cognitive)
 # =====================================================================
-@app.route("/challenge", methods=["POST"])
+@app.route("/refute", methods=["POST"])
 def challenge():
     try:
         data = request.get_json(silent=True) or {}   # silent=True evita el 400 crudo
