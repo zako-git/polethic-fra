@@ -848,7 +848,7 @@
       btnRefute.innerText = t.refuting;
 
       try {
-        const response = await fetch(`${API_BASE_URL}/refute`, {
+        const response = await fetch(`${API_BASE_URL}/challenge`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -859,7 +859,7 @@
         });
 
         const data = await response.json();
-        const refutationText = data.refutation || data.reply || '';
+        const refutationText = data.challenge || data.refutation ||data.reply || '';
 
         if (refutationText) {
           const titleMap = {
