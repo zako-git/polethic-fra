@@ -307,9 +307,9 @@
       </nav>
       <!-- TRES LENGUAS FUNCIONALES -->
       <div class="lang-selector">
-        <a class="lang-btn active" id="btn-fr">FR</a><span>|</span>
-        <a class="lang-btn" id="btn-es">ES</a><span>|</span>
-        <a class="lang-btn" id="btn-en">EN</a>
+        <a class="lang-btn active" id="btn-fr" tabIndex="0">FR</a><span>|</span>
+        <a class="lang-btn" id="btn-es" tabIndex="0">ES</a><span>|</span>
+        <a class="lang-btn" id="btn-en" tabIndex="0">EN</a>
       </div>
     </div>
   </header>
@@ -322,7 +322,7 @@
     </div>
 
     <section class="drop-zone" id="drop-zone">
-      <textarea id="user-input" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
+      <textarea id="user-input" aria-label="Texto a analizar" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
       <div class="input-actions-bar">
         <label for="user-file" class="file-upload-btn">
            <span id="file-name-display">Joindre / Glisser un fichier</span>
@@ -410,7 +410,7 @@
     let ethicSpinnerInterval = null;
     let lastAnalyzedText = "";
 
-    // DICCIONARIOS DE IDIOMA Y FLAGS
+    // DICCIONARIOS DE IDIOMA Y FLAGS (COMPLETADOS)
     const langMap = {
       fr: {
         subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
@@ -424,7 +424,9 @@
         purgeBtn: " PURGER",
         shieldTitle: "Bouclier de Protection Professionnelle",
         shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
-      
+        noAnalysisAlert: "Aucune analyse valide disponible pour générer un défi.",
+        noExportAlert: "Aucune analyse disponible pour l'exportation PDF.",
+        refuteError: "Erreur lors du traitement de la réfutation."
       },
       es: {
         subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
@@ -438,7 +440,9 @@
         purgeBtn: " PURGAR",
         shieldTitle: "Escudo de Protección Profesional",
         shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
-      
+        noAnalysisAlert: "No hay un análisis válido disponible para generar un desafío.",
+        noExportAlert: "No hay un análisis disponible para exportar a PDF.",
+        refuteError: "Error al procesar la refutación."
       },
       en: {
         subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
@@ -452,7 +456,9 @@
         purgeBtn: " PURGE",
         shieldTitle: "Professional Protection Shield",
         shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation.",
-       
+        noAnalysisAlert: "No valid analysis available to challenge.",
+        noExportAlert: "No analysis available to export as PDF.",
+        refuteError: "Error processing the refutation."
       }
     };
 
@@ -666,7 +672,7 @@
       const currentAnalysis = analysisReport.innerText;
       const t = langMap[currentLang];
 
-      if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur")) {
+      if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("Error")) {
         return alert(t.noAnalysisAlert);
       }
 
@@ -697,7 +703,7 @@
           analysisReport.innerText += `\n\n========================================\n  ${titleMap[currentLang] || titleMap.fr}:\n========================================\n${refutationText}`;
         }
       } catch (e) {
-        alert(currentLang === 'es' ? "Error al procesar la refutación." : "Erreur lors du traitement de la réfutation.");
+        alert(t.refuteError);
       } finally {
         btnRefute.disabled = false;
         btnRefute.innerText = t.refuteBtn;
@@ -705,15 +711,15 @@
     });
 
     // =====================================================================
-    //  EXPORTACIÓN A PDF (CON ENCABEZADOS SUBRAYADOS Y TÍTULOS CORREGIDOS)
+    //  EXPORTACIÓN A PDF (CON ENCABEZADOS SUBRAYADOS Y CORRECCIÓN DE TEXTO)
     // =====================================================================
     btnPdf.addEventListener('click', () => {
       const reportText = analysisReport.innerText;
       const lang = currentLang || 'fr';
       const t = langMap[lang] || langMap['fr'];
 
-      if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur")) {
-        return alert(t.noExportAlert || "No report available");
+      if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur") || reportText.includes("Error")) {
+        return alert(t.noExportAlert);
       }
 
       const { jsPDF } = window.jspdf;
@@ -725,18 +731,11 @@
       const contentWidth = pageWidth - (margin * 2);
       let cursorY = margin;
 
-      const WHITELIST = /[^A-Za-z0-9ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýŸÿœŒ¿¡•©™€$%+\-_/.,;:!?'"()\[\]{}\s]/g;
-
-      // 1. Limpieza de texto y corrección forzada del punto 3
+      // 1. Limpieza de emojis y caracteres que rompen jsPDF
       let cleanText = reportText
         .replace(/\*\*/g, '')
         .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
         .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
-        // Eliminar "ET LIMBIQUE" / "Y LÍMBICO"
-        .replace(/DÉMONTEMENT COGNITIF/gi, 'DÉMONTEMENT COGNITIF')
-        .replace(/DESMONTAJE COGNITIVO/gi, 'DESMONTAJE COGNITIVO')
-        .replace(/COGNITIVE DECONSTRUCTION/gi, 'COGNITIVE DECONSTRUCTION')
-        .replace(WHITELIST, '')
         .trim();
 
       const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
@@ -750,16 +749,14 @@
       const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
       const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
 
-      // 🎨 FUNCIÓN PARA DIBUJAR LOS ENCABEZADOS SUBRAYADOS EN AZUL CLARO
+      // DIBUJAR ENCABEZADOS DE SECCIÓN DENTRO DEL PDF
       function printSectionHeader(text, x, y) {
-        // Fondo azul claro de destaque (cyan pastel)
         doc.setFillColor(224, 247, 250); 
         doc.roundedRect(x - 2, y - 5, contentWidth + 4, 8, 1, 1, 'F');
 
-        // Texto del Encabezado
         doc.setFont("helvetica", "bold");
         doc.setFontSize(11);
-        doc.setTextColor(6, 21, 38); // Texto azul oscuro para gran contraste
+        doc.setTextColor(6, 21, 38);
         doc.text(text, x, y);
       }
 
@@ -853,7 +850,6 @@
           return;
         }
 
-        // Detección de títulos/encabezados de fase
         const isHeader = /^[-•\s=]*(1\.|2\.|3\.|4\.|PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTEMENT COGNITIF|DEMONTEMENT COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE|RECADRAGE|REDONNEMENT|DÉFI DU BIAIS|DESAFÍO DEL SESGO|BIAS CHALLENGE)/i.test(trimmed);
 
         if (isHeader) {
@@ -951,6 +947,7 @@
 
       doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
     });
+
     // =====================================================================
     //  PURGAR INTERFAZ
     // =====================================================================
