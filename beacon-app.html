@@ -681,17 +681,17 @@
 
         const data = await response.json();
         const flagsReceived = data.flags || data.detected_flags;
-        
+
         applyEthicBadge(data.ethic_letter || data.scoreLetter || 'C', flagsReceived);
         displayReportText(data.analysis || data.report || 'Analyse terminée.');
-        
-        } catch (e) {
-    console.error("[BEACON Challenge Error]:", e);
-    alert(`${t.refuteError}\n(${e.message})`);
-    displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
-} finally {
-    btnAnalyze.disabled = false;
-}
+
+    } catch (e) {
+        console.error("[BEACON Challenge Error]:", e);
+        alert(`${t.refuteError}\n(${e.message})`);
+        displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
+    } finally {
+        btnAnalyze.disabled = false;
+    }
 });
    // =====================================================================
     //  REFUTACIÓN DIRECCIONADA (ENDPOINT /refute RESTAURADO)
