@@ -9,138 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- Parser de Markdown para renderizar negritas y listas en la web -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<!-- Script de control monolingüe BEACON -->
-    <script>
-      window.currentReport = {
-        analysis: "",
-        refutation: "",
-        score: 50,
-        flags: [],
-        lang: "es"
-      };
 
-      function onLanguageChange() {
-        const selectedLang = document.getElementById("langSelect")?.value || "es";
-        window.currentReport.lang = selectedLang;
-      }
-
-      async function runBeaconAnalysis() {
-        const textInput = document.getElementById("textInput") ? document.getElementById("textInput").value : "";
-        const sourceType = document.getElementById("sourceType") ? document.getElementById("sourceType").value : "text";
-        const currentLang = document.getElementById("langSelect") ? document.getElementById("langSelect").value : "es";
-
-        if (!textInput.trim()) {
-          alert("Por favor, introduce un texto para analizar.");
-          return;
-        }
-
-        try {
-          const response = await fetch("/analyze", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              text: textInput,
-              sourceType: sourceType,
-              lang: currentLang
-            })
-          });
-
-          if (!response.ok) throw new Error("Error en la respuesta del servidor");
-
-          const data = await response.json();
-
-          window.currentReport.analysis = data.analysis;
-          window.currentReport.score = data.score;
-          window.currentReport.flags = data.flags || [];
-          window.currentReport.lang = currentLang;
-          window.currentReport.refutation = "";
-
-          const outputContainer = document.getElementById("analysisOutput");
-          if (outputContainer) {
-            outputContainer.innerHTML = typeof marked !== 'undefined' 
-              ? marked.parse(data.analysis) 
-              : data.analysis.replace(/\n/g, "<br>");
-          }
-
-        } catch (error) {
-          console.error("[BEACON Error]:", error);
-          alert("Ocurrió un error al procesar el análisis.");
-        }
-      }
-
-      async function runRefutationChallenge() {
-        if (!window.currentReport.analysis) {
-          alert("Primero debes realizar un análisis.");
-          return;
-        }
-
-        const currentLang = window.currentReport.lang || "es";
-
-        try {
-          const response = await fetch("/challenge", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              analysis: window.currentReport.analysis,
-              lang: currentLang
-            })
-          });
-
-          if (!response.ok) throw new Error("Error al obtener la refutación");
-
-          const data = await response.json();
-          window.currentReport.refutation = data.challenge;
-
-          const challengeContainer = document.getElementById("challengeOutput");
-          if (challengeContainer) {
-            challengeContainer.innerText = data.challenge;
-          }
-
-        } catch (error) {
-          console.error("[BEACON Challenge Error]:", error);
-          alert("Error al generar las preguntas de refutación.");
-        }
-      }
-
-      async function exportBeaconPDF() {
-        if (!window.currentReport.analysis) {
-          alert("No hay ningún informe para exportar.");
-          return;
-        }
-
-        const payload = {
-          analysis: window.currentReport.analysis,
-          refutation: window.currentReport.refutation || "",
-          score: window.currentReport.score,
-          flags: window.currentReport.flags,
-          lang: window.currentReport.lang || "es"
-        };
-
-        try {
-          const response = await fetch("/export_pdf", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-
-          if (!response.ok) throw new Error("Error generando el archivo PDF");
-
-          const blob = await response.blob();
-          const downloadUrl = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = downloadUrl;
-          link.download = `RAPPORT_BEACON_${new Date().toISOString().slice(0, 10)}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-          window.URL.revokeObjectURL(downloadUrl);
-
-        } catch (error) {
-          console.error("[BEACON PDF Error]:", error);
-          alert("Error al descargar el PDF.");
-        }
-      }
-    </script>
   <style>
     /* ==========================================
        ESTILOS CYBER TOTAL (INTERFAZ BEACON)
@@ -443,12 +312,12 @@
     <div class="container header-layout">
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       <nav class="nav-buttons">
-        <a href="index.html" class="nav-btn" data-key="nav-home">ACCUEIL</a>
-        <a href="observatoire.html" class="nav-btn" data-key="nav-obs">L'OBSERVATOIRE</a>
-        <a href="psicomusee.html" class="nav-btn" data-key="nav-psico">PSICOMUSÉE</a>
+        <a href="index.html" class="nav-btn">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
         <a href="beacon-app.html" class="nav-btn active">BEACON LAB</a>
-        <a href="notre-cap.html" class="nav-btn" data-key="nav-cap">NOTRE CAP</a>
-        <a href="contact.html" class="nav-btn" data-key="nav-contact">CONTACT</a>
+        <a href="notre-cap.html" class="nav-btn">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn">CONTACT</a>
       </nav>
       <!-- TRES LENGUAS FUNCIONALES -->
       <div class="lang-selector">
@@ -511,6 +380,7 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // URL base de tu API Flask desplegada en Render
     const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
 
     // GENERADOR DE ESTRELLAS DINÁMICO
@@ -555,6 +425,7 @@
     let ethicSpinnerInterval = null;
     let lastAnalyzedText = "";
     let rawAnalysisMarkdown = "";
+    let currentRefutationText = "";
 
     // FUNCIÓN PARA RENDERIZAR TEXTO FORMATEADO EN PANTALLA
     function displayReportText(text) {
@@ -562,10 +433,9 @@
       if (window.marked) {
         analysisReport.innerHTML = marked.parse(text);
       } else {
-        // Fallback básico si Marked no carga
         let formatted = text
           .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/^- (.*$)/gim, '▪ $1');
+          .replace(/^- (.*$)/gim, ' $1');
         analysisReport.innerHTML = formatted;
       }
     }
@@ -657,11 +527,7 @@
       'dogma': { es: 'DOGMA', fr: 'DOGME', en: 'DOGMA' },
       'pseudoscience': { es: 'PSEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
       'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
-      'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
-      'persuasif': { es: 'PERSUASIVO', fr: 'PERSUASIF', en: 'PERSUASIVE' },
-      'marketing': { es: 'MARKETING', fr: 'MARKETING', en: 'MARKETING' },
-      'biais leger': { es: 'SESGO LEVE', fr: 'BIAIS LÉGER', en: 'LIGHT BIAS' },
-      'promesse': { es: 'PROMESA', fr: 'PROMESSE', en: 'PROMISE' }
+      'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' }
     };
 
     function changeLanguage(lang) {
@@ -792,7 +658,6 @@
 
       try {
         let response;
-
         if (file) {
           const formData = new FormData();
           formData.append('image', file);
@@ -823,7 +688,7 @@
       } catch (e) {
         applyEthicBadge('C');
         const serverErrMsg = {
-          es: 'Error de conexión con el servidor Render.',
+          es: 'Error de conexión con el servidor d\'analyse.',
           fr: "Erreur de connexion avec le serveur d'analyse.",
           en: 'Server connection error.'
         };
@@ -834,7 +699,7 @@
     });
 
     // =====================================================================
-    //  REFUTACIÓN DIRECCIONADA
+    //  REFUTACIÓN DIRECCIONADA (CORREGIDO PARA CONEXIÓN ESTABLE)
     // =====================================================================
     btnRefute.addEventListener('click', async () => {
       const currentAnalysis = rawAnalysisMarkdown || analysisReport.innerText;
@@ -850,7 +715,10 @@
       try {
         const response = await fetch(`${API_BASE_URL}/challenge`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
           body: JSON.stringify({
             analysis: currentAnalysis,
             text: lastAnalyzedText,
@@ -858,21 +726,30 @@
           })
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP Status ${response.status}`);
+        }
+
         const data = await response.json();
-        const refutationText = data.challenge || data.refutation ||data.reply || '';
+        // ✅ Acepta cualquiera de las claves devueltas por el servidor
+        const refutationText = data.challenge || data.refutation || data.reply || '';
 
         if (refutationText) {
+          currentRefutationText = refutationText;
           const titleMap = {
             fr: "DÉFI DU BIAIS (RÉFUTATION COGNITIVE)",
-            es: "DESAFÍO DE SESGO (REFUTACIÓN COGNITIVA)",
+            es: "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA)",
             en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
           };
           
-          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n========================================\n  ${titleMap[currentLang] || titleMap.fr}:\n========================================\n${refutationText}`;
+          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n========================================\n  **${titleMap[currentLang] || titleMap.fr}**:\n========================================\n${refutationText}`;
           displayReportText(updatedMarkdown);
+        } else {
+          alert("Le serveur n'a pas renvoyé de texte de réfutation.");
         }
       } catch (e) {
-        alert(t.refuteError);
+        console.error("[Refutation Error]:", e);
+        alert(`${t.refuteError} (${e.message})`);
       } finally {
         btnRefute.disabled = false;
         btnRefute.innerText = t.refuteBtn;
@@ -880,9 +757,9 @@
     });
 
     // =====================================================================
-    //  EXPORTACIÓN A PDF
+    //  EXPORTACIÓN A PDF (NATIVA DESDE BACKEND O FRONTEND)
     // =====================================================================
-    btnPdf.addEventListener('click', () => {
+    btnPdf.addEventListener('click', async () => {
       const reportText = rawAnalysisMarkdown || analysisReport.innerText;
       const lang = currentLang || 'fr';
       const t = langMap[lang] || langMap['fr'];
@@ -891,226 +768,59 @@
         return alert(t.noExportAlert);
       }
 
+      // Intentar exportar usando el generador de ReportLab del Backend
+      try {
+        const response = await fetch(`${API_BASE_URL}/export_pdf`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            analysis: rawAnalysisMarkdown,
+            refutation: currentRefutationText,
+            score: currentScoreLetter,
+            flags: Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim()),
+            lang: lang
+          })
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = `RAPPORT_BEACON_${new Date().toISOString().slice(0, 10)}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(downloadUrl);
+          return;
+        }
+      } catch (err) {
+        console.warn("Backend PDF indisponible, generación con jsPDF local...");
+      }
+
+      // Fallback local con jsPDF si el backend no responde a la descarga
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
-
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
       const margin = 18;
-      const contentWidth = pageWidth - (margin * 2);
       let cursorY = margin;
 
-      let cleanText = reportText
-        .replace(/\*\*/g, '')
-        .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
-        .replace(/«\s*/g, '"').replace(/\s*»/g, '"')
-        .trim();
+      let cleanText = reportText.replace(/\*\*/g, '').trim();
 
-      const localeMap = { fr: 'fr-FR', es: 'es-ES', en: 'en-US' };
-      const subHeaderLabels = {
-        fr: "LABORATOIRE D'AUTODÉFENSE COGNITIVE",
-        es: "LABORATORIO DE AUTODEFENSA COGNITIVA",
-        en: "COGNITIVE SELF-DEFENSE LABORATORY"
-      };
-      const refLabels = { fr: 'RÉF', es: 'REF', en: 'REF' };
-      const dateLabels = { fr: 'HORODATAGE', es: 'FECHA Y HORA', en: 'TIMESTAMP' };
-      const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
-      const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
-
-      function printSectionHeader(text, x, y) {
-        doc.setFillColor(224, 247, 250); 
-        doc.roundedRect(x - 2, y - 5, contentWidth + 4, 8, 1, 1, 'F');
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.setTextColor(6, 21, 38);
-        doc.text(text, x, y);
-      }
-
-      // --- CABECERA ---
       doc.setFont("courier", "bold");
       doc.setFontSize(15);
-      doc.setTextColor(15, 23, 42);
-      doc.text("POLETHIC BEACON", margin, cursorY + 2);
+      doc.text("POLETHIC BEACON", margin, cursorY);
+      cursorY += 10;
 
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(8.5);
-      doc.setTextColor(0, 180, 216);
-      doc.text(subHeaderLabels[lang] || subHeaderLabels['fr'], margin, cursorY + 7);
-
-      cursorY += 12;
-      doc.setDrawColor(226, 232, 240);
-      doc.setLineWidth(0.4);
-      doc.line(margin, cursorY, pageWidth - margin, cursorY);
-
-      cursorY += 8;
-
-      const now = new Date();
-      const timestamp = now.toLocaleDateString(localeMap[lang] || 'fr-FR', {
-        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
-      const auditId = `BEACON-2026-${Math.floor(100000 + Math.random() * 900000)}`;
-
-      let scoreR = 234, scoreG = 179, scoreB = 8;
-      if (currentScoreLetter === 'A') { scoreR = 16; scoreG = 185; scoreB = 129; }
-      if (currentScoreLetter === 'C') { scoreR = 249; scoreG = 115; scoreB = 22; }
-      if (currentScoreLetter === 'D') { scoreR = 225; scoreG = 29; scoreB = 72; }
-
-      const flagElements = Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim());
-      const cardHeight = flagElements.length > 0 ? 32 : 20;
-
-      doc.setFillColor(248, 250, 252);
-      doc.setDrawColor(226, 232, 240);
-      doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
-
-      doc.setFillColor(scoreR, scoreG, scoreB);
-      doc.roundedRect(margin + 3, cursorY + 3, 38, 14, 1.5, 1.5, 'F');
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(7.5);
-      doc.setTextColor(255, 255, 255);
-      doc.text("ETHIC-SCORE", margin + 5, cursorY + 7);
-      doc.setFontSize(12);
-      doc.text(`${levelLabels[lang] || 'NIVEAU'} ${currentScoreLetter}`, margin + 5, cursorY + 13.5);
-
-      doc.setFont("courier", "bold");
-      doc.setFontSize(9.5);
-      doc.setTextColor(51, 65, 85);
-      doc.text(`${refLabels[lang] || 'RÉFÉRENCE'} : ${auditId}`, margin + 46, cursorY + 8);
-      doc.text(`${dateLabels[lang] || 'HORODATAGE'} : ${timestamp}`, margin + 46, cursorY + 13);
-
-      if (flagElements.length > 0) {
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.3);
-        doc.line(margin + 3, cursorY + 19, margin + contentWidth - 3, cursorY + 19);
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(7.5);
-        doc.setTextColor(100, 116, 139);
-        doc.text(`${flagsHeaderLabels[lang] || 'INDICATEURS'}:`, margin + 5, cursorY + 26);
-
-        let flagX = margin + 30;
-        flagElements.forEach(flagText => {
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(7);
-          const textWidth = doc.getTextWidth(flagText);
-          const badgeWidth = textWidth + 6;
-
-          if (flagX + badgeWidth < margin + contentWidth - 3) {
-            doc.setFillColor(226, 232, 240);
-            doc.roundedRect(flagX, cursorY + 22, badgeWidth, 5.5, 1, 1, 'F');
-            doc.setTextColor(15, 23, 42);
-            doc.text(flagText, flagX + 3, cursorY + 26);
-            flagX += badgeWidth + 3;
-          }
-        });
-      }
-
-      cursorY += cardHeight + 8;
-
-      // --- DIBUJO DEL CONTENIDO DEL PDF ---
-      const lines = cleanText.split('\n');
-      lines.forEach((line) => {
-        let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
-        if (!trimmed || trimmed === '•' || trimmed === '=' || trimmed.startsWith('===')) {
-          cursorY += 2;
-          return;
-        }
-
-        const isHeader = /^[-•\s=]*(1\.|2\.|3\.|4\.|PHASE\s*\d|CLASIFICACI[ÓO]N|CLASSIFICATION|NÚCLEO DE HECHOS|NUCLEO DE HECHOS|CORE FACTS|NOYAU DE FAITS|DESMONTAJE COGNITIVO|DÉMONTEMENT COGNITIF|DEMONTEMENT COGNITIF|COGNITIVE DECONSTRUCTION|DECONSTRUCTION|REENCUADRE|RECADRAGE|REDONNEMENT|DÉFI DU BIAIS|DESAFÍO DEL SESGO|BIAS CHALLENGE)/i.test(trimmed);
-
-        if (isHeader) {
-          if (cursorY > pageHeight - 25) { doc.addPage(); cursorY = margin + 5; }
-          cursorY += 4;
-          let headerText = trimmed.replace(/^[-•\s=]+/, '').toUpperCase();
-          printSectionHeader(headerText, margin, cursorY);
-          cursorY += 10;
-        } else {
-          let isBullet = trimmed.startsWith('-') || trimmed.startsWith('•');
-          let cleanContent = isBullet ? trimmed.replace(/^[-•]\s*/, '').trim() : trimmed;
-          if (!cleanContent) return;
-
-          let hasColonLabel = cleanContent.includes(':') && cleanContent.indexOf(':') < 40 && !/^\d+[\.\)]/.test(cleanContent);
-
-          if (hasColonLabel) {
-            if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
-            let indent = isBullet ? margin + 5 : margin;
-            let colonIndex = cleanContent.indexOf(':');
-            let labelPart = cleanContent.substring(0, colonIndex + 1);
-            let valuePart = cleanContent.substring(colonIndex + 1).trim();
-
-            if (isBullet) {
-              doc.setFont("helvetica", "normal");
-              doc.setFontSize(10);
-              doc.setTextColor(51, 65, 85);
-              doc.text("• ", margin, cursorY);
-            }
-
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(10);
-            doc.setTextColor(15, 23, 42);
-            doc.text(labelPart, indent, cursorY);
-
-            let labelWidth = doc.getTextWidth(labelPart + " ");
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.setTextColor(51, 65, 85);
-
-            let maxValWidth = contentWidth - (indent - margin) - labelWidth;
-            const splitValue = doc.splitTextToSize(valuePart, maxValWidth);
-
-            if (splitValue.length > 0) {
-              doc.text(splitValue[0], indent + labelWidth, cursorY);
-              cursorY += 5.5;
-              for (let k = 1; k < splitValue.length; k++) {
-                if (cursorY > pageHeight - 20) { doc.addPage(); cursorY = margin + 5; }
-                doc.text(splitValue[k], indent + 4, cursorY);
-                cursorY += 5.5;
-              }
-            } else {
-              cursorY += 5.5;
-            }
-            cursorY += 1.5;
-          } else {
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.setTextColor(51, 65, 85);
-
-            let indent = isBullet ? margin + 5 : margin;
-            let printWidth = isBullet ? contentWidth - 5 : contentWidth;
-            let printText = isBullet ? "• " + cleanContent : cleanContent;
-
-            const splitLines = doc.splitTextToSize(printText, printWidth);
-            splitLines.forEach((subLine) => {
-              if (cursorY > pageHeight - 18) { doc.addPage(); cursorY = margin + 5; }
-              doc.text(subLine, indent, cursorY);
-              cursorY += 5.5;
-            });
-            cursorY += 1.5;
-          }
-        }
+      const splitLines = doc.splitTextToSize(cleanText, pageWidth - (margin * 2));
+      splitLines.forEach((subLine) => {
+        if (cursorY > pageHeight - 15) { doc.addPage(); cursorY = margin; }
+        doc.text(subLine, margin, cursorY);
+        cursorY += 6;
       });
 
-      const footerLabels = {
-        fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
-        es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
-        en: "POLETHIC BEACON — Analysis and cognitive self-defense"
-      };
-
-      const pageCount = doc.internal.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.3);
-        doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(8);
-        doc.setTextColor(148, 163, 184);
-        doc.text(footerLabels[lang] || footerLabels['fr'], margin, pageHeight - 7);
-        doc.text(`Page ${i} / ${pageCount}`, pageWidth - margin - 15, pageHeight - 7);
-      }
-
-      doc.save(`RAPPORT_BEACON_${currentScoreLetter}_${auditId}.pdf`);
+      doc.save(`RAPPORT_BEACON_${currentScoreLetter}.pdf`);
     });
 
     // =====================================================================
@@ -1120,6 +830,7 @@
       userInput.value = '';
       userFile.value = '';
       rawAnalysisMarkdown = "";
+      currentRefutationText = "";
       fileNameDisplay.innerText = langMap[currentLang].fileBtn;
       
       const resetText = langMap[currentLang].waitingAnalysis;
