@@ -27,6 +27,9 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+# Límite de seguridad para carga de imágenes/archivos (16 MB max)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
 DATABASE_NAME = "beacon.db"
 
 # Token de Hugging Face y Cliente Inference
@@ -36,54 +39,6 @@ client = InferenceClient(api_key=HF_TOKEN) if HF_TOKEN else None
 # Modelo recomendado para análisis lingüístico y forense profundo
 MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
 
-// Detectar el idioma de la página (por variable o etiqueta <html lang="fr">)
-const currentLang = document.documentElement.lang || 'fr'; 
-
-async function runAnalysis(inputContent) {
-  const response = await fetch('/api/analyze', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      text: inputContent,
-      lang: currentLang // <-- OBLIGATORIO: Pasa el idioma seleccionado por el usuario
-    })
-  });
-
-  const data = await response.json();
-
-  // Para evitar que se vean los asteriscos ** en la pantalla:
-  // Usa una librería como marked.js
-  document.getElementById('output-container').innerHTML = marked.parse(data.analysis);
-}
-
-# En endpoint /analyze de app.py:
-
-lang_names = {
-    "fr": "FRANÇAIS",
-    "es": "ESPAÑOL",
-    "en": "ENGLISH"
-}
-target_lang_name = lang_names.get(lang, "FRANÇAIS")
-
-if client:
-    try:
-        # Forzamos la regla en el mensaje directo del usuario
-        user_prompt = (
-            f"STRICT INSTRUCTION: Respond 100% IN {target_lang_name}.\n"
-            f"All titles, phase labels, and extracted points MUST be in {target_lang_name}.\n\n"
-            f"Content to analyze:\n{content_to_analyze}"
-        )
-        
-        response = client.chat.completions.create(
-            model=MODEL_ID,
-            messages=[
-                {"role": "system", "content": template["system"]},
-                {"role": "user", "content": f"Idioma de respuesta deseado: {lang.upper()}\n\nTexto a analizar:\n{content_to_analyze}"}
-            ],
-            max_tokens=1200,
-            temperature=0.1 # Temperatura muy baja para garantizar que obedezca las instrucciones
-        )
-        analysis_text = response.choices[0].message.content
 # =====================================================================
 # DICCIONARIO DE TRADUCCIÓN DE BANDERAS/FLAGS SEGÚN EL IDIOMA
 # =====================================================================
@@ -130,29 +85,28 @@ def get_db_connection():
 
 def init_db():
     try:
-        conn = get_db_connection()
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS local_rules (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                module_key TEXT NOT NULL,
-                keyword TEXT NOT NULL,
-                risk_category TEXT NOT NULL,
-                penalty_points INTEGER NOT NULL
-            );
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS audits (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                module_key TEXT,
-                source_type TEXT,
-                raw_content TEXT,
-                ethic_score INTEGER,
-                diagnostic_report TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        """)
-        conn.commit()
-        conn.close()
+        with get_db_connection() as conn:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS local_rules (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    module_key TEXT NOT NULL,
+                    keyword TEXT NOT NULL,
+                    risk_category TEXT NOT NULL,
+                    penalty_points INTEGER NOT NULL
+                );
+            """)
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS audits (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    module_key TEXT,
+                    source_type TEXT,
+                    raw_content TEXT,
+                    ethic_score INTEGER,
+                    diagnostic_report TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            conn.commit()
     except Exception as e:
         print(f"[init_db] Warning: {e}")
 
@@ -169,13 +123,20 @@ def extract_text_from_image(image_bytes, lang='fra+spa+eng'):
         print(f"[extract_text_from_image error]: {e}")
         return None
 
+def extract_youtube_id(url):
+    """ Extrae de forma robusta el ID de YouTube de cualquier formato de URL """
+    pattern = r'(?:v=|\/([0-9A-Za-z_-]{11}).*|youtu\.be\/|\/embed\/|\/shorts\/)([0-9A-Za-z_-]{11})'
+    match = re.search(pattern, url)
+    if match:
+        return match.group(1) or match.group(2)
+    return None
+
 def extract_transcript(url):
     """ Obtiene transcripciones de YouTube tolerando cualquier idioma disponible """
     try:
-        if "youtu.be/" in url:
-            video_id = url.split("youtu.be/")[1].split("?")[0]
-        else:
-            video_id = url.split("v=")[1].split("&")[0]
+        video_id = extract_youtube_id(url)
+        if not video_id:
+            return None
 
         # Intenta primero con idiomas específicos, si falla busca cualquier lista
         try:
@@ -224,17 +185,16 @@ def apply_local_rules(content):
     lowered_content = content.lower()
 
     try:
-        conn = get_db_connection()
-        rules = conn.execute(
-            "SELECT keyword, risk_category, penalty_points FROM local_rules"
-        ).fetchall()
-        conn.close()
+        with get_db_connection() as conn:
+            rules = conn.execute(
+                "SELECT keyword, risk_category, penalty_points FROM local_rules"
+            ).fetchall()
 
-        for rule in rules:
-            keyword_lower = rule["keyword"].lower()
-            if keyword_lower in lowered_content:
-                penalty_total += rule["penalty_points"]
-                flags.append(rule["risk_category"].lower())
+            for rule in rules:
+                keyword_lower = rule["keyword"].lower()
+                if keyword_lower in lowered_content:
+                    penalty_total += rule["penalty_points"]
+                    flags.append(rule["risk_category"].lower())
     except Exception as e:
         print(f"[apply_local_rules] Warning/Skipped: {e}")
 
@@ -255,14 +215,13 @@ def translate_flags(flags_list, lang="fr"):
 
 def save_audit(module_key, source_type, raw_content, ethic_score, diagnostic_report):
     try:
-        conn = get_db_connection()
-        conn.execute(
-            """INSERT INTO audits (module_key, source_type, raw_content, ethic_score, diagnostic_report)
-               VALUES (?, ?, ?, ?, ?)""",
-            (module_key, source_type, str(raw_content), ethic_score, diagnostic_report)
-        )
-        conn.commit()
-        conn.close()
+        with get_db_connection() as conn:
+            conn.execute(
+                """INSERT INTO audits (module_key, source_type, raw_content, ethic_score, diagnostic_report)
+                   VALUES (?, ?, ?, ?, ?)""",
+                (module_key, source_type, str(raw_content), ethic_score, diagnostic_report)
+            )
+            conn.commit()
     except Exception as e:
         print(f"[save_audit] error: {e}")
 
@@ -279,15 +238,15 @@ TEMPLATES = {
             "2. Rédigez 100% de la réponse, des titres et des sous-titres STRICTEMENT EN FRANÇAIS.\n"
             "3. Il est INTERDIT de mélanger de l'espagnol, de l'anglais ou d'autres langues dans le résultat.\n\n"
             "FORMAT DE SORTIE IMPÉRATIF (RESPECTEZ EXACTEMENT CES TITRES) :\n\n"
-            " 🏷️ **1. CLASSIFICATION (Phase 0)**\n"
+            "  **1. CLASSIFICATION (Phase 0)**\n"
             "- Type de Texte:\n"
             "- Objectif de l'Émetteur:\n\n"
-            " 📌 **2. NOYAU DE FAITS / PRÉMISSES (Phase 1)**\n"
+            "  **2. NOYAU DE FAITS / PRÉMISSES (Phase 1)**\n"
             "- Données et affirmations filtrées sans bruit (sans rhétorique):\n\n"
-            " 🧠 **3. DÉMONTAGE COGNITIF ET LIMBIQUE (Phase 2)**\n"
+            "  **3. DÉMONTAGE COGNITIF ET LIMBIQUE (Phase 2)**\n"
             "- Déclencheur Émotionnel / Biais Détecté:\n"
             "- Intention vs Réalité (Analyse du blanchiment de langage):\n\n"
-            " 🚀 **4. RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**\n"
+            "  **4. RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**\n"
             "- Diagnostic synthétique final et recommandation d'action:\n\n"
             "<flags>[Liste séparée par des virgules parmi: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
             "<score>[Note entière de 0 à 100]</score>"
@@ -307,15 +266,15 @@ TEMPLATES = {
             "2. Escribe el 100% de la respuesta, títulos y subtítulos STRICTAMENTE EN ESPAÑOL.\n"
             "3. Está PROHIBIDO mezclar palabras en francés, inglés u otros idiomas en la respuesta.\n\n"
             "FORMATO DE SALIDA OBLIGATORIO (RESPETA EXACTAMENTE ESTOS TÍTULOS):\n\n"
-            " 🏷️ **1. CLASIFICACIÓN (Fase 0)**\n"
+            "  **1. CLASIFICACIÓN (Fase 0)**\n"
             "- Tipo de Texto:\n"
             "- Propósito del Emisor:\n\n"
-            " 📌 **2. NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
+            "  **2. NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
             "- Datos y afirmaciones filtradas sin ruido (sin retórica):\n\n"
-            " 🧠 **3. DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
+            "  **3. DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
             "- Disparador Emocional / Sesgo Detectado:\n"
             "- Intención vs. Realidad (Análisis de blanqueamiento de lenguaje):\n\n"
-            " 🚀 **4. REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
+            "  **4. REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
             "- Diagnóstico sintético final y recomendación de acción:\n\n"
             "<flags>[Lista separada por comas de: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
             "<score>[Número entero de 0 a 100]</score>"
@@ -335,15 +294,15 @@ TEMPLATES = {
             "2. Write 100% of the response, headers, and section titles STRICTLY IN ENGLISH.\n"
             "3. It is STRICTLY FORBIDDEN to mix French, Spanish, or other languages in the output.\n\n"
             "MANDATORY OUTPUT FORMAT (RESPECT THESE TITLES EXACTLY):\n\n"
-            " 🏷️ **1. CLASSIFICATION (Phase 0)**\n"
+            "  **1. CLASSIFICATION (Phase 0)**\n"
             "- Text Type:\n"
             "- Sender Purpose:\n\n"
-            " 📌 **2. CORE FACTS / PREMISES (Phase 1)**\n"
+            "  **2. CORE FACTS / PREMISES (Phase 1)**\n"
             "- Noise-filtered data and claims (without rhetoric):\n\n"
-            " 🧠 **3. COGNITIVE AND LIMBIC DECONSTRUCTION (Phase 2)**\n"
+            "  **3. COGNITIVE AND LIMBIC DECONSTRUCTION (Phase 2)**\n"
             "- Emotional Trigger / Bias Detected:\n"
             "- Intent vs. Reality (Language laundering analysis):\n\n"
-            " 🚀 **4. CORTICAL REFRAMING & STRATEGY (Phase 3)**\n"
+            "  **4. CORTICAL REFRAMING & STRATEGY (Phase 3)**\n"
             "- Final synthetic diagnosis and action recommendation:\n\n"
             "<flags>[Comma-separated list from: fakenews, myth, bluff, coercion, dogma, pseudoscience, authority_transfer, psnc]</flags>\n"
             "<score>[Integer from 0 to 100]</score>"
@@ -389,7 +348,6 @@ def is_heading_line(original_line):
     
     line_clean = _EMOJI_PATTERN.sub("", original_line).replace("**", "").strip().upper()
     
-    # Expresión regular que detecta títulos con números, fases o palabras clave
     heading_keywords = [
         "CLASIFICACIÓN", "CLASSIFICATION",
         "NÚCLEO DE HECHOS", "NOYAU DE FAITS", "CORE FACTS",
@@ -398,6 +356,7 @@ def is_heading_line(original_line):
     ]
     
     return any(kw in line_clean for kw in heading_keywords) or "PHASE" in line_clean or "FASE" in line_clean
+
 # =====================================================================
 # ENDPOINTS DE LA API
 # =====================================================================
@@ -479,7 +438,7 @@ def analyze():
                         {"role": "user", "content": user_prompt}
                     ],
                     max_tokens=1200,
-                    temperature=0.1 # Temperatura muy baja para garantizar que obedezca el idioma
+                    temperature=0.1
                 )
                 analysis_text = response.choices[0].message.content
             except Exception as hf_err:
@@ -589,7 +548,7 @@ def export_pdf():
         primary_blue = colors.HexColor("#0284c7")
         border_color = colors.HexColor("#cbd5e1")
         bg_card = colors.HexColor("#f8fafc")
-        bg_heading = colors.HexColor("#e0f2fe") # Azul claro para los títulos de Fase
+        bg_heading = colors.HexColor("#e0f2fe")
         text_dark = colors.HexColor("#0f172a")
 
         if ethic_letter == "A":
@@ -613,8 +572,6 @@ def export_pdf():
         score_box_style = ParagraphStyle(
             'ScoreBox', fontName='Helvetica-Bold', fontSize=15, leading=18, textColor=score_color, alignment=1
         )
-        
-        # Estilo mejorado para los títulos de Fase
         heading_style = ParagraphStyle(
             'SectionHeading', fontName='Helvetica-Bold', fontSize=11, leading=14, textColor=primary_blue, spaceBefore=0, spaceAfter=0
         )
@@ -662,7 +619,6 @@ def export_pdf():
         story.append(card_table)
         story.append(Spacer(1, 14))
 
-        # Procesamiento y formateo del reporte
         for raw_line in raw_analysis.split('\n'):
             line_str = raw_line.strip()
             if not line_str:
@@ -672,7 +628,6 @@ def export_pdf():
             if not clean_line:
                 continue
 
-            # Si es un Encabezado de Fase, lo encerramos en una banda visual
             if is_heading_line(line_str):
                 story.append(Spacer(1, 8))
                 heading_table = Table([[Paragraph(f"<b>{clean_line.upper()}</b>", heading_style)]], colWidths=[530])
@@ -685,11 +640,9 @@ def export_pdf():
                 story.append(heading_table)
                 story.append(Spacer(1, 6))
             elif line_str.startswith("- ") or line_str.startswith("• "):
-                # Viñetas
                 story.append(Paragraph(f"• {clean_line[2:]}", bullet_style))
                 story.append(Spacer(1, 2))
             else:
-                # Texto normal
                 story.append(Paragraph(clean_line, body_style))
                 story.append(Spacer(1, 3))
 
