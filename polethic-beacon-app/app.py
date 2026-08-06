@@ -36,6 +36,54 @@ client = InferenceClient(api_key=HF_TOKEN) if HF_TOKEN else None
 # Modelo recomendado para análisis lingüístico y forense profundo
 MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
 
+// Detectar el idioma de la página (por variable o etiqueta <html lang="fr">)
+const currentLang = document.documentElement.lang || 'fr'; 
+
+async function runAnalysis(inputContent) {
+  const response = await fetch('/api/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      text: inputContent,
+      lang: currentLang // <-- OBLIGATORIO: Pasa el idioma seleccionado por el usuario
+    })
+  });
+
+  const data = await response.json();
+
+  // Para evitar que se vean los asteriscos ** en la pantalla:
+  // Usa una librería como marked.js
+  document.getElementById('output-container').innerHTML = marked.parse(data.analysis);
+}
+
+# En endpoint /analyze de app.py:
+
+lang_names = {
+    "fr": "FRANÇAIS",
+    "es": "ESPAÑOL",
+    "en": "ENGLISH"
+}
+target_lang_name = lang_names.get(lang, "FRANÇAIS")
+
+if client:
+    try:
+        # Forzamos la regla en el mensaje directo del usuario
+        user_prompt = (
+            f"STRICT INSTRUCTION: Respond 100% IN {target_lang_name}.\n"
+            f"All titles, phase labels, and extracted points MUST be in {target_lang_name}.\n\n"
+            f"Content to analyze:\n{content_to_analyze}"
+        )
+        
+        response = client.chat.completions.create(
+            model=MODEL_ID,
+            messages=[
+                {"role": "system", "content": template["system"]},
+                {"role": "user", "content": user_prompt}
+            ],
+            max_tokens=1200,
+            temperature=0.1 # Temperatura muy baja para garantizar que obedezca las instrucciones
+        )
+        analysis_text = response.choices[0].message.content
 # =====================================================================
 # DICCIONARIO DE TRADUCCIÓN DE BANDERAS/FLAGS SEGÚN EL IDIOMA
 # =====================================================================
