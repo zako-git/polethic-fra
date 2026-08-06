@@ -685,13 +685,10 @@
         applyEthicBadge(data.ethic_letter || data.scoreLetter || 'C', flagsReceived);
         displayReportText(data.analysis || data.report || 'Analyse terminée.');
         
-      } catch (e) {
-        applyEthicBadge('C');
-        const serverErrMsg = {
-          es: 'Error de conexión con el servidor d\'analyse.',
-          fr: "Erreur de connexion avec le serveur d'analyse.",
-          en: 'Server connection error.'
-        };
+        } catch (e) {
+          console.error("[BEACON Challenge Error]:", e);
+          alert(`${t.refuteError}\n(${e.message})`);
+        }
         displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
       } finally {
         btnAnalyze.disabled = false;
