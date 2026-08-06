@@ -9,7 +9,138 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- Parser de Markdown para renderizar negritas y listas en la web -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Script de control monolingüe BEACON -->
+    <script>
+      window.currentReport = {
+        analysis: "",
+        refutation: "",
+        score: 50,
+        flags: [],
+        lang: "es"
+      };
 
+      function onLanguageChange() {
+        const selectedLang = document.getElementById("langSelect")?.value || "es";
+        window.currentReport.lang = selectedLang;
+      }
+
+      async function runBeaconAnalysis() {
+        const textInput = document.getElementById("textInput") ? document.getElementById("textInput").value : "";
+        const sourceType = document.getElementById("sourceType") ? document.getElementById("sourceType").value : "text";
+        const currentLang = document.getElementById("langSelect") ? document.getElementById("langSelect").value : "es";
+
+        if (!textInput.trim()) {
+          alert("Por favor, introduce un texto para analizar.");
+          return;
+        }
+
+        try {
+          const response = await fetch("/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              text: textInput,
+              sourceType: sourceType,
+              lang: currentLang
+            })
+          });
+
+          if (!response.ok) throw new Error("Error en la respuesta del servidor");
+
+          const data = await response.json();
+
+          window.currentReport.analysis = data.analysis;
+          window.currentReport.score = data.score;
+          window.currentReport.flags = data.flags || [];
+          window.currentReport.lang = currentLang;
+          window.currentReport.refutation = "";
+
+          const outputContainer = document.getElementById("analysisOutput");
+          if (outputContainer) {
+            outputContainer.innerHTML = typeof marked !== 'undefined' 
+              ? marked.parse(data.analysis) 
+              : data.analysis.replace(/\n/g, "<br>");
+          }
+
+        } catch (error) {
+          console.error("[BEACON Error]:", error);
+          alert("Ocurrió un error al procesar el análisis.");
+        }
+      }
+
+      async function runRefutationChallenge() {
+        if (!window.currentReport.analysis) {
+          alert("Primero debes realizar un análisis.");
+          return;
+        }
+
+        const currentLang = window.currentReport.lang || "es";
+
+        try {
+          const response = await fetch("/challenge", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              analysis: window.currentReport.analysis,
+              lang: currentLang
+            })
+          });
+
+          if (!response.ok) throw new Error("Error al obtener la refutación");
+
+          const data = await response.json();
+          window.currentReport.refutation = data.challenge;
+
+          const challengeContainer = document.getElementById("challengeOutput");
+          if (challengeContainer) {
+            challengeContainer.innerText = data.challenge;
+          }
+
+        } catch (error) {
+          console.error("[BEACON Challenge Error]:", error);
+          alert("Error al generar las preguntas de refutación.");
+        }
+      }
+
+      async function exportBeaconPDF() {
+        if (!window.currentReport.analysis) {
+          alert("No hay ningún informe para exportar.");
+          return;
+        }
+
+        const payload = {
+          analysis: window.currentReport.analysis,
+          refutation: window.currentReport.refutation || "",
+          score: window.currentReport.score,
+          flags: window.currentReport.flags,
+          lang: window.currentReport.lang || "es"
+        };
+
+        try {
+          const response = await fetch("/export_pdf", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) throw new Error("Error generando el archivo PDF");
+
+          const blob = await response.blob();
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = `RAPPORT_BEACON_${new Date().toISOString().slice(0, 10)}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(downloadUrl);
+
+        } catch (error) {
+          console.error("[BEACON PDF Error]:", error);
+          alert("Error al descargar el PDF.");
+        }
+      }
+    </script>
   <style>
     /* ==========================================
        ESTILOS CYBER TOTAL (INTERFAZ BEACON)
