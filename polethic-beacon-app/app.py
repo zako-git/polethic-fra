@@ -335,12 +335,21 @@ def sanitize_for_pdf(text):
     return text.strip()
 
 def is_heading_line(original_line):
+    """ Detecta si la línea corresponde a una de las 4 fases principales """
+    if not original_line:
+        return False
+    
     line_clean = _EMOJI_PATTERN.sub("", original_line).replace("**", "").strip().upper()
-    keywords = ["CLASSIFICATION", "NOYAU DE FAITS", "DÉMONTAGE COGNITIF", 
-                "RECADRAGE CORTICAL", "CLASIFICACIÓN", "NÚCLEO DE HECHOS", 
-                "DESMONTAJE COGNITIVO", "REENCUADRE CORTICAL", "COGNITIVE DECONSTRUCTION"]
-    return any(kw in line_clean for kw in keywords) or line_clean.startswith("PHASE")
-
+    
+    # Expresión regular que detecta títulos con números, fases o palabras clave
+    heading_keywords = [
+        "CLASIFICACIÓN", "CLASSIFICATION",
+        "NÚCLEO DE HECHOS", "NOYAU DE FAITS", "CORE FACTS",
+        "DESMONTAJE COGNITIVO", "DÉMONTAGE COGNITIF", "COGNITIVE DECONSTRUCTION",
+        "REENCUADRE CORTICAL", "RECADRAGE CORTICAL", "CORTICAL REFRAMING"
+    ]
+    
+    return any(kw in line_clean for kw in heading_keywords) or "PHASE" in line_clean or "FASE" in line_clean
 # =====================================================================
 # ENDPOINTS DE LA API
 # =====================================================================
