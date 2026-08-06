@@ -690,9 +690,8 @@
           alert(`${t.refuteError}\n(${e.message})`);
         }
         displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
-      } finally {
+     .finally(() => {
         btnAnalyze.disabled = false;
-      }
     });
 
    // =====================================================================
