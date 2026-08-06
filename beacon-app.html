@@ -7,6 +7,8 @@
 
   <!-- Librería jsPDF para generación de PDF profesional -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Parser de Markdown para renderizar negritas y listas en la web -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
     /* ==========================================
@@ -247,6 +249,18 @@
       white-space: pre-wrap;
     }
 
+    .report-box strong {
+      color: var(--cyber-cyan);
+      font-weight: bold;
+    }
+
+    .report-box h1, .report-box h2, .report-box h3 {
+      color: var(--cyber-green);
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-family: var(--font-cyber);
+    }
+
     .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 
     .btn-action-refute, .btn-action-pdf, .btn-action-purge {
@@ -409,8 +423,23 @@
     let currentScoreLetter = 'C';
     let ethicSpinnerInterval = null;
     let lastAnalyzedText = "";
+    let rawAnalysisMarkdown = "";
 
-    // DICCIONARIOS DE IDIOMA Y FLAGS (COMPLETADOS)
+    // FUNCIÓN PARA RENDERIZAR TEXTO FORMATEADO EN PANTALLA
+    function displayReportText(text) {
+      rawAnalysisMarkdown = text;
+      if (window.marked) {
+        analysisReport.innerHTML = marked.parse(text);
+      } else {
+        // Fallback básico si Marked no carga
+        let formatted = text
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/^- (.*$)/gim, '▪ $1');
+        analysisReport.innerHTML = formatted;
+      }
+    }
+
+    // DICCIONARIOS DE IDIOMA Y FLAGS
     const langMap = {
       fr: {
         subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
@@ -426,7 +455,9 @@
         shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
         noAnalysisAlert: "Aucune analyse valide disponible pour générer un défi.",
         noExportAlert: "Aucune analyse disponible pour l'exportation PDF.",
-        refuteError: "Erreur lors du traitement de la réfutation."
+        refuteError: "Erreur lors du traitement de la réfutation.",
+        waitingAnalysis: "En attente d'analyse...",
+        analysisReady: "ANALYSE PRÊTE"
       },
       es: {
         subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
@@ -442,7 +473,9 @@
         shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
         noAnalysisAlert: "No hay un análisis válido disponible para generar un desafío.",
         noExportAlert: "No hay un análisis disponible para exportar a PDF.",
-        refuteError: "Error al procesar la refutación."
+        refuteError: "Error al procesar la refutación.",
+        waitingAnalysis: "En espera de análisis...",
+        analysisReady: "ANÁLISIS LISTO"
       },
       en: {
         subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
@@ -458,7 +491,9 @@
         shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation.",
         noAnalysisAlert: "No valid analysis available to challenge.",
         noExportAlert: "No analysis available to export as PDF.",
-        refuteError: "Error processing the refutation."
+        refuteError: "Error processing the refutation.",
+        waitingAnalysis: "Waiting for analysis...",
+        analysisReady: "ANALYSIS READY"
       }
     };
 
@@ -516,6 +551,10 @@
       btnPurge.innerText = t.purgeBtn;
       document.getElementById('txt-shield-title').innerText = t.shieldTitle;
       document.getElementById('txt-shield-desc').innerText = t.shieldDesc;
+
+      if (!rawAnalysisMarkdown) {
+        displayReportText(t.waitingAnalysis);
+      }
     }
 
     btnFr.addEventListener('click', () => changeLanguage('fr'));
@@ -617,13 +656,12 @@
         fr: ' Analyse forensique en cours...',
         en: ' Forensic analysis in progress...'
       };
-      analysisReport.innerText = loadingMsg[currentLang] || loadingMsg.fr;
+      displayReportText(loadingMsg[currentLang] || loadingMsg.fr);
       startEthicSpinner();
 
       try {
         let response;
 
-        // CASO A: SI HAY UN ARCHIVO (PDF O CAPTURA) -> MULTIPART FORM
         if (file) {
           const formData = new FormData();
           formData.append('image', file);
@@ -635,7 +673,6 @@
             body: formData
           });
         } 
-        // CASO B: SI SOLO HAY TEXTO -> JSON
         else {
           response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
@@ -650,7 +687,7 @@
         const flagsReceived = data.flags || data.detected_flags;
         
         applyEthicBadge(data.ethic_letter || data.scoreLetter || 'C', flagsReceived);
-        analysisReport.innerText = data.analysis || data.report || 'Analyse terminée.';
+        displayReportText(data.analysis || data.report || 'Analyse terminée.');
         
       } catch (e) {
         applyEthicBadge('C');
@@ -659,7 +696,7 @@
           fr: "Erreur de connexion avec le serveur d'analyse.",
           en: 'Server connection error.'
         };
-        analysisReport.innerText = serverErrMsg[currentLang] || serverErrMsg.fr;
+        displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
       } finally {
         btnAnalyze.disabled = false;
       }
@@ -669,7 +706,7 @@
     //  REFUTACIÓN DIRECCIONADA
     // =====================================================================
     btnRefute.addEventListener('click', async () => {
-      const currentAnalysis = analysisReport.innerText;
+      const currentAnalysis = rawAnalysisMarkdown || analysisReport.innerText;
       const t = langMap[currentLang];
 
       if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("Error")) {
@@ -700,7 +737,8 @@
             en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
           };
           
-          analysisReport.innerText += `\n\n========================================\n  ${titleMap[currentLang] || titleMap.fr}:\n========================================\n${refutationText}`;
+          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n========================================\n  ${titleMap[currentLang] || titleMap.fr}:\n========================================\n${refutationText}`;
+          displayReportText(updatedMarkdown);
         }
       } catch (e) {
         alert(t.refuteError);
@@ -711,10 +749,10 @@
     });
 
     // =====================================================================
-    //  EXPORTACIÓN A PDF (CON ENCABEZADOS SUBRAYADOS Y CORRECCIÓN DE TEXTO)
+    //  EXPORTACIÓN A PDF
     // =====================================================================
     btnPdf.addEventListener('click', () => {
-      const reportText = analysisReport.innerText;
+      const reportText = rawAnalysisMarkdown || analysisReport.innerText;
       const lang = currentLang || 'fr';
       const t = langMap[lang] || langMap['fr'];
 
@@ -731,7 +769,6 @@
       const contentWidth = pageWidth - (margin * 2);
       let cursorY = margin;
 
-      // 1. Limpieza de emojis y caracteres que rompen jsPDF
       let cleanText = reportText
         .replace(/\*\*/g, '')
         .replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
@@ -749,7 +786,6 @@
       const levelLabels = { fr: 'NIVEAU', es: 'NIVEL', en: 'LEVEL' };
       const flagsHeaderLabels = { fr: 'INDICATEURS', es: 'INDICADORES', en: 'INDICATORS' };
 
-      // DIBUJAR ENCABEZADOS DE SECCIÓN DENTRO DEL PDF
       function printSectionHeader(text, x, y) {
         doc.setFillColor(224, 247, 250); 
         doc.roundedRect(x - 2, y - 5, contentWidth + 4, 8, 1, 1, 'F');
@@ -792,7 +828,6 @@
       const flagElements = Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim());
       const cardHeight = flagElements.length > 0 ? 32 : 20;
 
-      // Tarjeta de Ethic-Score
       doc.setFillColor(248, 250, 252);
       doc.setDrawColor(226, 232, 240);
       doc.roundedRect(margin, cursorY, contentWidth, cardHeight, 2, 2, 'FD');
@@ -841,7 +876,7 @@
 
       cursorY += cardHeight + 8;
 
-      // --- PROCESAMIENTO Y DIBUJO DEL CONTENIDO ---
+      // --- DIBUJO DEL CONTENIDO DEL PDF ---
       const lines = cleanText.split('\n');
       lines.forEach((line) => {
         let trimmed = line.replace(/^[\s\u00A0\u200B]+|[\s\u00A0\u200B]+$/g, '');
@@ -924,7 +959,6 @@
         }
       });
 
-      // Pie de página
       const footerLabels = {
         fr: "POLETHIC BEACON — Analyse et autodéfense cognitive",
         es: "POLETHIC BEACON — Análisis y autodefensa cognitiva",
@@ -954,22 +988,15 @@
     btnPurge.addEventListener('click', () => {
       userInput.value = '';
       userFile.value = '';
+      rawAnalysisMarkdown = "";
       fileNameDisplay.innerText = langMap[currentLang].fileBtn;
       
-      const resetText = {
-        es: 'En espera de análisis...',
-        fr: 'En attente d\'analyse...',
-        en: 'Waiting for analysis...'
-      };
-      analysisReport.innerText = resetText[currentLang] || resetText.fr;
+      const resetText = langMap[currentLang].waitingAnalysis;
+      displayReportText(resetText);
 
-      const readyText = {
-        es: 'ANÁLISIS LISTO',
-        fr: 'ANALYSE PRÊTE',
-        en: 'ANALYSIS READY'
-      };
+      const readyText = langMap[currentLang].analysisReady;
       if (detectedFlags) {
-        detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText[currentLang] || readyText.fr}</span>`;
+        detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText}</span>`;
       }
 
       stopEthicSpinner();
