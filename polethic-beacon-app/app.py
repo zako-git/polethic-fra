@@ -346,6 +346,8 @@ def export_pdf():
         pdf_filename = f"RAPPORT_BEACON_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         pdf_path = os.path.join("/tmp", pdf_filename)
 
+        PAGE_WIDTH = 540
+        
         doc = SimpleDocTemplate(
             pdf_path,
             pagesize=letter,
@@ -358,7 +360,7 @@ def export_pdf():
         styles = getSampleStyleSheet()
 
         style_header_title = ParagraphStyle('HeaderTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=18, leading=22, textColor=colors.HexColor("#00E5FF"))
-        style_header_sub = ParagraphStyle('HeaderSub', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=11, textColor=colors.HexColor("#00E5FF"))
+        style_header_sub = ParagraphStyle('HeaderSub', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=11, textColor=colors.HexColor("#A5F3FC"))
         style_meta = ParagraphStyle('MetaText', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, leading=12, textColor=colors.HexColor("#FFFFFF"))
         style_heading = ParagraphStyle('Heading', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=11, leading=14, textColor=colors.HexColor("#00E5FF"), spaceBefore=10, spaceAfter=4)
         style_body = ParagraphStyle('Body', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#D0D7DE"), spaceAfter=4)
