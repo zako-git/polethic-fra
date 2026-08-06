@@ -11,7 +11,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
 app = Flask(__name__)
-# ✅ Habilitar CORS explícito para permitir peticiones AJAX desde cualquier origen
+# Habilitar CORS explícito para permitir peticiones AJAX desde cualquier origen
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # =====================================================================
@@ -27,7 +27,8 @@ if HF_TOKEN:
     except Exception as e:
         print(f"[WARN] Error al inicializar HuggingFace Client: {e}")
 
-AUDIT_FILE = "beacon_audits.json"
+# Guardar en la carpeta temporal para evitar fallos de permisos en servidores tipo Render
+AUDIT_FILE = os.path.join("/tmp", "beacon_audits.json")
 
 # =====================================================================
 # DICCIONARIO DE ENCABEZADOS ESTRUCTURADOS SEGÚN EL IDIOMA
@@ -172,24 +173,28 @@ def is_heading_line(original_line):
     ])
 
 def save_audit(source_type, content_type, raw_text, score, analysis):
-    entry = {
-        "timestamp": datetime.now().isoformat(),
-        "source_type": source_type,
-        "content_type": content_type,
-        "raw_text": raw_text[:200] + "...",
-        "score": score,
-        "analysis": analysis
-    }
-    data = []
-    if os.path.exists(AUDIT_FILE):
-        try:
-            with open(AUDIT_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except Exception:
-            data = []
-    data.append(entry)
-    with open(AUDIT_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    """Guarda una copia de la auditoría de forma segura sin romper la aplicación"""
+    try:
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "source_type": source_type,
+            "content_type": content_type,
+            "raw_text": raw_text[:200] + "...",
+            "score": score,
+            "analysis": analysis
+        }
+        data = []
+        if os.path.exists(AUDIT_FILE):
+            try:
+                with open(AUDIT_FILE, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception:
+                data = []
+        data.append(entry)
+        with open(AUDIT_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[WARN] No se pudo escribir en el archivo de auditoría: {e}")
 
 # =====================================================================
 # ENDPOINT PRINCIPAL: /analyze
@@ -199,82 +204,90 @@ def analyze():
     if request.method == "OPTIONS":
         return jsonify({"status": "ok"}), 200
 
-    data = request.json or {}
-    content_to_analyze = data.get("text", "") or data.get("content", "")
-    source_type = data.get("sourceType", "text")
-    lang = data.get("lang", "fr").lower()
-
-    if not content_to_analyze:
-        return jsonify({"error": "No content provided"}), 400
-
-    template = TEMPLATES.get(lang, TEMPLATES["fr"])
-    analysis_text = ""
-    final_score = 50
-    final_flags = []
-
-    if client:
-        try:
-            lang_names = {"fr": "FRENCH", "es": "SPANISH", "en": "ENGLISH"}
-            target_lang_name = lang_names.get(lang, "FRENCH")
-
-            user_prompt = (
-                f"CRITICAL REQUIREMENT: WRITE EVERYTHING 100% IN {target_lang_name}.\n"
-                f"DO NOT MIX LANGUAGES. USE ONLY {target_lang_name} FOR HEADERS AND CONTENT.\n\n"
-                f"Content to analyze:\n{content_to_analyze}"
-            )
-
-            response = client.chat.completions.create(
-                model=MODEL_ID,
-                messages=[
-                    {"role": "system", "content": template["system"]},
-                    {"role": "user", "content": user_prompt}
-                ],
-                max_tokens=1200,
-                temperature=0.0
-            )
-            analysis_text = response.choices[0].message.content
-        except Exception as hf_err:
-            print(f"[HF Error]: {hf_err}")
-            return jsonify({"error": f"Error in LLM analysis service: {str(hf_err)}"}), 500
-    else:
-        return jsonify({"error": "HF_TOKEN not configured on server"}), 500
-
-    # Extraer score y flags de la respuesta
-    score_match = re.search(r"<score>(\d+)</score>", analysis_text)
-    if score_match:
-        final_score = int(score_match.group(1))
-
-    flags_match = re.search(r"<flags>(.*?)</flags>", analysis_text)
-    if flags_match:
-        final_flags = [f.strip() for f in flags_match.group(1).split(",") if f.strip()]
-
-    # Limpiar tags XML del texto resultante
-    clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text, flags=re.DOTALL)
-    clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis, flags=re.DOTALL).strip()
-
-    # FORZAR ENCABEZADOS EN EL IDIOMA OBJETIVO
-    clean_analysis = force_language_headings(clean_analysis, target_lang=lang)
-
-    ethic_letter = get_ethic_letter(final_score)
-    save_audit("CORE", source_type, content_to_analyze, final_score, clean_analysis)
-
-    return jsonify({
-        "analysis": clean_analysis,
-        "report": clean_analysis,
-        "score": final_score,
-        "numericScore": final_score,
-        "flags": final_flags,
-        "ethic_letter": ethic_letter,
-        "scoreLetter": ethic_letter
-    }), 200
-
-# =====================================================================
-# ENDPOINT SECUNDARIO: /challenge (Réfutation Cognitive)
-# =====================================================================
-@app.route("/refute", methods=["POST"])
-def challenge():
     try:
-        data = request.get_json(silent=True) or {}   # silent=True evita el 400 crudo
+        data = request.json or {}
+        content_to_analyze = data.get("text", "") or data.get("content", "")
+        source_type = data.get("sourceType", "text")
+        lang = data.get("lang", "fr").lower()
+
+        if not content_to_analyze:
+            return jsonify({"error": "No content provided"}), 400
+
+        template = TEMPLATES.get(lang, TEMPLATES["fr"])
+        analysis_text = ""
+        final_score = 50
+        final_flags = []
+
+        if client:
+            try:
+                lang_names = {"fr": "FRENCH", "es": "SPANISH", "en": "ENGLISH"}
+                target_lang_name = lang_names.get(lang, "FRENCH")
+
+                user_prompt = (
+                    f"CRITICAL REQUIREMENT: WRITE EVERYTHING 100% IN {target_lang_name}.\n"
+                    f"DO NOT MIX LANGUAGES. USE ONLY {target_lang_name} FOR HEADERS AND CONTENT.\n\n"
+                    f"Content to analyze:\n{content_to_analyze}"
+                )
+
+                response = client.chat.completions.create(
+                    model=MODEL_ID,
+                    messages=[
+                        {"role": "system", "content": template["system"]},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=1200,
+                    temperature=0.0
+                )
+                analysis_text = response.choices[0].message.content
+            except Exception as hf_err:
+                print(f"[HF Error]: {hf_err}")
+                return jsonify({"error": f"Error in LLM analysis service: {str(hf_err)}"}), 502
+        else:
+            return jsonify({"error": "HF_TOKEN not configured on server"}), 500
+
+        # Extraer score y flags de la respuesta
+        score_match = re.search(r"<score>(\d+)</score>", analysis_text)
+        if score_match:
+            final_score = int(score_match.group(1))
+
+        flags_match = re.search(r"<flags>(.*?)</flags>", analysis_text)
+        if flags_match:
+            final_flags = [f.strip() for f in flags_match.group(1).split(",") if f.strip()]
+
+        # Limpiar tags XML del texto resultante
+        clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text, flags=re.DOTALL)
+        clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis, flags=re.DOTALL).strip()
+
+        # FORZAR ENCABEZADOS EN EL IDIOMA OBJETIVO
+        clean_analysis = force_language_headings(clean_analysis, target_lang=lang)
+
+        ethic_letter = get_ethic_letter(final_score)
+        save_audit("CORE", source_type, content_to_analyze, final_score, clean_analysis)
+
+        return jsonify({
+            "analysis": clean_analysis,
+            "report": clean_analysis,
+            "score": final_score,
+            "numericScore": final_score,
+            "flags": final_flags,
+            "ethic_letter": ethic_letter,
+            "scoreLetter": ethic_letter
+        }), 200
+
+    except Exception as err:
+        print(f"[Analyze Route Error]: {err}")
+        return jsonify({"error": "Internal Server Error", "details": str(err)}), 500
+
+# =====================================================================
+# ENDPOINT SECUNDARIO: /refute (Réfutation Cognitive)
+# =====================================================================
+@app.route("/refute", methods=["POST", "OPTIONS"])
+def challenge():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
+    try:
+        data = request.get_json(silent=True) or {}
         text_to_challenge = data.get("analysis", "") or data.get("text", "")
         lang = data.get("lang", "fr").lower()
 
@@ -282,10 +295,10 @@ def challenge():
         refutation_text = ""
 
         if not text_to_challenge:
-            return jsonify({"challenge": "", "error": "No analysis text provided."}), 200
+            return jsonify({"challenge": "", "error": "No analysis text provided."}), 400
 
         if not client:
-            return jsonify({"challenge": "", "error": "HF client not initialized (missing HF_TOKEN)."}), 200
+            return jsonify({"challenge": "", "error": "HF client not initialized (missing HF_TOKEN)."}), 500
 
         try:
             response = client.chat.completions.create(
@@ -302,18 +315,15 @@ def challenge():
             print(f"[Challenge HF Error]: {err}")
             return jsonify({"challenge": "", "error": f"HF inference failed: {err}"}), 502
 
-        return jsonify({"challenge": refutation_text}), 200
+        return jsonify({
+            "status": "success",
+            "challenge": refutation_text,
+            "refutation": refutation_text
+        }), 200
 
     except Exception as outer_err:
         print(f"[Challenge Route Error]: {outer_err}")
         return jsonify({"challenge": "", "error": str(outer_err)}), 500
-
-    # ✅ Devolver la propiedad "challenge" y compatibilidad con "refutation"
-    return jsonify({
-        "status": "success",
-        "challenge": refutation_text,
-        "refutation": refutation_text
-    }), 200
 
 # =====================================================================
 # ENDPOINT PDF: /export_pdf
@@ -323,151 +333,156 @@ def export_pdf():
     if request.method == "OPTIONS":
         return jsonify({"status": "ok"}), 200
 
-    data = request.json or {}
-    analysis_text = data.get("analysis", "")
-    refutation_text = data.get("refutation", "")
-    score = data.get("score", 50)
-    flags = data.get("flags", [])
-    lang = data.get("lang", "fr").lower()
+    try:
+        data = request.json or {}
+        analysis_text = data.get("analysis", "")
+        refutation_text = data.get("refutation", "")
+        score = data.get("score", 50)
+        flags = data.get("flags", [])
+        lang = data.get("lang", "fr").lower()
 
-    analysis_text = force_language_headings(analysis_text, target_lang=lang)
+        analysis_text = force_language_headings(analysis_text, target_lang=lang)
 
-    pdf_filename = f"RAPPORT_BEACON_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-    pdf_path = os.path.join("/tmp", pdf_filename)
+        pdf_filename = f"RAPPORT_BEACON_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        pdf_path = os.path.join("/tmp", pdf_filename)
 
-    doc = SimpleDocTemplate(
-        pdf_path,
-        pagesize=letter,
-        rightMargin=36,
-        leftMargin=36,
-        topMargin=36,
-        bottomMargin=36
-    )
+        doc = SimpleDocTemplate(
+            pdf_path,
+            pagesize=letter,
+            rightMargin=36,
+            leftMargin=36,
+            topMargin=36,
+            bottomMargin=36
+        )
 
-    styles = getSampleStyleSheet()
+        styles = getSampleStyleSheet()
 
-    style_header_title = ParagraphStyle('HeaderTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=18, leading=22, textColor=colors.HexColor("#00E5FF"))
-    style_header_sub = ParagraphStyle('HeaderSub', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=11, textColor=colors.HexColor("#00E5FF"))
-    style_meta = ParagraphStyle('MetaText', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, leading=12, textColor=colors.HexColor("#FFFFFF"))
-    style_heading = ParagraphStyle('Heading', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=11, leading=14, textColor=colors.HexColor("#00E5FF"), spaceBefore=10, spaceAfter=4)
-    style_body = ParagraphStyle('Body', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#D0D7DE"), spaceAfter=4)
-    style_bullet = ParagraphStyle('Bullet', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#D0D7DE"), leftIndent=12, firstLineIndent=-8, spaceAfter=2)
-    style_warn_title = ParagraphStyle('WarnTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, leading=11, textColor=colors.HexColor("#FFB703"))
-    style_warn_body = ParagraphStyle('WarnBody', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=11, textColor=colors.HexColor("#D0D7DE"))
-    style_footer = ParagraphStyle('Footer', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=10, textColor=colors.HexColor("#8B949E"), alignment=1)
+        style_header_title = ParagraphStyle('HeaderTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=18, leading=22, textColor=colors.HexColor("#00E5FF"))
+        style_header_sub = ParagraphStyle('HeaderSub', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=11, textColor=colors.HexColor("#00E5FF"))
+        style_meta = ParagraphStyle('MetaText', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, leading=12, textColor=colors.HexColor("#FFFFFF"))
+        style_heading = ParagraphStyle('Heading', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=11, leading=14, textColor=colors.HexColor("#00E5FF"), spaceBefore=10, spaceAfter=4)
+        style_body = ParagraphStyle('Body', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#D0D7DE"), spaceAfter=4)
+        style_bullet = ParagraphStyle('Bullet', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor("#D0D7DE"), leftIndent=12, firstLineIndent=-8, spaceAfter=2)
+        style_warn_title = ParagraphStyle('WarnTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, leading=11, textColor=colors.HexColor("#FFB703"))
+        style_warn_body = ParagraphStyle('WarnBody', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=11, textColor=colors.HexColor("#D0D7DE"))
+        style_footer = ParagraphStyle('Footer', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=10, textColor=colors.HexColor("#8B949E"), alignment=1)
 
-    disclaimers = {
-        "fr": {
-            "warn_title": "AVERTISSEMENT D'ANALYSE CRITIQUE ET DÉCONSTRUCTION",
-            "warn_body": "Ce module applique les principes de la logique formelle et de la méthode scientifique. Le résultat peut générer une dissonance cognitive. La plateforme n'est pas responsable de la friction émotionnelle résultant de cette analyse.",
-            "refute_title": "DÉFI DU BIAIS (RÉFUTATION COGNITIVE) :"
-        },
-        "es": {
-            "warn_title": "ADVERTENCIA DE ANÁLISIS CRÍTICO Y DECONSTRUCCIÓN",
-            "warn_body": "Este módulo aplica principios de lógica formal, exégesis histórica y método científico. El resultado puede generar disonancia cognitiva al cuestionar dogmas. La plataforma no se responsabiliza de la fricción emocional resultante.",
-            "refute_title": "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA) :"
-        },
-        "en": {
-            "warn_title": "CRITICAL ANALYSIS AND DECONSTRUCTION WARNING",
-            "warn_body": "This module applies principles of formal logic and scientific method. The result may cause cognitive dissonance. The platform is not responsible for emotional friction resulting from this analysis.",
-            "refute_title": "BIAS CHALLENGE (COGNITIVE REFUTATION) :"
+        disclaimers = {
+            "fr": {
+                "warn_title": "AVERTISSEMENT D'ANALYSE CRITIQUE ET DÉCONSTRUCTION",
+                "warn_body": "Ce module applique les principes de la logique formelle et de la méthode scientifique. Le résultat peut générer une dissonance cognitive. La plateforme n'est pas responsable de la friction émotionnelle résultant de cette analyse.",
+                "refute_title": "DÉFI DU BIAIS (RÉFUTATION COGNITIVE) :"
+            },
+            "es": {
+                "warn_title": "ADVERTENCIA DE ANÁLISIS CRÍTICO Y DECONSTRUCCIÓN",
+                "warn_body": "Este módulo aplica principios de lógica formal, exégesis histórica y método científico. El resultado puede generar disonancia cognitiva al cuestionar dogmas. La plataforma no se responsabiliza de la fricción emocional resultante.",
+                "refute_title": "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA) :"
+            },
+            "en": {
+                "warn_title": "CRITICAL ANALYSIS AND DECONSTRUCTION WARNING",
+                "warn_body": "This module applies principles of formal logic and scientific method. The result may cause cognitive dissonance. The platform is not responsible for emotional friction resulting from this analysis.",
+                "refute_title": "BIAS CHALLENGE (COGNITIVE REFUTATION) :"
+            }
         }
-    }
-    disc = disclaimers.get(lang, disclaimers["fr"])
+        disc = disclaimers.get(lang, disclaimers["fr"])
 
-    story = []
+        story = []
 
-    story.append(Paragraph("POLETHIC BEACON", style_header_title))
-    story.append(Paragraph("LABORATOIRE D'AUTODÉFENSE COGNITIVE", style_header_sub))
-    story.append(Spacer(1, 10))
-
-    beacon_ref = f"BEACON-{datetime.now().year}-{int(datetime.now().timestamp()) % 1000000:06d}"
-    flags_str = ", ".join(flags).upper() if flags else "NONE"
-    
-    meta_data = [
-        [
-            Paragraph(f"ETHIC-SCORE: {score}/100 ({get_ethic_letter(score)})", style_meta),
-            Paragraph(f"NIVEAU: {get_ethic_letter(score)}", style_meta)
-        ],
-        [
-            Paragraph(f"RÉF: {beacon_ref}", style_meta),
-            Paragraph(f"HORODATAGE: {datetime.now().strftime('%d/%m/%Y %H:%M')}", style_meta)
-        ],
-        [
-            Paragraph(f"INDICATEURS: {flags_str}", style_meta),
-            Paragraph("", style_meta)
-        ]
-    ]
-    t_meta = Table(meta_data, colWidths=[270, 270])
-    t_meta.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#0D1117")),
-        ('BOX', (0,0), (-1,-1), 1, colors.HexColor("#00E5FF")),
-        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-        ('PADDING', (0,0), (-1,-1), 6),
-    ]))
-    story.append(t_meta)
-    story.append(Spacer(1, 12))
-
-    for line in analysis_text.split('\n'):
-        line_s = line.strip()
-        if not line_s:
-            continue
-        
-        clean_line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line_s)
-        
-        if is_heading_line(line_s):
-            heading_p = Paragraph(clean_line, style_heading)
-            t_head = Table([[heading_p]], colWidths=[540])
-            t_head.setStyle(TableStyle([
-                ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#161B22")),
-                ('LINELEFT', (0,0), (-1,-1), 3, colors.HexColor("#00E5FF")),
-                ('PADDING', (0,0), (-1,-1), 4),
-            ]))
-            story.append(Spacer(1, 6))
-            story.append(t_head)
-            story.append(Spacer(1, 4))
-        elif line_s.startswith(('-', '•', '*')):
-            item_text = re.sub(r'^[-•\*]\s*', '', clean_line)
-            story.append(Paragraph(f"• {item_text}", style_bullet))
-        else:
-            story.append(Paragraph(clean_line, style_body))
-
-    if refutation_text:
+        story.append(Paragraph("POLETHIC BEACON", style_header_title))
+        story.append(Paragraph("LABORATOIRE D'AUTODÉFENSE COGNITIVE", style_header_sub))
         story.append(Spacer(1, 10))
-        story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#FFB703"), spaceBefore=5, spaceAfter=10))
-        story.append(Paragraph(disc["refute_title"], style_heading))
+
+        beacon_ref = f"BEACON-{datetime.now().year}-{int(datetime.now().timestamp()) % 1000000:06d}"
+        flags_str = ", ".join(flags).upper() if flags else "NONE"
         
-        warn_content = [
-            Paragraph(disc["warn_title"], style_warn_title),
-            Spacer(1, 2),
-            Paragraph(disc["warn_body"], style_warn_body)
+        meta_data = [
+            [
+                Paragraph(f"ETHIC-SCORE: {score}/100 ({get_ethic_letter(score)})", style_meta),
+                Paragraph(f"NIVEAU: {get_ethic_letter(score)}", style_meta)
+            ],
+            [
+                Paragraph(f"RÉF: {beacon_ref}", style_meta),
+                Paragraph(f"HORODATAGE: {datetime.now().strftime('%d/%m/%Y %H:%M')}", style_meta)
+            ],
+            [
+                Paragraph(f"INDICATEURS: {flags_str}", style_meta),
+                Paragraph("", style_meta)
+            ]
         ]
-        t_warn = Table([[warn_content]], colWidths=[540])
-        t_warn.setStyle(TableStyle([
-            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#1A1400")),
-            ('BOX', (0,0), (-1,-1), 1, colors.HexColor("#FFB703")),
+        t_meta = Table(meta_data, colWidths=[270, 270])
+        t_meta.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#0D1117")),
+            ('BOX', (0,0), (-1,-1), 1, colors.HexColor("#00E5FF")),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
             ('PADDING', (0,0), (-1,-1), 6),
         ]))
-        story.append(t_warn)
-        story.append(Spacer(1, 8))
+        story.append(t_meta)
+        story.append(Spacer(1, 12))
 
-        for line in refutation_text.split('\n'):
+        for line in analysis_text.split('\n'):
             line_s = line.strip()
-            if line_s:
-                clean_ref = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line_s)
-                story.append(Paragraph(clean_ref, style_body))
+            if not line_s:
+                continue
+            
+            clean_line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line_s)
+            
+            if is_heading_line(line_s):
+                heading_p = Paragraph(clean_line, style_heading)
+                t_head = Table([[heading_p]], colWidths=[540])
+                t_head.setStyle(TableStyle([
+                    ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#161B22")),
+                    ('LINELEFT', (0,0), (-1,-1), 3, colors.HexColor("#00E5FF")),
+                    ('PADDING', (0,0), (-1,-1), 4),
+                ]))
+                story.append(Spacer(1, 6))
+                story.append(t_head)
+                story.append(Spacer(1, 4))
+            elif line_s.startswith(('-', '•', '*')):
+                item_text = re.sub(r'^[-•\*]\s*', '', clean_line)
+                story.append(Paragraph(f"• {item_text}", style_bullet))
+            else:
+                story.append(Paragraph(clean_line, style_body))
 
-    story.append(Spacer(1, 15))
-    story.append(Paragraph("POLETHIC BEACON — Analyse et autodéfense cognitive", style_footer))
+        if refutation_text:
+            story.append(Spacer(1, 10))
+            story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#FFB703"), spaceBefore=5, spaceAfter=10))
+            story.append(Paragraph(disc["refute_title"], style_heading))
+            
+            warn_content = [
+                Paragraph(disc["warn_title"], style_warn_title),
+                Spacer(1, 2),
+                Paragraph(disc["warn_body"], style_warn_body)
+            ]
+            t_warn = Table([[warn_content]], colWidths=[540])
+            t_warn.setStyle(TableStyle([
+                ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#1A1400")),
+                ('BOX', (0,0), (-1,-1), 1, colors.HexColor("#FFB703")),
+                ('PADDING', (0,0), (-1,-1), 6),
+            ]))
+            story.append(t_warn)
+            story.append(Spacer(1, 8))
 
-    def background_canvas(canvas, doc):
-        canvas.saveState()
-        canvas.setFillColor(colors.HexColor("#050811"))
-        canvas.rect(0, 0, letter[0], letter[1], fill=1, stroke=0)
-        canvas.restoreState()
+            for line in refutation_text.split('\n'):
+                line_s = line.strip()
+                if line_s:
+                    clean_ref = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line_s)
+                    story.append(Paragraph(clean_ref, style_body))
 
-    doc.build(story, onFirstPage=background_canvas, onLaterPages=background_canvas)
-    return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)
+        story.append(Spacer(1, 15))
+        story.append(Paragraph("POLETHIC BEACON — Analyse et autodéfense cognitive", style_footer))
+
+        def background_canvas(canvas, doc):
+            canvas.saveState()
+            canvas.setFillColor(colors.HexColor("#050811"))
+            canvas.rect(0, 0, letter[0], letter[1], fill=1, stroke=0)
+            canvas.restoreState()
+
+        doc.build(story, onFirstPage=background_canvas, onLaterPages=background_canvas)
+        return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)
+
+    except Exception as pdf_err:
+        print(f"[Export PDF Error]: {pdf_err}")
+        return jsonify({"error": "Failed to generate PDF", "details": str(pdf_err)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
