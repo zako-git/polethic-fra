@@ -675,7 +675,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text, lang: currentLang })
           });
-        }
+      
  
         if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
