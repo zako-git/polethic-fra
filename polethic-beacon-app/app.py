@@ -78,7 +78,7 @@ if client:
             model=MODEL_ID,
             messages=[
                 {"role": "system", "content": template["system"]},
-                {"role": "user", "content": user_prompt}
+                {"role": "user", "content": f"Idioma de respuesta deseado: {lang.upper()}\n\nTexto a analizar:\n{content_to_analyze}"}
             ],
             max_tokens=1200,
             temperature=0.1 # Temperatura muy baja para garantizar que obedezca las instrucciones
@@ -416,7 +416,6 @@ def analyze():
             image_bytes = uploaded_file.read()
             lang = str(request.form.get("lang", "fr")).lower()
             
-            # Map simple de lenguaje para Tesseract
             tess_lang = "spa" if lang == "es" else ("fra" if lang == "fr" else "eng")
             extracted_text = extract_text_from_image(image_bytes, lang=f"{tess_lang}+eng")
             
@@ -456,16 +455,31 @@ def analyze():
         template = TEMPLATES[lang]
         analysis_text = ""
 
+        # DICCIONARIO DE IDIOMA TARGET
+        lang_names = {
+            "fr": "FRANÇAIS",
+            "es": "ESPAÑOL",
+            "en": "ENGLISH"
+        }
+        target_lang_name = lang_names.get(lang, "FRANÇAIS")
+
         if client:
             try:
+                # Instrucción estricta e imperativa para Llama-3.3-70B
+                user_prompt = (
+                    f"STRICT INSTRUCTION: Respond 100% IN {target_lang_name}.\n"
+                    f"All titles, phase labels, and extracted points MUST be strictly written in {target_lang_name}.\n\n"
+                    f"Content to analyze:\n{content_to_analyze}"
+                )
+
                 response = client.chat.completions.create(
                     model=MODEL_ID,
                     messages=[
                         {"role": "system", "content": template["system"]},
-                        {"role": "user", "content": f"Idioma de respuesta deseado: {lang.upper()}\n\nTexto a analizar:\n{content_to_analyze}"}
+                        {"role": "user", "content": user_prompt}
                     ],
                     max_tokens=1200,
-                    temperature=0.2 # Temperatura baja para prevenir divagaciones e idiomas mezclados
+                    temperature=0.1 # Temperatura muy baja para garantizar que obedezca el idioma
                 )
                 analysis_text = response.choices[0].message.content
             except Exception as hf_err:
@@ -481,7 +495,6 @@ def analyze():
         final_score = min(100, model_score + local_penalty)
         final_flags = list(set(model_flags + local_flags))
 
-        # Limpieza rigurosa de tags XML del texto resultante
         clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text, flags=re.DOTALL)
         clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis, flags=re.DOTALL).strip()
 
