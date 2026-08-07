@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BEACON LAB | POLETHIC France</title>
 
-  <!-- Librería jsPDF para generación de PDF profesional -->
+  <!-- Librería jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Librería html2pdf.js para exportación PDF directamente en el cliente -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <!-- Parser de Markdown para renderizar negritas y listas en la web -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -758,9 +760,9 @@
       }
     });
     // =====================================================================
-    //  EXPORTACIÓN A PDF (NATIVA DESDE BACKEND O FRONTEND)
+    //  EXPORTACIÓN A PDF (100% CLIENTE, VÍA html2pdf.js)
     // =====================================================================
-    btnPdf.addEventListener('click', async () => {
+    btnPdf.addEventListener('click', () => {
       const reportText = rawAnalysisMarkdown || analysisReport.innerText;
       const lang = currentLang || 'fr';
       const t = langMap[lang] || langMap['fr'];
@@ -769,59 +771,89 @@
         return alert(t.noExportAlert);
       }
 
-      // Intentar exportar usando el generador de ReportLab del Backend
-      try {
-        const response = await fetch(`${API_BASE_URL}/export_pdf`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            analysis: rawAnalysisMarkdown,
-            refutation: currentRefutationText,
-            score: currentScoreLetter,
-            flags: Array.from(detectedFlags.querySelectorAll('.flag-badge')).map(el => el.innerText.trim()),
-            lang: lang
-          })
-        });
+      // Clonamos el panel de resultados tal cual se ve en pantalla (score, flags, texto)
+      // para que el PDF conserve el mismo formato/estilo que la interfaz.
+      const sourceNode = document.getElementById('results-panel');
+      const clone = sourceNode.cloneNode(true);
+      clone.style.display = 'block';
+      clone.style.background = '#0f172a';
+      clone.style.maxWidth = '100%';
+      clone.style.boxShadow = 'none';
 
-        if (response.ok) {
-          const blob = await response.blob();
-          const downloadUrl = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = downloadUrl;
-          link.download = `RAPPORT_BEACON_${new Date().toISOString().slice(0, 10)}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-          window.URL.revokeObjectURL(downloadUrl);
-          return;
-        }
-      } catch (err) {
-        console.warn("Backend PDF indisponible, generación con jsPDF local...");
+      const wrapper = document.createElement('div');
+      wrapper.style.padding = '20px';
+      wrapper.style.background = '#0f172a';
+
+      const title = document.createElement('h1');
+      title.innerText = 'POLETHIC BEACON';
+      title.style.color = '#00E5FF';
+      title.style.fontFamily = "'Courier New', Courier, monospace";
+      title.style.fontSize = '20px';
+      title.style.marginBottom = '4px';
+
+      const sub = document.createElement('div');
+      sub.innerText = `${new Date().toLocaleString()} — Ethic-Score™: ${currentScoreLetter}`;
+      sub.style.color = '#00ff88';
+      sub.style.fontFamily = "'Courier New', Courier, monospace";
+      sub.style.fontSize = '11px';
+      sub.style.marginBottom = '14px';
+
+      wrapper.appendChild(title);
+      wrapper.appendChild(sub);
+      wrapper.appendChild(clone);
+
+      if (currentRefutationText) {
+        const refuteBlock = document.createElement('div');
+        refuteBlock.style.marginTop = '18px';
+        refuteBlock.style.borderLeft = '3px solid #ffe600';
+        refuteBlock.style.paddingLeft = '10px';
+
+        const refuteTitle = document.createElement('h3');
+        const titleMap = {
+          fr: "DÉFI DU BIAIS (RÉFUTATION COGNITIVE)",
+          es: "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA)",
+          en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
+        };
+        refuteTitle.innerText = titleMap[lang] || titleMap.fr;
+        refuteTitle.style.color = '#ffe600';
+        refuteTitle.style.fontFamily = "'Courier New', Courier, monospace";
+        refuteTitle.style.fontSize = '13px';
+
+        const refuteBody = document.createElement('div');
+        refuteBody.style.color = '#d0e0e0';
+        refuteBody.style.fontSize = '11px';
+        refuteBody.style.whiteSpace = 'pre-wrap';
+        refuteBody.innerText = currentRefutationText;
+
+        refuteBlock.appendChild(refuteTitle);
+        refuteBlock.appendChild(refuteBody);
+        wrapper.appendChild(refuteBlock);
       }
 
-      // Fallback local con jsPDF si el backend no responde a la descarga
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
-      const margin = 18;
-      let cursorY = margin;
+      const opt = {
+        margin: 10,
+        filename: `RAPPORT_BEACON_${currentScoreLetter}_${new Date().toISOString().slice(0, 10)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, backgroundColor: '#0f172a' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
 
-      let cleanText = reportText.replace(/\*\*/g, '').trim();
+      // html2canvas necesita que el nodo esté realmente insertado en el documento
+      // para calcular su layout y capturar colores/fondos correctamente. Lo insertamos
+      // fuera de la pantalla (no display:none, que tampoco se renderiza), generamos
+      // el PDF, y lo quitamos al terminar.
+      wrapper.style.position = 'fixed';
+      wrapper.style.top = '0';
+      wrapper.style.left = '-9999px';
+      wrapper.style.width = '800px';
+      document.body.appendChild(wrapper);
 
-      doc.setFont("courier", "bold");
-      doc.setFontSize(15);
-      doc.text("POLETHIC BEACON", margin, cursorY);
-      cursorY += 10;
-
-      const splitLines = doc.splitTextToSize(cleanText, pageWidth - (margin * 2));
-      splitLines.forEach((subLine) => {
-        if (cursorY > pageHeight - 15) { doc.addPage(); cursorY = margin; }
-        doc.text(subLine, margin, cursorY);
-        cursorY += 6;
+      html2pdf().set(opt).from(wrapper).save().then(() => {
+        document.body.removeChild(wrapper);
+      }).catch((err) => {
+        console.error('[PDF Export Error]:', err);
+        document.body.removeChild(wrapper);
       });
-
-      doc.save(`RAPPORT_BEACON_${currentScoreLetter}.pdf`);
     });
 
     // =====================================================================
