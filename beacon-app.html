@@ -677,21 +677,38 @@
           });
       
  
-        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+        try {
+  let response;
+  if (file) {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('text', text);
+    formData.append('lang', currentLang);
+    response = await fetch(`${API_BASE_URL}/analyze`, {
+      method: 'POST',
+      body: formData
+    });
+  } else {
+    response = await fetch(`${API_BASE_URL}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, lang: currentLang })
+    });
+  }
 
-        const data = await response.json();
-        const flagsReceived = data.flags || data.detected_flags;
+  if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+  const data = await response.json();
+  const flagsReceived = data.flags || data.detected_flags;
+  applyEthicBadge(data.ethic_letter || data.scoreLetter || 'C', flagsReceived);
+  displayReportText(data.analysis || data.report || 'Analyse terminée.');
 
-        applyEthicBadge(data.ethic_letter || data.scoreLetter || 'C', flagsReceived);
-        displayReportText(data.analysis || data.report || 'Analyse terminée.');
-
-    } catch (e) {
-        console.error("[BEACON Challenge Error]:", e);
-        alert(`${t.refuteError}\n(${e.message})`);
-        displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
-    } finally {
-        btnAnalyze.disabled = false;
-    }
+} catch (e) {
+  console.error("[BEACON Challenge Error]:", e);
+  alert(`${t.refuteError}\n(${e.message})`);
+  displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
+} finally {
+  btnAnalyze.disabled = false;
+}
 });
    // =====================================================================
     //  REFUTACIÓN DIRECCIONADA (ENDPOINT /refute RESTAURADO)
