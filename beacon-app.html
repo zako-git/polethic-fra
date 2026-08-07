@@ -840,28 +840,24 @@
     //  PURGAR INTERFAZ
     // =====================================================================
     btnPurge.addEventListener('click', () => {
-      userInput.value = '';
-      userFile.value = '';
-      rawAnalysisMarkdown = "";
-      currentRefutationText = "";
-      fileNameDisplay.innerText = langMap[currentLang].fileBtn;
-      
-      const resetText = langMap[currentLang].waitingAnalysis;
-      displayReportText(resetText);
-
-      const readyText = langMap[currentLang].analysisReady;
-      if (detectedFlags) {
-        detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText}</span>`;
-      }
-
-      stopEthicSpinner();
-      ethicScore.innerText = 'Ethic-Score™: --';
-      ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
-      
-      resultsPanel.style.display = 'none';
-      lastAnalyzedText = "";
-    });
-
-  </script>
+            userInput.value = '';
+            userFile.value = '';
+            rawAnalysisMarkdown = "";
+            currentRefutationText = "";
+            fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+            const resetText = langMap[currentLang].waitingAnalysis;
+            displayReportText(resetText);
+            const readyText = langMap[currentLang].analysisReady;
+            if (detectedFlags) {
+                detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText}</span>`;
+            }
+            stopEthicSpinner();
+            ethicScore.innerText = 'Ethic-Score™: --';
+            ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
+            resultsPanel.style.display = 'none';
+            lastAnalyzedText = "";
+        });   // cierra btnPurge.addEventListener
+    });       // cierra document.addEventListener('DOMContentLoaded', ...)  ← ESTA es la que quitaste
+    </script>
 </body>
 </html>
