@@ -18,6 +18,9 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 # CONFIGURACIÓN Y CLIENTE HUGGINGFACE
 # =====================================================================
 HF_TOKEN = os.environ.get("HF_TOKEN", "")
+# Modelo pequeño (8B) para mantenerse dentro de la cuota gratuita de Inference Providers.
+# El modelo anterior (Llama-3.3-70B-Instruct) agotaba la cuota gratuita en pocas llamadas
+# y devolvía 402 Payment Required.
 MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
 
 client = None
@@ -26,6 +29,56 @@ if HF_TOKEN:
         client = InferenceClient(token=HF_TOKEN)
     except Exception as e:
         print(f"[WARN] Error al inicializar HuggingFace Client: {e}")
+
+# Modo de prueba sin gastar cuota de HF: activa con la variable de entorno MOCK_LLM=true
+# (en Render: Settings > Environment > Add Environment Variable). Con esto puedes probar
+# todo el flujo (frontend, PDF, refutación) aunque HF esté sin cuota o de baja.
+MOCK_LLM = os.environ.get("MOCK_LLM", "false").lower() == "true"
+
+MOCK_ANALYSIS = {
+    "fr": (
+        "**1. CLASSIFICATION (Phase 0)**\n"
+        "- Type de texte: Exemple de test (mode MOCK)\n"
+        "- Objectif de l'émetteur: Démonstration sans appel réel au LLM\n\n"
+        "**2. NOYAU DE FAITS / PRÉMISSES (Phase 1)**\n"
+        "- Données et affirmations filtrées sans bruit: Ceci est une réponse simulée.\n\n"
+        "**3. DÉMONTAGE COGNITIF ET LIMBIQUE (Phase 2)**\n"
+        "- Déclencheur émotionnel / Biais détecté: Aucun (mode test)\n"
+        "- Intention vs Réalité (Analyse du langage): N/A\n\n"
+        "**4. RECADRAGE CORTICAL ET STRATÉGIE (Phase 3)**\n"
+        "- Diagnostic synthétique final et recommandation d'action: Ceci est un résultat de test généré localement, sans consommer de crédits Hugging Face.\n"
+    ),
+    "es": (
+        "**1. CLASIFICACIÓN (Fase 0)**\n"
+        "- Tipo de texto: Ejemplo de prueba (modo MOCK)\n"
+        "- Propósito del emisor: Demostración sin llamada real al LLM\n\n"
+        "**2. NÚCLEO DE HECHOS / PREMISAS (Fase 1)**\n"
+        "- Datos y afirmaciones filtradas sin ruido: Esta es una respuesta simulada.\n\n"
+        "**3. DESMONTAJE COGNITIVO Y LÍMBICO (Fase 2)**\n"
+        "- Disparador emocional / Sesgo detectado: Ninguno (modo prueba)\n"
+        "- Intención vs Realidad (Análisis del lenguaje): N/D\n\n"
+        "**4. REENCUADRE CORTICAL Y ESTRATEGIA (Fase 3)**\n"
+        "- Diagnóstico sintético final y recomendación de acción: Este es un resultado de prueba generado localmente, sin consumir créditos de Hugging Face.\n"
+    ),
+    "en": (
+        "**1. CLASSIFICATION (Phase 0)**\n"
+        "- Text Type: Test example (MOCK mode)\n"
+        "- Sender Purpose: Demonstration without a real LLM call\n\n"
+        "**2. CORE FACTS / PREMISES (Phase 1)**\n"
+        "- Noise-filtered data: This is a simulated response.\n\n"
+        "**3. COGNITIVE AND LIMBIC DECONSTRUCTION (Phase 2)**\n"
+        "- Emotional Trigger / Bias Detected: None (test mode)\n"
+        "- Intent vs. Reality: N/A\n\n"
+        "**4. CORTICAL REFRAMING & STRATEGY (Phase 3)**\n"
+        "- Final synthetic diagnosis and action recommendation: This is a locally generated test result, without consuming Hugging Face credits.\n"
+    ),
+}
+
+MOCK_REFUTATION = {
+    "fr": "1. Ceci est une question de test n°1.\n2. Ceci est une question de test n°2.\n3. Ceci est une question de test n°3.",
+    "es": "1. Esta es una pregunta de prueba n.º 1.\n2. Esta es una pregunta de prueba n.º 2.\n3. Esta es una pregunta de prueba n.º 3.",
+    "en": "1. This is test question #1.\n2. This is test question #2.\n3. This is test question #3.",
+}
 
 # Guardar en la carpeta temporal para evitar fallos de permisos en servidores tipo Render
 AUDIT_FILE = os.path.join("/tmp", "beacon_audits.json")
@@ -218,7 +271,10 @@ def analyze():
         final_score = 50
         final_flags = []
 
-        if client:
+        if MOCK_LLM:
+            analysis_text = MOCK_ANALYSIS.get(lang, MOCK_ANALYSIS["fr"])
+            analysis_text += "\n\n<flags>fakenews,myth</flags>\n<score>55</score>"
+        elif client:
             try:
                 lang_names = {"fr": "FRENCH", "es": "SPANISH", "en": "ENGLISH"}
                 target_lang_name = lang_names.get(lang, "FRENCH")
@@ -297,23 +353,26 @@ def challenge():
         if not text_to_challenge:
             return jsonify({"challenge": "", "error": "No analysis text provided."}), 400
 
-        if not client:
-            return jsonify({"challenge": "", "error": "HF client not initialized (missing HF_TOKEN)."}), 500
+        if MOCK_LLM:
+            refutation_text = MOCK_REFUTATION.get(lang, MOCK_REFUTATION["fr"])
+        else:
+            if not client:
+                return jsonify({"challenge": "", "error": "HF client not initialized (missing HF_TOKEN)."}), 500
 
-        try:
-            response = client.chat.completions.create(
-                model=MODEL_ID,
-                messages=[
-                    {"role": "system", "content": "You are POLETHIC BEACON Metacognitive Refutation Engine."},
-                    {"role": "user", "content": f"{template['refute_prompt']}\n\nContext:\n{text_to_challenge}"}
-                ],
-                max_tokens=600,
-                temperature=0.2
-            )
-            refutation_text = response.choices[0].message.content
-        except Exception as err:
-            print(f"[Challenge HF Error]: {err}")
-            return jsonify({"challenge": "", "error": f"HF inference failed: {err}"}), 502
+            try:
+                response = client.chat.completions.create(
+                    model=MODEL_ID,
+                    messages=[
+                        {"role": "system", "content": "You are POLETHIC BEACON Metacognitive Refutation Engine."},
+                        {"role": "user", "content": f"{template['refute_prompt']}\n\nContext:\n{text_to_challenge}"}
+                    ],
+                    max_tokens=600,
+                    temperature=0.2
+                )
+                refutation_text = response.choices[0].message.content
+            except Exception as err:
+                print(f"[Challenge HF Error]: {err}")
+                return jsonify({"challenge": "", "error": f"HF inference failed: {err}"}), 502
 
         return jsonify({
             "status": "success",
