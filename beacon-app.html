@@ -332,7 +332,7 @@
   <main class="container">
     <div class="beacon-title-block">
       <h1 class="hero-app-title">POLETHIC BEACON</h1>
-      <p class="subtitle" id="txt-subtitle">Moteur d'autodéfense cognitive & Analyse métacommunicationnelle</p>
+      <p class="subtitle" id="txt-subtitle">Moteur d'autodéfense cognitive &amp; Analyse métacommunicationnelle</p>
     </div>
 
     <section class="drop-zone" id="drop-zone">
@@ -634,6 +634,7 @@
     btnAnalyze.addEventListener('click', async () => {
       const text = userInput.value.trim();
       const file = userFile.files[0];
+      const t = langMap[currentLang];
 
       if (!text && !file) {
         const errorMsg = {
@@ -656,6 +657,12 @@
       displayReportText(loadingMsg[currentLang] || loadingMsg.fr);
       startEthicSpinner();
 
+      const serverErrMsg = {
+        es: ' No se pudo contactar con el servidor de análisis.',
+        fr: ' Impossible de contacter le serveur d\'analyse.',
+        en: ' Could not reach the analysis server.'
+      };
+
       try {
         let response;
         if (file) {
@@ -668,51 +675,32 @@
             method: 'POST',
             body: formData
           });
-        } 
-        else {
+        } else {
           response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text, lang: currentLang })
           });
-      
- 
-        try {
-    let response;
-    if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('text', text);
-        formData.append('lang', currentLang);
+        }
 
-        response = await fetch(`${API_BASE_URL}/analyze`, {
-            method: 'POST',
-            body: formData
-        });
-    } else {
-        response = await fetch(`${API_BASE_URL}/analyze`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, lang: currentLang })
-        });
-    }
+        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
-    if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+        const data = await response.json();
+        const flagsReceived = data.flags || data.detected_flags;
 
-    const data = await response.json();
-    const flagsReceived = data.flags || data.detected_flags;
+        applyEthicBadge(data.ethic_letter || data.scoreLetter || 'C', flagsReceived);
+        displayReportText(data.analysis || data.report || 'Analyse terminée.');
 
-    applyEthicBadge(data.ethic_letter || data.scoreLetter || 'C', flagsReceived);
-    displayReportText(data.analysis || data.report || 'Analyse terminée.');
+      } catch (e) {
+        console.error("[BEACON Challenge Error]:", e);
+        alert(`${t.refuteError}\n(${e.message})`);
+        displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
+      } finally {
+        btnAnalyze.disabled = false;
+      }
+    });
 
-} catch (e) {
-    console.error("[BEACON Challenge Error]:", e);
-    alert(`${t.refuteError}\n(${e.message})`);
-    displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
-} finally {
-    btnAnalyze.disabled = false;
-}
-   // =====================================================================
+    // =====================================================================
     //  REFUTACIÓN DIRECCIONADA (ENDPOINT /refute RESTAURADO)
     // =====================================================================
     btnRefute.addEventListener('click', async () => {
@@ -840,24 +828,28 @@
     //  PURGAR INTERFAZ
     // =====================================================================
     btnPurge.addEventListener('click', () => {
-            userInput.value = '';
-            userFile.value = '';
-            rawAnalysisMarkdown = "";
-            currentRefutationText = "";
-            fileNameDisplay.innerText = langMap[currentLang].fileBtn;
-            const resetText = langMap[currentLang].waitingAnalysis;
-            displayReportText(resetText);
-            const readyText = langMap[currentLang].analysisReady;
-            if (detectedFlags) {
-                detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText}</span>`;
-            }
-            stopEthicSpinner();
-            ethicScore.innerText = 'Ethic-Score™: --';
-            ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
-            resultsPanel.style.display = 'none';
-            lastAnalyzedText = "";
-        });   // cierra btnPurge.addEventListener
-    });       // cierra document.addEventListener('DOMContentLoaded', ...)  ← ESTA es la que quitaste
-    </script>
+      userInput.value = '';
+      userFile.value = '';
+      rawAnalysisMarkdown = "";
+      currentRefutationText = "";
+      fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+      
+      const resetText = langMap[currentLang].waitingAnalysis;
+      displayReportText(resetText);
+
+      const readyText = langMap[currentLang].analysisReady;
+      if (detectedFlags) {
+        detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText}</span>`;
+      }
+
+      stopEthicSpinner();
+      ethicScore.innerText = 'Ethic-Score™: --';
+      ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
+      
+      resultsPanel.style.display = 'none';
+      lastAnalyzedText = "";
+    });
+  });
+  </script>
 </body>
 </html>
