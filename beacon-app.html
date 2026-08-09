@@ -232,9 +232,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 16px;
       border-bottom: 1px solid rgba(0, 255, 136, 0.25);
       padding-bottom: 12px;
       margin-bottom: 15px;
+      flex-wrap: wrap;
     }
 
     .ethic-score-badge {
@@ -245,17 +247,19 @@
       font-size: 1.1rem;
       padding: 6px 14px;
       border-radius: 4px;
+      margin-right: 12px;
+      flex-shrink: 0;
     }
 
     .report-box {
-      background: rgba(0, 0, 0, 0.65);
-      border-left: 3px solid var(--cyber-green);
+      background: #0f172a;
       padding: 15px;
       color: #d0e0e0;
       font-family: var(--font-cyber);
       font-size: 0.9rem;
       line-height: 1.6;
       white-space: pre-wrap;
+      border-radius: 8px;
     }
 
     .report-box strong {
@@ -268,6 +272,15 @@
       margin-top: 12px;
       margin-bottom: 6px;
       font-family: var(--font-cyber);
+    }
+
+    .report-refutation-title {
+      color: var(--cyber-cyan);
+      font-family: var(--font-cyber);
+      font-size: 0.92rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+      margin: 10px 0 6px 0;
     }
 
     .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
@@ -292,7 +305,13 @@
     .btn-action-purge { border: 1px solid var(--cyber-red); color: var(--cyber-red); }
     .btn-action-purge:hover { background: var(--cyber-red); color: #fff; }
 
-    .flags-container { display: flex; gap: 8px; flex-wrap: wrap; }
+    .flags-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-left: 8px;
+      align-items: center;
+    }
 
     .flag-badge {
       font-family: var(--font-cyber);
@@ -303,6 +322,103 @@
       color: var(--cyber-cyan);
       background: rgba(0, 240, 255, 0.1);
     }
+
+    .risk-summary {
+      margin-top: 14px;
+      border: 1px solid rgba(255, 230, 0, 0.4);
+      border-radius: 8px;
+      background: rgba(255, 230, 0, 0.08);
+      padding: 12px;
+      font-family: var(--font-cyber);
+    }
+
+    .risk-summary-title {
+      color: var(--cyber-yellow);
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .risk-summary-main {
+      color: #f8fafc;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .risk-indicators {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .risk-indicator-badge {
+      border: 1px solid rgba(255, 230, 0, 0.5);
+      color: #ffe98e;
+      background: rgba(255, 230, 0, 0.12);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-family: var(--font-cyber);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Paleta unificada por nivel de Ethic-Score ── */
+    .results-card.score-A {
+      border-color: var(--cyber-green);
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.35);
+    }
+    .results-card.score-A .ethic-score-badge { background: #00ff88; color: #030a12; box-shadow: 0 0 12px #00ff88; }
+    .results-card.score-A .flag-badge { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.1); }
+    .results-card.score-A .risk-summary { border-color: rgba(0,255,136,0.4); background: rgba(0,255,136,0.07); }
+    .results-card.score-A .risk-summary-title { color: #00ff88; }
+    .results-card.score-A .risk-indicator-badge { border-color: rgba(0,255,136,0.5); color: #9effd8; background: rgba(0,255,136,0.1); }
+    .results-card.score-A .report-box { border-left-color: #00ff88; }
+
+    .results-card.score-B {
+      border-color: var(--cyber-cyan);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+    }
+    .results-card.score-B .ethic-score-badge { background: #00f0ff; color: #030a12; box-shadow: 0 0 12px #00f0ff; }
+    .results-card.score-B .flag-badge { border-color: #00f0ff; color: #00f0ff; background: rgba(0,240,255,0.1); }
+    .results-card.score-B .risk-summary { border-color: rgba(0,240,255,0.4); background: rgba(0,240,255,0.07); }
+    .results-card.score-B .risk-summary-title { color: #00f0ff; }
+    .results-card.score-B .risk-indicator-badge { border-color: rgba(0,240,255,0.5); color: #a8f4ff; background: rgba(0,240,255,0.1); }
+    .results-card.score-B .report-box { border-left-color: #00f0ff; }
+
+    .results-card.score-C {
+      border-color: var(--cyber-yellow);
+      box-shadow: 0 0 25px rgba(255, 230, 0, 0.28);
+    }
+    .results-card.score-C .ethic-score-badge { background: #ffe600; color: #1a1000; box-shadow: 0 0 12px #ffe600; }
+    .results-card.score-C .flag-badge { border-color: #ffe600; color: #ffe600; background: rgba(255,230,0,0.1); }
+    .results-card.score-C .risk-summary { border-color: rgba(255,230,0,0.4); background: rgba(255,230,0,0.07); }
+    .results-card.score-C .risk-summary-title { color: #ffe600; }
+    .results-card.score-C .risk-indicator-badge { border-color: rgba(255,230,0,0.5); color: #ffe98e; background: rgba(255,230,0,0.1); }
+    .results-card.score-C .report-box { border-left-color: #ffe600; }
+
+    .results-card.score-D {
+      border-color: #ff8c00;
+      box-shadow: 0 0 25px rgba(255, 140, 0, 0.32);
+    }
+    .results-card.score-D .ethic-score-badge { background: #ff8c00; color: #0d0600; box-shadow: 0 0 12px #ff8c00; }
+    .results-card.score-D .flag-badge { border-color: #ff8c00; color: #ff8c00; background: rgba(255,140,0,0.1); }
+    .results-card.score-D .risk-summary { border-color: rgba(255,140,0,0.4); background: rgba(255,140,0,0.07); }
+    .results-card.score-D .risk-summary-title { color: #ff8c00; }
+    .results-card.score-D .risk-indicator-badge { border-color: rgba(255,140,0,0.5); color: #ffc97a; background: rgba(255,140,0,0.1); }
+    .results-card.score-D .report-box { border-left-color: #ff8c00; }
+
+    .results-card.score-E {
+      border-color: var(--cyber-red);
+      box-shadow: 0 0 25px rgba(255, 42, 109, 0.38);
+    }
+    .results-card.score-E .ethic-score-badge { background: #ff2a6d; color: #fff; box-shadow: 0 0 12px #ff2a6d; }
+    .results-card.score-E .flag-badge { border-color: #ff2a6d; color: #ff2a6d; background: rgba(255,42,109,0.1); }
+    .results-card.score-E .risk-summary { border-color: rgba(255,42,109,0.4); background: rgba(255,42,109,0.07); }
+    .results-card.score-E .risk-summary-title { color: #ff2a6d; }
+    .results-card.score-E .risk-indicator-badge { border-color: rgba(255,42,109,0.5); color: #ffaac9; background: rgba(255,42,109,0.1); }
+    .results-card.score-E .report-box { border-left-color: #ff2a6d; }
 
     footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.15); text-align: center; }
     .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.6); }
@@ -341,7 +457,7 @@
   <main class="container">
     <div class="beacon-title-block">
       <h1 class="hero-app-title">POLETHIC BEACON</h1>
-      <p class="subtitle" id="txt-subtitle">Moteur d'autodéfense cognitive &amp; Analyse métacommunicationnelle</p>
+      <p class="subtitle" id="txt-subtitle">Nous dénudons les narratives humaines et traduisons les mécanismes de persuasion</p>
     </div>
 
     <section class="drop-zone" id="drop-zone">
@@ -353,7 +469,7 @@
         <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
         <button id="btn-analyze" class="btn-beacon-primary"> BEACON-IZE</button>
       </div>
-      <div class="status-bar"><span id="txt-status"> MOTEUR PRÊT | SYSTEM ONLINE (2026)</span></div>
+      <div class="status-bar"><span id="txt-status"> MOTEUR PRÊT | TRADUCTION MÉTACOGNITIVE ONLINE (2026)</span></div>
     </section>
 
     <!-- RESULTADOS Y ACCIONES DE ANÁLISIS -->
@@ -361,7 +477,15 @@
       <div class="results-header">
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
         <div id="detected-flags-container" class="flags-container">
-          <span class="flag-badge" id="txt-ready">ANALYSE PRÊTE</span>
+          <span class="flag-badge" id="txt-ready">TRADUCTION PRÊTE</span>
+        </div>
+      </div>
+
+      <div class="risk-summary" id="risk-summary-panel">
+        <div class="risk-summary-title" id="risk-summary-title">Riesgo por ruido / venta de humo</div>
+        <div class="risk-summary-main" id="risk-summary-main">Riesgo: Grado --</div>
+        <div class="risk-indicators" id="risk-indicators">
+          <span class="risk-indicator-badge">Sin indicadores todavia</span>
         </div>
       </div>
 
@@ -533,6 +657,9 @@
     const analysisReport = document.getElementById('analysis-report');
     const ethicScore = document.getElementById('ethic-score');
     const detectedFlags = document.getElementById('detected-flags-container');
+    const riskSummaryMain = document.getElementById('risk-summary-main');
+    const riskSummaryTitle = document.getElementById('risk-summary-title');
+    const riskIndicators = document.getElementById('risk-indicators');
 
     const btnRefute = document.getElementById('btn-refute');
     const btnPdf = document.getElementById('btn-pdf');
@@ -582,7 +709,11 @@
         noExportAlert: "Aucune analyse disponible pour l'exportation PDF.",
         refuteError: "Erreur lors du traitement de la réfutation.",
         waitingAnalysis: "En attente d'analyse...",
-        analysisReady: "ANALYSE PRÊTE"
+        analysisReady: "ANALYSE PRÊTE",
+        riskTitle: "Risque bruit / vente de fumee",
+        riskMainEmpty: "Risque: Grade --",
+        riskMain: (grade, label) => `Risque: Grade ${grade} | ${label}`,
+        noRiskIndicators: "Aucun indicateur local"
       },
       es: {
         subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
@@ -600,7 +731,11 @@
         noExportAlert: "No hay un análisis disponible para exportar a PDF.",
         refuteError: "Error al procesar la refutación.",
         waitingAnalysis: "En espera de análisis...",
-        analysisReady: "ANÁLISIS LISTO"
+        analysisReady: "ANÁLISIS LISTO",
+        riskTitle: "Riesgo por ruido / venta de humo",
+        riskMainEmpty: "Riesgo: Grado --",
+        riskMain: (grade, label) => `Riesgo: Grado ${grade} | ${label}`,
+        noRiskIndicators: "Sin indicadores locales"
       },
       en: {
         subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
@@ -618,7 +753,11 @@
         noExportAlert: "No analysis available to export as PDF.",
         refuteError: "Error processing the refutation.",
         waitingAnalysis: "Waiting for analysis...",
-        analysisReady: "ANALYSIS READY"
+        analysisReady: "ANALYSIS READY",
+        riskTitle: "Noise / hype risk",
+        riskMainEmpty: "Risk: Grade --",
+        riskMain: (grade, label) => `Risk: Grade ${grade} | ${label}`,
+        noRiskIndicators: "No local indicators"
       }
     };
 
@@ -675,6 +814,18 @@
 
       if (!rawAnalysisMarkdown) {
         displayReportText(t.waitingAnalysis);
+      }
+
+      if (riskSummaryTitle) {
+        riskSummaryTitle.innerText = t.riskTitle;
+      }
+
+      if (riskSummaryMain && !riskSummaryMain.dataset.filled) {
+        riskSummaryMain.innerText = t.riskMainEmpty;
+      }
+
+      if (riskIndicators && riskIndicators.children.length === 0) {
+        riskIndicators.innerHTML = `<span class="risk-indicator-badge">${t.noRiskIndicators}</span>`;
       }
     }
 
@@ -741,19 +892,26 @@
       }
     }
 
-    function applyEthicBadge(score, customFlags) {
+    const SCORE_COLORS = { A: '#00ff88', B: '#00f0ff', C: '#ffe600', D: '#ff8c00', E: '#ff2a6d' };
+    const SCORE_LETTERS = new Set(['A','B','C','D','E']);
+
+    function applyEthicBadge(letterValue, customFlags, riskLabelValue, riskIndicatorsValue) {
       stopEthicSpinner();
       let letter = 'C';
-      let color = '#ff9900';
-      if (typeof score === 'string') letter = score.toUpperCase();
-      if (letter === 'A') color = '#00ff88';
-      if (letter === 'B') color = '#ffe600';
-      if (letter === 'C') color = '#ff9900';
-      if (letter === 'D') color = '#ff2a6d';
+      if (typeof letterValue === 'string' && SCORE_LETTERS.has(letterValue.toUpperCase())) {
+        letter = letterValue.toUpperCase();
+      }
+      const color = SCORE_COLORS[letter] || '#ff9900';
 
       currentScoreLetter = letter;
       ethicScore.innerText = `Ethic-Score™: ${letter}`;
-      ethicScore.style.backgroundColor = color;
+      // badge color driven by CSS class; inline style kept as fallback for spinner reset
+      ethicScore.style.backgroundColor = '';
+
+      // Apply score palette to card; removes previous score-* class first
+      resultsPanel.className = resultsPanel.className
+        .replace(/\bscore-[A-E]\b/g, '').trim();
+      resultsPanel.classList.add(`score-${letter}`);
 
       const lang = FLAGS_BY_SCORE[currentLang] ? currentLang : 'fr';
       const flagsToRender = (customFlags && customFlags.length > 0) 
@@ -761,6 +919,38 @@
         : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
 
       renderFlags(flagsToRender);
+      renderRiskSummary(letter, riskLabelValue, riskIndicatorsValue, flagsToRender);
+    }
+
+    function renderRiskSummary(grade, riskLabel, indicators, fallbackFlags) {
+      const t = langMap[currentLang] || langMap.fr;
+      if (riskSummaryMain) {
+        const safeGrade = grade || '--';
+        const safeLabel = riskLabel || '';
+        riskSummaryMain.innerText = typeof t.riskMain === 'function'
+          ? t.riskMain(safeGrade, safeLabel)
+          : `Risk: Grade ${safeGrade}`;
+        riskSummaryMain.dataset.filled = '1';
+      }
+
+      if (!riskIndicators) return;
+
+      const sourceIndicators = Array.isArray(indicators) && indicators.length > 0
+        ? indicators
+        : (Array.isArray(fallbackFlags) ? fallbackFlags : []);
+
+      riskIndicators.innerHTML = '';
+      if (sourceIndicators.length === 0) {
+        riskIndicators.innerHTML = `<span class="risk-indicator-badge">${t.noRiskIndicators}</span>`;
+        return;
+      }
+
+      sourceIndicators.slice(0, 6).forEach((item) => {
+        const badge = document.createElement('span');
+        badge.className = 'risk-indicator-badge';
+        badge.innerText = String(item).trim();
+        riskIndicators.appendChild(badge);
+      });
     }
 
     function renderFlags(flagsArray) {
@@ -803,6 +993,8 @@
 
       lastAnalyzedText = text || (file ? file.name : "");
       btnAnalyze.disabled = true;
+      // Reset palette class before showing so no stale colour leaks from previous run
+      resultsPanel.className = resultsPanel.className.replace(/\bscore-[A-E]\b/g, '').trim();
       resultsPanel.style.display = 'block';
 
       const loadingMsg = {
@@ -823,7 +1015,7 @@
         let response;
         if (file) {
           const formData = new FormData();
-          formData.append('image', file);
+          formData.append('file', file);
           formData.append('text', text);
           formData.append('lang', currentLang);
 
@@ -844,7 +1036,12 @@
         const data = await response.json();
         const flagsReceived = data.flags || data.detected_flags;
 
-        applyEthicBadge(data.ethic_letter || data.scoreLetter || 'C', flagsReceived);
+        applyEthicBadge(
+          data.ethic_letter || data.scoreLetter || data.risk_grade || 'C',
+          flagsReceived,
+          data.risk_label,
+          data.risk_indicators
+        );
         displayReportText(data.analysis || data.report || 'Analyse terminée.');
 
       } catch (e) {
@@ -895,7 +1092,7 @@
             en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
           };
           
-          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n========================================\n  **${titleMap[currentLang] || titleMap.fr}**:\n========================================\n${refutationText}`;
+          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n========================================\n<div class="report-refutation-title">${titleMap[currentLang] || titleMap.fr}</div>\n========================================\n${refutationText}`;
           displayReportText(updatedMarkdown);
         } else {
           alert("Le serveur n'a pas renvoyé de texte de réfutation.");
@@ -927,9 +1124,6 @@
         .map(el => el.innerText.trim())
         .filter(Boolean);
 
-      const scoreMapping = { A: 92, B: 78, C: 64, D: 38, F: 15 };
-      const numericScore = scoreMapping[currentScoreLetter] || 50;
-
       try {
         const analysisPayload = rawAnalysisMarkdown || reportText;
         const refutationPayload = currentRefutationText && !analysisPayload.includes(currentRefutationText)
@@ -943,7 +1137,7 @@
             'Accept': 'application/pdf'
           },
           body: JSON.stringify({
-            score: numericScore,
+            scoreLetter: currentScoreLetter,
             flags,
             lang,
             analysis: analysisPayload,
@@ -1004,9 +1198,19 @@
         detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText}</span>`;
       }
 
+      if (riskSummaryMain) {
+        riskSummaryMain.innerText = langMap[currentLang].riskMainEmpty;
+        riskSummaryMain.dataset.filled = '';
+      }
+
+      if (riskIndicators) {
+        riskIndicators.innerHTML = `<span class="risk-indicator-badge">${langMap[currentLang].noRiskIndicators}</span>`;
+      }
+
       stopEthicSpinner();
       ethicScore.innerText = 'Ethic-Score™: --';
-      ethicScore.style.backgroundColor = 'var(--cyber-cyan)';
+      ethicScore.style.backgroundColor = '';
+      resultsPanel.className = resultsPanel.className.replace(/\bscore-[A-E]\b/g, '').trim();
       
       resultsPanel.style.display = 'none';
       lastAnalyzedText = "";
