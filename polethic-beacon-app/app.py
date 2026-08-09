@@ -1311,14 +1311,14 @@ def force_language_headings(analysis_text, target_lang="fr"):
 
 def get_ethic_band(score):
     if score >= 85:
-        return "A", colors.HexColor("#166534")
+        return "A", colors.HexColor("#00FF88")
     elif score >= 70:
-        return "B", colors.HexColor("#2563EB")
+        return "B", colors.HexColor("#00F0FF")
     elif score >= 50:
-        return "C", colors.HexColor("#D97706")
+        return "C", colors.HexColor("#FFE600")
     elif score >= 30:
-        return "D", colors.HexColor("#EA580C")
-    return "E", colors.HexColor("#DC2626")
+        return "D", colors.HexColor("#FF8C00")
+    return "E", colors.HexColor("#FF2A6D")
 
 
 def get_ethic_letter(score):
@@ -1992,6 +1992,14 @@ def export_pdf():
             _, color = get_ethic_band(numeric_score)
             return color
 
+        score_letter_colors = {
+            "A": colors.HexColor("#00FF88"),
+            "B": colors.HexColor("#00F0FF"),
+            "C": colors.HexColor("#FFE600"),
+            "D": colors.HexColor("#FF8C00"),
+            "E": colors.HexColor("#FF2A6D"),
+        }
+
         score_color = score_palette(score)
 
         style_title = ParagraphStyle('DocTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=17, leading=21, textColor=colors.HexColor('#0B1320'), spaceAfter=2)
@@ -2003,7 +2011,7 @@ def export_pdf():
         style_meta_value = ParagraphStyle('MetaValue', parent=styles['Normal'], fontName='Courier', fontSize=8, leading=10, textColor=colors.HexColor('#0F172A'))
 
         style_indicator_title = ParagraphStyle('IndicatorTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=8, leading=10, textColor=colors.HexColor('#334155'))
-        style_indicator_chip = ParagraphStyle('IndicatorChip', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=6.6, leading=8.2, textColor=colors.HexColor('#0F172A'), alignment=1)
+        style_indicator_chip = ParagraphStyle('IndicatorChip', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=6.8, leading=8.4, textColor=colors.HexColor('#334155'), alignment=1)
 
         style_section_title = ParagraphStyle('SectionTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=10, leading=13, textColor=colors.HexColor('#0F172A'), spaceBefore=10, spaceAfter=5)
         style_section_body = ParagraphStyle('SectionBody', parent=styles['Normal'], fontName='Helvetica', fontSize=8.8, leading=12.2, textColor=colors.HexColor('#111827'), spaceAfter=3)
@@ -2069,6 +2077,39 @@ def export_pdf():
             ('BOTTOMPADDING', (0,0), (-1,-1), 12),
         ]))
 
+        score_scale_cells = []
+        for score_letter in ["A", "B", "C", "D", "E"]:
+            hex_color = score_letter_colors[score_letter].hexval().replace("0x", "#")
+            score_scale_cells.append(
+                Paragraph(f"<font color='{hex_color}'><b>{score_letter}</b></font>", style_indicator_chip)
+            )
+
+        score_scale = Table([score_scale_cells], colWidths=[82, 82, 82, 82, 82])
+        score_scale.setStyle(TableStyle([
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+            ('LEFTPADDING', (0,0), (-1,-1), 4),
+            ('RIGHTPADDING', (0,0), (-1,-1), 4),
+            ('TOPPADDING', (0,0), (-1,-1), 4),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#F2F4F8')),
+            ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor('#CBD5E1')),
+            ('GRID', (0,0), (-1,-1), 0.35, colors.HexColor('#D6DEE8')),
+        ]))
+
+        score_scale_row = Table([
+            [Paragraph("SCORES:", style_indicator_title), score_scale]
+        ], colWidths=[90, 430])
+        score_scale_row.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#F7F8FA')),
+            ('BOX', (0,0), (-1,-1), 0, colors.white),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ('LEFTPADDING', (0,0), (-1,-1), 10),
+            ('RIGHTPADDING', (0,0), (-1,-1), 10),
+            ('TOPPADDING', (0,0), (-1,-1), 5),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+        ]))
+
         indicator_tags = [str(flag).upper() for flag in (flags if flags else ['NONE'])]
         chips_per_row = 3
         chip_rows = []
@@ -2086,15 +2127,15 @@ def export_pdf():
             ('RIGHTPADDING', (0,0), (-1,-1), 3),
             ('TOPPADDING', (0,0), (-1,-1), 2),
             ('BOTTOMPADDING', (0,0), (-1,-1), 2),
-            ('BACKGROUND', (0,0), (-1,-1), colors.white),
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#F8FAFC')),
         ]))
 
         for r, row in enumerate(chip_rows):
             for c, cell in enumerate(row):
                 if cell:
                     indicator_line.setStyle(TableStyle([
-                        ('BACKGROUND', (c, r), (c, r), colors.HexColor('#E5E7EB')),
-                        ('BOX', (c, r), (c, r), 0.5, colors.HexColor('#CBD5E1')),
+                        ('BACKGROUND', (c, r), (c, r), colors.HexColor('#EEF2F7')),
+                        ('BOX', (c, r), (c, r), 0.5, colors.HexColor('#C7D1DE')),
                         ('ROUNDEDCORNERS', [2, 2, 2, 2]),
                     ]))
 
@@ -2113,6 +2154,7 @@ def export_pdf():
 
         card_wrapper = Table([
             [top_row],
+            [score_scale_row],
             [HRFlowable(width='100%', thickness=0.5, color=colors.HexColor('#CBD5E1'), spaceBefore=10, spaceAfter=10)],
             [indicator_row]
         ], colWidths=[520])

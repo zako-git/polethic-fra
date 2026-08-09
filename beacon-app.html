@@ -323,45 +323,11 @@
       background: rgba(0, 240, 255, 0.1);
     }
 
-    .risk-summary {
-      margin-top: 14px;
-      border: 1px solid rgba(255, 230, 0, 0.4);
-      border-radius: 8px;
-      background: rgba(255, 230, 0, 0.08);
-      padding: 12px;
-      font-family: var(--font-cyber);
-    }
-
-    .risk-summary-title {
-      color: var(--cyber-yellow);
-      font-size: 0.82rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-
-    .risk-summary-main {
-      color: #f8fafc;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
-    .risk-indicators {
-      margin-top: 10px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .risk-indicator-badge {
-      border: 1px solid rgba(255, 230, 0, 0.5);
-      color: #ffe98e;
-      background: rgba(255, 230, 0, 0.12);
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 0.72rem;
-      font-family: var(--font-cyber);
-      letter-spacing: 0.02em;
+    .report-refutation-divider {
+      width: 100%;
+      height: 1px;
+      margin: 12px 0;
+      background: rgba(0, 240, 255, 0.4);
     }
 
     /* ── Paleta unificada por nivel de Ethic-Score ── */
@@ -371,10 +337,9 @@
     }
     .results-card.score-A .ethic-score-badge { background: #00ff88; color: #030a12; box-shadow: 0 0 12px #00ff88; }
     .results-card.score-A .flag-badge { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.1); }
-    .results-card.score-A .risk-summary { border-color: rgba(0,255,136,0.4); background: rgba(0,255,136,0.07); }
-    .results-card.score-A .risk-summary-title { color: #00ff88; }
-    .results-card.score-A .risk-indicator-badge { border-color: rgba(0,255,136,0.5); color: #9effd8; background: rgba(0,255,136,0.1); }
     .results-card.score-A .report-box { border-left-color: #00ff88; }
+    .results-card.score-A .report-refutation-divider { background: rgba(0, 255, 136, 0.55); }
+    .results-card.score-A .report-refutation-title { color: #00ff88; }
 
     .results-card.score-B {
       border-color: var(--cyber-cyan);
@@ -382,10 +347,9 @@
     }
     .results-card.score-B .ethic-score-badge { background: #00f0ff; color: #030a12; box-shadow: 0 0 12px #00f0ff; }
     .results-card.score-B .flag-badge { border-color: #00f0ff; color: #00f0ff; background: rgba(0,240,255,0.1); }
-    .results-card.score-B .risk-summary { border-color: rgba(0,240,255,0.4); background: rgba(0,240,255,0.07); }
-    .results-card.score-B .risk-summary-title { color: #00f0ff; }
-    .results-card.score-B .risk-indicator-badge { border-color: rgba(0,240,255,0.5); color: #a8f4ff; background: rgba(0,240,255,0.1); }
     .results-card.score-B .report-box { border-left-color: #00f0ff; }
+    .results-card.score-B .report-refutation-divider { background: rgba(0, 240, 255, 0.55); }
+    .results-card.score-B .report-refutation-title { color: #00f0ff; }
 
     .results-card.score-C {
       border-color: var(--cyber-yellow);
@@ -393,10 +357,9 @@
     }
     .results-card.score-C .ethic-score-badge { background: #ffe600; color: #1a1000; box-shadow: 0 0 12px #ffe600; }
     .results-card.score-C .flag-badge { border-color: #ffe600; color: #ffe600; background: rgba(255,230,0,0.1); }
-    .results-card.score-C .risk-summary { border-color: rgba(255,230,0,0.4); background: rgba(255,230,0,0.07); }
-    .results-card.score-C .risk-summary-title { color: #ffe600; }
-    .results-card.score-C .risk-indicator-badge { border-color: rgba(255,230,0,0.5); color: #ffe98e; background: rgba(255,230,0,0.1); }
     .results-card.score-C .report-box { border-left-color: #ffe600; }
+    .results-card.score-C .report-refutation-divider { background: rgba(255, 230, 0, 0.55); }
+    .results-card.score-C .report-refutation-title { color: #ffe600; }
 
     .results-card.score-D {
       border-color: #ff8c00;
@@ -404,10 +367,9 @@
     }
     .results-card.score-D .ethic-score-badge { background: #ff8c00; color: #0d0600; box-shadow: 0 0 12px #ff8c00; }
     .results-card.score-D .flag-badge { border-color: #ff8c00; color: #ff8c00; background: rgba(255,140,0,0.1); }
-    .results-card.score-D .risk-summary { border-color: rgba(255,140,0,0.4); background: rgba(255,140,0,0.07); }
-    .results-card.score-D .risk-summary-title { color: #ff8c00; }
-    .results-card.score-D .risk-indicator-badge { border-color: rgba(255,140,0,0.5); color: #ffc97a; background: rgba(255,140,0,0.1); }
     .results-card.score-D .report-box { border-left-color: #ff8c00; }
+    .results-card.score-D .report-refutation-divider { background: rgba(255, 140, 0, 0.55); }
+    .results-card.score-D .report-refutation-title { color: #ff8c00; }
 
     .results-card.score-E {
       border-color: var(--cyber-red);
@@ -415,10 +377,9 @@
     }
     .results-card.score-E .ethic-score-badge { background: #ff2a6d; color: #fff; box-shadow: 0 0 12px #ff2a6d; }
     .results-card.score-E .flag-badge { border-color: #ff2a6d; color: #ff2a6d; background: rgba(255,42,109,0.1); }
-    .results-card.score-E .risk-summary { border-color: rgba(255,42,109,0.4); background: rgba(255,42,109,0.07); }
-    .results-card.score-E .risk-summary-title { color: #ff2a6d; }
-    .results-card.score-E .risk-indicator-badge { border-color: rgba(255,42,109,0.5); color: #ffaac9; background: rgba(255,42,109,0.1); }
     .results-card.score-E .report-box { border-left-color: #ff2a6d; }
+    .results-card.score-E .report-refutation-divider { background: rgba(255, 42, 109, 0.55); }
+    .results-card.score-E .report-refutation-title { color: #ff2a6d; }
 
     footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.15); text-align: center; }
     .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.6); }
@@ -478,14 +439,6 @@
         <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
         <div id="detected-flags-container" class="flags-container">
           <span class="flag-badge" id="txt-ready">TRADUCTION PRÊTE</span>
-        </div>
-      </div>
-
-      <div class="risk-summary" id="risk-summary-panel">
-        <div class="risk-summary-title" id="risk-summary-title">Riesgo por ruido / venta de humo</div>
-        <div class="risk-summary-main" id="risk-summary-main">Riesgo: Grado --</div>
-        <div class="risk-indicators" id="risk-indicators">
-          <span class="risk-indicator-badge">Sin indicadores todavia</span>
         </div>
       </div>
 
@@ -657,9 +610,6 @@
     const analysisReport = document.getElementById('analysis-report');
     const ethicScore = document.getElementById('ethic-score');
     const detectedFlags = document.getElementById('detected-flags-container');
-    const riskSummaryMain = document.getElementById('risk-summary-main');
-    const riskSummaryTitle = document.getElementById('risk-summary-title');
-    const riskIndicators = document.getElementById('risk-indicators');
 
     const btnRefute = document.getElementById('btn-refute');
     const btnPdf = document.getElementById('btn-pdf');
@@ -710,10 +660,7 @@
         refuteError: "Erreur lors du traitement de la réfutation.",
         waitingAnalysis: "En attente d'analyse...",
         analysisReady: "ANALYSE PRÊTE",
-        riskTitle: "Risque bruit / vente de fumee",
-        riskMainEmpty: "Risque: Grade --",
-        riskMain: (grade, label) => `Risque: Grade ${grade} | ${label}`,
-        noRiskIndicators: "Aucun indicateur local"
+        riskTitle: "Risque bruit / vente de fumee"
       },
       es: {
         subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
@@ -732,10 +679,7 @@
         refuteError: "Error al procesar la refutación.",
         waitingAnalysis: "En espera de análisis...",
         analysisReady: "ANÁLISIS LISTO",
-        riskTitle: "Riesgo por ruido / venta de humo",
-        riskMainEmpty: "Riesgo: Grado --",
-        riskMain: (grade, label) => `Riesgo: Grado ${grade} | ${label}`,
-        noRiskIndicators: "Sin indicadores locales"
+        riskTitle: "Riesgo por ruido / venta de humo"
       },
       en: {
         subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
@@ -754,10 +698,7 @@
         refuteError: "Error processing the refutation.",
         waitingAnalysis: "Waiting for analysis...",
         analysisReady: "ANALYSIS READY",
-        riskTitle: "Noise / hype risk",
-        riskMainEmpty: "Risk: Grade --",
-        riskMain: (grade, label) => `Risk: Grade ${grade} | ${label}`,
-        noRiskIndicators: "No local indicators"
+        riskTitle: "Noise / hype risk"
       }
     };
 
@@ -816,17 +757,7 @@
         displayReportText(t.waitingAnalysis);
       }
 
-      if (riskSummaryTitle) {
-        riskSummaryTitle.innerText = t.riskTitle;
-      }
 
-      if (riskSummaryMain && !riskSummaryMain.dataset.filled) {
-        riskSummaryMain.innerText = t.riskMainEmpty;
-      }
-
-      if (riskIndicators && riskIndicators.children.length === 0) {
-        riskIndicators.innerHTML = `<span class="risk-indicator-badge">${t.noRiskIndicators}</span>`;
-      }
     }
 
     btnFr.addEventListener('click', () => changeLanguage('fr'));
@@ -895,7 +826,7 @@
     const SCORE_COLORS = { A: '#00ff88', B: '#00f0ff', C: '#ffe600', D: '#ff8c00', E: '#ff2a6d' };
     const SCORE_LETTERS = new Set(['A','B','C','D','E']);
 
-    function applyEthicBadge(letterValue, customFlags, riskLabelValue, riskIndicatorsValue) {
+    function applyEthicBadge(letterValue, customFlags) {
       stopEthicSpinner();
       let letter = 'C';
       if (typeof letterValue === 'string' && SCORE_LETTERS.has(letterValue.toUpperCase())) {
@@ -919,38 +850,6 @@
         : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
 
       renderFlags(flagsToRender);
-      renderRiskSummary(letter, riskLabelValue, riskIndicatorsValue, flagsToRender);
-    }
-
-    function renderRiskSummary(grade, riskLabel, indicators, fallbackFlags) {
-      const t = langMap[currentLang] || langMap.fr;
-      if (riskSummaryMain) {
-        const safeGrade = grade || '--';
-        const safeLabel = riskLabel || '';
-        riskSummaryMain.innerText = typeof t.riskMain === 'function'
-          ? t.riskMain(safeGrade, safeLabel)
-          : `Risk: Grade ${safeGrade}`;
-        riskSummaryMain.dataset.filled = '1';
-      }
-
-      if (!riskIndicators) return;
-
-      const sourceIndicators = Array.isArray(indicators) && indicators.length > 0
-        ? indicators
-        : (Array.isArray(fallbackFlags) ? fallbackFlags : []);
-
-      riskIndicators.innerHTML = '';
-      if (sourceIndicators.length === 0) {
-        riskIndicators.innerHTML = `<span class="risk-indicator-badge">${t.noRiskIndicators}</span>`;
-        return;
-      }
-
-      sourceIndicators.slice(0, 6).forEach((item) => {
-        const badge = document.createElement('span');
-        badge.className = 'risk-indicator-badge';
-        badge.innerText = String(item).trim();
-        riskIndicators.appendChild(badge);
-      });
     }
 
     function renderFlags(flagsArray) {
@@ -1038,9 +937,7 @@
 
         applyEthicBadge(
           data.ethic_letter || data.scoreLetter || data.risk_grade || 'C',
-          flagsReceived,
-          data.risk_label,
-          data.risk_indicators
+          flagsReceived
         );
         displayReportText(data.analysis || data.report || 'Analyse terminée.');
 
@@ -1092,7 +989,7 @@
             en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
           };
           
-          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n========================================\n<div class="report-refutation-title">${titleMap[currentLang] || titleMap.fr}</div>\n========================================\n${refutationText}`;
+          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n<div class="report-refutation-divider" aria-hidden="true"></div>\n<div class="report-refutation-title">${titleMap[currentLang] || titleMap.fr}</div>\n<div class="report-refutation-divider" aria-hidden="true"></div>\n${refutationText}`;
           displayReportText(updatedMarkdown);
         } else {
           alert("Le serveur n'a pas renvoyé de texte de réfutation.");
@@ -1196,15 +1093,6 @@
       const readyText = langMap[currentLang].analysisReady;
       if (detectedFlags) {
         detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText}</span>`;
-      }
-
-      if (riskSummaryMain) {
-        riskSummaryMain.innerText = langMap[currentLang].riskMainEmpty;
-        riskSummaryMain.dataset.filled = '';
-      }
-
-      if (riskIndicators) {
-        riskIndicators.innerHTML = `<span class="risk-indicator-badge">${langMap[currentLang].noRiskIndicators}</span>`;
       }
 
       stopEthicSpinner();
