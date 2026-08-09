@@ -67,7 +67,8 @@ LOCAL_RISK_RULES = [
         "keywords": [
             "constellations familiales", "bert hellinger", "psychologie systemique",
             "biodescodificacion", "bioneuroemocion", "quantum hypnosis",
-            "ancestral healing", "med beds", "quantique"
+            "ancestral healing", "med beds", "quantique", "tecnica cuantica",
+            "técnica cuántica", "método cuántico", "metodo cuantico"
         ],
     },
     {
@@ -91,7 +92,9 @@ LOCAL_RISK_RULES = [
         "score": 8,
         "keywords": [
             "prendre le controle", "bonheur", "epanouissement", "paix",
-            "seule voie", "tres difficile", "changer"
+            "seule voie", "tres difficile", "changer", "solo funciona",
+            "only works", "without doubt", "sin dudar", "promete resultados",
+            "promet resultados", "resultados si sigues", "results if you follow"
         ],
     },
     {
@@ -100,7 +103,8 @@ LOCAL_RISK_RULES = [
         "keywords": [
             "nous devons", "must", "debes", "partage avant", "share before",
             "diffuse avant", "escape the matrix", "high-ticket", "liberte financiere",
-            "oportunidad unica", "opportunite unique"
+            "oportunidad unica", "opportunite unique", "sin dudar", "without doubt",
+            "solo funciona", "only works"
         ],
     },
     {
@@ -199,14 +203,14 @@ BITE_AXIS_RULES = {
 }
 
 # Matrice principale d'integrite: A est le niveau le plus fiable, E le plus fragile.
-# Les signaux locaux soustraient des points a la base de 78; les indices academiques
+# Les signaux locaux soustraient des points a la base de 82; les indices academiques
 # verifiables peuvent etre rehausses par les branches positives ci-dessous.
 SCORE_MATRIX = {
-    "A": {"range": (85, 100), "fr": "Integrite factuelle elevee", "es": "Integridad factual alta", "en": "High factual integrity"},
-    "B": {"range": (70, 84), "fr": "Communication globalement solide, vigilance legere", "es": "Comunicacion globalmente solida, vigilancia leve", "en": "Generally sound communication, light vigilance"},
-    "C": {"range": (50, 69), "fr": "Ambiguite ou cadrage persuasif notable", "es": "Ambiguedad o encuadre persuasivo notable", "en": "Notable ambiguity or persuasive framing"},
-    "D": {"range": (30, 49), "fr": "Manipulation rhetorique ou risque d'influence eleve", "es": "Manipulacion retorica o riesgo de influencia alto", "en": "Rhetorical manipulation or high influence risk"},
-    "E": {"range": (0, 29), "fr": "Integrite argumentative tres faible", "es": "Integridad argumental muy baja", "en": "Very low argumentative integrity"},
+    "A": {"range": (88, 100), "fr": "Integrite factuelle elevee", "es": "Integridad factual alta", "en": "High factual integrity"},
+    "B": {"range": (75, 87), "fr": "Communication globalement solide, vigilance legere", "es": "Comunicacion globalmente solida, vigilancia leve", "en": "Generally sound communication, light vigilance"},
+    "C": {"range": (56, 74), "fr": "Ambiguite ou cadrage persuasif notable", "es": "Ambiguedad o encuadre persuasivo notable", "en": "Notable ambiguity or persuasive framing"},
+    "D": {"range": (35, 55), "fr": "Manipulation rhetorique ou risque d'influence eleve", "es": "Manipulacion retorica o riesgo de influencia alto", "en": "Rhetorical manipulation or high influence risk"},
+    "E": {"range": (0, 34), "fr": "Integrite argumentative tres faible", "es": "Integridad argumental muy baja", "en": "Very low argumentative integrity"},
 }
 
 # Niveau minimal impose par les signaux: la lettre finale est toujours celle du
@@ -534,7 +538,8 @@ def infer_domain(norm_text):
 def detect_business_promo_context(norm_text):
     expertise_hits = [
         token for token in [
-            "marketing", "comunicacion", "consultor", "experto", "experiencia",
+            "marketing", "comunicacion", "consultor", "consultoria", "consultoría", "consulting",
+            "experto", "experiencia", "organizacion", "organización", "organizacional",
             "communication", "consultant", "expert", "experience", "business"
         ]
         if token in norm_text
@@ -566,12 +571,137 @@ def detect_business_promo_context(norm_text):
     }
 
 
+def infer_document_type(norm_text, lang="fr"):
+    if any(token in norm_text for token in [
+        "marketing", "consultor", "consultoria", "consultoría", "consulting", "coaching",
+        "business", "commercial", "promo", "promotional", "proposition", "strategy"
+    ]):
+        if lang == "es":
+            return "Propuesta comercial / texto promocional"
+        if lang == "en":
+            return "Commercial proposal / promotional text"
+        return "Proposition commerciale / texte promotionnel"
+
+    if any(token in norm_text for token in [
+        "recherche", "research", "scientific", "scientifique", "study", "studies",
+        "publication", "journal", "academy", "academie", "academico", "academic"
+    ]):
+        if lang == "es":
+            return "Ensayo informativo / texto académico"
+        if lang == "en":
+            return "Informative essay / academic text"
+        return "Essai informatif / texte académique"
+
+    if any(token in norm_text for token in [
+        "therapeutic", "therapeutique", "therapeutic", "cure", "guerit", "guarir",
+        "medication", "medicament", "medicina", "medical", "médical"
+    ]):
+        if lang == "es":
+            return "Manifiesto o texto de orientación terapéutica"
+        if lang == "en":
+            return "Manifesto or therapeutic guidance text"
+        return "Manifeste ou texte d'orientation thérapeutique"
+
+    if lang == "es":
+        return "Texto de orientación o guía informativa"
+    if lang == "en":
+        return "Guidance or informative text"
+    return "Texte d'orientation ou de guidance"
+
+
+def build_phase0_block(content, lang="fr"):
+    norm_text = normalize_for_match(content)
+    domain = infer_domain(norm_text)
+    doc_type = infer_document_type(norm_text, lang)
+
+    labels = {
+        "fr": {"topic": "Sujet / Résumé", "domain": "Domaine", "doc_type": "Type de document"},
+        "es": {"topic": "Tema / Resumen", "domain": "Dominio", "doc_type": "Tipo de documento"},
+        "en": {"topic": "Topic / Summary", "domain": "Domain", "doc_type": "Document type"},
+    }
+    label_set = labels.get(lang, labels["fr"])
+
+    if any(token in norm_text for token in ["promesse", "promise", "promesa", "miracle", "milagro", "guerit", "cure", "cura", "medical", "medic", "medication", "tecnica", "technique", "method", "methode", "método"]):
+        summary = {
+            "fr": "Présentation d'une proposition de transformation personnelle ou thérapeutique formulée avec un cadre de guidance et de persuasion.",
+            "es": "Presentación de una propuesta de transformación personal o terapéutica formulada con un marco de orientación y persuasión.",
+            "en": "Presentation of a personal or therapeutic transformation proposal framed as guidance and persuasion.",
+        }[lang]
+    elif any(token in norm_text for token in ["marketing", "consultor", "consultoria", "consulting", "business", "communication", "empresa", "entreprise"]):
+        summary = {
+            "fr": "Présentation d'une offre de conseil, de communication ou de positionnement commercial orientée vers l'amélioration de l'organisation ou de la perception.",
+            "es": "Presentación de una oferta de asesoría, comunicación o posicionamiento comercial orientada a mejorar la organización o la percepción.",
+            "en": "Presentation of a consulting, communication, or commercial positioning offer aimed at improving organization or perception.",
+        }[lang]
+    elif any(token in norm_text for token in ["recherche", "research", "scientific", "academ", "univers", "publications", "journal", "study"]):
+        summary = {
+            "fr": "Présentation d'un argument ou d'un cadre d'expertise formulé dans un registre scientifique, académique ou professionnel.",
+            "es": "Presentación de un argumento o marco de experticia formulado en un registro científico, académico o profesional.",
+            "en": "Presentation of an argument or expertise framework expressed in a scientific, academic, or professional register.",
+        }[lang]
+    else:
+        summary = {
+            "fr": "Présentation d'un texte de guidance ou de persuasion visant à orienter une lecture, un choix ou une interprétation.",
+            "es": "Presentación de un texto de orientación o persuasión orientado a guiar una lectura, una elección o una interpretación.",
+            "en": "Presentation of guidance or persuasion text intended to steer a reading, choice, or interpretation.",
+        }[lang]
+
+    return [
+        f"• {label_set['topic']}: {summary}",
+        f"• {label_set['domain']}: {domain}",
+        f"• {label_set['doc_type']}: {doc_type}",
+    ]
+
+
+def normalize_phase0_structure(analysis_text, content, lang="fr"):
+    headers = SECTION_HEADERS.get(lang, SECTION_HEADERS["fr"])
+    if not analysis_text:
+        return ""
+
+    phase0_lines = build_phase0_block(content, lang)
+    if headers["h2"] in analysis_text:
+        before, after = analysis_text.split(headers["h2"], 1)
+        existing_lines = [line for line in before.splitlines() if line.strip()]
+        if existing_lines and normalize_for_match(existing_lines[0]) == normalize_for_match(headers["h1"]):
+            existing_lines = existing_lines[1:]
+        if existing_lines:
+            existing_lines = [
+                line for line in existing_lines
+                if not normalize_for_match(line).startswith("ethic score")
+                and not normalize_for_match(line).startswith("- flags")
+                and not normalize_for_match(line).startswith("flags detect")
+            ]
+
+        new_block = [headers["h1"], *phase0_lines, ""]
+        return "\n".join(new_block + [headers["h2"], after]).strip()
+
+    return "\n".join([headers["h1"], *phase0_lines, "", analysis_text]).strip()
+
+
 def build_local_analysis_report(content, lang="fr"):
     norm_text = normalize_for_match(content)
     academic_context = detect_academic_context(norm_text)
     business_context = detect_business_promo_context(norm_text)
     hits = local_match_rules(content, academic_context=academic_context)
-    score = 78
+    score = 92
+
+    def finalize_report(analysis_text, score_value, flags_value):
+        return {
+            "analysis": normalize_phase0_structure(analysis_text, content, lang),
+            "score": score_value,
+            "flags": flags_value,
+        }
+    if business_context["active"]:
+        score = 82
+    elif academic_context["verified"]:
+        score = 90
+    elif academic_context["probable"]:
+        score = 86
+
+    if any(hit["flag"] == "PROMESSE IMPLICITE" for hit in hits):
+        score = max(75, score - 8)
+    if any(hit["flag"] == "RHETORIQUE COERCITIVE" for hit in hits):
+        score = max(56, score - 10)
 
     for hit in hits:
         score -= hit["score"]
@@ -592,7 +722,7 @@ def build_local_analysis_report(content, lang="fr"):
     if viral_clickbait_detected and not any(h["flag"] == "PSEUDO-SCIENCE" for h in hits):
         # Several signals can describe one clickbait device; D captures the high
         # influence risk without treating the headline alone as an E-level claim.
-        score = max(score, 38)
+        score = min(score, 38)
         letter = get_ethic_letter(score)
 
         if lang == "es":
@@ -653,11 +783,7 @@ def build_local_analysis_report(content, lang="fr"):
                 "- Distinguer une alerte virale d'une preuve scientifique: la colere attribuee a une autorite ne valide pas l'affirmation.",
             ])
 
-        return {
-            "analysis": analysis,
-            "score": score,
-            "flags": flags,
-        }
+        return finalize_report(analysis, score, flags)
 
     bite_axis_flags = [flag for flag in flags if flag in BITE_AXIS_RULES]
     if bite_axis_flags:
@@ -721,11 +847,7 @@ def build_local_analysis_report(content, lang="fr"):
                 "- Retablir l'acces a des sources externes, maintenir des soutiens independants et refuser toute instruction limitant soins, information ou liens personnels.",
             ])
 
-        return {
-            "analysis": analysis,
-            "score": score,
-            "flags": flags,
-        }
+        return finalize_report(analysis, score, flags)
 
     scientific_washing_detected = "BLANCHIMENT SCIENTIFIQUE" in flags
     if scientific_washing_detected:
@@ -818,17 +940,13 @@ def build_local_analysis_report(content, lang="fr"):
                 *strategy,
             ])
 
-        return {
-            "analysis": analysis,
-            "score": score,
-            "flags": flags,
-        }
+        return finalize_report(analysis, score, flags)
 
     if lang == "fr":
         domain = infer_domain(norm_text)
 
         if business_context["active"] and not any(h["flag"] in {"PSEUDO-SCIENCE", "CROYANCE TRANSGENERATIONNELLE", "RHETORIQUE COERCITIVE"} for h in hits):
-            score = max(score, 72)
+            score = 78
             letter = get_ethic_letter(score)
             flags = ["AMBIGUITE METHODOLOGIQUE", "CADRAGE PERSUASIF LEGER"]
             risk_comment = get_risk_level_comment(score, lang)
@@ -853,14 +971,10 @@ def build_local_analysis_report(content, lang="fr"):
                 "- Verifier comment les conflits, la cohesion et l'amelioration operationnelle sont effectivement diagnostiques puis evalues.",
             ])
 
-            return {
-                "analysis": analysis,
-                "score": score,
-                "flags": flags,
-            }
+            return finalize_report(analysis, score, flags)
 
         if academic_context["verified"] and not hits:
-            score = 92
+            score = 94
             letter = get_ethic_letter(score)
             flags = ["CREDIBILITE ACADEMIQUE AVEREE"]
             risk_comment = get_risk_level_comment(score, lang)
@@ -891,14 +1005,10 @@ def build_local_analysis_report(content, lang="fr"):
                 "- Maintenir une lecture epistemique: preuves, reproductibilite, limites et conditions d'application.",
             ])
 
-            return {
-                "analysis": analysis,
-                "score": score,
-                "flags": flags,
-            }
+            return finalize_report(analysis, score, flags)
 
         if academic_context["probable"] and not hits:
-            score = 78
+            score = 86
             letter = get_ethic_letter(score)
             flags = ["CREDIBILITE ACADEMIQUE SIGNALEE"]
             risk_comment = get_risk_level_comment(score, lang)
@@ -933,11 +1043,7 @@ def build_local_analysis_report(content, lang="fr"):
                 "- Maintenir une lecture critique sans rabattre automatiquement le texte vers une suspicion de derive.",
             ])
 
-            return {
-                "analysis": analysis,
-                "score": score,
-                "flags": flags,
-            }
+            return finalize_report(analysis, score, flags)
 
         risk_comment = get_risk_level_comment(score, lang)
 
@@ -1036,7 +1142,7 @@ def build_local_analysis_report(content, lang="fr"):
         flags_text = " | ".join(flags)
 
         if business_context["active"] and not any(h["flag"] in {"PSEUDO-SCIENCE", "CROYANCE TRANSGENERATIONNELLE", "RHETORIQUE COERCITIVE"} for h in hits):
-            score = max(score, 72)
+            score = 78
             flags = ["AMBIGUEDAD METODOLOGICA", "ENCUADRE PERSUASIVO LEVE"]
             flags_text = " | ".join(flags)
 
@@ -1061,11 +1167,7 @@ def build_local_analysis_report(content, lang="fr"):
                 phase4_line,
             ])
 
-            return {
-                "analysis": analysis,
-                "score": score,
-                "flags": flags,
-            }
+            return finalize_report(analysis, score, flags)
 
         if any(h["flag"] in {"PSEUDO-SCIENCE", "CROYANCE TRANSGENERATIONNELLE"} for h in hits):
             phase2_line = "- Hechos y premisas detectadas: se mezclan marcos de acompanamiento con postulados dificiles de validar empiricamente."
@@ -1115,11 +1217,7 @@ def build_local_analysis_report(content, lang="fr"):
             "- Recommendation: request comparative evidence and separate metaphorical framing from clinical claims.",
         ])
 
-    return {
-        "analysis": analysis,
-        "score": score,
-        "flags": flags,
-    }
+    return finalize_report(analysis, score, flags)
 
 
 def build_local_refutation(context_text, lang="fr"):
@@ -1310,15 +1408,15 @@ def force_language_headings(analysis_text, target_lang="fr"):
     return clean_text
 
 def get_ethic_band(score):
-    if score >= 85:
+    if score >= 88:
         return "A", colors.HexColor("#00FF88")
-    elif score >= 70:
-        return "B", colors.HexColor("#00F0FF")
-    elif score >= 50:
-        return "C", colors.HexColor("#FFE600")
-    elif score >= 30:
-        return "D", colors.HexColor("#FF8C00")
-    return "E", colors.HexColor("#FF2A6D")
+    elif score >= 75:
+        return "B", colors.HexColor("#FFE600")
+    elif score >= 56:
+        return "C", colors.HexColor("#FF8C00")
+    elif score >= 35:
+        return "D", colors.HexColor("#FF2A2A")
+    return "E", colors.HexColor("#B00020")
 
 
 def get_ethic_letter(score):
@@ -1471,58 +1569,13 @@ def build_risk_indicators(flags, lang="fr"):
 
 
 def update_report_summary_lines(analysis_text, score, flags, lang="fr"):
-    risk_line = f"- Ethic-Score: {get_ethic_letter(score)} - {get_risk_level_comment(score, lang)}"
-    flags_line = format_flags_line(flags, lang)
-
-    updated_lines = []
-    replaced_score = False
-    replaced_flags = False
-
-    for line in analysis_text.splitlines():
-        normalized = normalize_for_match(line)
-        if normalized.startswith("ethic score:"):
-            if not replaced_score:
-                updated_lines.append(risk_line)
-                replaced_score = True
-            continue
-        if (
-            normalized.startswith("- flags detectes:")
-            or normalized.startswith("- flags detectados:")
-            or normalized.startswith("- flags detected:")
-        ):
-            if not replaced_flags:
-                updated_lines.append(flags_line)
-                replaced_flags = True
-            continue
-        updated_lines.append(line)
-
-    if not replaced_score or not replaced_flags:
-        rebuilt = []
-        inserted_score = False
-        inserted_flags = False
-        for line in updated_lines:
-            rebuilt.append(line)
-            normalized = normalize_for_match(line)
-            if not replaced_score and not inserted_score and normalized.startswith("**1. "):
-                rebuilt.append(risk_line)
-                inserted_score = True
-            elif not replaced_flags and not inserted_flags and (
-                normalized.startswith("- domaine:")
-                or normalized.startswith("- dominio:")
-                or normalized.startswith("- domain:")
-                or normalized.startswith("- tipo de texto:")
-                or normalized.startswith("- text type:")
-            ):
-                rebuilt.append(flags_line)
-                inserted_flags = True
-        updated_lines = rebuilt
-
-    return "\n".join(updated_lines)
+    return normalize_phase0_structure(analysis_text, analysis_text, lang)
 
 
 def enforce_analysis_consistency(analysis_text, score, flags, lang="fr"):
     normalized_text = normalize_for_match(analysis_text)
     normalized_flags = []
+    had_real_flags = False
     default_flag_labels = {
         get_default_flag_label(lang, score),
         "AUCUN SIGNAL MAJEUR",
@@ -1533,6 +1586,7 @@ def enforce_analysis_consistency(analysis_text, score, flags, lang="fr"):
         clean_flag = str(flag).strip()
         if clean_flag and clean_flag not in normalized_flags and clean_flag not in default_flag_labels:
             normalized_flags.append(clean_flag)
+            had_real_flags = True
 
     trigger_flags = []
 
@@ -1550,8 +1604,13 @@ def enforce_analysis_consistency(analysis_text, score, flags, lang="fr"):
         score = 60
 
     dominant_severity = get_dominant_severity(normalized_flags)
-    if dominant_severity:
+    if dominant_severity and dominant_severity in {"D", "E"}:
         score = SEVERITY_SCORE[dominant_severity]
+    elif dominant_severity == "C" and score >= 78:
+        score = SEVERITY_SCORE[dominant_severity]
+
+    if not had_real_flags and not trigger_flags:
+        score = max(score, 82)
 
     if not normalized_flags:
         normalized_flags = [get_default_flag_label(lang, score)]
@@ -1994,16 +2053,17 @@ def export_pdf():
 
         score_letter_colors = {
             "A": colors.HexColor("#00FF88"),
-            "B": colors.HexColor("#00F0FF"),
-            "C": colors.HexColor("#FFE600"),
-            "D": colors.HexColor("#FF8C00"),
-            "E": colors.HexColor("#FF2A6D"),
+            "B": colors.HexColor("#FFE600"),
+            "C": colors.HexColor("#FF8C00"),
+            "D": colors.HexColor("#FF2A2A"),
+            "E": colors.HexColor("#B00020"),
         }
 
-        score_color = score_palette(score)
+        resolved_score_letter = score_letter_raw if score_letter_raw in score_letter_colors else get_ethic_letter(score)
+        score_color = score_letter_colors.get(resolved_score_letter, score_palette(score))
 
-        style_title = ParagraphStyle('DocTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=17, leading=21, textColor=colors.HexColor('#0B1320'), spaceAfter=2)
-        style_subtitle_sm = ParagraphStyle('DocSubtitle', parent=styles['Normal'], fontName='Helvetica', fontSize=8.5, leading=11, textColor=colors.HexColor('#334155'), spaceAfter=10)
+        style_title = ParagraphStyle('DocTitle', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=17, leading=21, textColor=colors.HexColor('#0F172A'), spaceAfter=2)
+        style_subtitle_sm = ParagraphStyle('DocSubtitle', parent=styles['Normal'], fontName='Helvetica', fontSize=8.5, leading=11, textColor=colors.HexColor('#475569'), spaceAfter=10)
         style_score_label = ParagraphStyle('ScoreLabel', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=6.8, leading=8.0, textColor=colors.white, alignment=1)
         style_score_value = ParagraphStyle('ScoreValue', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=13.8, leading=15.0, textColor=colors.white, alignment=1)
 
@@ -2039,14 +2099,56 @@ def export_pdf():
         }
         disc = disclaimers.get(lang, disclaimers["fr"])
 
+        pdf_labels = {
+            "fr": {
+                "title": "POLETHIC BEACON",
+                "subtitle": "LABORATOIRE D'AUTODEFENSE COGNITIVE",
+                "score_label": "ETHIC-SCORE",
+                "ref_label": "REF DOSSIER :",
+                "timestamp_label": "HORODATAGE :",
+                "indicators_label": "INDICATEURS :",
+                "footer": "POLETHIC BEACON | Rapport forensique d'intégrité cognitive"
+            },
+            "es": {
+                "title": "POLETHIC BEACON",
+                "subtitle": "LABORATORIO DE AUTODEFENSA COGNITIVA",
+                "score_label": "PUNTAJE ÉTICO",
+                "ref_label": "EXPEDIENTE REF :",
+                "timestamp_label": "FECHA/HORA :",
+                "indicators_label": "INDICADORES :",
+                "footer": "POLETHIC BEACON | Informe forense de integridad cognitiva"
+            },
+            "en": {
+                "title": "POLETHIC BEACON",
+                "subtitle": "COGNITIVE SELF-DEFENSE LABORATORY",
+                "score_label": "ETHIC SCORE",
+                "ref_label": "REF CASE :",
+                "timestamp_label": "TIMESTAMP :",
+                "indicators_label": "INDICATORS :",
+                "footer": "POLETHIC BEACON | Forensic report on cognitive integrity"
+            }
+        }
+        pdf_text = pdf_labels.get(lang, pdf_labels["fr"])
+
         story = []
-        story.append(Paragraph("POLETHIC BEACON", style_title))
-        story.append(Paragraph("LABORATOIRE D'AUTODEFENSE COGNITIVE", style_subtitle_sm))
+        title_banner = Table([
+            [Paragraph(pdf_text["title"], style_title)],
+            [Paragraph(pdf_text["subtitle"], style_subtitle_sm)]
+        ], colWidths=[520])
+        title_banner.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#F8FAFC')),
+            ('BOX', (0, 0), (-1, -1), 0.8, colors.HexColor('#CBD5E1')),
+            ('LEFTPADDING', (0, 0), (-1, -1), 12),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 12),
+            ('TOPPADDING', (0, 0), (-1, -1), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+        ]))
+        story.append(title_banner)
         story.append(Spacer(1, 4))
 
         beacon_ref = f"BEACON-{datetime.now().year}-{int(datetime.now().timestamp()) % 1000000:06d}"
         score_box = Table([
-            [Paragraph("ETHIC-SCORE", style_score_label)],
+            [Paragraph(pdf_text["score_label"], style_score_label)],
             [Paragraph(ethic_score_letter, style_score_value)]
         ], colWidths=[78])
         score_box.setStyle(TableStyle([
@@ -2059,8 +2161,8 @@ def export_pdf():
         ]))
 
         meta_lines = [
-            f"<font face='Courier-Bold'>REF DOSSIER :</font> {beacon_ref}",
-            f"<font face='Courier-Bold'>HORODATAGE :</font> {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+            f"<font face='Courier-Bold'>{pdf_text['ref_label']}</font> {beacon_ref}",
+            f"<font face='Courier-Bold'>{pdf_text['timestamp_label']}</font> {datetime.now().strftime('%d/%m/%Y %H:%M')}"
         ]
         meta_paragraph = Paragraph('<br />'.join(meta_lines), style_meta_value)
 
@@ -2068,46 +2170,13 @@ def export_pdf():
             [score_box, meta_paragraph]
         ], colWidths=[94, 426])
         top_row.setStyle(TableStyle([
-            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#F7F8FA')),
-            ('BOX', (0,0), (-1,-1), 1, colors.HexColor('#CBD5E1')),
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#FFFFFF')),
+            ('BOX', (0,0), (-1,-1), 0.8, colors.HexColor('#CBD5E1')),
             ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
             ('LEFTPADDING', (0,0), (-1,-1), 10),
             ('RIGHTPADDING', (0,0), (-1,-1), 10),
             ('TOPPADDING', (0,0), (-1,-1), 12),
             ('BOTTOMPADDING', (0,0), (-1,-1), 12),
-        ]))
-
-        score_scale_cells = []
-        for score_letter in ["A", "B", "C", "D", "E"]:
-            hex_color = score_letter_colors[score_letter].hexval().replace("0x", "#")
-            score_scale_cells.append(
-                Paragraph(f"<font color='{hex_color}'><b>{score_letter}</b></font>", style_indicator_chip)
-            )
-
-        score_scale = Table([score_scale_cells], colWidths=[82, 82, 82, 82, 82])
-        score_scale.setStyle(TableStyle([
-            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-            ('ALIGN', (0,0), (-1,-1), 'CENTER'),
-            ('LEFTPADDING', (0,0), (-1,-1), 4),
-            ('RIGHTPADDING', (0,0), (-1,-1), 4),
-            ('TOPPADDING', (0,0), (-1,-1), 4),
-            ('BOTTOMPADDING', (0,0), (-1,-1), 4),
-            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#F2F4F8')),
-            ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor('#CBD5E1')),
-            ('GRID', (0,0), (-1,-1), 0.35, colors.HexColor('#D6DEE8')),
-        ]))
-
-        score_scale_row = Table([
-            [Paragraph("SCORES:", style_indicator_title), score_scale]
-        ], colWidths=[90, 430])
-        score_scale_row.setStyle(TableStyle([
-            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#F7F8FA')),
-            ('BOX', (0,0), (-1,-1), 0, colors.white),
-            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-            ('LEFTPADDING', (0,0), (-1,-1), 10),
-            ('RIGHTPADDING', (0,0), (-1,-1), 10),
-            ('TOPPADDING', (0,0), (-1,-1), 5),
-            ('BOTTOMPADDING', (0,0), (-1,-1), 5),
         ]))
 
         indicator_tags = [str(flag).upper() for flag in (flags if flags else ['NONE'])]
@@ -2140,7 +2209,7 @@ def export_pdf():
                     ]))
 
         indicator_row = Table([
-            [Paragraph("INDICATEURS:", style_indicator_title), indicator_line]
+            [Paragraph(pdf_text["indicators_label"], style_indicator_title), indicator_line]
         ], colWidths=[90, 430])
         indicator_row.setStyle(TableStyle([
             ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#F7F8FA')),
@@ -2154,13 +2223,11 @@ def export_pdf():
 
         card_wrapper = Table([
             [top_row],
-            [score_scale_row],
-            [HRFlowable(width='100%', thickness=0.5, color=colors.HexColor('#CBD5E1'), spaceBefore=10, spaceAfter=10)],
             [indicator_row]
         ], colWidths=[520])
         card_wrapper.setStyle(TableStyle([
-            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#F7F8FA')),
-            ('BOX', (0,0), (-1,-1), 1, colors.HexColor('#CBD5E1')),
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#FFFFFF')),
+            ('BOX', (0,0), (-1,-1), 0.8, colors.HexColor('#CBD5E1')),
             ('LEFTPADDING', (0,0), (-1,-1), 0),
             ('RIGHTPADDING', (0,0), (-1,-1), 0),
             ('TOPPADDING', (0,0), (-1,-1), 0),
@@ -2235,7 +2302,7 @@ def export_pdf():
             canvas.line(36, 32, letter[0] - 36, 32)
             canvas.setFillColor(colors.HexColor('#334155'))
             canvas.setFont('Helvetica', 7.5)
-            canvas.drawString(36, 20, 'POLETHIC BEACON | Rapport forensique d integrite cognitive')
+            canvas.drawString(36, 20, pdf_text['footer'])
             canvas.drawRightString(letter[0] - 36, 20, f'Page {doc.page}')
             canvas.restoreState()
 
