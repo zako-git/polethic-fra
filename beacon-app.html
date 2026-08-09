@@ -150,6 +150,13 @@
       max-width: 850px;
       margin: 0 auto 30px auto;
       backdrop-filter: blur(8px);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .drop-zone.drag-over {
+      border-color: #00ff88;
+      box-shadow: 0 0 35px rgba(0, 255, 136, 0.45);
+      background-color: rgba(0, 255, 136, 0.06);
     }
 
     textarea#user-input {
@@ -382,8 +389,121 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // URL base de tu API Flask desplegada en Render
-    const API_BASE_URL = "https://polethic-beacon-api.onrender.com";
+    const LOCAL_API_BASE_URL = 'http://127.0.0.1:5000';
+    const REMOTE_API_BASE_URL = 'https://super-duper-enigma-6vvg7xx5j6gg254gq-5000.app.github.dev';
+
+    function getGithubDevBackendCandidates(hostname, endpoint) {
+      const urls = [];
+      const normalized = hostname.toLowerCase();
+
+      if (normalized.endsWith('-5500.app.github.dev')) {
+        urls.push(`https://${normalized.replace('-5500.app.github.dev', '-5000.app.github.dev')}${endpoint}`);
+        urls.push(`https://${normalized.replace('-5500.app.github.dev', '-5000.github.dev')}${endpoint}`);
+      }
+
+      if (normalized.endsWith('-5500.github.dev')) {
+        urls.push(`https://${normalized.replace('-5500.github.dev', '-5000.github.dev')}${endpoint}`);
+      }
+
+      if (normalized.endsWith('-5500.githubusercontent.com')) {
+        urls.push(`https://${normalized.replace('-5500.githubusercontent.com', '-5000.githubusercontent.com')}${endpoint}`);
+      }
+
+      if (normalized.includes('-5500') && urls.length === 0) {
+        urls.push(`https://${normalized.replace('-5500', '-5000')}${endpoint}`);
+      }
+
+      return urls.filter((value, index, self) => self.indexOf(value) === index);
+    }
+
+    function isGithubDevPreviewHost(hostname) {
+      const lower = hostname.toLowerCase();
+      return lower.includes('-5500.app.github.dev') || lower.includes('-5500.github.dev') || lower.includes('-5500.githubusercontent.com');
+    }
+
+    const API_BASE_URL = (() => {
+        if (window.location.protocol === 'file:') {
+          return LOCAL_API_BASE_URL;
+        }
+
+        const hostname = window.location.hostname.toLowerCase();
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+          return window.location.origin;
+        }
+
+        const githubDevUrls = getGithubDevBackendCandidates(hostname, '');
+        if (githubDevUrls.length > 0) {
+          console.info('[BEACON] GitHub.dev backend candidates:', githubDevUrls);
+          return githubDevUrls[0];
+        }
+
+        console.info('[BEACON] no GitHub.dev backend rewrite found for hostname:', hostname);
+        return window.location.origin || REMOTE_API_BASE_URL;
+      })();
+
+      function isNetworkError(err) {
+        return err instanceof TypeError || err.name === 'TypeError' || err.message?.includes('NetworkError');
+      }
+
+      function formatBeaconError(err) {
+        if (!err || !err.message) return 'Unknown error';
+        if (isNetworkError(err)) {
+          return `NetworkError: ${err.message.replace(/^NetworkError:\s*/i, '')}`;
+        }
+        return err.message;
+      }
+
+      async function beaconFetch(endpoint, options = {}) {
+        const hostname = window.location.hostname.toLowerCase();
+        const githubDevUrls = getGithubDevBackendCandidates(hostname, endpoint);
+        const urls = [...githubDevUrls];
+        const localUrl = `${LOCAL_API_BASE_URL}${endpoint}`;
+
+        if ((window.location.protocol === 'http:' || window.location.protocol === 'file:') && !urls.includes(localUrl)) {
+          urls.push(localUrl);
+        }
+
+        const remoteUrl = `${REMOTE_API_BASE_URL}${endpoint}`;
+        if (!urls.includes(remoteUrl)) {
+          urls.push(remoteUrl);
+        }
+
+        if (!isGithubDevPreviewHost(hostname)) {
+          const originUrl = `${window.location.origin}${endpoint}`;
+          if (!urls.includes(originUrl)) {
+            urls.push(originUrl);
+          }
+        }
+
+        console.info('[BEACON] backend candidates for', endpoint, urls);
+
+        let lastError = null;
+        for (const url of urls) {
+          try {
+            console.info('[BEACON] trying backend URL:', url);
+            const response = await fetch(url, options);
+            if (!response.ok) {
+              const text = await response.text().catch(() => 'Unable to read response body');
+              throw new Error(`HTTP Error ${response.status} fetching ${url}: ${text}`);
+            }
+            return response;
+          } catch (err) {
+            const cleanedMessage = err.message?.replace(/^NetworkError:\s*/i, '') || err.toString();
+            const wrappedError = isNetworkError(err)
+              ? new Error(`NetworkError fetching ${url}: ${cleanedMessage}`)
+              : new Error(`Error fetching ${url}: ${cleanedMessage}`);
+            console.warn(`[BEACON] fetch failed for ${url}:`, wrappedError);
+            lastError = wrappedError;
+          }
+        }
+
+        if (lastError) {
+          throw lastError;
+        }
+        throw new Error('Unable to reach Beacon backend.');
+    }
+
+    console.info('[BEACON] API_BASE_URL:', API_BASE_URL);
 
     // GENERADOR DE ESTRELLAS DINÁMICO
     function generateStars(count = 40) {
@@ -428,6 +548,8 @@
     let lastAnalyzedText = "";
     let rawAnalysisMarkdown = "";
     let currentRefutationText = "";
+    let droppedFile = null;
+    const dropZone = document.getElementById('drop-zone');
 
     // FUNCIÓN PARA RENDERIZAR TEXTO FORMATEADO EN PANTALLA
     function displayReportText(text) {
@@ -561,12 +683,44 @@
     btnEn.addEventListener('click', () => changeLanguage('en'));
 
     userFile.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        fileNameDisplay.innerText = e.target.files[0].name;
+      droppedFile = e.target.files[0] || null;
+      if (droppedFile) {
+        fileNameDisplay.innerText = droppedFile.name;
       } else {
         fileNameDisplay.innerText = langMap[currentLang].fileBtn;
       }
     });
+
+    if (dropZone) {
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          droppedFile = files[0];
+          fileNameDisplay.innerText = droppedFile.name;
+          if (!userInput.value.trim()) {
+            userInput.value = '';
+          }
+          return;
+        }
+
+        const droppedText = e.dataTransfer.getData('text/plain');
+        if (droppedText) {
+          userInput.value = droppedText;
+        }
+      });
+    }
 
     function startEthicSpinner() {
       const letters = ['A', 'B', 'C', 'D', 'S', 'X'];
@@ -635,7 +789,7 @@
     // =====================================================================
     btnAnalyze.addEventListener('click', async () => {
       const text = userInput.value.trim();
-      const file = userFile.files[0];
+      const file = droppedFile || userFile.files[0];
       const t = langMap[currentLang];
 
       if (!text && !file) {
@@ -647,7 +801,7 @@
         return alert(errorMsg[currentLang] || errorMsg.fr);
       }
 
-      lastAnalyzedText = text;
+      lastAnalyzedText = text || (file ? file.name : "");
       btnAnalyze.disabled = true;
       resultsPanel.style.display = 'block';
 
@@ -673,12 +827,12 @@
           formData.append('text', text);
           formData.append('lang', currentLang);
 
-          response = await fetch(`${API_BASE_URL}/analyze`, {
+          response = await beaconFetch('/analyze', {
             method: 'POST',
             body: formData
           });
         } else {
-          response = await fetch(`${API_BASE_URL}/analyze`, {
+          response = await beaconFetch('/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text, lang: currentLang })
@@ -695,7 +849,7 @@
 
       } catch (e) {
         console.error("[BEACON Challenge Error]:", e);
-        alert(`${t.refuteError}\n(${e.message})`);
+        alert(`${t.refuteError}\n(${formatBeaconError(e)})`);
         displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
       } finally {
         btnAnalyze.disabled = false;
@@ -717,8 +871,7 @@
       btnRefute.innerText = t.refuting;
 
       try {
-        // Volvemos al endpoint exacto que tiene configurado tu backend: /refute
-        const response = await fetch(`${API_BASE_URL}/refute`, {
+        const response = await beaconFetch('/refute', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -730,10 +883,6 @@
             lang: currentLang
           })
         });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
 
         const data = await response.json();
         const refutationText = data.refutation || data.challenge || data.reply || '';
@@ -753,16 +902,16 @@
         }
       } catch (e) {
         console.error("[Refutation Error]:", e);
-        alert(`${t.refuteError} (${e.message})`);
+        alert(`${t.refuteError} (${formatBeaconError(e)})`);
       } finally {
         btnRefute.disabled = false;
         btnRefute.innerText = t.refuteBtn;
       }
     });
     // =====================================================================
-    //  EXPORTACIÓN A PDF (100% CLIENTE, VÍA html2pdf.js)
+    //  EXPORTACIÓN A PDF (SERVIDOR BACKEND, ESTILO TARJETA)
     // =====================================================================
-    btnPdf.addEventListener('click', () => {
+    btnPdf.addEventListener('click', async () => {
       const reportText = rawAnalysisMarkdown || analysisReport.innerText;
       const lang = currentLang || 'fr';
       const t = langMap[lang] || langMap['fr'];
@@ -771,89 +920,70 @@
         return alert(t.noExportAlert);
       }
 
-      // Clonamos el panel de resultados tal cual se ve en pantalla (score, flags, texto)
-      // para que el PDF conserve el mismo formato/estilo que la interfaz.
-      const sourceNode = document.getElementById('results-panel');
-      const clone = sourceNode.cloneNode(true);
-      clone.style.display = 'block';
-      clone.style.background = '#0f172a';
-      clone.style.maxWidth = '100%';
-      clone.style.boxShadow = 'none';
+      btnPdf.disabled = true;
+      btnPdf.innerText = `${t.pdfBtn}...`;
 
-      const wrapper = document.createElement('div');
-      wrapper.style.padding = '20px';
-      wrapper.style.background = '#0f172a';
+      const flags = Array.from(document.querySelectorAll('#detected-flags-container .flag-badge'))
+        .map(el => el.innerText.trim())
+        .filter(Boolean);
 
-      const title = document.createElement('h1');
-      title.innerText = 'POLETHIC BEACON';
-      title.style.color = '#00E5FF';
-      title.style.fontFamily = "'Courier New', Courier, monospace";
-      title.style.fontSize = '20px';
-      title.style.marginBottom = '4px';
+      const scoreMapping = { A: 92, B: 78, C: 64, D: 38, F: 15 };
+      const numericScore = scoreMapping[currentScoreLetter] || 50;
 
-      const sub = document.createElement('div');
-      sub.innerText = `${new Date().toLocaleString()} — Ethic-Score™: ${currentScoreLetter}`;
-      sub.style.color = '#00ff88';
-      sub.style.fontFamily = "'Courier New', Courier, monospace";
-      sub.style.fontSize = '11px';
-      sub.style.marginBottom = '14px';
+      try {
+        const analysisPayload = rawAnalysisMarkdown || reportText;
+        const refutationPayload = currentRefutationText && !analysisPayload.includes(currentRefutationText)
+          ? currentRefutationText
+          : '';
 
-      wrapper.appendChild(title);
-      wrapper.appendChild(sub);
-      wrapper.appendChild(clone);
+        const response = await beaconFetch('/export_pdf', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/pdf'
+          },
+          body: JSON.stringify({
+            score: numericScore,
+            flags,
+            lang,
+            analysis: analysisPayload,
+            refutation: refutationPayload
+          })
+        });
 
-      if (currentRefutationText) {
-        const refuteBlock = document.createElement('div');
-        refuteBlock.style.marginTop = '18px';
-        refuteBlock.style.borderLeft = '3px solid #ffe600';
-        refuteBlock.style.paddingLeft = '10px';
+        const contentType = response.headers.get('Content-Type') || '';
+        if (!response.ok) {
+          let details = '';
+          if (contentType.includes('application/json')) {
+            const errorBody = await response.json().catch(() => null);
+            details = errorBody?.error || JSON.stringify(errorBody || {});
+          } else {
+            details = await response.text().catch(() => response.statusText);
+          }
+          throw new Error(`HTTP ${response.status}: ${details}`);
+        }
 
-        const refuteTitle = document.createElement('h3');
-        const titleMap = {
-          fr: "DÉFI DU BIAIS (RÉFUTATION COGNITIVE)",
-          es: "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA)",
-          en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
-        };
-        refuteTitle.innerText = titleMap[lang] || titleMap.fr;
-        refuteTitle.style.color = '#ffe600';
-        refuteTitle.style.fontFamily = "'Courier New', Courier, monospace";
-        refuteTitle.style.fontSize = '13px';
+        if (contentType.includes('application/json')) {
+          const errorBody = await response.json().catch(() => null);
+          throw new Error(errorBody?.error || 'El servidor devolvió JSON en lugar de PDF.');
+        }
 
-        const refuteBody = document.createElement('div');
-        refuteBody.style.color = '#d0e0e0';
-        refuteBody.style.fontSize = '11px';
-        refuteBody.style.whiteSpace = 'pre-wrap';
-        refuteBody.innerText = currentRefutationText;
-
-        refuteBlock.appendChild(refuteTitle);
-        refuteBlock.appendChild(refuteBody);
-        wrapper.appendChild(refuteBlock);
-      }
-
-      const opt = {
-        margin: 10,
-        filename: `RAPPORT_BEACON_${currentScoreLetter}_${new Date().toISOString().slice(0, 10)}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, backgroundColor: '#0f172a' },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-
-      // html2canvas necesita que el nodo esté realmente insertado en el documento
-      // para calcular su layout y capturar colores/fondos correctamente. Lo insertamos
-      // fuera de la pantalla (no display:none, que tampoco se renderiza), generamos
-      // el PDF, y lo quitamos al terminar.
-      wrapper.style.position = 'fixed';
-      wrapper.style.top = '0';
-      wrapper.style.left = '-9999px';
-      wrapper.style.width = '800px';
-      document.body.appendChild(wrapper);
-
-      html2pdf().set(opt).from(wrapper).save().then(() => {
-        document.body.removeChild(wrapper);
-      }).catch((err) => {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `RAPPORT_BEACON_${currentScoreLetter}_${new Date().toISOString().slice(0, 10)}.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
         console.error('[PDF Export Error]:', err);
-        document.body.removeChild(wrapper);
-      });
+        alert(`PDF export failed: ${err.message}`);
+      } finally {
+        btnPdf.disabled = false;
+        btnPdf.innerText = t.pdfBtn;
+      }
     });
 
     // =====================================================================
