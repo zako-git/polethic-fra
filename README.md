@@ -118,11 +118,11 @@ L'Ethic-Score evalue l'integrite rhetorique et epistemique du contenu, et non la
 
 | Niveau | Plage indicative | Decision | Signaux typiques |
 | --- | --- | --- | --- |
-| A | 85-100 | Conforme / rigueur scientifique | Faits verifiables, sources, affiliations et donnees empiriques; aucun flag critique. |
-| B | 70-84 | Vigilance mineure / communication commerciale | Autopresentation B2B/B2C standard, ambiguite methodologique, glissement d'expertise ou cadrage persuasif leger. |
+| E | 85-100 | Conforme / rigueur scientifique | Faits verifiables, sources, affiliations et donnees empiriques; aucun flag critique. |
+| D | 70-84 | Vigilance mineure / communication commerciale | Autopresentation B2B/B2C standard, ambiguite methodologique, glissement d'expertise ou cadrage persuasif leger. |
 | C | 50-69 | Attention requise / elements non eprouves | Pseudo-science, biais d'autorite, blanchiment scientifique, croyance transgenerationnelle ou promesse implicite. |
-| D | 30-49 | Vigilance elevee / derive therapeutique | Promesse therapeutique, pseudo-medecine, application d'une pratique non validee a une pathologie physique, biais d'anecdote, validation croisee ou rhetorique virale fortement manipulatrice. |
-| E | 0-29 | Alerte critique / emprise ou fraude manifeste | Injonction au decrochage medical, emprise psychologique, theorie du complot medical ou rhetorique cultuelle. |
+| B | 30-49 | Vigilance elevee / derive therapeutique | Promesse therapeutique, pseudo-medecine, application d'une pratique non validee a une pathologie physique, biais d'anecdote, validation croisee ou rhetorique virale fortement manipulatrice. |
+| A | 0-29 | Alerte critique / emprise ou fraude manifeste | Injonction au decrochage medical, emprise psychologique, theorie du complot medical ou rhetorique cultuelle. |
 
 Les indicateurs sont detectes dans les trois langues. Par exemple, une combinaison du type `BREAKING`, `they don't want you to know`, `one simple trick` et `share before they delete this` est classee D: elle associe sensationnalisme, cadrage conspirationniste, promesse miracle et injonction de diffusion, sans constituer a elle seule une preuve de pseudoscience de niveau E.
 
