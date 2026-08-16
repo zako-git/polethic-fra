@@ -467,7 +467,7 @@
   <script>
   document.addEventListener('DOMContentLoaded', () => {
     const LOCAL_API_BASE_URL = 'http://127.0.0.1:5000';
-    const REMOTE_API_BASE_URL = 'https://super-duper-enigma-6vvg7xx5j6gg254gq-5000.app.github.dev';
+    const DEPLOYED_API_BASE_URL = 'https://tu-backend-en-render-o-railway.com';
 
     function getGithubDevBackendCandidates(hostname, endpoint) {
       const urls = [];
@@ -508,6 +508,10 @@
           return window.location.origin;
         }
 
+        if (hostname.includes('github.io')) {
+          return DEPLOYED_API_BASE_URL;
+        }
+
         const githubDevUrls = getGithubDevBackendCandidates(hostname, '');
         if (githubDevUrls.length > 0) {
           console.info('[BEACON] GitHub.dev backend candidates:', githubDevUrls);
@@ -533,14 +537,14 @@
       async function beaconFetch(endpoint, options = {}) {
         const hostname = window.location.hostname.toLowerCase();
         const githubDevUrls = getGithubDevBackendCandidates(hostname, endpoint);
-        const urls = [...githubDevUrls];
+        const urls = [`${API_BASE_URL}${endpoint}`, ...githubDevUrls];
         const localUrl = `${LOCAL_API_BASE_URL}${endpoint}`;
 
         if ((window.location.protocol === 'http:' || window.location.protocol === 'file:') && !urls.includes(localUrl)) {
           urls.push(localUrl);
         }
 
-        const remoteUrl = `${REMOTE_API_BASE_URL}${endpoint}`;
+        const remoteUrl = `${DEPLOYED_API_BASE_URL}${endpoint}`;
         if (!urls.includes(remoteUrl)) {
           urls.push(remoteUrl);
         }

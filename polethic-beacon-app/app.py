@@ -1,8 +1,9 @@
 import os
 import re
 import json
+import hashlib
 import unicodedata
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from huggingface_hub import InferenceClient
@@ -1780,6 +1781,22 @@ def extract_pdf_text(file_storage):
         return None
 
 
+# =====================================================================
+# FUNCIONES AUXILIARES Y UTILIDADES DE AUDITORIA
+# =====================================================================
+def generate_audit_metadata(input_text, pdf_bytes=None):
+    """Generate verifiable UTC and SHA-256 audit metadata for an analysis."""
+    text_hash = hashlib.sha256(input_text.encode("utf-8")).hexdigest()
+    pdf_hash = hashlib.sha256(pdf_bytes).hexdigest() if pdf_bytes else None
+
+    return {
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "text_hash_sha256": text_hash,
+        "pdf_hash_sha256": pdf_hash,
+        "audit_id": text_hash[:12].upper(),
+    }
+
+
 @app.route("/", methods=["GET"])
 def home():
     """Serve the main Beacon UI when opening the backend root URL."""
@@ -1864,6 +1881,7 @@ def analyze():
         if not content_to_analyze:
             return jsonify({"error": "No content provided"}), 400
 
+        audit_meta = generate_audit_metadata(content_to_analyze)
         template = TEMPLATES.get(lang, TEMPLATES["fr"])
         preliminary_hits = local_match_rules(
             content_to_analyze,
@@ -1935,14 +1953,17 @@ def analyze():
         save_audit("CORE", source_type, content_to_analyze, final_score, clean_analysis)
 
         return jsonify({
+            "status": "success",
             "analysis": clean_analysis,
             "report": clean_analysis,
+            "score": final_score,
             "flags": final_flags,
             "ethic_letter": ethic_letter,
             "scoreLetter": ethic_letter,
             "risk_grade": ethic_letter,
             "risk_label": get_risk_intensity_comment(risk_score, lang),
-            "risk_indicators": risk_indicators
+            "risk_indicators": risk_indicators,
+            "audit_metadata": audit_meta,
         }), 200
 
     except Exception as err:

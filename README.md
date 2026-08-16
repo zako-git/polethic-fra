@@ -188,9 +188,16 @@ curl -X POST http://127.0.0.1:5000/analyze \
 		└── static/
 ```
 
-### Licence et responsabilite
+### Licence, responsabilité et usage
 
-Ce projet est oriente autodéfense cognitive et analyse de rhetorique. Il ne remplace ni une expertise clinique, ni un conseil juridique, ni une verification scientifique formelle par un professionnel qualifie.
+Ce projet est distribué sous licence [MIT / Apache 2.0].
+
+**Périmètre d'utilisation :**
+POLETHIC BEACON est un moteur d'analyse métacommunicationnelle et d'autodéfense cognitive. 
+Dans sa version standard, il constitue un outil d'assistance, d'éducation et de prévention.
+
+- **Avis médical et clinique :** Le système identifie des structures linguistiques (dont le modèle BITE) et ne constitue pas un diagnostic clinique.
+- **Avis juridique :** Les rapports standards sont fournis à titre indicatif. L'architecture technique intègre la traçabilité des données (hashes de contrôle), permettant à un perito ou expert qualifié de ratifier les résultats dans le cadre d'une procédure formelle.
 
 ---
 
