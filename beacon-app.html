@@ -510,7 +510,13 @@
       async function beaconFetch(endpoint, options = {}) {
         const url = `${BEACON_API_URL}${endpoint}`;
         const controller = new AbortController();
-        const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+        const timeoutId = window.setTimeout(() => controller.abort(), 60000);
+        const statusElement = document.getElementById('txt-status');
+        const previousStatus = statusElement?.textContent;
+
+        if (endpoint === '/analyze' && statusElement) {
+          statusElement.textContent = 'Conectando con el servidor (esto puede tomar hasta 45 s si el servicio estaba en reposo)...';
+        }
 
         try {
           console.info('[BEACON] requesting backend URL:', url);
@@ -529,6 +535,9 @@
           throw new Error(message);
         } finally {
           window.clearTimeout(timeoutId);
+          if (endpoint === '/analyze' && statusElement) {
+            statusElement.textContent = previousStatus;
+          }
         }
       }
 
