@@ -478,30 +478,6 @@
     const LOCAL_API_BASE_URL = 'http://127.0.0.1:5000';
     const DEPLOYED_API_BASE_URL = 'https://polethic-beacon-api.onrender.com';
 
-    function getGithubDevBackendCandidates(hostname, endpoint) {
-      const urls = [];
-      const normalized = hostname.toLowerCase();
-
-      if (normalized.endsWith('-5500.app.github.dev')) {
-        urls.push(`https://${normalized.replace('-5500.app.github.dev', '-5000.app.github.dev')}${endpoint}`);
-        urls.push(`https://${normalized.replace('-5500.app.github.dev', '-5000.github.dev')}${endpoint}`);
-      }
-
-      if (normalized.endsWith('-5500.github.dev')) {
-        urls.push(`https://${normalized.replace('-5500.github.dev', '-5000.github.dev')}${endpoint}`);
-      }
-
-      if (normalized.endsWith('-5500.githubusercontent.com')) {
-        urls.push(`https://${normalized.replace('-5500.githubusercontent.com', '-5000.githubusercontent.com')}${endpoint}`);
-      }
-
-      if (normalized.includes('-5500') && urls.length === 0) {
-        urls.push(`https://${normalized.replace('-5500', '-5000')}${endpoint}`);
-      }
-
-      return urls.filter((value, index, self) => self.indexOf(value) === index);
-    }
-
     function isGithubDevPreviewHost(hostname) {
       const lower = hostname.toLowerCase();
       return lower.includes('-5500.app.github.dev') || lower.includes('-5500.github.dev') || lower.includes('-5500.githubusercontent.com');
@@ -525,14 +501,7 @@
           return DEPLOYED_API_BASE_URL;
         }
 
-        const githubDevUrls = getGithubDevBackendCandidates(hostname, '');
-        if (githubDevUrls.length > 0) {
-          console.info('[BEACON] GitHub.dev backend candidates:', githubDevUrls);
-          return githubDevUrls[0];
-        }
-
-        console.info('[BEACON] no GitHub.dev backend rewrite found for hostname:', hostname);
-        return window.location.origin || DEPLOYED_API_BASE_URL;
+        return DEPLOYED_API_BASE_URL;
       })();
 
       function isNetworkError(err) {
@@ -566,26 +535,7 @@
       }
 
       async function beaconFetch(endpoint, options = {}) {
-        const hostname = window.location.hostname.toLowerCase();
-        const githubDevUrls = getGithubDevBackendCandidates(hostname, endpoint);
-        const urls = [`${API_BASE_URL}${endpoint}`, ...githubDevUrls];
-        const localUrl = `${LOCAL_API_BASE_URL}${endpoint}`;
-
-        if ((window.location.protocol === 'http:' || window.location.protocol === 'file:') && !urls.includes(localUrl)) {
-          urls.push(localUrl);
-        }
-
-        const remoteUrl = `${DEPLOYED_API_BASE_URL}${endpoint}`;
-        if (!urls.includes(remoteUrl)) {
-          urls.push(remoteUrl);
-        }
-
-        if (!isGithubDevPreviewHost(hostname)) {
-          const originUrl = `${window.location.origin}${endpoint}`;
-          if (!urls.includes(originUrl)) {
-            urls.push(originUrl);
-          }
-        }
+        const urls = [`${API_BASE_URL}${endpoint}`];
 
         console.info('[BEACON] backend candidates for', endpoint, urls);
 
