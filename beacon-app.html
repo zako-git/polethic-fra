@@ -475,34 +475,7 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const LOCAL_API_BASE_URL = 'http://127.0.0.1:5000';
-    const DEPLOYED_API_BASE_URL = 'https://polethic-beacon-api.onrender.com';
-
-    function isGithubDevPreviewHost(hostname) {
-      const lower = hostname.toLowerCase();
-      return lower.includes('-5500.app.github.dev') || lower.includes('-5500.github.dev') || lower.includes('-5500.githubusercontent.com');
-    }
-
-    const API_BASE_URL = (() => {
-        if (window.location.protocol === 'file:') {
-          return LOCAL_API_BASE_URL;
-        }
-
-        const hostname = window.location.hostname.toLowerCase();
-        if (hostname === 'localhost' || hostname === '127.0.0.1') {
-          return window.location.origin;
-        }
-
-        if (hostname.includes('github.io')) {
-          return DEPLOYED_API_BASE_URL;
-        }
-
-        if (isGithubDevPreviewHost(hostname)) {
-          return DEPLOYED_API_BASE_URL;
-        }
-
-        return DEPLOYED_API_BASE_URL;
-      })();
+    const BEACON_API_URL = 'https://polethic-beacon-api.onrender.com';
 
       function isNetworkError(err) {
         return err instanceof TypeError || err.name === 'TypeError' || err.message?.includes('NetworkError');
@@ -535,41 +508,31 @@
       }
 
       async function beaconFetch(endpoint, options = {}) {
-        const urls = [`${API_BASE_URL}${endpoint}`];
+        const url = `${BEACON_API_URL}${endpoint}`;
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 12000);
 
-        console.info('[BEACON] backend candidates for', endpoint, urls);
-
-        let lastError = null;
-        for (const url of urls) {
-          const controller = new AbortController();
-          const timeoutId = window.setTimeout(() => controller.abort(), 12000);
-          try {
-            console.info('[BEACON] trying backend URL:', url);
-            const response = await fetch(url, { ...options, signal: controller.signal });
-            if (!response.ok) {
-              const text = await response.text().catch(() => 'Unable to read response body');
-              throw new Error(`HTTP Error ${response.status} fetching ${url}: ${text}`);
-            }
-            return response;
-          } catch (err) {
-            const cleanedMessage = err.message?.replace(/^NetworkError:\s*/i, '') || err.toString();
-            const wrappedError = isNetworkError(err)
-              ? new Error(`NetworkError fetching ${url}: ${cleanedMessage}`)
-              : new Error(`Error fetching ${url}: ${cleanedMessage}`);
-            console.warn(`[BEACON] fetch failed for ${url}:`, wrappedError);
-            lastError = wrappedError;
-          } finally {
-            window.clearTimeout(timeoutId);
+        try {
+          console.info('[BEACON] requesting backend URL:', url);
+          const response = await fetch(`${BEACON_API_URL}${endpoint}`, { ...options, signal: controller.signal });
+          if (!response.ok) {
+            const text = await response.text().catch(() => 'Unable to read response body');
+            throw new Error(`HTTP Error ${response.status} fetching ${url}: ${text}`);
           }
+          return response;
+        } catch (err) {
+          const cleanedMessage = err.message?.replace(/^NetworkError:\s*/i, '') || err.toString();
+          const message = isNetworkError(err)
+            ? `NetworkError fetching ${url}: ${cleanedMessage}`
+            : `Error fetching ${url}: ${cleanedMessage}`;
+          console.warn(`[BEACON] fetch failed for ${url}:`, message);
+          throw new Error(message);
+        } finally {
+          window.clearTimeout(timeoutId);
         }
+      }
 
-        if (lastError) {
-          throw lastError;
-        }
-        throw new Error('Unable to reach Beacon backend.');
-    }
-
-    console.info('[BEACON] API_BASE_URL:', API_BASE_URL);
+    console.info('[BEACON] API URL:', BEACON_API_URL);
 
     // GENERADOR DE ESTRELLAS DINÁMICO
     function generateStars(count = 40) {
