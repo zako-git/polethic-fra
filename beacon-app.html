@@ -5,12 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BEACON LAB | POLETHIC France</title>
 
-  <!-- Librería jsPDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Librería html2pdf.js para exportación PDF directamente en el cliente -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <!-- Parser de Markdown para renderizar negritas y listas en la web -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 
   <style>
     /* ==========================================
@@ -386,6 +383,18 @@
     .shield-title { font-family: var(--font-cyber); color: var(--cyber-green); font-weight: bold; font-size: 0.95rem; }
     .shield-disclaimer { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
     .copyright { font-family: var(--font-cyber); font-size: 0.75rem; color: #64748b; }
+
+    @media (max-width: 620px) {
+      .container { padding: 0 14px; }
+      .beacon-title-block { margin: 28px 0 18px; }
+      .hero-app-title { font-size: 2rem; letter-spacing: 2px; }
+      .drop-zone, .results-card { padding: 16px; border-radius: 8px; }
+      .input-actions-bar, .results-actions { align-items: stretch; flex-direction: column; }
+      .file-upload-btn, .btn-beacon-primary, .btn-action-refute, .btn-action-pdf, .btn-action-purge { justify-content: center; width: 100%; }
+      .nav-buttons { gap: 10px; }
+      .nav-btn { font-size: 0.78rem; }
+      .report-box { overflow-wrap: anywhere; }
+    }
   </style>
 </head>
 <body>
@@ -467,7 +476,7 @@
   <script>
   document.addEventListener('DOMContentLoaded', () => {
     const LOCAL_API_BASE_URL = 'http://127.0.0.1:5000';
-    const DEPLOYED_API_BASE_URL = 'https://tu-backend-en-render-o-railway.com';
+    const DEPLOYED_API_BASE_URL = 'https://polethic-beacon-api.onrender.com';
 
     function getGithubDevBackendCandidates(hostname, endpoint) {
       const urls = [];
@@ -512,6 +521,10 @@
           return DEPLOYED_API_BASE_URL;
         }
 
+        if (isGithubDevPreviewHost(hostname)) {
+          return DEPLOYED_API_BASE_URL;
+        }
+
         const githubDevUrls = getGithubDevBackendCandidates(hostname, '');
         if (githubDevUrls.length > 0) {
           console.info('[BEACON] GitHub.dev backend candidates:', githubDevUrls);
@@ -519,7 +532,7 @@
         }
 
         console.info('[BEACON] no GitHub.dev backend rewrite found for hostname:', hostname);
-        return window.location.origin || REMOTE_API_BASE_URL;
+        return window.location.origin || DEPLOYED_API_BASE_URL;
       })();
 
       function isNetworkError(err) {
@@ -532,6 +545,24 @@
           return `NetworkError: ${err.message.replace(/^NetworkError:\s*/i, '')}`;
         }
         return err.message;
+      }
+
+      function buildLocalFallbackReport(text, lang) {
+        const normalized = text.toLowerCase();
+        const rules = [
+          { flag: 'PSEUDOSCIENCE', words: ['quantum healing', 'biodescodificacion', 'bioneuroemocion', 'cura milagro'] },
+          { flag: 'PROMESA MILAGRO', words: ['milagro', 'cura el cancer', 'solucion secreta', 'one simple trick'] },
+          { flag: 'RETORICA COERCITIVA', words: ['debes', 'sin dudar', 'must', 'urgent'] },
+        ];
+        const flags = rules.filter(({ words }) => words.some(word => normalized.includes(word))).map(({ flag }) => flag);
+        const score = Math.max(40, 82 - flags.length * 14);
+        const scoreLetter = score >= 75 ? 'B' : score >= 56 ? 'C' : 'D';
+        const messages = {
+          fr: `## Mode local\n\nLe serveur d'analyse est indisponible. Ce rapport provisoire utilise uniquement des règles locales.\n\n- Score provisoire : **${scoreLetter}**\n- Signaux : ${flags.join(', ') || 'aucun signal lexical détecté'}`,
+          es: `## Modo local\n\nEl servidor de análisis no está disponible. Este informe provisional usa únicamente reglas locales.\n\n- Puntuación provisional: **${scoreLetter}**\n- Señales: ${flags.join(', ') || 'sin señales léxicas detectadas'}`,
+          en: `## Local mode\n\nThe analysis server is unavailable. This provisional report uses local rules only.\n\n- Provisional score: **${scoreLetter}**\n- Signals: ${flags.join(', ') || 'no lexical signals detected'}`,
+        };
+        return { analysis: messages[lang] || messages.fr, flags, scoreLetter };
       }
 
       async function beaconFetch(endpoint, options = {}) {
@@ -560,9 +591,11 @@
 
         let lastError = null;
         for (const url of urls) {
+          const controller = new AbortController();
+          const timeoutId = window.setTimeout(() => controller.abort(), 12000);
           try {
             console.info('[BEACON] trying backend URL:', url);
-            const response = await fetch(url, options);
+            const response = await fetch(url, { ...options, signal: controller.signal });
             if (!response.ok) {
               const text = await response.text().catch(() => 'Unable to read response body');
               throw new Error(`HTTP Error ${response.status} fetching ${url}: ${text}`);
@@ -575,6 +608,8 @@
               : new Error(`Error fetching ${url}: ${cleanedMessage}`);
             console.warn(`[BEACON] fetch failed for ${url}:`, wrappedError);
             lastError = wrappedError;
+          } finally {
+            window.clearTimeout(timeoutId);
           }
         }
 
@@ -635,13 +670,10 @@
     // FUNCIÓN PARA RENDERIZAR TEXTO FORMATEADO EN PANTALLA
     function displayReportText(text) {
       rawAnalysisMarkdown = text;
-      if (window.marked) {
-        analysisReport.innerHTML = marked.parse(text);
+      if (window.marked && window.DOMPurify) {
+        analysisReport.innerHTML = DOMPurify.sanitize(marked.parse(text));
       } else {
-        let formatted = text
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/^- (.*$)/gim, ' $1');
-        analysisReport.innerHTML = formatted;
+        analysisReport.textContent = text;
       }
     }
 
@@ -946,9 +978,15 @@
         displayReportText(data.analysis || data.report || 'Analyse terminée.');
 
       } catch (e) {
-        console.error("[BEACON Challenge Error]:", e);
-        alert(`${t.refuteError}\n(${formatBeaconError(e)})`);
-        displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
+        console.error("[BEACON Analyze Error]:", e);
+        if (text) {
+          const localResult = buildLocalFallbackReport(text, currentLang);
+          applyEthicBadge(localResult.scoreLetter, localResult.flags);
+          displayReportText(localResult.analysis);
+        } else {
+          alert(`${serverErrMsg[currentLang] || serverErrMsg.fr}\n(${formatBeaconError(e)})`);
+          displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
+        }
       } finally {
         btnAnalyze.disabled = false;
       }
@@ -993,7 +1031,7 @@
             en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
           };
           
-          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n<div class="report-refutation-divider" aria-hidden="true"></div>\n<div class="report-refutation-title">${titleMap[currentLang] || titleMap.fr}</div>\n<div class="report-refutation-divider" aria-hidden="true"></div>\n${refutationText}`;
+          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n---\n\n## ${titleMap[currentLang] || titleMap.fr}\n\n---\n\n${refutationText}`;
           displayReportText(updatedMarkdown);
         } else {
           alert("Le serveur n'a pas renvoyé de texte de réfutation.");

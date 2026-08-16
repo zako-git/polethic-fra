@@ -33,8 +33,21 @@ except ImportError:
     pytesseract = None
 
 app = Flask(__name__)
-# Habilitar CORS explícito para permitir peticiones AJAX desde cualquier origen
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+# Configure the public site origin in deployment, for example:
+# FRONTEND_ORIGINS=https://zako-git.github.io
+FRONTEND_ORIGINS = {
+    origin.strip()
+    for origin in os.environ.get(
+        "FRONTEND_ORIGINS",
+        "https://zako-git.github.io,http://localhost:5000,http://127.0.0.1:5000",
+    ).split(",")
+    if origin.strip()
+}
+CORS(
+    app,
+    resources={r"/*": {"origins": sorted(FRONTEND_ORIGINS)}},
+    supports_credentials=False,
+)
 
 # =====================================================================
 # CONFIGURACIÓN Y CLIENTE HUGGINGFACE
