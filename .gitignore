@@ -3,3 +3,18 @@
 **/__pycache__/
 **/.pytest_cache/
 *.pyc
+
+# Local BEACON artifacts and maintenance history
+backend/.env
+backend/beacon.db
+backend/app.py.bak
+backend/fix*.py
+backend/force_phase2.py
+backend/update_visual_format.py
+backend/package-lock.json
+backend/seed.py
+backend/static/
+backend/templates/
+
+# Personal editor configuration
+.vscode/settings.json

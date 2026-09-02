@@ -249,26 +249,107 @@
     }
 
     .report-box {
-      background: #0f172a;
-      padding: 15px;
-      color: #d0e0e0;
-      font-family: var(--font-cyber);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      border-radius: 8px;
+      background: transparent;
+      padding: 0;
+      color: #dfe7f4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 0.85rem !important;
+      line-height: 1.55;
+      white-space: normal;
+      border-radius: 0;
+      border: none;
     }
 
     .report-box strong {
-      color: var(--cyber-cyan);
-      font-weight: bold;
+      color: #f8fafc;
+      font-weight: 700;
     }
 
     .report-box h1, .report-box h2, .report-box h3 {
-      color: var(--cyber-green);
-      margin-top: 12px;
-      margin-bottom: 6px;
-      font-family: var(--font-cyber);
+      color: var(--score-color, #ffffff);
+      margin-top: 18px;
+      margin-bottom: 10px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      border-bottom: none !important;
+      padding-bottom: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .report-box hr {
+      display: none !important;
+      border: none !important;
+      height: 0 !important;
+      margin: 0 !important;
+    }
+
+    .executive-metadata {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 20px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      background: rgba(8, 15, 27, 0.35);
+    }
+
+    .executive-metadata p {
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .report-box p,
+    .report-box li,
+    .report-box ul,
+    .report-box ol,
+    .report-box span {
+      color: #dfe7f4;
+      font-weight: 400;
+      font-size: inherit !important;
+    }
+
+    .report-box blockquote {
+      border-left: 2px solid var(--score-color, #ff0055);
+      margin: 18px 0;
+      padding-left: 16px;
+      color: #aab8c8;
+      font-style: italic;
+    }
+
+    .report-box p {
+      margin-bottom: 18px;
+    }
+
+    .report-box ul {
+      margin: 0 0 18px 18px;
+    }
+
+    .report-box li {
+      margin-bottom: 8px;
+    }
+
+    .report-box li strong,
+    .report-box p strong {
+      color: #edf3ff;
+      font-weight: 700;
+    }
+
+    .report-box .forensic-card,
+    .report-box .quote-block,
+    .report-box .analysis-block {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .report-box .forensic-card {
+      margin-top: 24px;
+    }
+
+    .report-box .bite-inline {
+      display: none !important;
     }
 
     .report-refutation-title {
@@ -282,7 +363,7 @@
 
     .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 
-    .btn-action-refute, .btn-action-pdf, .btn-action-purge {
+    .btn-action-refute, .btn-action-memes, .btn-action-pdf, .btn-action-purge {
       background: transparent;
       font-family: var(--font-cyber);
       padding: 10px 18px;
@@ -295,6 +376,9 @@
 
     .btn-action-refute { border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow); }
     .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; }
+
+    .btn-action-memes { border: 1px solid #ff4f9a; color: #ff4f9a; }
+    .btn-action-memes:hover { background: #ff4f9a; color: #fff; }
 
     .btn-action-pdf { border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); }
     .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; }
@@ -327,56 +411,145 @@
       background: rgba(0, 240, 255, 0.4);
     }
 
-    /* ── Paleta unificada por nivel de Ethic-Score ── */
-    .results-card.score-A {
-      border-color: var(--cyber-green);
-      box-shadow: 0 0 25px rgba(0, 255, 136, 0.35);
+    .report-box strong, .report-box li::marker,
+    .report-box .score-section-title,
+    .report-box .analysis-keyword {
+      color: inherit;
     }
-    .results-card.score-A .ethic-score-badge { background: #00ff88; color: #030a12; box-shadow: 0 0 12px #00ff88; }
-    .results-card.score-A .flag-badge { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.1); }
-    .results-card.score-A .report-box { border-left-color: #00ff88; }
-    .results-card.score-A .report-refutation-divider { background: rgba(0, 255, 136, 0.55); }
-    .results-card.score-A .report-refutation-title { color: #00ff88; }
 
-    .results-card.score-B {
-      border-color: var(--cyber-yellow);
-      box-shadow: 0 0 25px rgba(255, 230, 0, 0.3);
+    .report-box h3 {
+      display: block;
+      margin: 18px 0 10px;
+      padding: 0;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      font-weight: 800;
+      border-bottom: none !important;
+      text-align: left;
     }
-    .results-card.score-B .ethic-score-badge { background: #ffe600; color: #1a1000; box-shadow: 0 0 12px #ffe600; }
-    .results-card.score-B .flag-badge { border-color: #ffe600; color: #ffe600; background: rgba(255,230,0,0.1); }
-    .results-card.score-B .report-box { border-left-color: #ffe600; }
-    .results-card.score-B .report-refutation-divider { background: rgba(255, 230, 0, 0.55); }
-    .results-card.score-B .report-refutation-title { color: #ffe600; }
 
-    .results-card.score-C {
-      border-color: #ff8c00;
-      box-shadow: 0 0 25px rgba(255, 140, 0, 0.28);
+    .report-box h3:first-child {
+      margin-top: 0;
     }
-    .results-card.score-C .ethic-score-badge { background: #ff8c00; color: #0d0600; box-shadow: 0 0 12px #ff8c00; }
-    .results-card.score-C .flag-badge { border-color: #ff8c00; color: #ff8c00; background: rgba(255,140,0,0.1); }
-    .results-card.score-C .report-box { border-left-color: #ff8c00; }
-    .results-card.score-C .report-refutation-divider { background: rgba(255, 140, 0, 0.55); }
-    .results-card.score-C .report-refutation-title { color: #ff8c00; }
 
-    .results-card.score-D {
-      border-color: #ff2a2a;
-      box-shadow: 0 0 25px rgba(255, 42, 42, 0.34);
+    .report-box .forensic-card {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-left: 4px solid rgba(148, 163, 184, 0.9);
+      border-radius: 12px;
+      background: rgba(10, 14, 22, 0.62);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 24px rgba(15, 23, 42, 0.18);
     }
-    .results-card.score-D .ethic-score-badge { background: #ff2a2a; color: #fff; box-shadow: 0 0 12px #ff2a2a; }
-    .results-card.score-D .flag-badge { border-color: #ff2a2a; color: #ff2a2a; background: rgba(255,42,42,0.1); }
-    .results-card.score-D .report-box { border-left-color: #ff2a2a; }
-    .results-card.score-D .report-refutation-divider { background: rgba(255, 42, 42, 0.55); }
-    .results-card.score-D .report-refutation-title { color: #ff2a2a; }
 
-    .results-card.score-E {
-      border-color: #b00020;
-      box-shadow: 0 0 25px rgba(176, 0, 32, 0.38);
+    .report-box .quote-block,
+    .report-box .analysis-block {
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.16);
     }
-    .results-card.score-E .ethic-score-badge { background: #b00020; color: #fff; box-shadow: 0 0 12px #b00020; }
-    .results-card.score-E .flag-badge { border-color: #b00020; color: #b00020; background: rgba(176,0,32,0.12); }
-    .results-card.score-E .report-box { border-left-color: #b00020; }
-    .results-card.score-E .report-refutation-divider { background: rgba(176, 0, 32, 0.55); }
-    .results-card.score-E .report-refutation-title { color: #b00020; }
+
+    .report-box .quote-block {
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    .report-box .analysis-block {
+      background: rgba(8, 15, 27, 0.52);
+    }
+
+    .report-box ul {
+      margin: 0 0 20px 22px;
+      padding-left: 18px;
+    }
+
+    .report-box li {
+      margin-bottom: 10px;
+      line-height: 1.7;
+      opacity: 0.98;
+      font-size: 1rem;
+    }
+
+    .report-box strong {
+      font-weight: 800;
+    }
+
+    /* ── Palette par score, avec visuel lisible et typographie plus élégante ── */
+    .results-card.score-A { border-color: rgba(39, 59, 233, 0.45); box-shadow: 0 0 22px rgba(39, 59, 233, 0.18); }
+    .results-card.score-B { border-color: rgba(9, 170, 41, 0.45); box-shadow: 0 0 22px rgba(9, 170, 41, 0.18); }
+    .results-card.score-C { border-color: rgba(255, 183, 0, 0.45); box-shadow: 0 0 22px rgba(255, 183, 0, 0.18); }
+    .results-card.score-D { border-color: rgba(255, 102, 0, 0.45); box-shadow: 0 0 22px rgba(255, 102, 0, 0.18); }
+    .results-card.score-E { border-color: rgba(255, 0, 85, 0.45); box-shadow: 0 0 22px rgba(255, 0, 85, 0.18); }
+
+    .results-card.score-A .ethic-score-badge { background: #273BE9; color: #fff; }
+    .results-card.score-B .ethic-score-badge { background: #09AA29; color: #fff; }
+    .results-card.score-C .ethic-score-badge { background: #FFB700; color: #120f00; }
+    .results-card.score-D .ethic-score-badge { background: #FF6600; color: #fff; }
+    .results-card.score-E .ethic-score-badge { background: #FF0055; color: #fff; }
+
+    .results-card.score-A .flag-badge { border-color: #273BE9 !important; color: #273BE9 !important; }
+    .results-card.score-B .flag-badge { border-color: #09AA29 !important; color: #09AA29 !important; }
+    .results-card.score-C .flag-badge { border-color: #FFB700 !important; color: #FFB700 !important; }
+    .results-card.score-D .flag-badge { border-color: #FF6600 !important; color: #FF6600 !important; }
+    .results-card.score-E .flag-badge { border-color: #FF0055 !important; color: #FF0055 !important; }
+
+    .results-card.score-A .report-box h1, .results-card.score-A .report-box h2, .results-card.score-A .report-box h3,
+    .results-card.score-A .report-box strong, .results-card.score-A .report-box li::marker,
+    .results-card.score-A .report-box .score-section-title, .results-card.score-A .report-box .analysis-keyword,
+    .results-card.score-A .report-box blockquote { color: #273BE9 !important; }
+    .results-card.score-A .report-box blockquote { border-left-color: #273BE9 !important; }
+
+    .results-card.score-B .report-box h1, .results-card.score-B .report-box h2, .results-card.score-B .report-box h3,
+    .results-card.score-B .report-box strong, .results-card.score-B .report-box li::marker,
+    .results-card.score-B .report-box .score-section-title, .results-card.score-B .report-box .analysis-keyword,
+    .results-card.score-B .report-box blockquote { color: #09AA29 !important; }
+    .results-card.score-B .report-box blockquote { border-left-color: #09AA29 !important; }
+
+    .results-card.score-C .report-box h1, .results-card.score-C .report-box h2, .results-card.score-C .report-box h3,
+    .results-card.score-C .report-box strong, .results-card.score-C .report-box li::marker,
+    .results-card.score-C .report-box .score-section-title, .results-card.score-C .report-box .analysis-keyword,
+    .results-card.score-C .report-box blockquote { color: #FFB700 !important; }
+    .results-card.score-C .report-box blockquote { border-left-color: #FFB700 !important; }
+
+    .results-card.score-D .report-box h1, .results-card.score-D .report-box h2, .results-card.score-D .report-box h3,
+    .results-card.score-D .report-box strong, .results-card.score-D .report-box li::marker,
+    .results-card.score-D .report-box .score-section-title, .results-card.score-D .report-box .analysis-keyword,
+    .results-card.score-D .report-box blockquote { color: #FF6600 !important; }
+    .results-card.score-D .report-box blockquote { border-left-color: #FF6600 !important; }
+
+    .results-card.score-E .report-box h1, .results-card.score-E .report-box h2, .results-card.score-E .report-box h3,
+    .results-card.score-E .report-box strong, .results-card.score-E .report-box li::marker,
+    .results-card.score-E .report-box .score-section-title, .results-card.score-E .report-box .analysis-keyword,
+    .results-card.score-E .report-box blockquote { color: #FF0055 !important; }
+    .results-card.score-E .report-box blockquote { border-left-color: #FF0055 !important; }
+
+    .results-card .report-box { border-left: none; }
+    .results-card .report-refutation-divider { background: rgba(255, 255, 255, 0.12); }
+    .results-card .report-refutation-title { color: #ffffff; }
+
+    #results-panel .flag-badge {
+      border-color: var(--score-color, #FF0055) !important;
+      color: var(--score-color, #FF0055) !important;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    #results-panel .report-box h1,
+    #results-panel .report-box h2,
+    #results-panel .report-box h3,
+    #results-panel .report-box strong,
+    #results-panel .report-box li::marker,
+    #results-panel .report-box .score-section-title,
+    #results-panel .report-box .analysis-keyword,
+    #results-panel .report-box blockquote {
+      color: var(--score-color, #FF0055) !important;
+    }
+
+    #results-panel .report-box blockquote {
+      border-left-color: var(--score-color, #FF0055) !important;
+    }
 
     footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.15); text-align: center; }
     .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.6); }
@@ -457,6 +630,7 @@
 
       <div class="results-actions">
         <button id="btn-refute" class="btn-action-refute"> RÉFUTER / CHALLENGER</button>
+        <button id="btn-memes" class="btn-action-memes"> MEMES</button>
         <button id="btn-pdf" class="btn-action-pdf"> EXPORTER EN PDF</button>
         <button id="btn-purge" class="btn-action-purge"> PURGER</button>
       </div>
@@ -475,7 +649,7 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const BEACON_API_URL = 'https://polethic-beacon-api.onrender.com';
+    const BEACON_API_URL = "http://127.0.0.1:5000";
 
       function isNetworkError(err) {
         return err instanceof TypeError || err.name === 'TypeError' || err.message?.includes('NetworkError');
@@ -508,41 +682,40 @@
       }
 
       async function beaconFetch(endpoint, options = {}) {
-        const url = `${BEACON_API_URL}${endpoint}`;
-        const controller = new AbortController();
-        const timeoutId = window.setTimeout(() => controller.abort(), 60000);
-        const statusElement = document.getElementById('txt-status');
-        const previousStatus = statusElement?.textContent;
+  // Aseguramos que url use la variable global y el endpoint proporcionado
+  const url = `${BEACON_API_URL}${endpoint}`;
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 60000);
+  const statusElement = document.getElementById('txt-status');
+  const previousStatus = statusElement?.textContent;
 
-        if (endpoint === '/analyze' && statusElement) {
-          statusElement.textContent = 'Conectando con el servidor (esto puede tomar hasta 45 s si el servicio estaba en reposo)...';
-        }
+  if (endpoint === '/analyze' && statusElement) {
+    statusElement.textContent = 'Connexion au serveur (cela peut prendre jusqu\'à 45 s si le service était en veille)...';
+  }
 
-        try {
-          console.info('[BEACON] requesting backend URL:', url);
-          const response = await fetch(`${BEACON_API_URL}${endpoint}`, { ...options, signal: controller.signal });
-          if (!response.ok) {
-            const text = await response.text().catch(() => 'Unable to read response body');
-            throw new Error(`HTTP Error ${response.status} fetching ${url}: ${text}`);
-          }
-          return response;
-        } catch (err) {
-          const cleanedMessage = err.message?.replace(/^NetworkError:\s*/i, '') || err.toString();
-          const message = isNetworkError(err)
-            ? `NetworkError fetching ${url}: ${cleanedMessage}`
-            : `Error fetching ${url}: ${cleanedMessage}`;
-          console.warn(`[BEACON] fetch failed for ${url}:`, message);
-          throw new Error(message);
-        } finally {
-          window.clearTimeout(timeoutId);
-          if (endpoint === '/analyze' && statusElement) {
-            statusElement.textContent = previousStatus;
-          }
-        }
-      }
-
-    console.info('[BEACON] API URL:', BEACON_API_URL);
-
+  try {
+    console.info('[BEACON] requesting backend URL:', url);
+    // CORRECCIÓN: usar 'url' en lugar de concatenar BEACON_API_URL de nuevo
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    if (!response.ok) {
+      const text = await response.text().catch(() => 'Unable to read response body');
+      throw new Error(`HTTP Error ${response.status} fetching ${url}: ${text}`);
+    }
+    return response;
+  } catch (err) {
+    const cleanedMessage = err.message?.replace(/^NetworkError:\s*/i, '') || err.toString();
+    const message = isNetworkError(err)
+      ? `NetworkError fetching ${url}: ${cleanedMessage}`
+      : `Error fetching ${url}: ${cleanedMessage}`;
+    console.warn(`[BEACON] fetch failed for ${url}:`, message);
+    throw new Error(message);
+  } finally {
+    window.clearTimeout(timeoutId);
+    if (endpoint === '/analyze' && statusElement) {
+      statusElement.textContent = previousStatus;
+    }
+  }
+}
     // GENERADOR DE ESTRELLAS DINÁMICO
     function generateStars(count = 40) {
       const container = document.getElementById('stars-container');
@@ -573,6 +746,7 @@
     const detectedFlags = document.getElementById('detected-flags-container');
 
     const btnRefute = document.getElementById('btn-refute');
+    const btnMemes = document.getElementById('btn-memes');
     const btnPdf = document.getElementById('btn-pdf');
     const btnPurge = document.getElementById('btn-purge');
 
@@ -586,14 +760,23 @@
     let lastAnalyzedText = "";
     let rawAnalysisMarkdown = "";
     let currentRefutationText = "";
+    let currentMemeText = "";
+    let currentFlags = [];
     let droppedFile = null;
     const dropZone = document.getElementById('drop-zone');
+
+    function normalizeMarkdownPresentation(text) {
+      if (!text || typeof text !== 'string') return '';
+      return String(text).replace(/\r\n/g, '\n').trim();
+    }
 
     // FUNCIÓN PARA RENDERIZAR TEXTO FORMATEADO EN PANTALLA
     function displayReportText(text) {
       rawAnalysisMarkdown = text;
+      const safeText = normalizeMarkdownPresentation(text || '');
       if (window.marked && window.DOMPurify) {
-        analysisReport.innerHTML = DOMPurify.sanitize(marked.parse(text));
+        const rendered = marked.parse(safeText || text || '');
+        analysisReport.innerHTML = DOMPurify.sanitize(rendered);
       } else {
         analysisReport.textContent = text;
       }
@@ -609,6 +792,8 @@
         status: " MOTEUR PRÊT | SYSTEM ONLINE (2026)",
         refuteBtn: " RÉFUTER / CHALLENGER",
         refuting: " GÉNÉRATION DU DÉFI...",
+        memesBtn: " MEMES",
+        noMemeAlert: "Aucune analyse valide disponible pour générer un meme.",
         pdfBtn: " EXPORTER EN PDF",
         purgeBtn: " PURGER",
         shieldTitle: "Bouclier de Protection Professionnelle",
@@ -628,6 +813,8 @@
         status: " MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
         refuteBtn: " REFUTAR / DESAFIAR",
         refuting: " GENERANDO REFUTACIÓN...",
+        memesBtn: " MEMES",
+        noMemeAlert: "No hay un análisis válido para generar un meme.",
         pdfBtn: " EXPORTAR A PDF",
         purgeBtn: " PURGAR",
         shieldTitle: "Escudo de Protección Profesional",
@@ -647,6 +834,8 @@
         status: " ENGINE READY | SYSTEM ONLINE (2026)",
         refuteBtn: " REFUTE / CHALLENGE",
         refuting: " GENERATING CHALLENGE...",
+        memesBtn: " MEMES",
+        noMemeAlert: "No valid analysis is available to generate a meme.",
         pdfBtn: " EXPORT TO PDF",
         purgeBtn: " PURGE",
         shieldTitle: "Professional Protection Shield",
@@ -689,7 +878,16 @@
       'dogma': { es: 'DOGMA', fr: 'DOGME', en: 'DOGMA' },
       'pseudoscience': { es: 'PSEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
       'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
-      'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' }
+      'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
+      'deriva_sectaria_pseudoterapia': { es: 'DERIVA SECTARIA / PSEUDOTERAPIA', fr: 'DÉRIVE SECTAIRE / PSEUDOTHÉRAPIE', en: 'SECTARIAN DRIFT / PSEUDOTHERAPY' },
+      'deriva_sectaria_pseudoterapia': { es: 'DERIVA SECTARIA / PSEUDOTERAPIA', fr: 'DÉRIVE SECTAIRE / PSEUDOTHÉRAPIE', en: 'SECTARIAN DRIFT / PSEUDOTHERAPY' },
+      'coaching_transformation': { es: 'TRANSFORMACIÓN / COACHING', fr: 'TRANSFORMATION / COACHING', en: 'TRANSFORMATION / COACHING' },
+      'consultoria': { es: 'CONSULTORÍA', fr: 'CONSEIL / CONSULTING', en: 'CONSULTING' },
+      'abandono_medico': { es: 'ABANDONO MÉDICO', fr: 'ABANDON MÉDICAL', en: 'MEDICAL ABANDONMENT' },
+      'promesa_milagrosa': { es: 'PROMESA MILAGROSA', fr: 'PROMESSE MIRACLE', en: 'MIRACLE PROMISE' },
+      'persuasion': { es: 'PERSUASIÓN', fr: 'PERSUASION', en: 'PERSUASION' },
+      'injoncion': { es: 'INJONCIÓN', fr: 'INJONCTION', en: 'INJUNCTION' },
+      'glissement_semantique': { es: 'DESLIZAMIENTO SEMÁNTICO', fr: 'GLISSEMENT SÉMANTIQUE', en: 'SEMANTIC DRIFT' }
     };
 
     function changeLanguage(lang) {
@@ -706,6 +904,7 @@
       btnAnalyze.innerText = t.analyzeBtn;
       document.getElementById('txt-status').innerText = t.status;
       btnRefute.innerText = t.refuteBtn;
+      btnMemes.innerText = t.memesBtn;
       btnPdf.innerText = t.pdfBtn;
       btnPurge.innerText = t.purgeBtn;
       document.getElementById('txt-shield-title').innerText = t.shieldTitle;
@@ -763,8 +962,8 @@
     }
 
     function startEthicSpinner() {
-      const letters = ['A', 'B', 'C', 'D', 'S', 'X'];
-      const colors = ['#00ff88', '#ffe600', '#ff8c00', '#ff2a2a'];
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+      const colors = ['#273BE9', '#09AA29', '#FFB700', '#FF6600', '#FF0055'];
       if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
       ethicSpinnerInterval = setInterval(() => {
         const l = letters[Math.floor(Math.random() * letters.length)];
@@ -781,7 +980,7 @@
       }
     }
 
-    const SCORE_COLORS = { A: '#00ff88', B: '#ffe600', C: '#ff8c00', D: '#ff2a2a', E: '#b00020' };
+    const SCORE_COLORS = { A: '#273BE9', B: '#09AA29', C: '#FFB700', D: '#FF6600', E: '#FF0055' };
     const SCORE_LETTERS = new Set(['A','B','C','D','E']);
 
     function applyEthicBadge(letterValue, customFlags) {
@@ -794,19 +993,24 @@
 
       currentScoreLetter = letter;
       ethicScore.innerText = `Ethic-Score™: ${letter}`;
-      // badge color driven by CSS class; inline style kept as fallback for spinner reset
-      ethicScore.style.backgroundColor = '';
+      ethicScore.style.backgroundColor = color;
+      resultsPanel.style.setProperty('--score-color', color);
+      analysisReport.style.setProperty('--score-color', color);
+      detectedFlags.style.setProperty('--score-color', color);
 
-      // Apply score palette to card; removes previous score-* class first
       resultsPanel.className = resultsPanel.className
         .replace(/\bscore-[A-E]\b/g, '').trim();
       resultsPanel.classList.add(`score-${letter}`);
+      resultsPanel.style.setProperty('--score-color', color);
+      analysisReport.style.setProperty('--score-color', color);
+      syncReportScoreColors();
 
       const lang = FLAGS_BY_SCORE[currentLang] ? currentLang : 'fr';
       const flagsToRender = (customFlags && customFlags.length > 0) 
         ? customFlags 
         : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
 
+      currentFlags = Array.isArray(flagsToRender) ? flagsToRender : String(flagsToRender || '').split(',');
       renderFlags(flagsToRender);
     }
 
@@ -816,10 +1020,12 @@
       
       let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
       const lang = currentLang || 'fr';
+      const color = SCORE_COLORS[currentScoreLetter] || '#FF0055';
 
       (flags || ['ANALYSE']).forEach(f => {
-        const rawKey = f.trim().toLowerCase();
-        let displayLabel = f.trim().toUpperCase();
+        const rawValue = f.trim();
+        const rawKey = rawValue.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+        let displayLabel = rawValue.toUpperCase();
         if (FLAG_DICTIONARY[rawKey] && FLAG_DICTIONARY[rawKey][lang]) {
           displayLabel = FLAG_DICTIONARY[rawKey][lang];
         }
@@ -827,8 +1033,29 @@
         const span = document.createElement('span');
         span.className = 'flag-badge';
         span.innerText = displayLabel;
+        span.style.color = color;
+        span.style.borderColor = color;
         detectedFlags.appendChild(span);
       });
+    }
+
+    function syncReportScoreColors() {
+      const color = SCORE_COLORS[currentScoreLetter] || '#FF0055';
+      if (analysisReport) {
+        analysisReport.style.setProperty('--score-color', color);
+        analysisReport.querySelectorAll('h1, h2, h3, strong, blockquote, li::marker, .score-section-title, .analysis-keyword').forEach(el => {
+          el.style.color = color;
+          if (el.tagName === 'BLOCKQUOTE') {
+            el.style.borderLeftColor = color;
+          }
+        });
+      }
+      if (detectedFlags) {
+        detectedFlags.querySelectorAll('.flag-badge').forEach(flag => {
+          flag.style.color = color;
+          flag.style.borderColor = color;
+        });
+      }
     }
 
     // =====================================================================
@@ -850,6 +1077,9 @@
 
       lastAnalyzedText = text || (file ? file.name : "");
       btnAnalyze.disabled = true;
+      btnRefute.disabled = true;
+      btnMemes.disabled = true;
+      btnPdf.disabled = true;
       // Reset palette class before showing so no stale colour leaks from previous run
       resultsPanel.className = resultsPanel.className.replace(/\bscore-[A-E]\b/g, '').trim();
       resultsPanel.style.display = 'block';
@@ -891,13 +1121,19 @@
         if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
         const data = await response.json();
-        const flagsReceived = data.flags || data.detected_flags;
+        const flagsReceived = data.flags || data.detected_flags || [];
+        const band = data.band || data.ethic_class || data.ethic_letter || data.scoreLetter || data.risk_grade || 'C';
+        const bandColor = data.color || data.ethic_color || SCORE_COLORS[band.toUpperCase()] || '#ff9900';
+        const summaryText = data.summary || data.translation || 'Analyse terminée.';
 
-        applyEthicBadge(
-          data.ethic_letter || data.scoreLetter || data.risk_grade || 'C',
-          flagsReceived
-        );
-        displayReportText(data.analysis || data.report || 'Analyse terminée.');
+        applyEthicBadge(band, flagsReceived);
+
+        const analysisText = data.analysis || data.report || summaryText;
+        const renderedText = analysisText || summaryText;
+
+        rawAnalysisMarkdown = renderedText;
+        displayReportText(renderedText);
+        syncReportScoreColors();
 
       } catch (e) {
         console.error("[BEACON Analyze Error]:", e);
@@ -911,6 +1147,9 @@
         }
       } finally {
         btnAnalyze.disabled = false;
+        btnRefute.disabled = false;
+        btnMemes.disabled = false;
+        btnPdf.disabled = false;
       }
     });
 
@@ -943,7 +1182,13 @@
         });
 
         const data = await response.json();
-        const refutationText = data.refutation || data.challenge || data.reply || '';
+        const refutationPayload = data.refutation || data.challenge || data.reply || '';
+        const questionList = Array.isArray(data.questions)
+          ? data.questions
+          : Array.isArray(data.refutation_questions)
+            ? data.refutation_questions
+            : [];
+        const refutationText = refutationPayload || (questionList.length ? questionList.map((q) => `- ${q}`).join('\n\n') : '');
 
         if (refutationText) {
           currentRefutationText = refutationText;
@@ -952,9 +1197,10 @@
             es: "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA)",
             en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
           };
-          
-          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n---\n\n## ${titleMap[currentLang] || titleMap.fr}\n\n---\n\n${refutationText}`;
+
+          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n## ${titleMap[currentLang] || titleMap.fr}\n\n${refutationText}`;
           displayReportText(updatedMarkdown);
+          syncReportScoreColors();
         } else {
           alert("Le serveur n'a pas renvoyé de texte de réfutation.");
         }
@@ -965,6 +1211,55 @@
         btnRefute.disabled = false;
         btnRefute.innerText = t.refuteBtn;
       }
+    });
+
+    function buildMemeSynthesis(flags, lang) {
+      const normalizedFlags = (flags || []).map(flag => String(flag).toUpperCase());
+      const hasFlag = (flag) => normalizedFlags.some(value => value.includes(flag));
+
+      if (lang === 'es') {
+        if (hasFlag('PROMESA_MILAGROSA')) return 'Te venden la llave de todas las puertas sin enseñarte la cerradura: mucho brillo, cero prueba de que abre algo.';
+        if (hasFlag('ACCOMPAGNEMENT_SANTE')) return 'Hablan de dolor y salud con un lazo de coaching: si no dicen qué hacen, qué no hacen y cuándo derivan, la caja viene sin instrucciones de seguridad.';
+        if (hasFlag('REVENDICATION_NEUROSCIENTIFIQUE')) return 'Pegar “neurociencia” en la etiqueta sin método ni estudios es vender humo con bata blanca: impresiona, pero no demuestra nada.';
+        if (hasFlag('PERIMETRE_CLINIQUE')) return 'Usar palabras de consulta sin mostrar título ni límites es ponerse una bata para la foto: parece clínico, pero no acredita competencia.';
+        if (hasFlag('INJONCION')) return 'Si te empujan a decidir antes de mirar la letra pequeña, no es urgencia: es una puerta que quieren cerrar detrás de ti.';
+        return 'Mucho escaparate y poca ficha técnica: antes de creer el anuncio, mira qué hay realmente dentro de la caja.';
+      }
+      if (lang === 'en') {
+        if (hasFlag('PROMESA_MILAGROSA')) return 'They are selling a key to every door without showing the lock: plenty of shine, no proof it opens anything.';
+        if (hasFlag('ACCOMPAGNEMENT_SANTE')) return 'They wrap pain and health claims in coaching language: without clear limits and medical referral rules, the box has no safety instructions.';
+        if (hasFlag('REVENDICATION_NEUROSCIENTIFIQUE')) return 'Putting “neuroscience” on the label without a method or studies is smoke in a lab coat: impressive-looking, evidence-free.';
+        if (hasFlag('PERIMETRE_CLINIQUE')) return 'Using clinic words without showing credentials or limits is wearing a white coat for the photo: it looks clinical, but proves no competence.';
+        if (hasFlag('INJONCION')) return 'If they rush you before you read the small print, it is not urgency: it is a door they want shut behind you.';
+        return 'A polished shop window with no technical sheet: before trusting the pitch, check what is actually in the box.';
+      }
+      if (hasFlag('PROMESA_MILAGROSA')) return 'On vous vend le passe-partout sans vous montrer la serrure : ça brille fort, mais rien ne prouve que ça ouvre quoi que ce soit.';
+      if (hasFlag('ACCOMPAGNEMENT_SANTE')) return 'On emballe douleur et santé dans du coaching : sans limites claires ni règle d’orientation médicale, la boîte est vendue sans consigne de sécurité.';
+      if (hasFlag('REVENDICATION_NEUROSCIENTIFIQUE')) return 'Coller « neurosciences » sur l’étiquette sans méthode ni études, c’est vendre du vent en blouse blanche : ça impressionne, ça ne prouve rien.';
+      if (hasFlag('PERIMETRE_CLINIQUE')) return 'Utiliser des mots de médecin pour vendre des masterclasses de coaching sans diplôme, c’est comme coller un badge d’hôpital sur une boîte de Lego : ça fait sérieux sur la plaquette, mais ça ne soigne personne.';
+      if (hasFlag('INJONCION')) return 'Si l’on vous pousse à décider avant de lire les petites lignes, ce n’est pas l’urgence : c’est une porte qu’on veut fermer derrière vous.';
+      return 'Vitrine bien astiquée, fiche technique introuvable : avant de croire au discours, regardez ce qu’il y a vraiment dans la boîte.';
+    }
+
+    function removePreviousMemeBlocks(report) {
+      return String(report || '')
+        .replace(/(?:^|\n)#{1,6}\s*MEME(?:S)?\s*\n+[\s\S]*?(?=\n#{1,6}\s|$)/gi, '\n')
+        .trim();
+    }
+
+    btnMemes.addEventListener('click', () => {
+      const currentAnalysis = rawAnalysisMarkdown || analysisReport.innerText;
+      const t = langMap[currentLang];
+      if (!currentAnalysis || currentAnalysis.includes('En attente') || currentAnalysis.includes('Erreur') || currentAnalysis.includes('Error')) {
+        return alert(t.noMemeAlert);
+      }
+
+      const titles = { fr: 'MEMES', es: 'MEMES', en: 'MEMES' };
+      currentMemeText = `## ${titles[currentLang] || titles.fr}\n\n> ${buildMemeSynthesis(currentFlags, currentLang)}`;
+  const withoutPreviousMeme = removePreviousMemeBlocks(currentAnalysis);
+  rawAnalysisMarkdown = withoutPreviousMeme;
+      displayReportText(`${withoutPreviousMeme}\n\n${currentMemeText}`);
+      syncReportScoreColors();
     });
     // =====================================================================
     //  EXPORTACIÓN A PDF (SERVIDOR BACKEND, ESTILO TARJETA)
@@ -1049,6 +1344,8 @@
       userFile.value = '';
       rawAnalysisMarkdown = "";
       currentRefutationText = "";
+      currentMemeText = "";
+      currentFlags = [];
       fileNameDisplay.innerText = langMap[currentLang].fileBtn;
       
       const resetText = langMap[currentLang].waitingAnalysis;
