@@ -1,3 +1,10 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system"
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/bin/python",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/backend/venv/lib/python3.13/site-packages"
+  ],
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "none",
+    "reportMissingModuleSource": "none"
+  }
 }

@@ -1,12 +1,25 @@
+# Project environment
 .venv/
 .venv-1/
+venv/
+env/
+
+# Python cache and build artifacts
+__pycache__/
 **/__pycache__/
+.pytest_cache/
 **/.pytest_cache/
 *.pyc
+*.pyo
 
-# Local BEACON artifacts and maintenance history
+# Secrets and local runtime data
+.env
 backend/.env
+*.db
+beacon.db
 backend/beacon.db
+
+# Local project artifacts and maintenance files
 backend/app.py.bak
 backend/fix*.py
 backend/force_phase2.py
@@ -16,5 +29,8 @@ backend/seed.py
 backend/static/
 backend/templates/
 
-# Personal editor configuration
+# Editor and OS files
+.vscode/
 .vscode/settings.json
+.DS_Store
+Thumbs.db
