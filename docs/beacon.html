@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POLETHIC_FRA - Beacon Lab</title>
+
+  <!-- Tipografías de Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Enlace al CSS principal -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    /* Estilos específicos del Beacon Lab */
+    .lab-hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .lab-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--cyan-neon);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .lab-title {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin: 0.5rem 0 1rem 0;
+      color: var(--text-cream-bright);
+    }
+
+    .lab-lead {
+      max-width: 680px;
+      margin: 0 auto;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    /* Grid de las 5 herramientas (Pentágono de la suite) */
+    .pentad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.8rem;
+      margin-top: 2rem;
+    }
+
+    .window-card {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 2rem;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .window-card:hover {
+      border-color: rgba(0, 240, 255, 0.4);
+      box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.2);
+      transform: translateY(-3px);
+    }
+
+    /* Destacar la tarjeta principal de POLETHIC BEACON */
+    .window-card.featured-beacon {
+      border: 1px solid rgba(0, 240, 255, 0.5);
+      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(0, 240, 255, 0.05) 100%);
+    }
+
+    .window-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .window-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--cyan-neon);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .window-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-cream-bright);
+      margin: 0;
+    }
+
+    .window-body p {
+      color: var(--text-cream);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .highlight-box {
+      background: rgba(0, 240, 255, 0.04);
+      border-left: 2px solid var(--cyan-neon);
+      padding: 0.8rem 1rem;
+      border-radius: 0 6px 6px 0;
+      margin-top: 1rem;
+    }
+
+    .highlight-box h4 {
+      margin: 0 0 0.3rem 0;
+      font-size: 0.8rem;
+      color: var(--cyan-neon);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .highlight-box p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .status-bar {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-active {
+      color: var(--green-neon);
+    }
+
+    .theory-banner-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+      margin-bottom: 2.5rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- FONDO CON ESTRELLAS Y NEBULOSAS -->
+  <div id="stars-container"></div>
+
+  <!-- CABECERA DE NAVEGACIÓN -->
+  <header>
+    <div class="container header-layout">
+      <!-- LOGO -->
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      
+      <!-- MENÚ -->
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon.html" class="nav-btn active" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
+      </nav>
+
+      <!-- SELECTOR DE IDIOMAS -->
+      <div class="lang-selector">
+        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-es">ES</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-en">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container">
+    
+    <!-- ENCABEZADO PRINCIPAL -->
+    <section class="lab-hero">
+      <span class="lab-tag" data-key="beacon_module_tag">// MODULE: INNOVATION &amp; TERRAIN</span>
+      <h1 class="lab-title" data-key="beacon_title">TRADUCTION METACOGNITIVE &amp; INTERVENTIONS</h1>
+      <p class="lab-lead" data-key="beacon_intro">
+        Des outils pratiques et interactifs pour décoder l'information, repérer les pièges des réseaux et garder l'esprit clair.
+      </p>
+    </section>
+
+    <!-- BLOQUE DE FUNDAMENTO NEUROCIENTÍFICO -->
+    <section class="theory-banner-card">
+      <div class="theory-header" onclick="toggleTheoryModal()" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <span style="font-size: 1.5rem;">🧠</span>
+          <div>
+            <span class="lab-tag" data-key="theory_tag">// FONDEMENT SCIENTIFIQUE &amp; ALLOSTASIE</span>
+            <h3 style="margin: 0; color: var(--text-cream-bright); font-size: 1.1rem;" data-key="theory_title">La Neurosciences Prédictive &amp; le Problème Inverse</h3>
+          </div>
+        </div>
+        <span class="theory-toggle-icon" id="theory-icon" style="color: var(--cyan-neon); font-family: 'JetBrains Mono', monospace;">[ + VOIR LA THÉORIE ]</span>
+      </div>
+
+      <!-- Contenido desplegable -->
+      <div id="theory-content" style="display: none; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem;">
+        <p style="color: var(--text-cream); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1rem;" data-key="theory_desc">
+          Dans la neurosciences prédictive, la prémisse selon laquelle nous avons besoin d'une expérience préalable pour contraster les erreurs de prédiction est une règle biologique et mathématique fondamentale. Le cerveau résout constamment le <strong>« problème inverse »</strong> pour contrôler son budget énergétique (allostasie).
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 1.2rem 0;">
+          <div class="highlight-box">
+            <h4 data-key="theory_box1_title">1. L'Expérience comme « Molde »</h4>
+            <p data-key="theory_box1_desc">Le cerveau utilise le passé pour créer des catégories. Jusqu'à 90% des connexions du cortex visuel primaire (V1) transportent des signaux de prédiction descendente (feedback).</p>
+          </div>
+          <div class="highlight-box">
+            <h4 data-key="theory_box2_title">2. Le Contraste de l'Erreur</h4>
+            <p data-key="theory_box2_desc">Sans cette expérience, le flux sensoriel brut provoquerait un épuisement métabolique. L'écart entre l'attendu et le perçu (<strong>prediction error</strong>) met à jour le modèle interne.</p>
+          </div>
+        </div>
+
+        <div class="references-box" style="background: rgba(0, 240, 255, 0.03); padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed rgba(0, 240, 255, 0.2);">
+          <h4 style="color: var(--cyan-neon); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin: 0 0 0.5rem 0;" data-key="theory_ref_title">
+            📚 RÉFÉRENCES &amp; LITTÉRATURE SCIENTIFIQUE ASSOCIÉE
+          </h4>
+          <ul class="bullet-list" style="margin: 0; font-size: 0.82rem; padding-left: 1rem; color: var(--text-cream);">
+            <li><strong>Friston, K. (2005).</strong> A theory of cortical responses. <em>Philosophical Transactions B</em>.</li>
+            <li><strong>Clark, A. (2013).</strong> Whatever next? Predictive brains, situated agents. <em>Behavioral and Brain Sciences</em>.</li>
+            <li><strong>Barrett, L. F. (2017).</strong> How Emotions Are Made: The Secret Life of the Brain.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRID DE LAS 5 HERRAMIENTAS - BEACON LAB -->
+    <div class="pentad-grid">
+
+      <!-- 1. POLETHIC BEACON (MÓDULO PRINCIPAL / AUDITORÍA) -->
+      <article class="window-card featured-beacon">
+        <div>
+          <header class="window-header">
+            <span class="window-num" data-key="win1_num">01 // VÉRIFIER &amp; DÉTECTER</span>
+            <h2 class="window-title" data-key="win1_title">POLETHIC BEACON</h2>
+          </header>
+
+          <div class="window-body">
+            <p data-key="win1_desc">
+              Audite les affirmations de santé et pseudosciences. Détecte de manière déterministe le blanchiment scientifique et la promesse thérapeutique pour protéger le budget allostatique.
+            </p>
+            <div class="highlight-box">
+              <h4 data-key="win1_trap_title">Fonction principale</h4>
+              <p data-key="win1_trap_desc">Escudo regulador contra el anzuelo dopaminérgico de «La Moneda de Oro».</p>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <a href="beacon-app.html" id="btn-app-link" class="btn-lab-action btn-cyan" data-key="win1_btn">
+                🔦 LANCER BEACON
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="status-bar">
+          <span data-key="win1_status">&gt; AUDIT DÉTERMINISTE_</span>
+          <span class="status-active">● ONLINE</span>
+        </div>
+      </article>
+
+      <!-- 2. POLETHIC CONTEXT -->
+      <article class="window-card">
+        <div>
+          <header class="window-header">
+            <span class="window-num" data-key="win2_num">02 // COMPRENDRE LE BRUIT</span>
+            <h2 class="window-title" data-key="win2_title">POLETHIC CONTEXT</h2>
+          </header>
+
+          <div class="window-body">
+            <p data-key="win2_desc">
+            Traduit le langage fléchii, ironies et sarcasmes pour fournir au cerveau les données nécessaires sans deviner les intenciones.
+            </p>
+            <div class="highlight-box">
+              <h4 data-key="win2_trap_title">Piège résolu</h4>
+              <p data-key="win2_trap_desc">Incertitud por comunicación ambigua e indirecta.</p>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <a href="beacon-context.html" id="btn-ctx-link" class="btn-lab-action btn-purple" data-key="win2_btn">
+                🧭 LANCER CONTEXT
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="status-bar">
+          <span data-key="win2_status">&gt; CONTEXTE CLAIR_</span>
+          <span class="status-active" style="color: #a855f7;">● ONLINE</span>
+        </div>
+      </article>
+
+      <!-- 3. POLETHIC RELATION -->
+      <article class="window-card">
+        <div>
+          <header class="window-header">
+            <span class="window-num" data-key="win3_num">03 // DYNAMIQUE DE RELATION</span>
+            <h2 class="window-title" data-key="win3_title">POLETHIC RELATION</h2>
+          </header>
+
+          <div class="window-body">
+            <p data-key="win3_desc">
+            Sépare l'observation de la conduite des interprétations automatiques, restituant l'agentivité et le locus de control au présent.
+            </p>
+            <div class="highlight-box">
+              <h4 data-key="win3_trap_title">Piège résolu</h4>
+              <p data-key="win3_trap_desc">Proyecciones inconscientes y enredos del pasado.</p>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <a href="beacon-relation.html" id="btn-rel-link" class="btn-lab-action btn-cyan" data-key="win3_btn">
+                🤝 LANCER RELATION
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="status-bar">
+          <span data-key="win3_status">&gt; MAPPAGE OBJECTIF_</span>
+          <span class="status-active">● ONLINE</span>
+        </div>
+      </article>
+
+      <!-- 4. POLETHIC MIRROR & SELF -->
+      <article class="window-card">
+        <div>
+          <header class="window-header">
+            <span class="window-num" data-key="win4_num">04 // COMPRENDRE SOI-MÊME</span>
+            <h2 class="window-title" data-key="win4_title">POLETHIC MIRROR &amp; SELF</h2>
+          </header>
+
+          <div class="window-body">
+            <p data-key="win4_desc">
+              <strong>Modo Mirror:</strong> Erreur in-situ (défensivité y visceromoteur).<br><strong>Modo Self:</strong> Bayesian model learning offline para actualizar creencias rígidas (priors).
+            </p>
+            <div class="highlight-box">
+              <h4 data-key="win4_trap_title">Métacognition</h4>
+              <p data-key="win4_trap_desc">Observación profunda de los propios patrones.</p>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <a href="beacon-mirror-self.html" id="btn-ms-link" class="btn-lab-action btn-purple" data-key="win4_btn">
+                🪞🧠 LANCER MIRROR &amp; SELF
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="status-bar">
+          <span data-key="win4_status">&gt; MODÈLE BAYÉSIEN_</span>
+          <span class="status-active" style="color: #a855f7;">● ONLINE</span>
+        </div>
+      </article>
+
+      <!-- 5. POLETHIC DIALOGUE & SIMULATION -->
+      <article class="window-card">
+        <div>
+          <header class="window-header">
+            <span class="window-num" data-key="win5_num">05 // PRÉPARER LA COMMUNICATION</span>
+            <h2 class="window-title" data-key="win5_title">POLETHIC DIALOGUE</h2>
+          </header>
+
+          <div class="window-body">
+            <p data-key="win5_desc">
+              Simule des conversations difficiles (mode 🎭 <strong>Simulation</strong>) generando <em>fictitious prediction error signals</em> para entrenar al cerebro.
+            </p>
+            <div class="highlight-box">
+              <h4 data-key="win5_trap_title">Piège résolu</h4>
+              <p data-key="win5_trap_desc">Procrastinación por incertidumbre y miedo al conflicto.</p>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <a href="beacon-dialogue.html" id="btn-dia-link" class="btn-lab-action btn-cyan" data-key="win5_btn">
+                🗣️🎭 LANCER SIMULATION
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="status-bar">
+          <span data-key="win5_status">&gt; ENTRAÎNEMENT SÛR_</span>
+          <span class="status-active">● ONLINE</span>
+        </div>
+      </article>
+
+    </div>
+
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    <div class="container footer-content">
+      
+      <!-- ESCUDO DE PROTECCIÓN -->
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer" data-key="footer_disc1">
+          Action exclusive de prévention primaire et de psychoéducation non clinique.
+        </p>
+        <p class="shield-disclaimer" data-key="footer_disc2">
+          Aucun diagnostic ou thérapie médicale n'est pratiqué.
+        </p>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <!-- ENLACES LEGALES Y COPYRIGHT -->
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- SCRIPT TRILINGÜE DE TRADUCCIÓN Y NAVEGACIÓN -->
+  <script>
+  const translations = {
+      fr: {
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+
+          beacon_module_tag: "// MODULE: INNOVATION & TERRAIN",
+          beacon_title: "TRADUCTION METACOGNITIVE & INTERVENTIONS",
+          beacon_intro: "Le laboratoire d'outils technologiques pour évaluer la rigueur de l'information et d'expériences interactives pour développer l'esprit critique.",
+
+          theory_tag: "// FONDEMENT SCIENTIFIQUE & ALLOSTASIE",
+          theory_title: "La Neurosciences Prédictive & le Problème Inverse",
+          theory_desc: "Dans la neurosciences prédictive, la prémisse selon laquelle nous avons besoin d'une expérience préalable pour contraster les erreurs de prédiction est une règle biologique et mathématique fondamentale. Le cerveau résout constamment le <strong>« problème inverse »</strong> pour contrôler son budget énergétique (allostasie).",
+          theory_box1_title: "1. L'Expérience comme « Moule»",
+          theory_box1_desc: "Le cerveau utilise le passé pour créer des catégories. Jusqu'à 90% des connexions du cortex visuel primaire (V1) transportent des signaux de prédiction descendente (feedback).",
+          theory_box2_title: "2. Le Contraste de l'Erreur",
+          theory_box2_desc: "Sans cette expérience, le flux sensoriel brut provoquerait un épuisement métabolique. L'écart entre l'attendu et le perçu (<strong>prediction error</strong>) met à jour le modèle interne.",
+          theory_ref_title: "📚 RÉFÉRENCES & LITTÉRATURE SCIENTIFIQUE ASSOCIÉE",
+
+          win1_num: "01 // VÉRIFIER & DÉTECTER",
+          win1_title: "POLETHIC BEACON",
+          win1_desc: "Audite les affirmations de santé et pseudosciences. Détecte de manière déterministe le blanchiment scientifique et la promesse thérapeutique pour protéger le budget allostatique.",
+          win1_trap_title: "Fonction principale",
+          win1_trap_desc: "Bouclier régulateur contre l'hameçon dopaminergique de « la pièce d'or ».",
+          win1_btn: "🔦 LANCER BEACON",
+          win1_status: "> AUDIT DÉTERMINISTE_",
+
+          win2_num: "02 // COMPRENDRE LE BRUIT",
+          win2_title: "POLETHIC CONTEXT",
+          win2_desc: "Traduit le langage flou, ironies et sarcasmes pour fournir au cerveau les données nécessaires sans deviner les intentions.",
+          win2_trap_title: "Piège résolu",
+          win2_trap_desc: "Incertitude par communication ambiguë et indirecte.",
+          win2_btn: "🧭 LANCER CONTEXT",
+          win2_status: "> CONTEXTE CLAIR_",
+
+          win3_num: "03 // DYNAMIQUE DE RELATION",
+          win3_title: "POLETHIC RELATION",
+          win3_desc: "Sépare l'observation de la conduite des interprétations automatiques, restituant l'agentivité et le locus de contrôle au présent.",
+          win3_trap_title: "Piège résolu",
+          win3_trap_desc: "Projections et enchevêtrements du passé.",
+          win3_btn: "🤝 LANCER RELATION",
+          win3_status: "> MAPPAGE OBJECTIF_",
+
+          win4_num: "04 // COMPRENDRE SOI-MÊME",
+          win4_title: "POLETHIC MIRROR & SELF",
+          win4_desc: "<strong>Mode Mirror:</strong> Erreur in-situ (réactivité).<br><strong>Mode Self:</strong> Bayesian model learning offline pour actualiser les croyances rigides (priors).",
+          win4_trap_title: "Métacognition",
+          win4_trap_desc: "Observation profonde de ses propres schémas de défense.",
+          win4_btn: "🪞🧠 LANCER MIRROR & SELF",
+          win4_status: "> MODÈLE BAYÉSIEN_",
+
+          win5_num: "05 // PRÉPARER LA COMMUNICATION",
+          win5_title: "POLETHIC DIALOGUE",
+          win5_desc: "Simule des conversations difficiles (mode 🎭 Simulation) en générant des <em>fictitious prediction error signals</em> pour entraîner le cerveau.",
+          win5_trap_title: "Piège résolu",
+          win5_trap_desc: "Procrastination par incertitude et peur du conflit.",
+          win5_btn: "🗣️🎭 LANCER SIMULATION",
+          win5_status: "> ENTRAÎNEMENT SÛR_",
+
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies"
+      },
+      es: {
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+
+          beacon_module_tag: "// MÓDULO: INNOVACIÓN Y TERRENO",
+          beacon_title: "TRADUCCIÓN METACOGNITIVA E INTERVENCIONES",
+          beacon_intro: "El laboratorio de herramientas tecnológicas para evaluar el rigor de la información y experiencias interactivas para desarrollar el pensamiento crítico.",
+
+          theory_tag: "// FUNDAMENTO CIENTÍFICO Y ALOSTASIS",
+          theory_title: "Neurociencia Predictiva y el Problema Inverso",
+          theory_desc: "En la neurociencia predictiva, la premisa de que necesitamos experiencia previa para contrastar los errores de predicción es una regla biológica y matemática fundamental. El cerebro resuelve constantemente el <strong>«problema inverso»</strong> para controlar su presupuesto energético (alostasis).",
+          theory_box1_title: "1. La Experiencia como «Molde»",
+          theory_box1_desc: "El cerebro utiliza el pasado para crear categorías. Hasta el 90% de las conexiones del córtex visual primario (V1) transportan señales de predicción descendente (feedback).",
+          theory_box2_title: "2. El Contraste del Error",
+          theory_box2_desc: "Sin esta experiencia, el flujo sensorial bruto provocaría agotamiento metabólico. La discrepancia entre lo esperado y lo percibido (<strong>prediction error</strong>) actualiza el modelo interno.",
+          theory_ref_title: "📚 REFERENCIAS Y LITERATURA CIENTÍFICA ASOCIADA",
+
+          win1_num: "01 // VERIFICAR Y DETECTAR",
+          win1_title: "POLETHIC BEACON",
+          win1_desc: "Audita afirmaciones de salud y pseudociencias. Detecta de forma determinista el blanqueo científico y la promesa terapéutica para proteger el presupuesto alostático.",
+          win1_trap_title: "Función principal",
+          win1_trap_desc: "Escudo regulador contra el anzuelo dopaminérgico de «La Moneda de Oro».",
+          win1_btn: "🔦 INICIAR BEACON",
+          win1_status: "> AUDIT DETERMINISTA_",
+
+          win2_num: "02 // COMPRENDER EL RUIDO",
+          win2_title: "POLETHIC CONTEXT",
+          win2_desc: "Traduce la comunicación ambigua e indirecta para proporcionar al cerebro los datos necesarios sin adivinar intenciones.",
+          win2_trap_title: "Trampa resuelta",
+          win2_trap_desc: "Incertidumbre por lenguaje flácido y dobles sentidos.",
+          win2_btn: "🧭 INICIAR CONTEXT",
+          win2_status: "> CONTEXTO CLARO_",
+
+          win3_num: "03 // DINÁMICA DE RELACIÓN",
+          win3_title: "POLETHIC RELATION",
+          win3_desc: "Separa la observación de la conducta de las interpretaciones automáticas, devolviendo la agentividad y el locus de control al presente.",
+          win3_trap_title: "Trampa resuelta",
+          win3_trap_desc: "Proyecciones y enredos del pasado.",
+          win3_btn: "🤝 INICIAR RELATION",
+          win3_status: "> MAPEO OBJETIVO_",
+
+          win4_num: "04 // COMPRENDERSE A UNO MISMO",
+          win4_title: "POLETHIC MIRROR & SELF",
+          win4_desc: "<strong>Modo Mirror:</strong> Error in-situ (reactividad).<br><strong>Modo Self:</strong> Bayesian model learning offline para actualizar creencias rígidas (priors).",
+          win4_trap_title: "Metacognición",
+          win4_trap_desc: "Observación profunda de los propios patrones de defensa.",
+          win4_btn: "🪞🧠 INICIAR MIRROR & SELF",
+          win4_status: "> MODELO BAYESIANO_",
+
+          win5_num: "05 // PREPARAR LA COMUNICACIÓN",
+          win5_title: "POLETHIC DIALOGUE",
+          win5_desc: "Simula conversaciones difíciles (modo 🎭 Simulación) generando <em>fictitious prediction error signals</em> para entrenar al cerebro.",
+          win5_trap_title: "Trampa resuelta",
+          win5_trap_desc: "Procrastinación por incertidumbre y miedo al conflicto.",
+          win5_btn: "🗣️🎭 INICIAR SIMULACIÓN",
+          win5_status: "> ENTRENAMIENTO SEGURO_",
+
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies"
+      },
+      en: {
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
+
+          beacon_module_tag: "// MODULE: INNOVATION & FIELD",
+          beacon_title: "METACOGNITIVE TRANSLATION & FIELD INTERVENTIONS",
+          beacon_intro: "The laboratory for technological tools to evaluate information rigor and interactive experiences to foster critical thinking.",
+
+          theory_tag: "// SCIENTIFIC FOUNDATION & ALLOSTASIS",
+          theory_title: "Predictive Neuroscience & the Inverse Problem",
+          theory_desc: "In predictive neuroscience, needing prior experience to contrast prediction errors is a fundamental biological and mathematical rule. The brain constantly solves the <strong>«inverse problem»</strong> to control its energy budget (allostasis).",
+          theory_box1_title: "1. Experience as a «Mold»",
+          theory_box1_desc: "The brain uses the past to build categories. Up to 90% of connections in primary visual cortex (V1) carry descending prediction signals (feedback).",
+          theory_box2_title: "2. Error Contrast",
+          theory_box2_desc: "Without this experience, raw sensory flux would cause metabolic exhaustion. The mismatch between expected and perceived (<strong>prediction error</strong>) updates the internal model.",
+          theory_ref_title: "📚 REFERENCES & ASSOCIATED SCIENTIFIC LITERATURE",
+
+          win1_num: "01 // VERIFY & DETECT",
+          win1_title: "POLETHIC BEACON",
+          win1_desc: "Audits health claims and pseudoscience. Deterministically detects scientific whitewashing and therapeutic promises to protect the allostatic budget.",
+          win1_trap_title: "Main function",
+          win1_trap_desc: "Regulatory shield against the dopaminergic hook of 'The Golden Coin'.",
+          win1_btn: "🔦 LAUNCH BEACON",
+          win1_status: "> DETERMINISTIC AUDIT_",
+
+          win2_num: "02 // UNDERSTAND NOISE",
+          win2_title: "POLETHIC CONTEXT",
+          win2_desc: "Translates indirect communication and flaccid language to provide necessary data to the brain without guessing intents.",
+          win2_trap_title: "Trap resolved",
+          win2_trap_desc: "Uncertainty due to ambiguous communication.",
+          win2_btn: "🧭 LAUNCH CONTEXT",
+          win2_status: "> CLEAR CONTEXT_",
+
+          win3_num: "03 // RELATION DYNAMICS",
+          win3_title: "POLETHIC RELATION",
+          win3_desc: "Separates behavioral observation from automatic interpretations, returning agency and locus of control to the present.",
+          win3_trap_title: "Trap resolved",
+          win3_trap_desc: "Projections and past entanglements.",
+          win3_btn: "🤝 LAUNCH RELATION",
+          win3_status: "> OBJECTIVE MAPPING_",
+
+          win4_num: "04 // UNDERSTAND SELF",
+          win4_title: "POLETHIC MIRROR & SELF",
+          win4_desc: "<strong>Mirror mode:</strong> In-situ error (reactivity).<br><strong>Self mode:</strong> Bayesian model learning offline to update rigid beliefs (priors).",
+          win4_trap_title: "Metacognition",
+          win4_trap_desc: "Deep observation of one's own defense patterns.",
+          win4_btn: "🪞🧠 LAUNCH MIRROR & SELF",
+          win4_status: "> BAYESIAN MODEL_",
+
+          win5_num: "05 // PREPARE COMMUNICATION",
+          win5_title: "POLETHIC DIALOGUE",
+          win5_desc: "Bypasses the Avoided Bridge. Simulates difficult conversations (mode 🎭 Simulation) generating <em>fictitious prediction error signals</em> to train the brain.",
+          win5_trap_title: "Trap resolved",
+          win5_trap_desc: "Procrastination due to uncertainty and fear of conflict.",
+          win5_btn: "🗣️🎭 LAUNCH SIMULATION",
+          win5_status: "> SAFE TRAINING_",
+
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management"
+      }
+  };
+
+  function toggleTheoryModal() {
+      const content = document.getElementById('theory-content');
+      const icon = document.getElementById('theory-icon');
+      
+      if (content.style.display === 'none') {
+          content.style.display = 'block';
+          icon.textContent = '[ - MASQUER ]';
+      } else {
+          content.style.display = 'none';
+          icon.textContent = '[ + VOIR LA THÉORIE ]';
+      }
+  }
+
+  function setLanguage(lang) {
+      localStorage.setItem('preferred_lang', lang);
+
+      // Cambiar traducciones con soporte para innerHTML
+      document.querySelectorAll('[data-key]').forEach(element => {
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.innerHTML = translations[lang][key];
+          }
+      });
+
+      // Transferir idioma a los enlaces de las herramientas
+      const links = ['app', 'ctx', 'rel', 'ms', 'dia'];
+      const pages = ['beacon-app.html', 'beacon-context.html', 'beacon-relation.html', 'beacon-mirror-self.html', 'beacon-dialogue.html'];
+      
+      links.forEach((id, index) => {
+          const el = document.getElementById(`btn-${id}-link`);
+          if (el) el.href = `${pages[index]}?lang=${lang}`;
+      });
+
+      // Actualizar botón activo de idioma
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  // Event Listeners para el selector de idiomas
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  // Carga inicial según preferencia o defecto en Francés
+  document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
+      setLanguage(savedLang);
+  });
+  </script>
+</body>
+</html>
