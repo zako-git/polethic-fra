@@ -81,7 +81,7 @@ def get_ethic_band(score):
         score = 0
 
     if score <= 15:
-        return "A", "#273BE9"
+        return "A", "#1D2BAC"
     if score <= 30:
         return "B", "#09AA29"
     if score <= 45:
