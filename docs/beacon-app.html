@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEACON LAB | POLETHIC France</title>
+
+  <!-- Parser de Markdown para renderizar negritas y listas en la web -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+
+  <style>
+    /* ==========================================
+       ESTILOS CYBER TOTAL (INTERFAZ BEACON)
+       ========================================== */
+    :root {
+      --cyber-cyan: #00f0ff;
+      --cyber-green: #00ff88;
+      --cyber-red: #ff2a6d;
+      --cyber-yellow: #ffe600;
+      --cyber-bg: #061526;
+      --cyber-card-bg: rgba(15, 23, 42, 0.85);
+      --font-cyber: 'Courier New', Courier, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--cyber-bg);
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, rgba(0, 240, 255, 0.9), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 160px 120px, rgba(0, 255, 136, 0.8), rgba(0,0,0,0)),
+        radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.22) 0%, transparent 70%);
+      background-attachment: fixed;
+    }
+ 
+    /* CAPA DE ESTRELLAS ANIMADAS */
+    #stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 50%;
+      animation: twinkle linear infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    header, main, footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+      background: rgba(6, 21, 38, 0.92);
+      padding: 15px 0;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    .header-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo-title {
+      font-family: var(--font-cyber);
+      color: var(--cyber-cyan);
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+
+    .nav-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+
+    .nav-btn {
+      color: #a0aec0;
+      text-decoration: none;
+      font-family: var(--font-cyber);
+      font-size: 0.85rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      color: var(--cyber-cyan);
+      text-shadow: 0 0 8px var(--cyber-cyan);
+    }
+
+    .lang-selector {
+      font-family: var(--font-cyber);
+      font-size: 0.85rem;
+      color: #a0aec0;
+    }
+
+    .lang-btn { color: #a0aec0; text-decoration: none; cursor: pointer; transition: all 0.2s; padding: 0 2px; }
+    .lang-btn:hover { color: #fff; }
+    .lang-btn.active { color: var(--cyber-cyan); font-weight: bold; text-shadow: 0 0 6px var(--cyber-cyan); }
+
+    .beacon-title-block { text-align: center; margin: 40px 0 25px 0; }
+
+    .hero-app-title {
+      font-family: var(--font-cyber);
+      font-size: 2.5rem;
+      color: #ffffff;
+      text-shadow: 0 0 15px var(--cyber-cyan);
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      color: var(--cyber-cyan);
+      font-family: var(--font-cyber);
+      font-size: 0.9rem;
+      margin-top: 6px;
+      letter-spacing: 1px;
+      opacity: 0.95;
+    }
+
+    .drop-zone {
+      background: var(--cyber-card-bg);
+      border: 1px solid var(--cyber-cyan);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 850px;
+      margin: 0 auto 30px auto;
+      backdrop-filter: blur(8px);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .drop-zone.drag-over {
+      border-color: #00ff88;
+      box-shadow: 0 0 35px rgba(0, 255, 136, 0.45);
+      background-color: rgba(0, 255, 136, 0.06);
+    }
+
+    textarea#user-input {
+      width: 100%;
+      height: 140px;
+      background: rgba(1, 6, 12, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      border-radius: 6px;
+      color: var(--cyber-green);
+      font-family: var(--font-cyber);
+      font-size: 0.95rem;
+      padding: 12px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .input-actions-bar { display: flex; align-items: center; gap: 12px; margin-top: 15px; }
+
+    .file-upload-btn {
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      padding: 12px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-cyber);
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-beacon-primary {
+      flex-grow: 1;
+      background: transparent;
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      font-family: var(--font-cyber);
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-beacon-primary:hover {
+      background: var(--cyber-cyan);
+      color: #030a12;
+      box-shadow: 0 0 25px var(--cyber-cyan);
+    }
+
+    .status-bar {
+      margin-top: 15px;
+      font-family: var(--font-cyber);
+      font-size: 0.75rem;
+      color: var(--cyber-green);
+    }
+
+    .results-card {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid var(--cyber-green);
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.25);
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 850px;
+      margin: 0 auto 40px auto;
+      display: none;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid rgba(0, 255, 136, 0.25);
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .ethic-score-badge {
+      background: var(--cyber-cyan);
+      color: #030a12;
+      font-family: var(--font-cyber);
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 6px 14px;
+      border-radius: 4px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .report-box {
+      background: transparent;
+      padding: 0;
+      color: #dfe7f4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 0.85rem !important;
+      line-height: 1.55;
+      white-space: normal;
+      border-radius: 0;
+      border: none;
+    }
+
+    .report-box strong {
+      color: #f8fafc;
+      font-weight: 700;
+    }
+
+    .report-box h1, .report-box h2, .report-box h3 {
+      color: var(--score-color, #ffffff);
+      margin-top: 18px;
+      margin-bottom: 10px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      border-bottom: none !important;
+      padding-bottom: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .report-box hr {
+      display: none !important;
+      border: none !important;
+      height: 0 !important;
+      margin: 0 !important;
+    }
+
+    .executive-metadata {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 20px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      background: rgba(8, 15, 27, 0.35);
+    }
+
+    .executive-metadata p {
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .report-box p,
+    .report-box li,
+    .report-box ul,
+    .report-box ol,
+    .report-box span {
+      color: #dfe7f4;
+      font-weight: 400;
+      font-size: inherit !important;
+    }
+
+    .report-box blockquote {
+      border-left: 2px solid var(--score-color, #ff0055);
+      margin: 18px 0;
+      padding-left: 16px;
+      color: #aab8c8;
+      font-style: italic;
+    }
+
+    .report-box p {
+      margin-bottom: 18px;
+    }
+
+    .report-box ul {
+      margin: 0 0 18px 18px;
+    }
+
+    .report-box li {
+      margin-bottom: 8px;
+    }
+
+    .report-box li strong,
+    .report-box p strong {
+      color: #edf3ff;
+      font-weight: 700;
+    }
+
+    .report-box .forensic-card,
+    .report-box .quote-block,
+    .report-box .analysis-block {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .report-box .forensic-card {
+      margin-top: 24px;
+    }
+
+    .report-box .bite-inline {
+      display: none !important;
+    }
+
+    .report-refutation-title {
+      color: var(--cyber-cyan);
+      font-family: var(--font-cyber);
+      font-size: 0.92rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+      margin: 10px 0 6px 0;
+    }
+
+    .results-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+
+    .btn-action-refute, .btn-action-memes, .btn-action-pdf, .btn-action-purge {
+      background: transparent;
+      font-family: var(--font-cyber);
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-refute { border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow); }
+    .btn-action-refute:hover { background: var(--cyber-yellow); color: #000; }
+
+    .btn-action-memes { border: 1px solid #ff4f9a; color: #ff4f9a; }
+    .btn-action-memes:hover { background: #ff4f9a; color: #fff; }
+
+    .btn-action-pdf { border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); }
+    .btn-action-pdf:hover { background: var(--cyber-cyan); color: #000; }
+
+    .btn-action-purge { border: 1px solid var(--cyber-red); color: var(--cyber-red); }
+    .btn-action-purge:hover { background: var(--cyber-red); color: #fff; }
+
+    .flags-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-left: 8px;
+      align-items: center;
+    }
+
+    .flag-badge {
+      font-family: var(--font-cyber);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 3px;
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      background: rgba(0, 240, 255, 0.1);
+    }
+
+    .report-refutation-divider {
+      width: 100%;
+      height: 1px;
+      margin: 12px 0;
+      background: rgba(0, 240, 255, 0.4);
+    }
+
+    .report-box strong, .report-box li::marker,
+    .report-box .score-section-title,
+    .report-box .analysis-keyword {
+      color: inherit;
+    }
+
+    .report-box h3 {
+      display: block;
+      margin: 18px 0 10px;
+      padding: 0;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      font-weight: 800;
+      border-bottom: none !important;
+      text-align: left;
+    }
+
+    .report-box h3:first-child {
+      margin-top: 0;
+    }
+
+    .report-box .forensic-card {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-left: 4px solid rgba(148, 163, 184, 0.9);
+      border-radius: 12px;
+      background: rgba(10, 14, 22, 0.62);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 24px rgba(15, 23, 42, 0.18);
+    }
+
+    .report-box .quote-block,
+    .report-box .analysis-block {
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .report-box .quote-block {
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    .report-box .analysis-block {
+      background: rgba(8, 15, 27, 0.52);
+    }
+
+    .report-box ul {
+      margin: 0 0 20px 22px;
+      padding-left: 18px;
+    }
+
+    .report-box li {
+      margin-bottom: 10px;
+      line-height: 1.7;
+      opacity: 0.98;
+      font-size: 1rem;
+    }
+
+    .report-box strong {
+      font-weight: 800;
+    }
+
+    /* ── Palette par score, avec visuel lisible et typographie plus élégante ── */
+    .results-card.score-A { border-color: rgba(39, 59, 233, 0.45); box-shadow: 0 0 22px rgba(39, 59, 233, 0.18); }
+    .results-card.score-B { border-color: rgba(9, 170, 41, 0.45); box-shadow: 0 0 22px rgba(9, 170, 41, 0.18); }
+    .results-card.score-C { border-color: rgba(255, 183, 0, 0.45); box-shadow: 0 0 22px rgba(255, 183, 0, 0.18); }
+    .results-card.score-D { border-color: rgba(255, 102, 0, 0.45); box-shadow: 0 0 22px rgba(255, 102, 0, 0.18); }
+    .results-card.score-E { border-color: rgba(255, 0, 85, 0.45); box-shadow: 0 0 22px rgba(255, 0, 85, 0.18); }
+
+    .results-card.score-A .ethic-score-badge { background: #273BE9; color: #fff; }
+    .results-card.score-B .ethic-score-badge { background: #09AA29; color: #fff; }
+    .results-card.score-C .ethic-score-badge { background: #FFB700; color: #120f00; }
+    .results-card.score-D .ethic-score-badge { background: #FF6600; color: #fff; }
+    .results-card.score-E .ethic-score-badge { background: #FF0055; color: #fff; }
+
+    .results-card.score-A .flag-badge { border-color: #273BE9 !important; color: #273BE9 !important; }
+    .results-card.score-B .flag-badge { border-color: #09AA29 !important; color: #09AA29 !important; }
+    .results-card.score-C .flag-badge { border-color: #FFB700 !important; color: #FFB700 !important; }
+    .results-card.score-D .flag-badge { border-color: #FF6600 !important; color: #FF6600 !important; }
+    .results-card.score-E .flag-badge { border-color: #FF0055 !important; color: #FF0055 !important; }
+
+    .results-card.score-A .report-box h1, .results-card.score-A .report-box h2, .results-card.score-A .report-box h3,
+    .results-card.score-A .report-box strong, .results-card.score-A .report-box li::marker,
+    .results-card.score-A .report-box .score-section-title, .results-card.score-A .report-box .analysis-keyword,
+    .results-card.score-A .report-box blockquote { color: #273BE9 !important; }
+    .results-card.score-A .report-box blockquote { border-left-color: #273BE9 !important; }
+
+    .results-card.score-B .report-box h1, .results-card.score-B .report-box h2, .results-card.score-B .report-box h3,
+    .results-card.score-B .report-box strong, .results-card.score-B .report-box li::marker,
+    .results-card.score-B .report-box .score-section-title, .results-card.score-B .report-box .analysis-keyword,
+    .results-card.score-B .report-box blockquote { color: #09AA29 !important; }
+    .results-card.score-B .report-box blockquote { border-left-color: #09AA29 !important; }
+
+    .results-card.score-C .report-box h1, .results-card.score-C .report-box h2, .results-card.score-C .report-box h3,
+    .results-card.score-C .report-box strong, .results-card.score-C .report-box li::marker,
+    .results-card.score-C .report-box .score-section-title, .results-card.score-C .report-box .analysis-keyword,
+    .results-card.score-C .report-box blockquote { color: #FFB700 !important; }
+    .results-card.score-C .report-box blockquote { border-left-color: #FFB700 !important; }
+
+    .results-card.score-D .report-box h1, .results-card.score-D .report-box h2, .results-card.score-D .report-box h3,
+    .results-card.score-D .report-box strong, .results-card.score-D .report-box li::marker,
+    .results-card.score-D .report-box .score-section-title, .results-card.score-D .report-box .analysis-keyword,
+    .results-card.score-D .report-box blockquote { color: #FF6600 !important; }
+    .results-card.score-D .report-box blockquote { border-left-color: #FF6600 !important; }
+
+    .results-card.score-E .report-box h1, .results-card.score-E .report-box h2, .results-card.score-E .report-box h3,
+    .results-card.score-E .report-box strong, .results-card.score-E .report-box li::marker,
+    .results-card.score-E .report-box .score-section-title, .results-card.score-E .report-box .analysis-keyword,
+    .results-card.score-E .report-box blockquote { color: #FF0055 !important; }
+    .results-card.score-E .report-box blockquote { border-left-color: #FF0055 !important; }
+
+    .results-card .report-box { border-left: none; }
+    .results-card .report-refutation-divider { background: rgba(255, 255, 255, 0.12); }
+    .results-card .report-refutation-title { color: #ffffff; }
+
+    #results-panel .flag-badge {
+      border-color: var(--score-color, #FF0055) !important;
+      color: var(--score-color, #FF0055) !important;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    #results-panel .report-box h1,
+    #results-panel .report-box h2,
+    #results-panel .report-box h3,
+    #results-panel .report-box strong,
+    #results-panel .report-box li::marker,
+    #results-panel .report-box .score-section-title,
+    #results-panel .report-box .analysis-keyword,
+    #results-panel .report-box blockquote {
+      color: var(--score-color, #FF0055) !important;
+    }
+
+    #results-panel .report-box blockquote {
+      border-left-color: var(--score-color, #FF0055) !important;
+    }
+
+    footer { margin-top: 50px; padding: 30px 0; border-top: 1px solid rgba(0, 240, 255, 0.15); text-align: center; }
+    .footer-shield { max-width: 600px; margin: 0 auto 20px auto; padding: 15px; border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 8px; background: rgba(15, 23, 42, 0.6); }
+    .shield-title { font-family: var(--font-cyber); color: var(--cyber-green); font-weight: bold; font-size: 0.95rem; }
+    .shield-disclaimer { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
+    .copyright { font-family: var(--font-cyber); font-size: 0.75rem; color: #64748b; }
+
+    @media (max-width: 620px) {
+      .container { padding: 0 14px; }
+      .beacon-title-block { margin: 28px 0 18px; }
+      .hero-app-title { font-size: 2rem; letter-spacing: 2px; }
+      .drop-zone, .results-card { padding: 16px; border-radius: 8px; }
+      .input-actions-bar, .results-actions { align-items: stretch; flex-direction: column; }
+      .file-upload-btn, .btn-beacon-primary, .btn-action-refute, .btn-action-pdf, .btn-action-purge { justify-content: center; width: 100%; }
+      .nav-buttons { gap: 10px; }
+      .nav-btn { font-size: 0.78rem; }
+      .report-box { overflow-wrap: anywhere; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CAPA DE ESTRELLAS DE FONDO -->
+  <div id="stars-container"></div>
+
+  <!-- CABECERA -->
+  <header>
+    <div class="container header-layout">
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn">PSICOMUSÉE</a>
+        <a href="beacon-app.html" class="nav-btn active">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn">CONTACT</a>
+      </nav>
+      <!-- TRES LENGUAS FUNCIONALES -->
+      <div class="lang-selector">
+        <a class="lang-btn active" id="btn-fr" tabIndex="0">FR</a><span>|</span>
+        <a class="lang-btn" id="btn-es" tabIndex="0">ES</a><span>|</span>
+        <a class="lang-btn" id="btn-en" tabIndex="0">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="container">
+    <div class="beacon-title-block">
+      <h1 class="hero-app-title">POLETHIC BEACON</h1>
+      <p class="subtitle" id="txt-subtitle">Nous dénudons les narratives humaines et traduisons les mécanismes de persuasion</p>
+    </div>
+
+    <section class="drop-zone" id="drop-zone">
+      <textarea id="user-input" aria-label="Texto a analizar" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
+      <div class="input-actions-bar">
+        <label for="user-file" class="file-upload-btn">
+           <span id="file-name-display">Joindre / Glisser un fichier</span>
+        </label>
+        <input type="file" id="user-file" accept="image/*,.pdf" style="display: none;" />
+        <button id="btn-analyze" class="btn-beacon-primary"> BEACON-IZE</button>
+      </div>
+      <div class="status-bar"><span id="txt-status"> MOTEUR PRÊT | TRADUCTION MÉTACOGNITIVE ONLINE (2026)</span></div>
+    </section>
+
+    <!-- RESULTADOS Y ACCIONES DE ANÁLISIS -->
+    <section id="results-panel" class="results-card">
+      <div class="results-header">
+        <div id="ethic-score" class="ethic-score-badge">Ethic-Score™: --</div>
+        <div id="detected-flags-container" class="flags-container">
+          <span class="flag-badge" id="txt-ready">TRADUCTION PRÊTE</span>
+        </div>
+      </div>
+
+      <div class="analysis-body">
+        <div id="analysis-report" class="report-box">En attente d'analyse...</div>
+      </div>
+
+      <div class="results-actions">
+        <button id="btn-refute" class="btn-action-refute"> RÉFUTER / CHALLENGER</button>
+        <button id="btn-memes" class="btn-action-memes"> MEMES</button>
+        <button id="btn-pdf" class="btn-action-pdf"> EXPORTER EN PDF</button>
+        <button id="btn-purge" class="btn-action-purge"> PURGER</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-shield">
+        <div class="shield-title" id="txt-shield-title">Bouclier de Protection Professionnelle</div>
+        <p class="shield-disclaimer" id="txt-shield-desc">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+      </div>
+      <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const BEACON_API_URL = (() => {
+      const explicit = window.BEACON_API_URL || window.BEACON_BACKEND_URL || '';
+      if (explicit) return explicit.replace(/\/$/, '');
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://127.0.0.1:5000';
+      }
+      return 'http://127.0.0.1:5000';
+    })();
+
+      function isNetworkError(err) {
+        return err instanceof TypeError || err.name === 'TypeError' || err.message?.includes('NetworkError');
+      }
+
+      function formatBeaconError(err) {
+        if (!err || !err.message) return 'Unknown error';
+        if (isNetworkError(err)) {
+          return `NetworkError: ${err.message.replace(/^NetworkError:\s*/i, '')}`;
+        }
+        return err.message;
+      }
+
+      function buildLocalFallbackReport(text, lang) {
+        const normalized = text.toLowerCase();
+        const rules = [
+          { flag: 'PSEUDOSCIENCE', words: ['quantum healing', 'biodescodificacion', 'bioneuroemocion', 'cura milagro'] },
+          { flag: 'PROMESA MILAGRO', words: ['milagro', 'cura el cancer', 'solucion secreta', 'one simple trick'] },
+          { flag: 'RETORICA COERCITIVA', words: ['debes', 'sin dudar', 'must', 'urgent'] },
+        ];
+        const flags = rules.filter(({ words }) => words.some(word => normalized.includes(word))).map(({ flag }) => flag);
+        const score = Math.max(40, 82 - flags.length * 14);
+        const scoreLetter = score >= 75 ? 'B' : score >= 56 ? 'C' : 'D';
+        const messages = {
+          fr: `## Mode local\n\nLe serveur d'analyse est indisponible. Ce rapport provisoire utilise uniquement des règles locales.\n\n- Score provisoire : **${scoreLetter}**\n- Signaux : ${flags.join(', ') || 'aucun signal lexical détecté'}`,
+          es: `## Modo local\n\nEl servidor de análisis no está disponible. Este informe provisional usa únicamente reglas locales.\n\n- Puntuación provisional: **${scoreLetter}**\n- Señales: ${flags.join(', ') || 'sin señales léxicas detectadas'}`,
+          en: `## Local mode\n\nThe analysis server is unavailable. This provisional report uses local rules only.\n\n- Provisional score: **${scoreLetter}**\n- Signals: ${flags.join(', ') || 'no lexical signals detected'}`,
+        };
+        return { analysis: messages[lang] || messages.fr, flags, scoreLetter };
+      }
+
+      async function beaconFetch(endpoint, options = {}) {
+  // Aseguramos que url use la variable global y el endpoint proporcionado
+  const url = `${BEACON_API_URL}${endpoint}`;
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 60000);
+  const statusElement = document.getElementById('txt-status');
+  const previousStatus = statusElement?.textContent;
+
+  if (endpoint === '/analyze' && statusElement) {
+    statusElement.textContent = 'Connexion au serveur (cela peut prendre jusqu\'à 45 s si le service était en veille)...';
+  }
+
+  try {
+    console.info('[BEACON] requesting backend URL:', url);
+    // CORRECCIÓN: usar 'url' en lugar de concatenar BEACON_API_URL de nuevo
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    if (!response.ok) {
+      const text = await response.text().catch(() => 'Unable to read response body');
+      throw new Error(`HTTP Error ${response.status} fetching ${url}: ${text}`);
+    }
+    return response;
+  } catch (err) {
+    const cleanedMessage = err.message?.replace(/^NetworkError:\s*/i, '') || err.toString();
+    const message = isNetworkError(err)
+      ? `NetworkError fetching ${url}: ${cleanedMessage}`
+      : `Error fetching ${url}: ${cleanedMessage}`;
+    console.warn(`[BEACON] fetch failed for ${url}:`, message);
+    throw new Error(message);
+  } finally {
+    window.clearTimeout(timeoutId);
+    if (endpoint === '/analyze' && statusElement) {
+      statusElement.textContent = previousStatus;
+    }
+  }
+}
+    // GENERADOR DE ESTRELLAS DINÁMICO
+    function generateStars(count = 40) {
+      const container = document.getElementById('stars-container');
+      if (!container) return;
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.5 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        container.appendChild(star);
+      }
+    }
+    generateStars();
+
+    const btnAnalyze = document.getElementById('btn-analyze');
+    const userInput = document.getElementById('user-input');
+    const userFile = document.getElementById('user-file');
+    const fileNameDisplay = document.getElementById('file-name-display');
+    const resultsPanel = document.getElementById('results-panel');
+    const analysisReport = document.getElementById('analysis-report');
+    const ethicScore = document.getElementById('ethic-score');
+    const detectedFlags = document.getElementById('detected-flags-container');
+
+    const btnRefute = document.getElementById('btn-refute');
+    const btnMemes = document.getElementById('btn-memes');
+    const btnPdf = document.getElementById('btn-pdf');
+    const btnPurge = document.getElementById('btn-purge');
+
+    const btnFr = document.getElementById('btn-fr');
+    const btnEs = document.getElementById('btn-es');
+    const btnEn = document.getElementById('btn-en');
+
+    let currentLang = 'fr';
+    let currentScoreLetter = 'C';
+    let ethicSpinnerInterval = null;
+    let lastAnalyzedText = "";
+    let rawAnalysisMarkdown = "";
+    let currentRefutationText = "";
+    let currentMemeText = "";
+    let currentFlags = [];
+    let droppedFile = null;
+    const dropZone = document.getElementById('drop-zone');
+
+    function normalizeMarkdownPresentation(text) {
+      if (!text || typeof text !== 'string') return '';
+      return String(text).replace(/\r\n/g, '\n').trim();
+    }
+
+    // FUNCIÓN PARA RENDERIZAR TEXTO FORMATEADO EN PANTALLA
+    function displayReportText(text) {
+      rawAnalysisMarkdown = text;
+      const safeText = normalizeMarkdownPresentation(text || '');
+      if (window.marked && window.DOMPurify) {
+        const rendered = marked.parse(safeText || text || '');
+        analysisReport.innerHTML = DOMPurify.sanitize(rendered);
+      } else {
+        analysisReport.textContent = text;
+      }
+    }
+
+    // DICCIONARIOS DE IDIOMA Y FLAGS
+    const langMap = {
+      fr: {
+        subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
+        placeholder: "Collez du texte ou glissez-déposez un fichier PDF/Image ici...",
+        fileBtn: "Joindre / Glisser un fichier",
+        analyzeBtn: " BEACON-IZE",
+        status: " MOTEUR PRÊT | SYSTEM ONLINE (2026)",
+        refuteBtn: " RÉFUTER / CHALLENGER",
+        refuting: " GÉNÉRATION DU DÉFI...",
+        memesBtn: " MEMES",
+        noMemeAlert: "Aucune analyse valide disponible pour générer un meme.",
+        pdfBtn: " EXPORTER EN PDF",
+        purgeBtn: " PURGER",
+        shieldTitle: "Bouclier de Protection Professionnelle",
+        shieldDesc: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+        noAnalysisAlert: "Aucune analyse valide disponible pour générer un défi.",
+        noExportAlert: "Aucune analyse disponible pour l'exportation PDF.",
+        refuteError: "Erreur lors du traitement de la réfutation.",
+        waitingAnalysis: "En attente d'analyse...",
+        analysisReady: "ANALYSE PRÊTE",
+        riskTitle: "Risque bruit / vente de fumee"
+      },
+      es: {
+        subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
+        placeholder: "Pegue texto o arrastre un archivo PDF/Imagen aquí...",
+        fileBtn: "Adjuntar / Arrastrar archivo",
+        analyzeBtn: " BEACON-IZE",
+        status: " MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
+        refuteBtn: " REFUTAR / DESAFIAR",
+        refuting: " GENERANDO REFUTACIÓN...",
+        memesBtn: " MEMES",
+        noMemeAlert: "No hay un análisis válido para generar un meme.",
+        pdfBtn: " EXPORTAR A PDF",
+        purgeBtn: " PURGAR",
+        shieldTitle: "Escudo de Protección Profesional",
+        shieldDesc: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+        noAnalysisAlert: "No hay un análisis válido disponible para generar un desafío.",
+        noExportAlert: "No hay un análisis disponible para exportar a PDF.",
+        refuteError: "Error al procesar la refutación.",
+        waitingAnalysis: "En espera de análisis...",
+        analysisReady: "ANÁLISIS LISTO",
+        riskTitle: "Riesgo por ruido / venta de humo"
+      },
+      en: {
+        subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
+        placeholder: "Paste text or drag and drop a PDF/Image file here...",
+        fileBtn: "Attach / Drag file",
+        analyzeBtn: " BEACON-IZE",
+        status: " ENGINE READY | SYSTEM ONLINE (2026)",
+        refuteBtn: " REFUTE / CHALLENGE",
+        refuting: " GENERATING CHALLENGE...",
+        memesBtn: " MEMES",
+        noMemeAlert: "No valid analysis is available to generate a meme.",
+        pdfBtn: " EXPORT TO PDF",
+        purgeBtn: " PURGE",
+        shieldTitle: "Professional Protection Shield",
+        shieldDesc: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+        noAnalysisAlert: "No valid analysis available to challenge.",
+        noExportAlert: "No analysis available to export as PDF.",
+        refuteError: "Error processing the refutation.",
+        waitingAnalysis: "Waiting for analysis...",
+        analysisReady: "ANALYSIS READY",
+        riskTitle: "Noise / hype risk"
+      }
+    };
+
+    const FLAGS_BY_SCORE = {
+      es: {
+        'A': ['FACTUAL', 'TRANSPARENTE', 'DESCRIPTIVO', 'SIN RIESGO'],
+        'B': ['PERSUASIVO', 'MARKETING', 'SESGO LEVE', 'PROMESA'],
+        'C': ['MANIPULACIÓN', 'AMBIGÜEDAD', 'PSEUDOCIENCIA', 'RETÓRICA'],
+        'D': ['RIESGO SECTARIO', 'INFLUENCIA', 'AISLAMIENTO', 'PELIGRO COGNITIVO']
+      },
+      fr: {
+        'A': ['FACTUEL', 'TRANSPARENT', 'DESCRIPTIF', 'SANS RISQUE'],
+        'B': ['PERSUASIF', 'MARKETING', 'BIAIS LEGER', 'PROMESSE'],
+        'C': ['MANIPULATION', 'AMBIGUÏTÉ', 'PSEUDO-SCIENCE', 'RHÉTORIQUE'],
+        'D': ['RISQUE SECTAIRE', 'EMPRISE', 'ISOLEMENT', 'DANGER COGNITIF']
+      },
+      en: {
+        'A': ['FACTUAL', 'TRANSPARENT', 'DESCRIPTIVE', 'LOW RISK'],
+        'B': ['PERSUASIVE', 'MARKETING', 'LIGHT BIAS', 'PROMISE'],
+        'C': ['MANIPULATION', 'AMBIGUITY', 'PSEUDOSCIENCE', 'RHETORIC'],
+        'D': ['CULTIC RISK', 'COERCION', 'ISOLATION', 'DANGER']
+      }
+    };
+
+    const FLAG_DICTIONARY = {
+      'fakenews': { es: 'NOTICIA FALSA', fr: 'FAUX BRUIT', en: 'FAKE NEWS' },
+      'myth': { es: 'MITO', fr: 'MYTHE', en: 'MYTH' },
+      'bluff': { es: 'MARKETING / HYPE', fr: 'BLUFF / HYPE', en: 'BLUFF / HYPE' },
+      'coercion': { es: 'COERCIÓN', fr: 'COERCITION', en: 'COERCION' },
+      'dogma': { es: 'DOGMA', fr: 'DOGME', en: 'DOGMA' },
+      'pseudoscience': { es: 'PSEUDOCIENCIA', fr: 'PSEUDOSCIENCE', en: 'PSEUDOSCIENCE' },
+      'authority_transfer': { es: 'TRANSFERENCIA AUTORIDAD', fr: 'TRANSFERT AUTORITÉ', en: 'AUTHORITY TRANSFER' },
+      'psnc': { es: 'SESGO COGNITIVO', fr: 'BIAIS COGNITIF', en: 'COGNITIVE BIAS' },
+      'deriva_sectaria_pseudoterapia': { es: 'DERIVA SECTARIA / PSEUDOTERAPIA', fr: 'DÉRIVE SECTAIRE / PSEUDOTHÉRAPIE', en: 'SECTARIAN DRIFT / PSEUDOTHERAPY' },
+      'deriva_sectaria_pseudoterapia': { es: 'DERIVA SECTARIA / PSEUDOTERAPIA', fr: 'DÉRIVE SECTAIRE / PSEUDOTHÉRAPIE', en: 'SECTARIAN DRIFT / PSEUDOTHERAPY' },
+      'coaching_transformation': { es: 'TRANSFORMACIÓN / COACHING', fr: 'TRANSFORMATION / COACHING', en: 'TRANSFORMATION / COACHING' },
+      'consultoria': { es: 'CONSULTORÍA', fr: 'CONSEIL / CONSULTING', en: 'CONSULTING' },
+      'abandono_medico': { es: 'ABANDONO MÉDICO', fr: 'ABANDON MÉDICAL', en: 'MEDICAL ABANDONMENT' },
+      'promesa_milagrosa': { es: 'PROMESA MILAGROSA', fr: 'PROMESSE MIRACLE', en: 'MIRACLE PROMISE' },
+      'persuasion': { es: 'PERSUASIÓN', fr: 'PERSUASION', en: 'PERSUASION' },
+      'injoncion': { es: 'INJONCIÓN', fr: 'INJONCTION', en: 'INJUNCTION' },
+      'glissement_semantique': { es: 'DESLIZAMIENTO SEMÁNTICO', fr: 'GLISSEMENT SÉMANTIQUE', en: 'SEMANTIC DRIFT' }
+    };
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      [btnFr, btnEs, btnEn].forEach(b => b.classList.remove('active'));
+      if (lang === 'fr') btnFr.classList.add('active');
+      if (lang === 'es') btnEs.classList.add('active');
+      if (lang === 'en') btnEn.classList.add('active');
+
+      const t = langMap[lang];
+      document.getElementById('txt-subtitle').innerText = t.subtitle;
+      userInput.placeholder = t.placeholder;
+      if (userFile.files.length === 0) fileNameDisplay.innerText = t.fileBtn;
+      btnAnalyze.innerText = t.analyzeBtn;
+      document.getElementById('txt-status').innerText = t.status;
+      btnRefute.innerText = t.refuteBtn;
+      btnMemes.innerText = t.memesBtn;
+      btnPdf.innerText = t.pdfBtn;
+      btnPurge.innerText = t.purgeBtn;
+      document.getElementById('txt-shield-title').innerText = t.shieldTitle;
+      document.getElementById('txt-shield-desc').innerText = t.shieldDesc;
+
+      if (!rawAnalysisMarkdown) {
+        displayReportText(t.waitingAnalysis);
+      }
+
+
+    }
+
+    btnFr.addEventListener('click', () => changeLanguage('fr'));
+    btnEs.addEventListener('click', () => changeLanguage('es'));
+    btnEn.addEventListener('click', () => changeLanguage('en'));
+
+    userFile.addEventListener('change', (e) => {
+      droppedFile = e.target.files[0] || null;
+      if (droppedFile) {
+        fileNameDisplay.innerText = droppedFile.name;
+      } else {
+        fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+      }
+    });
+
+    if (dropZone) {
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          droppedFile = files[0];
+          fileNameDisplay.innerText = droppedFile.name;
+          if (!userInput.value.trim()) {
+            userInput.value = '';
+          }
+          return;
+        }
+
+        const droppedText = e.dataTransfer.getData('text/plain');
+        if (droppedText) {
+          userInput.value = droppedText;
+        }
+      });
+    }
+
+    function startEthicSpinner() {
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+      const colors = ['#273BE9', '#09AA29', '#FFB700', '#FF6600', '#FF0055'];
+      if (ethicSpinnerInterval) clearInterval(ethicSpinnerInterval);
+      ethicSpinnerInterval = setInterval(() => {
+        const l = letters[Math.floor(Math.random() * letters.length)];
+        const c = colors[Math.floor(Math.random() * colors.length)];
+        ethicScore.innerText = `Ethic-Score™: ${l}`;
+        ethicScore.style.backgroundColor = c;
+      }, 90);
+    }
+
+    function stopEthicSpinner() {
+      if (ethicSpinnerInterval) {
+        clearInterval(ethicSpinnerInterval);
+        ethicSpinnerInterval = null;
+      }
+    }
+
+    const SCORE_COLORS = { A: '#273BE9', B: '#09AA29', C: '#FFB700', D: '#FF6600', E: '#FF0055' };
+    const SCORE_LETTERS = new Set(['A','B','C','D','E']);
+
+    function applyEthicBadge(letterValue, customFlags) {
+      stopEthicSpinner();
+      let letter = 'C';
+      if (typeof letterValue === 'string' && SCORE_LETTERS.has(letterValue.toUpperCase())) {
+        letter = letterValue.toUpperCase();
+      }
+      const color = SCORE_COLORS[letter] || '#ff9900';
+
+      currentScoreLetter = letter;
+      ethicScore.innerText = `Ethic-Score™: ${letter}`;
+      ethicScore.style.backgroundColor = color;
+      resultsPanel.style.setProperty('--score-color', color);
+      analysisReport.style.setProperty('--score-color', color);
+      detectedFlags.style.setProperty('--score-color', color);
+
+      resultsPanel.className = resultsPanel.className
+        .replace(/\bscore-[A-E]\b/g, '').trim();
+      resultsPanel.classList.add(`score-${letter}`);
+      resultsPanel.style.setProperty('--score-color', color);
+      analysisReport.style.setProperty('--score-color', color);
+      syncReportScoreColors();
+
+      const lang = FLAGS_BY_SCORE[currentLang] ? currentLang : 'fr';
+      const flagsToRender = (customFlags && customFlags.length > 0) 
+        ? customFlags 
+        : (FLAGS_BY_SCORE[lang][letter] || FLAGS_BY_SCORE[lang]['C']);
+
+      currentFlags = Array.isArray(flagsToRender) ? flagsToRender : String(flagsToRender || '').split(',');
+      renderFlags(flagsToRender);
+    }
+
+    function renderFlags(flagsArray) {
+      if (!detectedFlags) return;
+      detectedFlags.innerHTML = '';
+      
+      let flags = typeof flagsArray === 'string' ? flagsArray.split(',') : flagsArray;
+      const lang = currentLang || 'fr';
+      const color = SCORE_COLORS[currentScoreLetter] || '#FF0055';
+
+      (flags || ['ANALYSE']).forEach(f => {
+        const rawValue = f.trim();
+        const rawKey = rawValue.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+        let displayLabel = rawValue.toUpperCase();
+        if (FLAG_DICTIONARY[rawKey] && FLAG_DICTIONARY[rawKey][lang]) {
+          displayLabel = FLAG_DICTIONARY[rawKey][lang];
+        }
+
+        const span = document.createElement('span');
+        span.className = 'flag-badge';
+        span.innerText = displayLabel;
+        span.style.color = color;
+        span.style.borderColor = color;
+        detectedFlags.appendChild(span);
+      });
+    }
+
+    function syncReportScoreColors() {
+      const color = SCORE_COLORS[currentScoreLetter] || '#FF0055';
+      if (analysisReport) {
+        analysisReport.style.setProperty('--score-color', color);
+        analysisReport.querySelectorAll('h1, h2, h3, strong, blockquote, li::marker, .score-section-title, .analysis-keyword').forEach(el => {
+          el.style.color = color;
+          if (el.tagName === 'BLOCKQUOTE') {
+            el.style.borderLeftColor = color;
+          }
+        });
+      }
+      if (detectedFlags) {
+        detectedFlags.querySelectorAll('.flag-badge').forEach(flag => {
+          flag.style.color = color;
+          flag.style.borderColor = color;
+        });
+      }
+    }
+
+    // =====================================================================
+    //  PROCESO DE ANÁLISIS MULTICANAL (TEXTO O ARCHIVO SUBIDO)
+    // =====================================================================
+    btnAnalyze.addEventListener('click', async () => {
+      const text = userInput.value.trim();
+      const file = droppedFile || userFile.files[0];
+      const t = langMap[currentLang];
+
+      if (!text && !file) {
+        const errorMsg = {
+          es: 'Por favor ingrese texto o adjunte un archivo (PDF/Imagen).',
+          fr: 'Veuillez entrer du texte ou joindre un fichier (PDF/Image).',
+          en: 'Please enter text or attach a file (PDF/Image).'
+        };
+        return alert(errorMsg[currentLang] || errorMsg.fr);
+      }
+
+      lastAnalyzedText = text || (file ? file.name : "");
+      btnAnalyze.disabled = true;
+      btnRefute.disabled = true;
+      btnMemes.disabled = true;
+      btnPdf.disabled = true;
+      // Reset palette class before showing so no stale colour leaks from previous run
+      resultsPanel.className = resultsPanel.className.replace(/\bscore-[A-E]\b/g, '').trim();
+      resultsPanel.style.display = 'block';
+
+      const loadingMsg = {
+        es: ' Análisis forense en proceso...',
+        fr: ' Analyse forensique en cours...',
+        en: ' Forensic analysis in progress...'
+      };
+      displayReportText(loadingMsg[currentLang] || loadingMsg.fr);
+      startEthicSpinner();
+
+      const serverErrMsg = {
+        es: ' No se pudo contactar con el servidor de análisis.',
+        fr: ' Impossible de contacter le serveur d\'analyse.',
+        en: ' Could not reach the analysis server.'
+      };
+
+      try {
+        let response;
+        if (file) {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('text', text);
+          formData.append('lang', currentLang);
+
+          response = await beaconFetch('/analyze', {
+            method: 'POST',
+            body: formData
+          });
+        } else {
+          response = await beaconFetch('/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, lang: currentLang })
+          });
+        }
+
+        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+
+        const data = await response.json();
+        const flagsReceived = data.flags || data.detected_flags || [];
+        const band = data.band || data.ethic_class || data.ethic_letter || data.scoreLetter || data.risk_grade || 'C';
+        const bandColor = data.color || data.ethic_color || SCORE_COLORS[band.toUpperCase()] || '#ff9900';
+        const summaryText = data.summary || data.translation || 'Analyse terminée.';
+
+        applyEthicBadge(band, flagsReceived);
+
+        const analysisText = data.analysis || data.report || summaryText;
+        const renderedText = analysisText || summaryText;
+
+        rawAnalysisMarkdown = renderedText;
+        displayReportText(renderedText);
+        syncReportScoreColors();
+
+      } catch (e) {
+        console.error("[BEACON Analyze Error]:", e);
+        if (text) {
+          const localResult = buildLocalFallbackReport(text, currentLang);
+          applyEthicBadge(localResult.scoreLetter, localResult.flags);
+          displayReportText(localResult.analysis);
+        } else {
+          alert(`${serverErrMsg[currentLang] || serverErrMsg.fr}\n(${formatBeaconError(e)})`);
+          displayReportText(serverErrMsg[currentLang] || serverErrMsg.fr);
+        }
+      } finally {
+        btnAnalyze.disabled = false;
+        btnRefute.disabled = false;
+        btnMemes.disabled = false;
+        btnPdf.disabled = false;
+      }
+    });
+
+    // =====================================================================
+    //  REFUTACIÓN DIRECCIONADA (ENDPOINT /refute RESTAURADO)
+    // =====================================================================
+    btnRefute.addEventListener('click', async () => {
+      const currentAnalysis = rawAnalysisMarkdown || analysisReport.innerText;
+      const t = langMap[currentLang];
+
+      if (!currentAnalysis || currentAnalysis.includes("En attente") || currentAnalysis.includes("Erreur") || currentAnalysis.includes("Error")) {
+        return alert(t.noAnalysisAlert);
+      }
+
+      btnRefute.disabled = true;
+      btnRefute.innerText = t.refuting;
+
+      try {
+        const response = await beaconFetch('/refute', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            analysis: currentAnalysis,
+            text: lastAnalyzedText,
+            lang: currentLang
+          })
+        });
+
+        const data = await response.json();
+        const refutationPayload = data.refutation || data.challenge || data.reply || '';
+        const questionList = Array.isArray(data.questions)
+          ? data.questions
+          : Array.isArray(data.refutation_questions)
+            ? data.refutation_questions
+            : [];
+        const refutationText = refutationPayload || (questionList.length ? questionList.map((q) => `- ${q}`).join('\n\n') : '');
+
+        if (refutationText) {
+          currentRefutationText = refutationText;
+          const titleMap = {
+            fr: "DÉFI DU BIAIS (RÉFUTATION COGNITIVE)",
+            es: "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA)",
+            en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
+          };
+
+          const updatedMarkdown = `${rawAnalysisMarkdown}\n\n## ${titleMap[currentLang] || titleMap.fr}\n\n${refutationText}`;
+          displayReportText(updatedMarkdown);
+          syncReportScoreColors();
+        } else {
+          alert("Le serveur n'a pas renvoyé de texte de réfutation.");
+        }
+      } catch (e) {
+        console.error("[Refutation Error]:", e);
+        alert(`${t.refuteError} (${formatBeaconError(e)})`);
+      } finally {
+        btnRefute.disabled = false;
+        btnRefute.innerText = t.refuteBtn;
+      }
+    });
+
+    function buildMemeSynthesis(flags, lang) {
+      const normalizedFlags = (flags || []).map(flag => String(flag).toUpperCase());
+      const hasFlag = (flag) => normalizedFlags.some(value => value.includes(flag));
+
+      if (lang === 'es') {
+        if (hasFlag('PROMESA_MILAGROSA')) return 'Te venden la llave de todas las puertas sin enseñarte la cerradura: mucho brillo, cero prueba de que abre algo.';
+        if (hasFlag('ACCOMPAGNEMENT_SANTE')) return 'Hablan de dolor y salud con un lazo de coaching: si no dicen qué hacen, qué no hacen y cuándo derivan, la caja viene sin instrucciones de seguridad.';
+        if (hasFlag('REVENDICATION_NEUROSCIENTIFIQUE')) return 'Pegar “neurociencia” en la etiqueta sin método ni estudios es vender humo con bata blanca: impresiona, pero no demuestra nada.';
+        if (hasFlag('PERIMETRE_CLINIQUE')) return 'Usar palabras de consulta sin mostrar título ni límites es ponerse una bata para la foto: parece clínico, pero no acredita competencia.';
+        if (hasFlag('INJONCION')) return 'Si te empujan a decidir antes de mirar la letra pequeña, no es urgencia: es una puerta que quieren cerrar detrás de ti.';
+        return 'Mucho escaparate y poca ficha técnica: antes de creer el anuncio, mira qué hay realmente dentro de la caja.';
+      }
+      if (lang === 'en') {
+        if (hasFlag('PROMESA_MILAGROSA')) return 'They are selling a key to every door without showing the lock: plenty of shine, no proof it opens anything.';
+        if (hasFlag('ACCOMPAGNEMENT_SANTE')) return 'They wrap pain and health claims in coaching language: without clear limits and medical referral rules, the box has no safety instructions.';
+        if (hasFlag('REVENDICATION_NEUROSCIENTIFIQUE')) return 'Putting “neuroscience” on the label without a method or studies is smoke in a lab coat: impressive-looking, evidence-free.';
+        if (hasFlag('PERIMETRE_CLINIQUE')) return 'Using clinic words without showing credentials or limits is wearing a white coat for the photo: it looks clinical, but proves no competence.';
+        if (hasFlag('INJONCION')) return 'If they rush you before you read the small print, it is not urgency: it is a door they want shut behind you.';
+        return 'A polished shop window with no technical sheet: before trusting the pitch, check what is actually in the box.';
+      }
+      if (hasFlag('PROMESA_MILAGROSA')) return 'On vous vend le passe-partout sans vous montrer la serrure : ça brille fort, mais rien ne prouve que ça ouvre quoi que ce soit.';
+      if (hasFlag('ACCOMPAGNEMENT_SANTE')) return 'On emballe douleur et santé dans du coaching : sans limites claires ni règle d’orientation médicale, la boîte est vendue sans consigne de sécurité.';
+      if (hasFlag('REVENDICATION_NEUROSCIENTIFIQUE')) return 'Coller « neurosciences » sur l’étiquette sans méthode ni études, c’est vendre du vent en blouse blanche : ça impressionne, ça ne prouve rien.';
+      if (hasFlag('PERIMETRE_CLINIQUE')) return 'Utiliser des mots de médecin pour vendre des masterclasses de coaching sans diplôme, c’est comme coller un badge d’hôpital sur une boîte de Lego : ça fait sérieux sur la plaquette, mais ça ne soigne personne.';
+      if (hasFlag('INJONCION')) return 'Si l’on vous pousse à décider avant de lire les petites lignes, ce n’est pas l’urgence : c’est une porte qu’on veut fermer derrière vous.';
+      return 'Vitrine bien astiquée, fiche technique introuvable : avant de croire au discours, regardez ce qu’il y a vraiment dans la boîte.';
+    }
+
+    function removePreviousMemeBlocks(report) {
+      return String(report || '')
+        .replace(/(?:^|\n)#{1,6}\s*MEME(?:S)?\s*\n+[\s\S]*?(?=\n#{1,6}\s|$)/gi, '\n')
+        .trim();
+    }
+
+    btnMemes.addEventListener('click', () => {
+      const currentAnalysis = rawAnalysisMarkdown || analysisReport.innerText;
+      const t = langMap[currentLang];
+      if (!currentAnalysis || currentAnalysis.includes('En attente') || currentAnalysis.includes('Erreur') || currentAnalysis.includes('Error')) {
+        return alert(t.noMemeAlert);
+      }
+
+      const titles = { fr: 'MEMES', es: 'MEMES', en: 'MEMES' };
+      currentMemeText = `## ${titles[currentLang] || titles.fr}\n\n> ${buildMemeSynthesis(currentFlags, currentLang)}`;
+  const withoutPreviousMeme = removePreviousMemeBlocks(currentAnalysis);
+  rawAnalysisMarkdown = withoutPreviousMeme;
+      displayReportText(`${withoutPreviousMeme}\n\n${currentMemeText}`);
+      syncReportScoreColors();
+    });
+    // =====================================================================
+    //  EXPORTACIÓN A PDF (SERVIDOR BACKEND, ESTILO TARJETA)
+    // =====================================================================
+    btnPdf.addEventListener('click', async () => {
+      const reportText = rawAnalysisMarkdown || analysisReport.innerText;
+      const lang = currentLang || 'fr';
+      const t = langMap[lang] || langMap['fr'];
+
+      if (!reportText || reportText.includes("En attente") || reportText.includes("Erreur") || reportText.includes("Error")) {
+        return alert(t.noExportAlert);
+      }
+
+      btnPdf.disabled = true;
+      btnPdf.innerText = `${t.pdfBtn}...`;
+
+      const flags = Array.from(document.querySelectorAll('#detected-flags-container .flag-badge'))
+        .map(el => el.innerText.trim())
+        .filter(Boolean);
+
+      try {
+        const analysisPayload = rawAnalysisMarkdown || reportText;
+        const refutationPayload = currentRefutationText && !analysisPayload.includes(currentRefutationText)
+          ? currentRefutationText
+          : '';
+
+        const response = await beaconFetch('/export_pdf', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/pdf'
+          },
+          body: JSON.stringify({
+            scoreLetter: currentScoreLetter,
+            flags,
+            lang,
+            analysis: analysisPayload,
+            refutation: refutationPayload
+          })
+        });
+
+        const contentType = response.headers.get('Content-Type') || '';
+        if (!response.ok) {
+          let details = '';
+          if (contentType.includes('application/json')) {
+            const errorBody = await response.json().catch(() => null);
+            details = errorBody?.error || JSON.stringify(errorBody || {});
+          } else {
+            details = await response.text().catch(() => response.statusText);
+          }
+          throw new Error(`HTTP ${response.status}: ${details}`);
+        }
+
+        if (contentType.includes('application/json')) {
+          const errorBody = await response.json().catch(() => null);
+          throw new Error(errorBody?.error || 'El servidor devolvió JSON en lugar de PDF.');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `RAPPORT_BEACON_${currentScoreLetter}_${new Date().toISOString().slice(0, 10)}.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error('[PDF Export Error]:', err);
+        alert(`PDF export failed: ${err.message}`);
+      } finally {
+        btnPdf.disabled = false;
+        btnPdf.innerText = t.pdfBtn;
+      }
+    });
+
+    // =====================================================================
+    //  PURGAR INTERFAZ
+    // =====================================================================
+    btnPurge.addEventListener('click', () => {
+      userInput.value = '';
+      userFile.value = '';
+      rawAnalysisMarkdown = "";
+      currentRefutationText = "";
+      currentMemeText = "";
+      currentFlags = [];
+      fileNameDisplay.innerText = langMap[currentLang].fileBtn;
+      
+      const resetText = langMap[currentLang].waitingAnalysis;
+      displayReportText(resetText);
+
+      const readyText = langMap[currentLang].analysisReady;
+      if (detectedFlags) {
+        detectedFlags.innerHTML = `<span class="flag-badge" id="txt-ready">${readyText}</span>`;
+      }
+
+      stopEthicSpinner();
+      ethicScore.innerText = 'Ethic-Score™: --';
+      ethicScore.style.backgroundColor = '';
+      resultsPanel.className = resultsPanel.className.replace(/\bscore-[A-E]\b/g, '').trim();
+      
+      resultsPanel.style.display = 'none';
+      lastAnalyzedText = "";
+    });
+  });
+  </script>
+</body>
+</html>

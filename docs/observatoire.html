@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Observatoire | POLETHIC France</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .alert-badge {
+            display: inline-block;
+            background-color: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .report-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: left;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .report-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+        .meta-info {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+        .critical-tag {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+  <!-- CAPA DE ESTRELLAS DE FONDO -->
+  <div id="stars-container"></div>
+
+  <!-- CABECERA DE NAVEGACIÓN -->
+  <header>
+    <div class="container header-layout">
+      <!-- LOGO -->
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      
+      <!-- MENÚ -->
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn active" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon.html" class="nav-btn" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
+      </nav>
+
+      <!-- SELECTOR DE IDIOMAS -->
+      <div class="lang-selector">
+        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-es">ES</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-en">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+      
+      <section class="hero-card" style="text-align: center; margin-bottom: 40px;">
+          <h2 style="font-size: 2rem; color: #1e3a8a;" data-key="obs_hero_title">L'Observatoire des Fronts Prédictifs</h2>
+          <p style="margin-top: 15px; color: #475569; max-width: 700px; margin-left: auto; margin-right: auto;" data-key="obs_hero_desc">
+              Analyses critiques, rapports d'activité et veilles citoyennes. Nous recensons les dérives sectaires modernes et l'intrusion professionnelle pour protéger l'espace public et la santé démocratique.
+          </p>
+      </section>
+
+      <!-- Listado de Informes / Vacunas Cognitivas -->
+      <div style="max-width: 800px; margin: 0 auto;">
+          
+          <!-- Informe 1: Constelaciones Familiares -->
+          <article class="report-card">
+              <span class="alert-badge" data-key="rep1_badge">Alerte Dérive</span>
+              <h3 data-key="rep1_title">Analyse critique : Le phénomène des Constellations Familiales</h3>
+              <div class="meta-info">
+                  <span data-key="rep1_date">Publié le 20 Juillet 2026</span> | 
+                  <span class="critical-tag" data-key="rep1_tag">Absence d'Évidence Scientifique</span>
+              </div>
+              <p style="color: #334155; line-height: 1.6;" data-key="rep1_desc">
+                  Étude détaillée sur les risques liés aux théories des "enredos" (remontées systémiques inconscientes). Face à l'augmentation de l'intrusion professionnelle dans le domaine de la santé mentale, notre observatoire déploie une analyse rigoureuse des dérives de cette pratique non validée par la science.
+              </p>
+              <a href="post/premiere-action.html" class="btn-accent" style="font-size: 0.9rem; padding: 8px 16px; margin-top: 15px; inline-block;" data-key="rep1_btn">Lire le rapport complet &rarr;</a>
+          </article>
+
+          <!-- Informe 2: Alerta Intrusismo -->
+          <article class="report-card">
+              <span class="alert-badge" style="background-color: #f59e0b;" data-key="rep2_badge">Vigilance Loi 2024</span>
+              <h3 data-key="rep2_title">Intrusion professionnelle & Santé Démocratique en France</h3>
+              <div class="meta-info">
+                  <span data-key="rep2_date">Publié en Juillet 2026</span> | 
+                  <span class="critical-tag" data-key="rep2_tag">Prévention Primaire</span>
+              </div>
+              <p style="color: #334155; line-height: 1.6;" data-key="rep2_desc">
+                  Conformément aux récentes évolutions législatives françaises sur le renforcement de la lutte contre les dérives sectaires, cet article dresse un état des lieux des signalements reçus concernant les faux experts et les promesses de thérapies alternatives miracles.
+              </p>
+              <a href="#" class="btn-accent" style="font-size: 0.9rem; padding: 8px 16px; margin-top: 15px; background-color: #64748b; inline-block;" data-key="rep2_btn">En cours de rédaction</a>
+          </article>
+
+      </div>
+
+  </main>
+
+  <!-- FOOTER GLOBAL -->
+  <footer>
+    <div class="container footer-content">
+      
+      <!-- ESCUDO Y DESCARGO DE RESPONSABILIDAD PROFESIONAL -->
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer" data-key="footer_disc1">
+          Action exclusive de prévention primaire et de psychoéducation non clinique.
+        </p>
+        <p class="shield-disclaimer" data-key="footer_disc2">
+          Aucun diagnostic ou thérapie médicale n'est pratiqué.
+        </p>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <!-- ENLACES LEGALES Y COPYRIGHT -->
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- SCRIPT DE ESTRELLAS DE FONDO -->
+  <script src="js/stars.js"></script>
+
+  <!-- SCRIPT DE TRADUCCIÓN MULTI-IDIOMA -->
+  <script>
+  const translations = {
+      fr: {
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+
+          obs_hero_title: "L'Observatoire des Fronts Prédictifs",
+          obs_hero_desc: "Analyses critiques, rapports d'activité et veilles citoyennes. Nous recensons les dérives sectaires modernes et l'intrusion professionnelle pour protéger l'espace public et la santé démocratique.",
+
+          rep1_badge: "Alerte Dérive",
+          rep1_title: "Analyse critique : Le phénomène des Constellations Familiales",
+          rep1_date: "Publié le 20 Juillet 2026",
+          rep1_tag: "Absence d'Évidence Scientifique",
+          rep1_desc: "Étude détaillée sur les risques liés aux théories des \"enredos\" (remontées systémiques inconscientes). Face à l'augmentation de l'intrusion professionnelle dans le domaine de la santé mentale, notre observatoire déploie une analyse rigoureuse des dérives de cette pratique non validée par la science.",
+          rep1_btn: "Lire le rapport complet →",
+
+          rep2_badge: "Vigilance Loi 2024",
+          rep2_title: "Intrusion professionnelle & Santé Démocratique en France",
+          rep2_date: "Publié en Juillet 2026",
+          rep2_tag: "Prévention Primaire",
+          rep2_desc: "Conformément aux récentes évolutions législatives françaises sur le renforcement de la lutte contre les dérives sectaires, cet article dresse un état des lieux des signalements reçus concernant les faux experts et les promesses de thérapies alternatives miracles.",
+          rep2_btn: "En cours de rédaction",
+
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies"
+      },
+      es: {
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+
+          obs_hero_title: "Observatorio de Frentes Predictivos",
+          obs_hero_desc: "Análisis críticos, informes de actividad y vigilancia ciudadana. Registramos las derivas sectarias modernas y el intrusismo profesional para proteger el espacio público y la salud democrática.",
+
+          rep1_badge: "Alerta Deriva",
+          rep1_title: "Análisis crítico: El fenómeno de las Constelaciones Familiares",
+          rep1_date: "Publicado el 20 de Julio de 2026",
+          rep1_tag: "Sin Evidencia Científica",
+          rep1_desc: "Estudio detallado sobre los riesgos vinculados a las teorías de los «enredos» (reminiscencias sistémicas inconscientes). Ante el aumento del intrusismo profesional en la salud mental, nuestro observatorio despliega un análisis riguroso de las derivas de esta práctica no validada por la ciencia.",
+          rep1_btn: "Leer el informe completo →",
+
+          rep2_badge: "Vigilancia Ley 2024",
+          rep2_title: "Intrusismo Profesional y Salud Democrática en Francia",
+          rep2_date: "Publicado en Julio de 2026",
+          rep2_tag: "Prevención Primaria",
+          rep2_desc: "De conformidad con las recientes novedades legislativas francesas sobre el refuerzo de la lucha contra las derivas sectarias, este artículo ofrece un balance de los reportes recibidos sobre falsos expertos y promesas de terapias alternativas milagrosas.",
+          rep2_btn: "En curso de redacción",
+
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies"
+      },
+      en: {
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
+
+          obs_hero_title: "Predictive Fronts Observatory",
+          obs_hero_desc: "Critical analysis, activity reports, and civic watchfulness. We log modern sectarian drifts and professional intrusion to safeguard the public sphere and democratic health.",
+
+          rep1_badge: "Drift Alert",
+          rep1_title: "Critical Analysis: The Family Constellations Phenomenon",
+          rep1_date: "Published July 20, 2026",
+          rep1_tag: "Lack of Scientific Evidence",
+          rep1_desc: "Detailed study on the risks connected to theories of 'enredos' (unconscious systemic dynamics). Facing the rise of professional intrusion in mental health, our observatory provides a rigorous analysis of the drifts within this scientifically unverified practice.",
+          rep1_btn: "Read full report →",
+
+          rep2_badge: "2024 Law Vigilance",
+          rep2_title: "Professional Intrusion & Democratic Health in France",
+          rep2_date: "Published July 2026",
+          rep2_tag: "Primary Prevention",
+          rep2_desc: "In accordance with recent French legal updates reinforcing the fight against sectarian drifts, this report provides an overview of notifications received regarding fake experts and miracle alternative therapy promises.",
+          rep2_btn: "Under construction",
+
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management"
+      }
+  };
+
+  function setLanguage(lang) {
+      localStorage.setItem('preferred_lang', lang);
+
+      document.querySelectorAll('[data-key]').forEach(element => {
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.textContent = translations[lang][key];
+          }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
+      setLanguage(savedLang);
+  });
+  </script>
+
+</body>
+</html>

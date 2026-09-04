@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | POLETHIC France</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Hero de Contacto */
+        .contact-hero {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 25px;
+            background: rgba(15, 23, 42, 0.7);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Grid Principal (Contacto + Información) */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Tarjeta de Contacto / Canal Directo */
+        .contact-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(8px);
+        }
+
+        .contact-card h2 {
+            color: #ffffff;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .email-badge {
+            display: inline-block;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            color: #00f0ff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .email-badge:hover {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 12px rgba(0, 255, 136, 0.2);
+        }
+
+        /* Módulos desplegables de "Qui sommes-nous ?" */
+        .cyber-details {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .cyber-details[open] {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .cyber-summary {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .cyber-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .cyber-summary::after {
+            content: '[+]';
+            color: #00f0ff;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .cyber-details[open] .cyber-summary::after {
+            content: '[-]';
+            color: #00ff88;
+        }
+
+        .cyber-content {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+  <!-- CAPA DE ESTRELLAS -->
+  <div id="stars-container"></div>
+
+  <!-- CABECERA DE NAVEGACIÓN -->
+  <header>
+    <div class="container header-layout">
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon.html" class="nav-btn" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn active" data-key="nav_contact">CONTACT</a>
+      </nav>
+
+      <!-- SELECTOR DE IDIOMAS CON SUS IDs -->
+      <div class="lang-selector">
+        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-es">ES</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-en">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+      
+      <!-- HERO CONTACTO -->
+      <section class="contact-hero">
+          <p data-key="hero_desc" style="color: #94a3b8; max-width: 650px; margin: 0 auto; font-size: 0.92rem; line-height: 1.5;">
+              Pour toute demande d'intervention institutionnelle, de conférence ou d'information sur nos programmes de prévention.
+          </p>
+      </section>
+
+      <!-- BLOQUE DE CONTACTO + QUIÉNES SOMOS -->
+      <div class="contact-grid">
+
+          <!-- CANAL DE CONTACTO -->
+          <div class="contact-card">
+              <h2 data-key="contact_title">01 // Interventions & Partenariats</h2>
+              <p data-key="contact_text" style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5;">
+                  Nous intervenons auprès des <strong>Mairies, établissements scolaires, associations et institutions publiques</strong> pour des actions de prévention primaire et d'autodéfense cognitive.
+              </p>
+              
+              <div style="margin-top: 20px;">
+                  <a href="mailto:polethic.ass@gmail.com" class="email-badge">polethic.ass@gmail.com</a>
+              </div>
+
+              <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: #64748b;">
+                  ⏱️ <strong data-key="delay_title">Délai de réponse :</strong> <span data-key="delay_text">Sous 48h ouvrées. Traitement confidentiel des demandes.</span>
+              </div>
+          </div>
+
+          <!-- SECCIÓN QUIÉNES SOMOS (QUI SOMMES-NOUS) -->
+          <div>
+              <h2 data-key="about_title" style="color: #ffffff; font-size: 1.25rem; margin-bottom: 15px; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 8px;">
+                  02 // Qui Sommes-Nous ?
+              </h2>
+
+              <!-- MÓDULO 1: LA FONDATEUR / LE PROFIL -->
+              <details class="cyber-details" open>
+                  <summary class="cyber-summary">
+                      <span><strong style="color: #00f0ff;">//</strong> <span data-key="mod1_title">Direction & Vision Triptyque</span></span>
+                  </summary>
+                  <div class="cyber-content">
+                      <p data-key="mod1_p1" style="margin-bottom: 8px;">
+                          L'initiative POLETHIC France a été fondée par une analyste-profileuse spécialisée en analyse du comportement criminel et évaluation du risque, issue d'un parcours universitaire poussé en psychologie et neurosciences comportementales (UNED, Espagne).
+                      </p>
+                      <p data-key="mod1_p2" style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0;">
+                          Enrichie par une première carrière dans le sport professionnel puis une décennie d'exploration dans la création artistique pluridisciplinaire, elle façonne une démarche transversale unique. Au croisement de la <strong>science, de l'art et de la technologie</strong>, POLETHIC cartographie les mécanismes de manipulation et renforce la prévention primaire grâce aux neurosciences et à la donnée.
+                      </p>
+                  </div>
+              </details>
+
+              <!-- MÓDULO 2: EXPERTISES TECHNIQUES -->
+              <details class="cyber-details">
+                  <summary class="cyber-summary">
+                      <span><strong style="color: #00f0ff;">//</strong> <span data-key="mod2_title">Domaines d'Expertise & Méthodologie</span></span>
+                  </summary>
+                  <div class="cyber-content">
+                      <ul style="padding-left: 15px; font-size: 0.85rem; color: #cbd5e1; margin: 0;">
+                          <li style="margin-bottom: 6px;">
+                              <strong style="color: #ffffff;" data-key="mod2_l1_title">Analyse Comportementale & Emprise :</strong> <span data-key="mod2_l1_text">Évaluation des dynamiques d'influence et de vulnérabilité (outils d'évaluation du risque, victimologie, profils neurodivergents).</span>
+                          </li>
+                          <li style="margin-bottom: 6px;">
+                              <strong style="color: #ffffff;" data-key="mod2_l2_title">Investigation Numérique & OSINT :</strong> <span data-key="mod2_l2_text">Détection des leviers de manipulation en ligne, dérives numériques et cartographie des comportements sur sources ouvertes.</span>
+                          </li>
+                          <li style="margin-bottom: 6px;">
+                              <strong style="color: #ffffff;" data-key="mod2_l3_title">Cyber & Sciences Cognitives :</strong> <span data-key="mod2_l3_text">Application des fondamentaux de la cybersécurité (CS50 Harvard) et des neurosciences appliquées à la protection de l'autonomie décisionnelle.</span>
+                          </li>
+                      </ul>
+                  </div>
+              </details>
+
+              <!-- MÓDULO 3: CADRE ÉTHIQUE -->
+              <details class="cyber-details">
+                  <summary class="cyber-summary">
+                      <span><strong style="color: #00ff88;">//</strong> <span data-key="mod3_title">Cadre Interventionnel & Éthique</span></span>
+                  </summary>
+                  <div class="cyber-content">
+                      <p data-key="mod3_p1" style="margin-bottom: 8px;">
+                          Formation certifiée en <em>Premiers Secours Psychologiques (PFA)</em> et psychologie comportementale non clinique.
+                      </p>
+                      <p data-key="mod3_p2" style="font-size: 0.85rem; color: #94a3b8; margin: 0;">
+                          POLETHIC opère strictement dans le cadre de la <strong>prévention primaire, de la psychoéducation et du renforcement de la vigilance citoyenne</strong>, sans pratiquer aucun diagnostic ni acte thérapeutique.
+                      </p>
+                  </div>
+              </details>
+          </div>
+
+      </div>
+
+  </main>
+
+  <!-- FOOTER GLOBAL -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer" data-key="footer_disc1">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer" data-key="footer_disc2">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <!-- REDES SOCIALES (LOGOS + ENLACES) -->
+        <div class="social-links-container">
+            <!-- INSTAGRAM -->
+            <a href="https://instagram.com/polethic_france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram POLETHIC">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+
+            <!-- FACEBOOK -->
+            <a href="https://facebook.com/polethic.france" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook POLETHIC">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                </svg>
+            </a>
+
+            <!-- LINKEDIN PERSONAL -->
+            <a href="https://www.linkedin.com/in/metalzako/" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn Professionnel">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                    <rect x="2" y="9" width="4" height="12"></rect>
+                    <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+            </a>
+        </div>
+        <div class="footer-links">
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DE TRADUCCIÓN MULTI-IDIOMA -->
+  <script>
+  const translations = {
+      fr: {
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+          hero_desc: "Pour toute demande d'intervention institutionnelle, de conférence ou d'information sur nos programmes de prévention.",
+          contact_title: "01 // Interventions & Partenariats",
+          contact_text: "Nous intervenons auprès des Mairies, établissements scolaires, associations et institutions publiques pour des actions de prévention primaire et d'autodéfense cognitive.",
+          delay_title: "Délai de réponse :",
+          delay_text: "Sous 48h ouvrées. Traitement confidentiel des demandes.",
+          about_title: "02 // Qui Sommes-Nous ?",
+          mod1_title: "Direction & Vision Triptyque",
+          mod1_p1: "L'initiative POLETHIC France a été fondée par une analyste-profileuse spécialisée en analyse du comportement criminel et évaluation du risque, issue d'un parcours universitaire poussé en psychologie et neurosciences comportementales (UNED, Espagne).",
+          mod1_p2: "Enrichie par une première carrière dans le sport professionnel puis une décennie d'exploration dans la création artistique pluridisciplinaire, elle façonne une démarche transversale unique. Au croisement de la science, de l'art et de la technologie, POLETHIC cartographie les mécanismes de manipulation et renforce la prévention primaire grâce aux neurosciences et à la donnée.",
+          mod2_title: "Domaines d'Expertise & Méthodologie",
+          mod2_l1_title: "Analyse Comportementale & Emprise :",
+          mod2_l1_text: "Évaluation des dynamiques d'influence et de vulnérabilité (outils d'évaluation du risque, victimologie, profils neurodivergents).",
+          mod2_l2_title: "Investigation Numérique & OSINT :",
+          mod2_l2_text: "Détection des leviers de manipulation en ligne, dérives numériques et cartographie des comportements sur sources ouvertes.",
+          mod2_l3_title: "Cyber & Sciences Cognitives :",
+          mod2_l3_text: "Application des fondamentaux de la cybersécurité (CS50 Harvard) et des neurosciences appliquées à la protection de l'autonomie décisionnelle.",
+          mod3_title: "Cadre Interventionnel & Éthique",
+          mod3_p1: "Formation certifiée en Premiers Secours Psychologiques (PFA) et psychologie comportementale non clinique.",
+          mod3_p2: "POLETHIC opère strictly dans le cadre de la prévention primaire, de la psychoéducation et du renforcement de la vigilance citoyenne, sans pratiquer aucun diagnostic ni acte thérapeutique.",
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies"
+      },
+      es: {
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+          hero_desc: "Para cualquier solicitud de intervención institucional, conferencia o información sobre nuestros programas de prevención.",
+          contact_title: "01 // Intervenciones y Alianzas",
+          contact_text: "Intervenimos ante Ayuntamientos, centros educativos, asociaciones e instituciones públicas para acciones de prevención primaria y autodefensa cognitiva.",
+          delay_title: "Plazo de respuesta:",
+          delay_text: "En menos de 48h laborables. Tratamiento confidencial de las solicitudes.",
+          about_title: "02 // ¿Quiénes Somos?",
+          mod1_title: "Dirección y Visión Tríptica",
+          mod1_p1: "La iniciativa POLETHIC France fue fundada por una analista-perfiladora especializada en análisis de la conducta criminal y evaluación del riesgo, con una sólida trayectoria universitaria en psicología y neurociencias conductuales (UNED, España).",
+          mod1_p2: "Enriquecida por una primera carrera en el deporte profesional y una década de exploración en la creación artística multidisciplinar, da forma a un enfoque transversal único. En la intersección de la ciencia, el arte y la tecnología, POLETHIC mapea los mecanismos de manipulación y refuerza la prevención primaria mediante las neurociencias y los datos.",
+          mod2_title: "Áreas de Experiencia y Metodología",
+          mod2_l1_title: "Análisis Conductual y Coerción:",
+          mod2_l1_text: "Evaluación de dinámicas de influencia y vulnerabilidad (herramientas de evaluación del riesgo, victimología, perfiles neurodivergentes).",
+          mod2_l2_title: "Investigación Digital y OSINT:",
+          mod2_l2_text: "Detección de palancas de manipulación en línea, derivas digitales y mapeo de conductas en fuentes abiertas.",
+          mod2_l3_title: "Cyber y Ciencias Cognitivas:",
+          mod2_l3_text: "Aplicación de los fundamentos de ciberseguridad (CS50 Harvard) y neurociencias aplicadas a la protección de la autonomía de decisión.",
+          mod3_title: "Marco de Intervención y Ética",
+          mod3_p1: "Formación certificada en Primeros Auxilios Psicológicos (PFA) y psicología conductual no clínica.",
+          mod3_p2: "POLETHIC opera estrictamente dentro del marco de la prevención primaria, psicoeducación y refuerzo de la vigilancia ciudadana, sin realizar ningún diagnóstico ni acto terapéutico.",
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies"
+      },
+      en: {
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
+          hero_desc: "For any request regarding institutional interventions, conferences, or information on our prevention programs.",
+          contact_title: "01 // Interventions & Partnerships",
+          contact_text: "We work with Municipalities, educational institutions, associations, and public entities to deliver primary prevention and cognitive self-defense actions.",
+          delay_title: "Response time:",
+          delay_text: "Within 48 business hours. Confidential handling of requests.",
+          about_title: "02 // Who Are We?",
+          mod1_title: "Leadership & Triptych Vision",
+          mod1_p1: "The POLETHIC France initiative was founded by an analyst-profiler specialized in criminal behavior analysis and risk assessment, with an advanced academic background in psychology and behavioral neuroscience (UNED, Spain).",
+          mod1_p2: "Enriched by an initial career in professional sports followed by a decade exploring multidisciplinary artistic creation, she designs a unique transversal approach. At the intersection of science, art, and technology, POLETHIC maps manipulation mechanisms and strengthens primary prevention through neurosciences and data.",
+          mod2_title: "Fields of Expertise & Methodology",
+          mod2_l1_title: "Behavioral Analysis & Coercion:",
+          mod2_l1_text: "Assessment of influence and vulnerability dynamics (risk evaluation tools, victimology, neurodivergent profiles).",
+          mod2_l2_title: "Digital Investigation & OSINT:",
+          mod2_l2_text: "Detection of online manipulation levers, digital drifts, and behavioral mapping on open sources.",
+          mod2_l3_title: "Cyber & Cognitive Sciences:",
+          mod2_l3_text: "Application of cybersecurity fundamentals (CS50 Harvard) and applied neurosciences to protect decision-making autonomy.",
+          mod3_title: "Intervention Framework & Ethics",
+          mod3_p1: "Certified training in Psychological First Aid (PFA) and non-clinical behavioral psychology.",
+          mod3_p2: "POLETHIC operates strictly within primary prevention, psychoeducation, and citizen vigilance enhancement, without performing diagnoses or medical therapies.",
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management"
+      }
+  };
+
+  function setLanguage(lang) {
+      localStorage.setItem('preferred_lang', lang);
+
+      document.querySelectorAll('[data-key]').forEach(element => {
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.textContent = translations[lang][key];
+          }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('preferred_lang') || 'fr';
+      setLanguage(savedLang);
+  });
+  </script>
+
+</body>
+</html>

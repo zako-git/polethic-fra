@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POLETHIC France | Association d'Autonomie Mentale & Esprit Critique</title>
+  <!-- Hoja de estilos unificada -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- CAPA DE ESTRELLAS DE FONDO -->
+  <div id="stars-container"></div>
+
+  <!-- CABECERA DE NAVEGACIÓN -->
+  <header>
+    <div class="container header-layout">
+      <!-- LOGO -->
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      
+      <!-- MENÚ -->
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn active" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon-app.html" class="nav-btn" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
+      </nav>
+
+      <!-- SELECTOR DE IDIOMAS CON SUS IDs -->
+      <div class="lang-selector">
+        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-es">ES</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-en">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container">
+    
+   <!-- HERO CARD PRINCIPAL -->
+    <section class="hero-card">
+      
+      <!-- BADGE ASOCIATIVO INSTITUCIONAL -->
+      <div class="assoc-badge" data-key="assoc_badge">
+        ASSOCIATION À BUT NON LUCRATIF • LOI 1901
+      </div>
+
+      <h1 class="hero-question">
+        <!-- PALABRA 1: CROIRE -->
+        <span class="word-container tooltip-left">
+          <span class="interactive-word word-croire" data-key="word_croire">Croire</span>,
+          <span class="tooltip-box">
+            <strong data-key="tt_croire_title">CROIRE :</strong> <span data-key="tt_croire_desc">Adhésion à une idée sans nécessité de preuve ni de vérification empirique.</span>
+          </span>
+        </span>
+        
+        <!-- PALABRA 2: PENSER -->
+        <span class="word-container tooltip-bottom">
+          <span class="interactive-word word-penser" data-key="word_penser">penser</span>
+          <span class="tooltip-box">
+            <strong data-key="tt_penser_title">PENSER :</strong> <span data-key="tt_penser_desc">Jugement personnel ou interprétation subjective non démontrée.</span>
+          </span>
+        </span> 
+        <span data-key="word_or">ou</span> 
+        
+        <!-- PALABRA 3: SAVOIR -->
+        <span class="word-container tooltip-right">
+          <span class="interactive-word word-savoir" data-key="word_savoir">savoir</span>
+          <span class="tooltip-box">
+            <strong data-key="tt_savoir_title">SAVOIR :</strong> <span data-key="tt_savoir_desc">Connaissance validée par des faits, la méthode scientifique et la preuve.</span>
+          </span>
+        </span> :<br>
+        <span data-key="hero_question_sub">savons-nous vraiment faire la différence ?</span>
+      </h1>
+      
+      <p class="hero-description" data-key="hero_desc">
+        <strong>POLETHIC France</strong> est une association indépendante dédiée à la prévention des dérives sectaires modernes, des pseudothérapies et de la désinformation. Nous développons des outils d'autodéfense cognitive, de la recherche indépendante et de la culture scientifique pour renforcer votre autonomie mentale.
+      </p>
+    </section>
+
+    <!-- GRID DE 4 PILARES (2x2) -->
+    <section class="features-grid">
+      
+      <!-- 1. L'OBSERVATOIRE -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+          </svg>
+        </div>
+        <h3 data-key="card1_title">L'OBSERVATOIRE</h3>
+        <p data-key="card1_desc">Notre centre d'investigation : veille critique, décryptage de l'actualité et analyse des dérives sectaires.</p>
+        <a href="observatoire.html" class="card-link" data-key="card1_link">Consulter les enquêtes &rarr;</a>
+      </div>
+
+      <!-- 2. PSICOMUSÉE -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <h3 data-key="card2_title">PSICOMUSÉE</h3>
+        <p data-key="card2_desc">Parcours immersif et pédagogique pour explorer les concepts fondamentaux de la psychologie et de la culture scientifique.</p>
+        <a href="psicomusee.html" class="card-link" data-key="card2_link">Explorer le Musée &rarr;</a>
+      </div>
+
+      <!-- 3. BEACON LAB -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+          </svg>
+        </div>
+        <h3 data-key="card3_title">BEACON LAB</h3>
+        <p data-key="card3_desc">Laboratoire d'expérimentation, outillage pratique et méthodologies de cartographie de la pensée.</p>
+        <a href="beacon-app.html" class="card-link" data-key="card3_link">Accéder au Lab &rarr;</a>
+      </div>
+
+      <!-- 4. NOTRE CAP -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 19 21 12 17 5 21 12 2"/>
+          </svg>
+        </div>
+        <h3 data-key="card4_title">NOTRE CAP</h3>
+        <p data-key="card4_desc">L'orientation éthique, la vision et les engagements scientifiques qui guident l'action de notre association.</p>
+        <a href="notre-cap.html" class="card-link" data-key="card4_link">Maintenir le cap &rarr;</a>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER GLOBAL -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer" data-key="footer_disc1">
+          Action exclusive de prévention primaire et de psychoéducation non clinique.
+        </p>
+        <p class="shield-disclaimer" data-key="footer_disc2">
+          Aucun diagnostic ou thérapie médicale n'est pratiqué.
+        </p>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
+        </div>
+        <p class="copyright" data-key="footer_copyright">&copy; 2026 POLETHIC France • Association Loi 1901. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DE TRADUCCIÓN MULTI-IDIOMA MEJORADO Y REFORZADO -->
+  <script>
+  const translations = {
+      fr: {
+          assoc_badge: "ASSOCIATION À BUT NON LUCRATIF • LOI 1901",
+          nav_home: "ACCUEIL",
+          nav_obs: "L'OBSERVATOIRE",
+          nav_museum: "PSICOMUSÉE",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NOTRE CAP",
+          nav_contact: "CONTACT",
+          
+          word_croire: "Croire",
+          tt_croire_title: "CROIRE :",
+          tt_croire_desc: "Adhésion à une idée sans nécessité de preuve ni de vérification empirique.",
+          
+          word_penser: "penser",
+          tt_penser_title: "PENSER :",
+          tt_penser_desc: "Jugement personnel ou interprétation subjective non démontrée.",
+          
+          word_or: "ou",
+          
+          word_savoir: "savoir",
+          tt_savoir_title: "SAVOIR :",
+          tt_savoir_desc: "Connaissance validée par des faits, la méthode scientifique et la preuve.",
+          
+          hero_question_sub: "savons-nous vraiment faire la différence ?",
+          hero_desc: "<strong>POLETHIC France</strong> est une association indépendante dédiée à la prévention des dérives sectaires modernes, des pseudothérapies et de la désinformation. Nous développons des outils d'autodéfense cognitive, de la recherche indépendante et de la culture scientifique pour renforcer votre autonomie mentale.",
+          
+          card1_title: "L'OBSERVATOIRE",
+          card1_desc: "Notre centre d'investigation : veille critique, décryptage de l'actualité et analyse des dérives sectaires.",
+          card1_link: "Consulter les enquêtes &rarr;",
+          
+          card2_title: "PSICOMUSÉE",
+          card2_desc: "Parcours immersif et pédagogique pour explorer les concepts fondamentaux de la psychologie et de la culture scientifique.",
+          card2_link: "Explorer le Musée &rarr;",
+          
+          card3_title: "BEACON LAB",
+          card3_desc: "Laboratoire d'expérimentation, outillage pratique et méthodologies de cartographie de la pensée.",
+          card3_link: "Accéder au Lab &rarr;",
+          
+          card4_title: "NOTRE CAP",
+          card4_desc: "L'orientation éthique, la vision et les engagements scientifiques qui guident l'action de notre association.",
+          card4_link: "Maintenir le cap &rarr;",
+
+          footer_shield: "Bouclier de Protection Professionnelle",
+          footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
+          footer_disc2: "Aucun diagnostic ou thérapie médicale n'est pratiqué.",
+          footer_legal: "Mentions Légales",
+          footer_privacy: "Politique de Confidentialité",
+          footer_cookies: "Gestion des Cookies",
+          footer_copyright: "&copy; 2026 POLETHIC France • Association Loi 1901. Tous droits réservés."
+      },
+      es: {
+          assoc_badge: "ASOCIACIÓN SIN ÁNIMO DE LUCRO • LEY 1901",
+          nav_home: "INICIO",
+          nav_obs: "OBSERVATORIO",
+          nav_museum: "PSICOMUSEO",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "NUESTRO RUMBO",
+          nav_contact: "CONTACTO",
+          
+          word_croire: "Creer",
+          tt_croire_title: "CREER:",
+          tt_croire_desc: "Adhesión a una idea sin necesidad de prueba ni comprobación empírica.",
+          
+          word_penser: "pensar",
+          tt_penser_title: "PENSAR:",
+          tt_penser_desc: "Juicio personal o interpretación subjetiva no demostrada.",
+          
+          word_or: "o",
+          
+          word_savoir: "saber",
+          tt_savoir_title: "SABER:",
+          tt_savoir_desc: "Conocimiento validado por hechos, el método científico y la evidencia.",
+          
+          hero_question_sub: "¿sabemos realmente marcar la diferencia?",
+          hero_desc: "<strong>POLETHIC France</strong> es una asociación independiente dedicada a la prevención de derivas sectarias modernas, seudoterapias y desinformación. Desarrollamos herramientas de autodefensa cognitiva, investigación independiente y cultura científica para reforzar tu autonomía mental.",
+          
+          card1_title: "OBSERVATORIO",
+          card1_desc: "Nuestro centro de investigación: vigilancia crítica, análisis de actualidad y detección de derivas sectarias.",
+          card1_link: "Consultar investigaciones &rarr;",
+          
+          card2_title: "PSICOMUSEO",
+          card2_desc: "Recorrido inmersivo y pedagógico para explorar los conceptos fundamentales de la psicología y la cultura científica.",
+          card2_link: "Explorar el Museo &rarr;",
+          
+          card3_title: "BEACON LAB",
+          card3_desc: "Laboratorio de experimentación, herramientas prácticas y metodologías de mapeo del pensamiento.",
+          card3_link: "Acceder al Lab &rarr;",
+          
+          card4_title: "NUESTRO RUMBO",
+          card4_desc: "La orientación ética, visión y compromisos científicos que guían la acción de nuestra asociación.",
+          card4_link: "Mantener el rumbo &rarr;",
+
+          footer_shield: "Escudo de Protección Profesional",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
+          footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
+          footer_legal: "Aviso Legal",
+          footer_privacy: "Política de Privacidad",
+          footer_cookies: "Gestión de Cookies",
+          footer_copyright: "&copy; 2026 POLETHIC France • Asociación Ley 1901. Todos los derechos reservados."
+      },
+      en: {
+          assoc_badge: "NON-PROFIT ASSOCIATION • FRENCH LAW 1901",
+          nav_home: "HOME",
+          nav_obs: "OBSERVATORY",
+          nav_museum: "PSYCHOMUSEUM",
+          nav_beacon: "BEACON LAB",
+          nav_cap: "OUR COURSE",
+          nav_contact: "CONTACT",
+          
+          word_croire: "Believing",
+          tt_croire_title: "BELIEVING:",
+          tt_croire_desc: "Adherence to an idea without the need for proof or empirical verification.",
+          
+          word_penser: "thinking",
+          tt_penser_title: "THINKING:",
+          tt_penser_desc: "Personal judgment or unproven subjective interpretation.",
+          
+          word_or: "or",
+          
+          word_savoir: "knowing",
+          tt_savoir_title: "KNOWING:",
+          tt_savoir_desc: "Knowledge validated by facts, scientific methodology, and evidence.",
+          
+          hero_question_sub: "do we really know the difference?",
+          hero_desc: "<strong>POLETHIC France</strong> is an independent association dedicated to preventing modern sectarian drifts, pseudotherapies, and disinformation. We develop cognitive self-defense tools, independent research, and scientific culture to strengthen your mental autonomy.",
+          
+          card1_title: "OBSERVATORY",
+          card1_desc: "Our investigation center: critical monitoring, news analysis, and tracking of sectarian drifts.",
+          card1_link: "View investigations &rarr;",
+          
+          card2_title: "PSYCHOMUSEUM",
+          card2_desc: "An immersive and educational journey to explore core concepts of psychology and scientific culture.",
+          card2_link: "Explore the Museum &rarr;",
+          
+          card3_title: "BEACON LAB",
+          card3_desc: "Experimental laboratory, practical toolkit, and thought mapping methodologies.",
+          card3_link: "Access the Lab &rarr;",
+          
+          card4_title: "OUR COURSE",
+          card4_desc: "Ethical direction, vision, and scientific commitments guiding our association's actions.",
+          card4_link: "Maintain course &rarr;",
+
+          footer_shield: "Professional Protection Shield",
+          footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
+          footer_disc2: "No medical diagnosis or therapy is performed.",
+          footer_legal: "Legal Notice",
+          footer_privacy: "Privacy Policy",
+          footer_cookies: "Cookie Management",
+          footer_copyright: "&copy; 2026 POLETHIC France • Law 1901 Association. All rights reserved."
+      }
+  };
+
+  function updateLinkUrls(lang) {
+      // Propaga el idioma activo a todos los enlaces internos para que la navegación sea coherente
+      document.querySelectorAll('a[href]:not([href^="#"]):not([href^="http"])').forEach(link => {
+          const url = new URL(link.href, window.location.origin);
+          url.searchParams.set('lang', lang);
+          link.href = url.pathname + url.search;
+      });
+  }
+
+  function setLanguage(lang) {
+      if (!translations[lang]) lang = 'fr'; // Fallback a francés
+      
+      localStorage.setItem('preferred_lang', lang);
+      document.documentElement.lang = lang; // Actualiza la etiqueta <html lang="...">
+
+      document.querySelectorAll('[data-key]').forEach(element => {
+          const key = element.getAttribute('data-key');
+          if (translations[lang] && translations[lang][key]) {
+              element.innerHTML = translations[lang][key]; 
+          }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      updateLinkUrls(lang);
+  }
+
+  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
+  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
+  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+  document.addEventListener('DOMContentLoaded', () => {
+      // Prioridad: URL -> LocalStorage -> Idioma predeterminado (FR)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlLang = urlParams.get('lang');
+      const savedLang = urlLang || localStorage.getItem('preferred_lang') || 'fr';
+      
+      setLanguage(savedLang);
+  });
+  </script>
+
+</body>
+</html>
