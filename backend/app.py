@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 
 import requests
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, jsonify, render_template, request, send_file
 from flask_cors import CORS
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
@@ -38,6 +38,29 @@ load_dotenv(dotenv_path=os.path.join(current_dir, ".env"))
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
+
+PUBLIC_TEMPLATES = {
+    "index.html",
+    "observatoire.html",
+    "psicomusee.html",
+    "beacon.html",
+    "beacon-app.html",
+    "notre-cap.html",
+    "contact.html",
+}
+
+
+@app.route("/")
+@app.route("/index.html")
+def index_page():
+    return render_template("index.html")
+
+
+@app.route("/<page>")
+def public_page(page):
+    if page not in PUBLIC_TEMPLATES:
+        return jsonify({"error": "Page introuvable"}), 404
+    return render_template(page)
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("HF_TOKEN")
 MODEL_CANDIDATES = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.0-flash-lite"]
