@@ -16,9 +16,25 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, send_file
 from flask_cors import CORS
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
+from reportlab.platypus import (
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+    KeepTogether,
+    HRFlowable,
+)
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+try:
+    from PIL import Image, ImageOps
+    import pytesseract
+except Exception:  # pragma: no cover
+    Image = None
+    ImageOps = None
+    pytesseract = None
+
 
 try:
     from pypdf import PdfReader
@@ -37,7 +53,14 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(dotenv_path=os.path.join(current_dir, ".env"))
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+
+ALLOWED_ORIGINS = [
+    re.compile(r"https://zako-git\.github\.io"),
+    re.compile(r"http://localhost(?::\d+)?"),
+    re.compile(r"http://127\.0\.0\.1(?::\d+)?"),
+    re.compile(r"https://.*\.app\.github\.dev"),
+]
+CORS(app, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
 
 PUBLIC_TEMPLATES = {
     "index.html",
@@ -56,7 +79,7 @@ def index_page():
     return render_template("index.html")
 
 
-@app.route("/<page>")
+@app.route("/<path:page>")
 def public_page(page):
     if page not in PUBLIC_TEMPLATES:
         return jsonify({"error": "Page introuvable"}), 404
@@ -104,7 +127,7 @@ def get_ethic_band(score):
         score = 0
 
     if score <= 15:
-        return "A", "#1D2BAC"
+        return "A", "#273BE9"
     if score <= 30:
         return "B", "#09AA29"
     if score <= 45:
@@ -112,6 +135,19 @@ def get_ethic_band(score):
     if score <= 60:
         return "D", "#FF6600"
     return "E", "#FF0055"
+
+
+def get_grade_color(grade):
+    """Devuelve el color ReportLab asociado a una clase ética."""
+    grade = str(grade).upper().strip()
+    color_map = {
+        "A": colors.HexColor("#2ECC71"),
+        "B": colors.HexColor("#27AE60"),
+        "C": colors.HexColor("#F1C40F"),
+        "D": colors.HexColor("#E67E22"),
+        "E": colors.HexColor("#E74C3C"),
+    }
+    return color_map.get(grade, colors.HexColor("#7F8C8D"))
 
 
 def normalize_for_match(text):
@@ -285,10 +321,25 @@ def build_phase0_block(content, lang="fr"):
     return metadata_block
 
 
+def get_refutation_title(lang="fr"):
+    titles = {
+        "fr": "RÉFUTATION",
+        "es": "REFUTACIÓN",
+        "en": "REFUTATION",
+    }
+    return titles.get(str(lang).lower(), titles["fr"])
+
+
 def build_gemini_system_instruction(lang="fr"):
     return (
         "Vous êtes l'IA POLETHIC BEACON, un moteur d'analyse métacognitive de haute précision.\n"
         "RÉDIGEZ TOUT À 100% EN FRANÇAIS.\n\n"
+        "RÈGLES STRICTES DE TITRES ET FORMATAGE :\n"
+        "1. NE JAMAIS UTILISER de symboles Markdown comme ###, ## ou ** dans le rapport.\n"
+        "2. Intitulez la section de remise en question STRICTEMENT ainsi selon la langue du rapport :\n"
+        "   - En Français : RÉFUTATION\n"
+        "   - En Espagnol : REFUTACIÓN\n"
+        "   - En Anglais : REFUTATION\n\n"
         "RÈGLES D'EXÉCUTION CRITIQUES :\n"
         "1. INTERDICTION FORMELLE DE RECYCLER DES TEMPLATES :\n"
         "   - Ne réutilisez jamais des phrases types, des définitions fixes, ni des formules déjà utilisées sur d'autres textes.\n"
@@ -896,23 +947,23 @@ def build_local_analysis_report(content, lang="fr"):
             phase_summary = "El texto presenta un riesgo alto por promesas terapéuticas, presión emocional, urgencia coercitiva o falta de verificación."
 
     if lang == "fr":
-        header_phase0 = "### Phase 0: contexte et type de discours"
-        intro_phase0 = f"- **Contexte :** {summary}"
-        header_phase1 = "### Phase 1: promesses, autorité et solution miracle"
-        header_phase2 = "### Phase 2: démontage forensique"
-        header_phase3 = "### Phase 3: sources et intérêts"
-        header_phase4 = "### Phase 4: logique et biais"
-        header_phase5 = "### Phase 5: synthèse et risque"
-        conclusion_prefix = "**Conclusion :** "
+        header_phase0 = "Phase 0: contexte et type de discours"
+        intro_phase0 = f"- Contexte : {summary}"
+        header_phase1 = "Phase 1: promesses, autorité et solution miracle"
+        header_phase2 = "Phase 2: démontage forensique"
+        header_phase3 = "Phase 3: sources et intérêts"
+        header_phase4 = "Phase 4: logique et biais"
+        header_phase5 = "Phase 5: synthèse et risque"
+        conclusion_prefix = "Conclusion : "
     else:
-        header_phase0 = "### Phase 0: contexto y tipo de discurso"
-        intro_phase0 = f"- **Contexto:** {summary}"
-        header_phase1 = "### Phase 1: promesas, autoridad y solución milagrosa"
-        header_phase2 = "### Phase 2: desmontaje forense"
-        header_phase3 = "### Phase 3: fuentes e intereses"
-        header_phase4 = "### Phase 4: lógica y sesgos"
-        header_phase5 = "### Phase 5: síntesis y riesgo"
-        conclusion_prefix = "**Conclusión:** "
+        header_phase0 = "Phase 0: contexto y tipo de discurso"
+        intro_phase0 = f"- Contexto: {summary}"
+        header_phase1 = "Phase 1: promesas, autoridad y solución milagrosa"
+        header_phase2 = "Phase 2: desmontaje forense"
+        header_phase3 = "Phase 3: fuentes e intereses"
+        header_phase4 = "Phase 4: lógica y sesgos"
+        header_phase5 = "Phase 5: síntesis y riesgo"
+        conclusion_prefix = "Conclusión: "
 
     forensic_anchor = []
     unique_fragments = []
@@ -925,16 +976,16 @@ def build_local_analysis_report(content, lang="fr"):
         unique_fragments.append(frag)
     if unique_fragments:
         if lang == "fr":
-            forensic_anchor.append("- **Autopsie lexicale :**")
+            forensic_anchor.append("- Autopsie lexicale :")
             forensic_anchor.extend(f"  - «{frag}»" for frag in unique_fragments[:3])
         else:
-            forensic_anchor.append("- **Autopsia léxica :**")
+            forensic_anchor.append("- Autopsia léxica :")
             forensic_anchor.extend(f"  - «{frag}»" for frag in unique_fragments[:3])
     else:
         if lang == "fr":
-            forensic_anchor.append("- **Autopsie lexicale :** aucune citation exploitable n'a été détectée.")
+            forensic_anchor.append("- Autopsie lexicale : aucune citation exploitable n'a été détectée.")
         else:
-            forensic_anchor.append("- **Autopsia léxica :** no se detectó ninguna cita explotable.")
+            forensic_anchor.append("- Autopsia léxica : no se detectó ninguna cita explotable.")
 
     analysis = "\n\n".join(
         [
@@ -1181,10 +1232,32 @@ def is_beacon_report(text):
     return sum(marker in normalized for marker in report_markers) >= 4
 
 
-def extract_uploaded_pdf_text(uploaded_file):
+def extract_uploaded_pdf_text(uploaded_file, lang="fr"):
     filename = (uploaded_file.filename or "").lower()
+    image_extensions = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
+
+    if filename.endswith(tuple(image_extensions)):
+        if Image is None or ImageOps is None or pytesseract is None:
+            return None, "L'extraction OCR des images n'est pas disponible sur le serveur."
+
+        ocr_languages = {"fr": "fra", "es": "spa", "en": "eng"}
+        try:
+            image = Image.open(uploaded_file.stream)
+            image = ImageOps.grayscale(image)
+            text = pytesseract.image_to_string(
+                image,
+                lang=ocr_languages.get(lang, "fra"),
+                config="--psm 6",
+            ).strip()
+        except Exception:
+            return None, "L'image ne peut pas être lue ou son texte ne peut pas être extrait par OCR."
+
+        if not text:
+            return None, "Aucun texte exploitable n'a été trouvé dans cette image."
+        return text, None
+
     if not filename.endswith(".pdf"):
-        return None, "Seuls les fichiers PDF sont actuellement pris en charge pour l'analyse de document."
+        return None, "Seuls les fichiers PDF ou images PNG/JPG sont actuellement pris en charge."
     if PdfReader is None:
         return None, "L'extraction PDF n'est pas disponible sur le serveur."
 
@@ -1265,6 +1338,134 @@ def report_text_to_pdf_lines(report_text):
     return [line.strip() for line in cleaned.split("\n") if line.strip()]
 
 
+_SANITIZE_ALLOWED_TAGS = {"h1", "h2", "h3", "blockquote", "ul", "ol", "li", "br", "p", "div", "strong", "b", "em", "i", "span"}
+_SANITIZE_STRIP_CONTENT_TAGS = {"script", "style", "noscript", "svg", "iframe", "object", "embed"}
+
+
+class _HTMLSanitizer(HTMLParser):
+    """Ne conserve que les balises structurelles autorisées, échappe tout le reste."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.output = []
+        self.skip_depth = 0
+
+    def handle_starttag(self, tag, attrs):
+        if tag in _SANITIZE_STRIP_CONTENT_TAGS:
+            self.skip_depth += 1
+        elif not self.skip_depth and tag in _SANITIZE_ALLOWED_TAGS:
+            self.output.append(f"<{tag}>")
+
+    def handle_startendtag(self, tag, attrs):
+        if not self.skip_depth and tag == "br":
+            self.output.append("<br>")
+
+    def handle_endtag(self, tag):
+        if tag in _SANITIZE_STRIP_CONTENT_TAGS:
+            if self.skip_depth:
+                self.skip_depth -= 1
+        elif not self.skip_depth and tag in _SANITIZE_ALLOWED_TAGS and tag != "br":
+            self.output.append(f"</{tag}>")
+
+    def handle_data(self, data):
+        if not self.skip_depth and data:
+            self.output.append(escape(data, quote=False))
+
+    def text(self):
+        return "".join(self.output)
+
+
+def sanitize_html(raw_html):
+    """Nettoie le HTML entrant avant son insertion dans le PDF (évite l'injection de balises non désirées)."""
+    if not raw_html:
+        return ""
+    sanitizer = _HTMLSanitizer()
+    try:
+        sanitizer.feed(str(raw_html))
+    except Exception:
+        return escape(str(raw_html), quote=False)
+    return sanitizer.text()
+
+import re
+from io import BytesIO
+from datetime import datetime, timezone
+from flask import request, jsonify, send_file
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+
+def traducir_markdown_a_pdf(texto_bruto, styles, band_color):
+    """
+    Toma el texto Markdown crudo y genera elementos visuales limpios para ReportLab.
+    """
+    elementos_pdf = []
+    
+    estilo_titulo_fase = ParagraphStyle(
+        'TituloFase',
+        parent=styles['Heading2'],
+        fontSize=10,
+        leading=13,
+        textColor=band_color,
+        spaceBefore=10,
+        spaceAfter=4,
+        keepWithNext=True
+    )
+    
+    estilo_cuerpo = ParagraphStyle(
+        'TextoNormal',
+        parent=styles['Normal'],
+        fontSize=8.5,
+        leading=12,
+        textColor=colors.HexColor("#2B2B2B"),
+        spaceAfter=4
+    )
+    
+    estilo_caja_destacada = ParagraphStyle(
+        'CajaMeme',
+        parent=estilo_cuerpo,
+        fontSize=8.5,
+        leading=12,
+        textColor=colors.HexColor("#7D6608"),
+        backColor=colors.HexColor("#FEF9E7"),
+        borderColor=colors.HexColor("#F1C40F"),
+        borderWidth=0.5,
+        borderPadding=6,
+        spaceBefore=6,
+        spaceAfter=6
+    )
+
+    lineas = texto_bruto.split('\n')
+    
+    for linea in lineas:
+        linea = linea.strip()
+        if not linea:
+            continue
+            
+        # 1. LIMPIEZA DE RESIDUOS (AQUÍ SE EXTIRPAN <<< Y >>> Y SE FORMATAN NEGRITAS)
+        linea = re.sub(r'<<<|>>>', '', linea)
+        linea = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', linea)
+        linea = linea.strip()
+        
+        # 2. CLASIFICACIÓN DE LÍNEAS
+        if linea.startswith('### ') or linea.startswith('## '):
+            texto_limpio = re.sub(r'^[#]+\s*', '', linea).upper()
+            elementos_pdf.append(Paragraph(texto_limpio, estilo_titulo_fase))
+            
+        elif linea.startswith('>') or linea.startswith('MEMES'):
+            texto_limpio = re.sub(r'^[>\s]+', '', linea)
+            elementos_pdf.append(Paragraph(texto_limpio, estilo_caja_destacada))
+            
+        elif linea.startswith('- ') or linea.startswith('• '):
+            texto_limpio = re.sub(r'^[\-\•\s]+', '', linea)
+            elementos_pdf.append(Paragraph(f"• {texto_limpio}", estilo_cuerpo))
+            
+        else:
+            elementos_pdf.append(Paragraph(linea, estilo_cuerpo))
+            
+    return elementos_pdf
+
+
 @app.route("/export_pdf", methods=["POST", "OPTIONS"])
 def export_pdf():
     if request.method == "OPTIONS":
@@ -1272,158 +1473,402 @@ def export_pdf():
 
     try:
         data = request.get_json(silent=True) or {}
-        report_text = str(data.get("analysis") or data.get("report") or "").strip()
-        if not report_text:
-            return jsonify({"error": "Aucun rapport à exporter."}), 400
+        if not data and getattr(request, "form", None):
+            data = request.form.to_dict(flat=True)
 
-        score_letter = str(data.get("scoreLetter") or "-").upper()
-        if score_letter not in {"A", "B", "C", "D", "E"}:
-            score_letter = "-"
-        flags = [str(flag) for flag in data.get("flags") or [] if str(flag).strip()]
-        lines = report_text_to_pdf_lines(report_text)
-
-        buffer = BytesIO()
-        document = SimpleDocTemplate(
-            buffer,
-            pagesize=letter,
-            leftMargin=42,
-            rightMargin=42,
-            topMargin=42,
-            bottomMargin=42,
+        analysis_text = data.get("analysis") or data.get("report") or ""
+        refutation_text = data.get("refutation") or data.get("challenge") or ""
+        score_letter_raw = (
+            str(data.get("scoreLetter") or data.get("ethic_letter") or "")
+            .strip()
+            .upper()
         )
+
+        severity_score_map = globals().get(
+            "SEVERITY_SCORE", {"A": 15, "B": 35, "C": 55, "D": 75, "E": 95}
+        )
+        if score_letter_raw in severity_score_map:
+            score = severity_score_map[score_letter_raw]
+        else:
+            try:
+                score = int(data.get("score", 15))
+            except (TypeError, ValueError):
+                score = 15
+
+        flags = data.get("flags") or []
+        lang = str(data.get("lang") or "fr").lower().strip()
+        if lang not in ("fr", "es", "en"):
+            lang = "fr"
+
+        if not analysis_text or not analysis_text.strip():
+            return (
+                jsonify(
+                    {"error": "Aucun texte d'analyse fourni pour l'export PDF."}
+                ),
+                400,
+            )
+
+        force_headings = globals().get("force_language_headings")
+        if callable(force_headings):
+            analysis_text = force_headings(analysis_text, target_lang=lang)
+
+        enforce_consistency = globals().get("enforce_analysis_consistency")
+        if callable(enforce_consistency):
+            analysis_text, score, flags = enforce_consistency(analysis_text, score, flags, lang)
+
+        get_letter = globals().get("get_ethic_letter")
+        if callable(get_letter):
+            ethic_score_letter = get_letter(score)
+        else:
+            ethic_score_letter = score_letter_raw or "A"        
+
+        # Etiquetas ajustadas a terminología pericial/forense
+        pdf_labels = {
+            "fr": {
+                "title": "POLETHIC BEACON",
+                "subtitle": "LABORATOIRE D'AUTODÉFENSE SÉMANTIQUE ET CRITIQUE",
+                "motto": "Nous dénudons les narratives humaines et traduisons les mécanismes de persuasion.",
+                "score_label": "ETHIC SCORE",
+                "ref_label": "RÉF :",
+                "timestamp_label": "HORODATAGE :",
+                "indicators_label": "INDICATEURS D'ALERTE :",
+                "warn_title": "AVERTISSEMENT FORENSIQUE D'AUDIT CRITIQUE",
+                "warn_body": (
+                    "Ce document applique des principes stricts de logique formelle "
+                    "et de déconstruction argumentative. Fichier scellé et vérifié."
+                ),
+                "refute_title": get_refutation_title("fr"),
+            },
+            "es": {
+                "title": "POLETHIC BEACON",
+                "subtitle": "LABORATORIO DE AUTODEFENSA SEMANTICA Y CRITICA",
+                "motto": "Desnudamos las narrativas humanas y traducimos los mecanismos de persuasión.",
+                "score_label": "ETHIC SCORE",
+                "ref_label": "RÉF :",
+                "timestamp_label": "FECHA / HORA :",
+                "indicators_label": "INDICADORES DE ALERTA :",
+                "warn_title": "ADVERTENCIA FORENSE DE AUDITORÍA CRÍTICA",
+                "warn_body": (
+                    "Este documento aplica principios estrictos de lógica formal "
+                    "y desconstrucción argumentativa. Archivo sellado y verificado."
+                ),
+                "refute_title": get_refutation_title("es"),
+            },
+            "en": {
+                "title": "POLETHIC BEACON",
+                "subtitle": "LABORATOIRE D'AUTODÉFENSE SÉMANTIQUE ET CRITIQUE",
+                "motto": "We expose human narratives and translate persuasion mechanisms.",
+                "score_label": "ETHIC SCORE",
+                "ref_label": "RÉF :",
+                "timestamp_label": "TIMESTAMP :",
+                "indicators_label": "ALERT INDICATORS :",
+                "warn_title": "CRITICAL FORENSIC AUDIT WARNING",
+                "warn_body": (
+                    "This document applies strict principles of formal logic "
+                    "and argument deconstruction. File sealed and verified."
+                ),
+                "refute_title": get_refutation_title("en"),
+            },
+        }
+        labels = pdf_labels[lang]
+
+        pdf_buffer = BytesIO()
+        doc = SimpleDocTemplate(
+            pdf_buffer,
+            pagesize=letter,
+            rightMargin=36,
+            leftMargin=36,
+            topMargin=36,
+            bottomMargin=60,
+        )
+
         styles = getSampleStyleSheet()
-        body_style = ParagraphStyle("BeaconBody", parent=styles["Normal"], fontName="Helvetica", fontSize=9.5, leading=14, textColor=colors.HexColor("#344054"), spaceAfter=5)
-        bullet_style = ParagraphStyle("BeaconBullet", parent=body_style, leftIndent=12, firstLineIndent=-8)
-        score_colors = {"A": "#273BE9", "B": "#09AA29", "C": "#FFB700", "D": "#FF6600", "E": "#FF0055", "-": "#667085"}
-        heading_style = ParagraphStyle("BeaconHeading", parent=styles["Heading3"], fontName="Helvetica-Bold", fontSize=11, leading=14, textColor=colors.HexColor(score_colors[score_letter]), spaceBefore=14, spaceAfter=6)
-        meta_style = ParagraphStyle("BeaconMeta", parent=body_style, fontName="Courier", fontSize=8.5, leading=13, textColor=colors.HexColor("#344054"))
-        score_style = ParagraphStyle("Score", parent=body_style, alignment=1, textColor=colors.white, leading=18)
-        brand_style = ParagraphStyle("Brand", parent=body_style, fontName="Helvetica-Bold", fontSize=12, leading=15, alignment=1, textColor=colors.HexColor("#1E293B"))
-        metadata_right_style = ParagraphStyle("MetadataRight", parent=meta_style, alignment=2, fontSize=8, leading=12)
-        indicator_style = ParagraphStyle("Indicator", parent=body_style, fontName="Helvetica-Bold", fontSize=7.5, leading=10, alignment=1, textColor=colors.HexColor("#344054"))
-        evidence_style = ParagraphStyle("Evidence", parent=body_style, fontName="Helvetica-Oblique", fontSize=9, leading=13, leftIndent=10, rightIndent=10, textColor=colors.HexColor("#475467"))
-        conclusion_style = ParagraphStyle("Conclusion", parent=body_style, fontName="Helvetica-Bold", fontSize=10, leading=15, textColor=colors.HexColor("#1E293B"))
 
-        timestamp = datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M UTC")
-        dossier_ref = f"BEACON-{datetime.now(timezone.utc).strftime('%Y')}-{datetime.now(timezone.utc).strftime('%H%M%S')}"
-        score_badge = Table([[
-            Paragraph(f"<b>ETHIC-SCORE</b> <font size=17>{escape(score_letter)}</font>", score_style)
-        ]], colWidths=[112], rowHeights=[34])
-        score_badge.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor(score_colors[score_letter])),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("LEFTPADDING", (0, 0), (-1, -1), 8),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
-            ("TOPPADDING", (0, 0), (-1, -1), 0),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+        # Estilos monocromáticos OSINT
+        style_header_title = ParagraphStyle(
+            "BeaconMainTitle",
+            parent=styles["Normal"],
+            fontName="Helvetica-Bold",
+            fontSize=22,
+            leading=24,
+            textColor=colors.HexColor("#0F172A"),
+        )
+        style_header_subtitle = ParagraphStyle(
+            "BeaconSubLab",
+            parent=styles["Normal"],
+            fontName="Helvetica-Bold",
+            fontSize=10,
+            leading=14,
+            textColor=colors.HexColor("#0284C7"),
+        )
+        style_header_motto = ParagraphStyle(
+            "BeaconMotto",
+            parent=styles["Normal"],
+            fontName="Helvetica-Oblique",
+            fontSize=8.5,
+            leading=12,
+            textColor=colors.HexColor("#475569"),
+        )
+        style_header_score = ParagraphStyle(
+            "HeaderScore",
+            parent=styles["Normal"],
+            fontName="Helvetica-Bold",
+            fontSize=22,
+            leading=22,
+            textColor=colors.white,
+            alignment=1,
+        )
+        style_meta_label = ParagraphStyle(
+            "MetaLabel",
+            parent=styles["Normal"],
+            fontName="Courier-Bold",
+            fontSize=7.5,
+            leading=10,
+            textColor=colors.black,
+        )
+        style_meta_val = ParagraphStyle(
+            "MetaVal",
+            parent=styles["Normal"],
+            fontName="Courier",
+            fontSize=7.5,
+            leading=10,
+            textColor=colors.HexColor("#111111"),
+        )
+        style_section_title = ParagraphStyle(
+            "SectionTitleForensic",
+            parent=styles["Normal"],
+            fontName="Helvetica-Bold",
+            fontSize=9.5,
+            leading=13,
+            textColor=colors.black,
+            spaceBefore=10,
+            spaceAfter=4,
+            keepWithNext=True,
+        )
+        style_section_body = ParagraphStyle(
+            "SectionBodyForensic",
+            parent=styles["Normal"],
+            fontName="Helvetica",
+            fontSize=8,
+            leading=11.5,
+            textColor=colors.black,
+            spaceAfter=3,
+        )
+        style_bullet = ParagraphStyle(
+            "BulletStyleForensic",
+            parent=style_section_body,
+            leftIndent=10,
+            spaceAfter=3,
+        )
+        style_warn_title = ParagraphStyle(
+            "WarnTitleForensic",
+            parent=styles["Normal"],
+            fontName="Helvetica-Bold",
+            fontSize=8,
+            leading=10,
+            textColor=colors.black,
+        )
+        style_warn_body = ParagraphStyle(
+            "WarnBodyForensic",
+            parent=styles["Normal"],
+            fontName="Helvetica",
+            fontSize=7.5,
+            leading=10,
+            textColor=colors.HexColor("#222222"),
+        )
+
+        story = []
+
+        # 1. ENCABEZADO VERTICAL, SIN FONDO NEGRO
+        beacon_ref = f"BCN-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
+
+        story.append(Paragraph(labels["title"], style_header_title))
+        story.append(Spacer(1, 4))
+        story.append(Paragraph(labels["subtitle"], style_header_subtitle))
+        story.append(Spacer(1, 4))
+        story.append(Paragraph(f"<b>{lang.upper()}:</b> {labels['motto']}", style_header_motto))
+        story.append(Spacer(1, 12))
+
+        # 2. TABLA TÉCNICA DE METADATOS Y BANDERAS (FICHA TIPO EXPEDIENTE)
+        indicator_tags = ", ".join(str(flag).upper().replace("_", " ") for flag in (flags if flags else ["AUCUN_BIAIS_DETECTE"]))
+        
+        meta_grid = [[
+            [
+                Paragraph(f"<b>{labels['ref_label']}</b> {beacon_ref}", style_meta_val),
+                Paragraph(f"<b>{labels['timestamp_label']}</b> {timestamp_str}", style_meta_val),
+            ],
+            [
+                Paragraph(f"<b>{labels['indicators_label']}</b>", style_meta_label),
+                Paragraph(indicator_tags, style_meta_val),
+            ],
+            [
+                Paragraph(f"<font size=22 color='white'><b>{ethic_score_letter}</b></font>", style_header_score),
+                Paragraph(f"<font size=8 color='white'><b>{labels['score_label']}</b></font>", style_header_score),
+            ],
+        ]]
+        meta_table = Table(meta_grid, colWidths=[160, 260, 130])
+        meta_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (1,0), colors.HexColor("#F8FAFC")),
+            ('BACKGROUND', (2,0), (2,0), get_grade_color(ethic_score_letter)),
+            ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor("#CBD5E1")),
+            ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor("#E2E8F0")),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ('TOPPADDING', (0,0), (-1,-1), 6),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 6),
         ]))
-        metadata = Paragraph(f"<b>RÉF :</b> {dossier_ref}<br/><b>DATE :</b> {timestamp}", metadata_right_style)
-        score_metadata = Table([[
-            score_badge,
-            Paragraph("POLETHIC BEACON", brand_style),
-            metadata,
-        ]], colWidths=[166, 176, 186], rowHeights=[43])
-        score_metadata.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
-            ("LINEBELOW", (0, 0), (-1, -1), 0.6, colors.HexColor("#CBD5E1")),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("LEFTPADDING", (0, 0), (0, 0), 0),
-            ("LEFTPADDING", (1, 0), (-1, -1), 0),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-            ("TOPPADDING", (0, 0), (-1, -1), 0),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
-        ]))
+        story.append(meta_table)
+        story.append(Spacer(1, 10))
 
-        story = [score_metadata, Spacer(1, 12)]
-        if flags:
-            indicator_cells = [Paragraph(escape(flag.replace("_", " ")), indicator_style) for flag in flags[:6]]
-            while len(indicator_cells) % 3:
-                indicator_cells.append(Paragraph("", indicator_style))
-            indicator_rows = [indicator_cells[index:index + 3] for index in range(0, len(indicator_cells), 3)]
-            indicators_grid = Table(indicator_rows, colWidths=[145, 145, 145])
-            indicators_grid.setStyle(TableStyle([
-                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F2F4F7")),
-                ("BOX", (0, 0), (-1, -1), 0, colors.white),
-                ("INNERGRID", (0, 0), (-1, -1), 4, colors.white),
-                ("TOPPADDING", (0, 0), (-1, -1), 5),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-            ]))
-            indicators_block = Table([[
-                Paragraph("<b>INDICATEURS<br/>D'ALERTE</b>", meta_style), indicators_grid
-            ]], colWidths=[92, 436])
-            indicators_block.setStyle(TableStyle([
-                ("BACKGROUND", (0, 0), (-1, -1), colors.white),
-                ("BOX", (0, 0), (-1, -1), 0, colors.white),
-                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-                ("LEFTPADDING", (0, 0), (-1, -1), 0),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-                ("TOPPADDING", (0, 0), (-1, -1), 0),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
-            ]))
-            story.extend([indicators_block, Spacer(1, 14)])
+        # 3. ANÁLISIS FORENSE (EXTRACCIÓN DE SINTAXIS RESIDUAL Y FORMATO EN NEGRO)
+        def is_heading(line_text):
+            clean = line_text.strip()
+            normalized = clean.upper()
+            return (
+                clean.startswith("###")
+                or clean.startswith("##")
+                or re.match(r"^(PHASE|FASE)\s+\d+", normalized) is not None
+                or normalized.startswith("PHASE")
+                or normalized.startswith("FASE")
+                or (clean.isupper() and len(clean) < 50)
+            )
 
-        identification_lines = []
-        while lines and re.match(r"^[1-3]\.\s", lines[0]):
-            identification_lines.append(lines.pop(0))
-        if identification_lines:
-            identification = Table([[Paragraph("<br/>".join(escape(line) for line in identification_lines), body_style)]], colWidths=[528])
-            identification.setStyle(TableStyle([
-                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
-                ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
-                ("LEFTPADDING", (0, 0), (-1, -1), 12),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 14),
-                ("TOPPADDING", (0, 0), (-1, -1), 10),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
-            ]))
-            story.extend([identification, Spacer(1, 7)])
+        def should_skip(line_text):
+            norm = line_text.strip().lower()
+            return norm.startswith("ethic-score") or norm.startswith("flags detect")
 
-        for line in lines:
-            heading = re.sub(r"^#{1,6}\s*", "", line).strip()
-            if line.startswith("#") or re.match(r"^(Phase|MEMES|DÉFI DU BIAIS)", heading, re.IGNORECASE):
-                story.append(Paragraph(escape(heading), heading_style))
-            elif re.match(r"^(Conclusion|Conclusion générale)\s*:", line, re.IGNORECASE):
-                conclusion = Table([[Paragraph(escape(line), conclusion_style)]], colWidths=[528])
-                conclusion.setStyle(TableStyle([
-                    ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor({"A": "#EFF6FF", "B": "#ECFDF3", "C": "#FFFAEB", "D": "#FFF7ED", "E": "#FFF1F3", "-": "#F8FAFC"}[score_letter])),
-                    ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
-                    ("LEFTPADDING", (0, 0), (-1, -1), 12),
-                    ("RIGHTPADDING", (0, 0), (-1, -1), 14),
-                    ("TOPPADDING", (0, 0), (-1, -1), 11),
-                    ("BOTTOMPADDING", (0, 0), (-1, -1), 11),
+        for line in analysis_text.split("\n"):
+            line_s = line.strip()
+            if not line_s or should_skip(line_s):
+                continue
+
+            # Extirpar marcadores residuales <<< >>> y formatear negritas
+            clean_line = re.sub(r'<<<|>>>', '', line_s)
+            clean_line = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", clean_line)
+            clean_line = re.sub(r"^#{1,6}\s*", "", clean_line).strip()
+            if normalize_for_match(clean_line) == "memes":
+                clean_line = "MEMES"
+
+            if is_heading(line_s):
+                story.append(Paragraph(f"<b>{clean_line.upper()}</b>", style_section_title))
+                story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black, spaceBefore=1, spaceAfter=4))
+            elif line_s.startswith(("- ", "• ")):
+                bullet_content = clean_line[2:].strip()
+                # Destacar la primera parte si incluye guión o dos puntos (ej: "Contexte: ...")
+                if ":" in bullet_content:
+                    parts = bullet_content.split(":", 1)
+                    bullet_content = f"<b>{parts[0]}:</b>{parts[1]}"
+                story.append(Paragraph(f"• {bullet_content}", style_bullet))
+            elif line_s.startswith(">"):
+                clean_quote = re.sub(r'^[>\s]+', '', clean_line)
+                quote_table = Table([[Paragraph(f"<i>\"{clean_quote}\"</i>", style_section_body)]], colWidths=[520])
+                quote_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#EAEAEA")),
+                    ('BOX', (0,0), (-1,-1), 0.5, colors.black),
+                    ('ROWPADDING', (0,0), (-1,-1), 5),
                 ]))
-                story.extend([Spacer(1, 7), conclusion])
-            elif line.startswith("- ") or line.startswith("• "):
-                item = line[2:].strip()
-                if item.startswith(("«", "\"")):
-                    evidence = Table([[Paragraph(escape(item), evidence_style)]], colWidths=[500])
-                    evidence.setStyle(TableStyle([
-                        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F1F5F9")),
-                        ("LEFTPADDING", (0, 0), (-1, -1), 10),
-                        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
-                        ("TOPPADDING", (0, 0), (-1, -1), 7),
-                        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
-                    ]))
-                    story.extend([evidence, Spacer(1, 4)])
-                else:
-                    story.append(Paragraph(f"• {escape(item)}", bullet_style))
+                story.append(quote_table)
             else:
-                story.append(Paragraph(escape(line), body_style))
+                story.append(Paragraph(clean_line, style_section_body))
 
-        def draw_footer(canvas, pdf_document):
+        # 4. RÉFUTATION 
+        if refutation_text and refutation_text.strip():
+            refute_elements = [
+                Spacer(1, 10),
+                Paragraph(f"<b>{labels['refute_title']}</b>", style_section_title),
+                HRFlowable(width="100%", thickness=0.5, color=colors.black, spaceBefore=1, spaceAfter=6),
+            ]
+
+            warn_box = Table(
+                [
+                    [Paragraph(f"<b>{labels['warn_title']}</b>", style_warn_title)],
+                    [Paragraph(labels['warn_body'], style_warn_body)],
+                ],
+                colWidths=[520],
+            )
+            warn_box.setStyle(
+                TableStyle([
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F2F2F2")),
+                    ("BOX", (0, 0), (-1, -1), 0.8, colors.black),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 8),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+                    ("TOPPADDING", (0, 0), (-1, -1), 5),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+                ])
+            )
+            refute_elements.append(warn_box)
+            refute_elements.append(Spacer(1, 6))
+
+            for line in refutation_text.split("\n"):
+                line_s = line.strip()
+                if line_s:
+                    clean_ref = re.sub(r'<<<|>>>', '', line_s)
+                    clean_ref = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", clean_ref)
+                    clean_ref = re.sub(r"^#{1,6}\s*", "", clean_ref).strip()
+                    normalized_ref = normalize_for_match(clean_ref)
+                    if "defi du biais" in normalized_ref and "refutation cognitive" in normalized_ref:
+                        continue
+                    if normalized_ref == "memes":
+                        clean_ref = "MEMES"
+                    if line_s.startswith(("- ", "• ")):
+                        refute_elements.append(Paragraph(f"• {clean_ref[2:]}", style_bullet))
+                    else:
+                        refute_elements.append(Paragraph(clean_ref, style_section_body))
+
+            story.append(KeepTogether(refute_elements))
+
+        # 5. PIE DE PÁGINA PERICIAL
+        footer_quotes = {
+            "fr": "« Croire et savoir ne sont pas la même chose. » | Nous ne sommes pas responsables de la dissonance générée.",
+            "es": "« Creer y saber no son lo mismo. » | No nos hacemos responsables de la disonancia generada.",
+            "en": "« Believing and knowing are not the same. » | We are not responsible for the dissonance generated.",
+        }
+        footer_quote = footer_quotes.get(lang, footer_quotes["fr"])
+
+        def draw_footer(canvas, doc_ref):
             canvas.saveState()
-            canvas.setStrokeColor(colors.HexColor("#E2E8F0"))
-            canvas.line(pdf_document.leftMargin, 28, letter[0] - pdf_document.rightMargin, 28)
             canvas.setFont("Helvetica", 7.5)
-            canvas.setFillColor(colors.HexColor("#64748B"))
-            canvas.drawString(pdf_document.leftMargin, 17, "POLETHIC BEACON - Forensic Cognitive Engine - Nous dénudons les narratives humaines et traduisons les mécanismes de persuasion")
-            canvas.drawRightString(letter[0] - pdf_document.rightMargin, 17, f"PAGE {pdf_document.page}")
+            canvas.setFillColor(colors.HexColor("#334155"))
+            canvas.setStrokeColor(colors.HexColor("#CBD5E1"))
+            canvas.setLineWidth(0.75)
+            canvas.line(30, 40, letter[0] - 30, 40)
+            canvas.drawString(
+                30,
+                27,
+                footer_quote,
+            )
+            canvas.drawString(
+                30,
+                15,
+                f"© POLETHIC BEACON — RAPPORT D'INTÉGRITÉ SÉMANTIQUE ET DISCURSIVE | PAGE {doc_ref.page}",
+            )
             canvas.restoreState()
 
-        document.build(story, onFirstPage=draw_footer, onLaterPages=draw_footer)
-        buffer.seek(0)
-        return send_file(buffer, mimetype="application/pdf", as_attachment=True, download_name="RAPPORT_BEACON.pdf")
-    except Exception as exc:
-        return jsonify({"error": f"Échec de l'export PDF : {exc}"}), 500
+        doc.build(
+            story,
+            onFirstPage=draw_footer,
+            onLaterPages=draw_footer,
+        )
+
+        pdf_buffer.seek(0)
+        filename = f"BEACON_FORENSIC_REPORT_{ethic_score_letter}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+
+        return send_file(
+            pdf_buffer,
+            as_attachment=True,
+            download_name=filename,
+            mimetype="application/pdf",
+        )
+
+    except Exception as pdf_err:
+        print(f"[Export PDF Error]: {pdf_err}")
+        return (
+            jsonify({
+                "error": "Échec de la génération du rapport PDF forensique.",
+                "details": str(pdf_err),
+            }),
+            500,
+        )
 
 
 @app.route("/refute/analyze", methods=["POST", "OPTIONS"])
@@ -1449,10 +1894,12 @@ def analyze():
 
         uploaded_file = request.files.get("file")
         if uploaded_file and uploaded_file.filename:
-            uploaded_text, extraction_error = extract_uploaded_pdf_text(uploaded_file)
+            uploaded_text, extraction_error = extract_uploaded_pdf_text(uploaded_file, lang)
             if extraction_error:
                 return jsonify({"error": extraction_error}), 400
-            content_to_analyze = "\n\n".join(part for part in [content_to_analyze, uploaded_text] if part).strip()
+            content_to_analyze = "\n\n".join(
+                part for part in [content_to_analyze, uploaded_text] if part
+            ).strip()
 
         if not content_to_analyze:
             return jsonify({"error": "Aucun contenu fourni"}), 400
@@ -1467,61 +1914,38 @@ def analyze():
         final_flags = local_result["flags"]
         styled_analysis = local_result["analysis"]
 
-        gemini_ok = False
-        use_gemini_analysis = os.environ.get("BEACON_ENABLE_GEMINI_ANALYSIS", "").lower() == "true"
-        try:
-            if use_gemini_analysis and client is not None:
+        use_gemini = os.environ.get("BEACON_ENABLE_GEMINI_ANALYSIS", "").lower() == "true"
+        if use_gemini and client is not None:
+            try:
                 resolved_model = get_available_model()
                 if resolved_model:
-                    gemini_ok = True
-                    user_prompt = f"Effectuez l'analyse complète en 7 couches du texte suivant :\n\n{content_to_analyze[:10000]}"
                     response = client.models.generate_content(
                         model=resolved_model,
-                        contents=user_prompt,
+                        contents=f"Effectuez l'analyse complète en 7 couches du texte suivant :\n\n{content_to_analyze[:10000]}",
                         config=types.GenerateContentConfig(
                             system_instruction=build_gemini_system_instruction(lang),
                             temperature=0.1,
                             max_output_tokens=8192,
-                        )
+                        ),
                     )
                     analysis_text = response.text or ""
-
                     score_match = re.search(r"<score>\s*(\d+)\s*</score>", analysis_text, re.IGNORECASE)
                     if score_match:
                         final_score = int(score_match.group(1))
-
                     flags_match = re.search(r"<flags>\s*(.*?)\s*</flags>", analysis_text, re.IGNORECASE | re.DOTALL)
                     if flags_match:
                         parsed_flags = normalize_flag_tokens(flags_match.group(1))
                         if parsed_flags:
                             final_flags = parsed_flags
-
                     clean_analysis = re.sub(r"<score>.*?</score>", "", analysis_text, flags=re.DOTALL | re.IGNORECASE)
                     clean_analysis = re.sub(r"<flags>.*?</flags>", "", clean_analysis, flags=re.DOTALL | re.IGNORECASE).strip()
-                    clean_analysis = force_structured_analysis(clean_analysis, final_score, final_flags)
-
-                    styled_analysis = f"<div style='line-height: 1.8; font-size: 15px; letter-spacing: 0.2px;'>" + clean_analysis + "</div>"
-                    for i in range(7):
-                        styled_analysis = re.sub(
-                            rf"(<h3[^>]*>)\s*(Phase\s*{i}[^<]*)",
-                            rf"\1<span style='color: {get_ethic_band(final_score)[1]};'>\2</span>",
-                            styled_analysis,
-                            flags=re.IGNORECASE,
-                        )
-
-                    styled_analysis = styled_analysis.replace("<h3>", "<h3 style='margin-top: 28px; margin-bottom: 10px; font-weight: 600;'>")
-                    styled_analysis = styled_analysis.replace("<ul>", "<ul style='margin-bottom: 20px; padding-left: 20px;'>")
-                    styled_analysis = styled_analysis.replace("<li>", "<li style='margin-bottom: 8px; opacity: 0.95;'>")
-        except Exception:
-            gemini_ok = False
+                    styled_analysis = force_structured_analysis(clean_analysis, final_score, final_flags)
+            except Exception:
+                pass
 
         ethic_letter, ethic_color = get_ethic_band(final_score)
         norm_text = normalize_for_match(content_to_analyze)
-        indicators = build_indicator_summary(norm_text)
         summary = build_summary_text(final_score, final_flags, lang)
-        translation = build_translation_summary(summary, lang)
-        refutation_questions = build_refutation_questions(final_flags, lang)
-
         return jsonify({
             "status": "success",
             "analysis": styled_analysis,
@@ -1534,9 +1958,9 @@ def analyze():
             "language": lang,
             "source_type": "url" if source_url else data.get("source_type", "text"),
             "summary": summary,
-            "translation": translation,
-            "indicators": indicators,
-            "refutation_questions": refutation_questions,
+            "translation": build_translation_summary(summary, lang),
+            "indicators": build_indicator_summary(norm_text),
+            "refutation_questions": build_refutation_questions(final_flags, lang),
         }), 200
     except Exception as exc:  # pragma: no cover
         return jsonify({"error": str(exc)}), 500

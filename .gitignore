@@ -34,3 +34,6 @@ backend/templates/
 .vscode/settings.json
 .DS_Store
 Thumbs.db
+# PDF reports and local exports
+*.pdf
+backend/*.pdf

@@ -94,18 +94,17 @@ def test_analysis_uses_six_phases_and_ethic_score_spinner_context():
         lang="fr",
     )
     analysis = result["analysis"]
-    assert "### Phase 0" in analysis
-    assert "### Phase 1" in analysis
-    assert "### Phase 2" in analysis
-    assert "### Phase 3" in analysis
-    assert "### Phase 4" in analysis
-    assert "### Phase 5" in analysis
+    assert "Phase 0: contexte et type de discours" in analysis
+    assert "Phase 1: promesses, autorité et solution miracle" in analysis
+    assert "Phase 2: démontage forensique" in analysis
+    assert "Phase 3: sources et intérêts" in analysis
+    assert "Phase 4: logique et biais" in analysis
+    assert "Phase 5: synthèse et risque" in analysis
     assert "phase 0: contexte et type de discours" in analysis.lower()
     assert "phase 1: promesses, autorité et solution miracle" in analysis.lower()
     assert "phase 2: démontage forensique" in analysis.lower()
     assert "phase 3: sources et intérêts" in analysis.lower()
     assert "phase 4: logique et biais" in analysis.lower()
-    assert "phase 5: synthèse et risque" in analysis.lower()
     assert "Ethic-Score" not in analysis
 
 
@@ -239,6 +238,21 @@ def test_force_structured_analysis_builds_multi_block_html():
     assert "<h3>2)" in html
     assert "<h3>3)" in html
     assert "<ul>" in html
+
+
+def test_report_uses_plain_text_formatting_and_exact_refutation_titles():
+    result = app_module.build_local_analysis_report(
+        "Ce texte promet une transformation totale et une autorité sans preuve.",
+        lang="fr",
+    )
+    analysis = result["analysis"]
+    assert "### " not in analysis
+    assert "## " not in analysis
+    assert "**" not in analysis
+    assert "Phase 0: contexte et type de discours" in analysis
+    assert "RÉFUTATION" in app_module.get_refutation_title("fr")
+    assert "REFUTACIÓN" in app_module.get_refutation_title("es")
+    assert "REFUTATION" in app_module.get_refutation_title("en")
 
 
 def test_forensic_report_includes_phase_sequence_without_displaying_bite_labels():
@@ -417,7 +431,11 @@ def test_export_pdf_returns_a_pdf_without_html_markup():
     assert "RÉF" in normalized_pdf_text
     assert "INDICATEURS D'ALERTE" in normalized_pdf_text
     assert "Conclusion : Une conclusion de test." in pdf_text
-    assert "Forensic Cognitive Engine" in pdf_text
+    assert "Forensic Cognitive Engine" not in pdf_text
+    assert "LABORATOIRE D'AUTODÉFENSE SÉMANTIQUE ET CRITIQUE" in pdf_text
+    assert "RAPPORT D'INTÉGRITÉ SÉMANTIQUE ET DISCURSIVE" in pdf_text
+    assert "PAGE 1" in pdf_text
+    assert "CHAÎNE DE CUSTODIE" not in pdf_text
 
 
 def test_unregulated_clinical_title_with_masterclass_flags_scope():

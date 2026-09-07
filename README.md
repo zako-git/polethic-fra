@@ -1,119 +1,172 @@
-# POLETHIC BEACON
+-------------------------------------------------------------
+# 📡 POLETHIC BEACON
+--------------------------------------------------------------
+> Outil forensique d'autodéfense cognitive pour la détection de la rhétorique persuasive, de la pseudoscience, des biais New Age et du marketing abusif.
 
-POLETHIC BEACON est un outil d'autodefense cognitive qui analyse la forme d'un discours: promesses, cadrage persuasif, autorite invoquee, opacite methodologique et risques de confusion avec un perimetre clinique. Il produit un rapport forensique structure, des indicateurs d'alerte et un `ETHIC-SCORE` de A a E.
+**POLETHIC BEACON** analyse la structure du discours : promesses non fondées, cadrage persuasif, appel à de fausses autorités, opacité méthodologique et risques d'empiétement sur le périmètre clinique. Il génère un rapport forensique structuré, des indicateurs d'alerte et un score d'évaluation `ETHIC-SCORE` (de A à E).
 
-Le moteur ne pose ni diagnostic medical, ni diagnostic psychologique, ni qualification juridique d'une personne ou d'une organisation. Les resultats decrivent uniquement les signaux presents dans le contenu soumis.
+La langue principale du système est le **Français (FR)**, avec prise en charge native de l'**Espagnol (ES)** et de l'**Anglais (EN)**.
 
-## Fonctionnalites
+> ⚠️ **Avertissement de responsabilité :** Le moteur ne pose aucun diagnostic médical, psychologique ou juridique. Les résultats décrivent exclusivement les signaux et données présents dans le contenu soumis.
 
-- Analyse de texte libre en francais, espagnol ou anglais.
-- Analyse d'une URL publique: le contenu HTML est extrait puis analyse.
-- Analyse de PDF textuels: le texte du document est extrait localement avec `pypdf`.
-- Rapport local deterministe en six phases: contexte, promesses, demontage forensique, sources, logique et synthese du risque.
-- Questions de refutation cognitive via `POST /refute`.
-- Bloc optionnel `MEMES`: synthese courte, directe et fondee sur les indicateurs detectes.
-- Export d'un rapport PDF forensique avec score colore, metadonnees, indicateurs, citations et conclusion.
+---
 
-Les PDF scannes sans couche de texte ne peuvent pas etre lus automatiquement. Il faut utiliser un PDF ayant subi un OCR ou coller le texte manuellement.
+## 🚀 Fonctionnalités
 
-## ETHIC-SCORE
+- **Ingestion Multi-Format :** Analyse de texte brut, URL publiques (extraction HTML), documents PDF (vectoriels et scannés via OCR) et images (`.png`, `.jpg`).
+- **Transcription YouTube :** Extraction automatique des sous-titres des vidéos pour analyse rétorique.
+- **Support Multilingue (i18n) :** Traitement natif prioritaire en **Français (`fr`)**, avec fallback dynamique vers l'**Espagnol (`es`)** et l'**Anglais (`en`)**.
+- **Pipeline Déterministe en 6 Phases :** Contexte, promesses, démontage forensique, sources, logique et synthèse du risque.
+- **Réfutation Cognitive (`POST /refute`) :** Génération de questions ciblées pour déconstruire le discours analysé.
+- **Module `MEMES` :** Résumé exécutif incisif basé sur les indicateurs détectés.
+- **Rapport PDF Forensique :** Exportation structurée avec code couleur, métadonnées, citations contextuelles et matrice de risque.
+- **Architecture Hybride :** Analyse locale déterministe autonome, enrichie optionnellement par l'API Gemini.
 
-Le score mesure le niveau de signaux rhetoriques detectes: plus il est eleve, plus les elements a verifier sont nombreux ou importants.
+---
 
-| Lettre | Score | Couleur | Lecture operationnelle |
-| --- | ---: | --- | --- |
-| A | 0-15 | Bleu | Peu ou pas de signaux detectes |
-| B | 16-30 | Vert | Vigilance faible |
-| C | 31-45 | Jaune | Elements a verifier |
-| D | 46-60 | Orange | Risque modere a eleve |
-| E | 61-100 | Rose/rouge | Risque eleve |
+## 📊 Matrice ETHIC-SCORE
 
-La lettre et sa couleur sont coherentes dans l'interface et dans le PDF exporte.
+Le score mesure la densité de signaux rhétoriques et de sophismes détectés :
 
-## Structure du projet
+| Lettre | Score | Couleur | Niveau de Risque / Lecture Opérationnelle |
+| :--- | :---: | :--- | :--- |
+| **A** | 0 - 15 | Bleu | **Aucun signal significatif.** Discours neutre ou transparent. |
+| **B** | 16 - 30 | Vert | **Vigilance faible.** Présence minime d'éléments persuasifs. |
+| **C** | 31 - 45 | Jaune | **Éléments à vérifier.** Affirmations non étayées ou ambiguës. |
+| **D** | 46 - 60 | Orange | **Risque modéré à élevé.** Manipulation rhétorique explicite. |
+| **E** | 61 - 100 | Rose / Rouge | **Risque critique.** Haute densité de biais, pseudoscience ou charlatanisme. |
 
-```text
-.
-|-- backend/
-|   |-- app.py                 # API Flask, analyse, extraction et export PDF
-|   |-- requirements.txt       # Dependances Python
-|   |-- tests/test_scoring.py  # Tests de regression
-|   |-- static/                # Ressources de l'interface Flask historique
-|   `-- templates/             # Gabarits Flask historiques
-|-- frontend/
-|   |-- beacon-app.html        # Interface principale BEACON
-|   |-- css/styles.css         # Styles des pages publiques
-|   `-- post/                  # Contenus editoriaux
-`-- README.md
+---
+
+## 🛠️ Prérequis et Installation
+
+### 1. Dépendances Système (OCR & Conversion PDF)
+
+Nécessaire pour le traitement des images et des fichiers PDF scannés :
+
+```bash
+# Ubuntu / Debian
+sudo apt-get update
+sudo apt-get install -y tesseract-ocr tesseract-ocr-fra tesseract-ocr-spa poppler-utils
+
 ```
 
-Les fichiers `.env`, `venv/`, caches Python et fichiers temporaires ne doivent pas etre versionnes. La base `backend/beacon.db` doit etre versionnee seulement si elle constitue une base de demonstration reproductible; sinon, elle doit rester locale et etre ajoutee au fichier `.gitignore`.
-
-## Demarrage local
-
-Prerequis: Python 3.10 ou plus recent.
+### 2. Environnement Python
 
 ```bash
 cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+
+```
+
+### 3. Configuration des Variables d'Environnement
+
+Créez un fichier `backend/.env` :
+
+```env
+PORT=5000
+FLASK_ENV=development
+DEFAULT_LANG=fr
+BEACON_ENABLE_GEMINI_ANALYSIS=false
+GEMINI_API_KEY=votre_cle_api_optionnelle
+
+```
+
+---
+
+## 🔌 Référence de l'API
+
+### `POST /analyze`
+
+Point d'entrée principal pour l'analyse de textes, URLs, images ou documents.
+
+**En-tête HTTP :** `Content-Type: application/json` ou `multipart/form-data`
+
+**Payload JSON (Texte ou URL) :**
+
+```json
+{
+  "text": "[https://www.youtube.com/watch?v=example](https://www.youtube.com/watch?v=example)",
+  "lang": "fr"
+}
+
+```
+
+**Payload Multipart/Form-Data (Fichiers) :**
+
+* `file` : Fichier binaire (`.pdf`, `.png`, `.jpg`).
+* `lang` : Code langue (`fr` par défaut, `es`, `en`).
+
+---
+
+### `POST /refute`
+
+Génère une série de questions critiques basées sur le rapport d'analyse.
+
+---
+
+### `POST /export_pdf`
+
+Compile et retourne le rapport technique téléchargeable `RAPPORT_BEACON.pdf`.
+
+---
+
+## 💻 Structure du Projet
+
+```text
+.
+├── backend/
+│   ├── app.py                 # API Flask et endpoints principaux
+│   ├── ingestion.py           # Pipeline d'extraction (OCR, PDF, URLs, YouTube)
+│   ├── requirements.txt       # Dépendances Python
+│   ├── .env                   # Variables d'environnement
+│   └── tests/                 # Tests unitaires et d'intégration
+│       └── test_scoring.py    # Validation du moteur d'analyse
+├── frontend/
+│   ├── beacon-app.html        # Interface utilisateur principale
+│   ├── css/styles.css         # Styles UI et palettes ETHIC-SCORE
+│   └── post/                  # Documentation éditoriale
+└── README.md
+
+```
+
+---
+
+## ⚡ Démarrage Local et Déploiement Cloud
+
+### Exécution Locale
+
+```bash
+cd backend
 python app.py
+
 ```
 
-L'API demarre sur `http://127.0.0.1:5000`.
+L'API démarre sur `http://127.0.0.1:5000`. Ouvrez `frontend/beacon-app.html` dans votre navigateur.
 
-Ouvrir ensuite [frontend/beacon-app.html](frontend/beacon-app.html) dans le navigateur. L'interface appelle le backend local sur le port `5000`.
+### Déploiement GitHub Codespaces + GitHub Pages
 
-## Analyse et export
+Pour autoriser les requêtes HTTPS depuis GitHub Pages :
 
-### Analyser un texte
+1. Lancez l'API dans Codespaces (`python app.py`).
+2. Dans l'onglet **Ports**, passez le port `5000` en **Public**.
+3. Copiez l'URL HTTPS publique générée.
+4. Injectez cette URL dans la variable `CODESPACES_BACKEND_URL` du fichier `docs/beacon-app.html`.
+
+---
+
+## 🧪 Tests et Qualité du Code
+
+Exécutez la suite de tests automatisés :
 
 ```bash
-curl -X POST http://127.0.0.1:5000/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"text":"Texte a analyser", "lang":"fr"}'
+cd backend
+pytest tests/test_scoring.py -v
+
 ```
 
-### Analyser un PDF
-
-L'interface transmet le fichier PDF au meme endpoint `POST /analyze` avec un formulaire `multipart/form-data`. Le backend accepte actuellement les fichiers `.pdf` contenant du texte extractible.
-
-### Exporter le rapport
-
-`POST /export_pdf` recoit le rapport, la lettre de score et les indicateurs, puis renvoie le fichier `RAPPORT_BEACON.pdf`.
-
-Le PDF contient une entete operationnelle avec `ETHIC-SCORE`, la reference de dossier et la date, les indicateurs d'alerte, les elements d'identification, les six phases et la conclusion. Les titres de phase et le badge score utilisent la couleur de l'ETHIC-SCORE.
-
-## Endpoints
-
-| Methode | Endpoint | Role |
-| --- | --- | --- |
-| `POST` | `/analyze` | Analyse de texte, URL ou PDF textuel |
-| `POST` | `/refute` | Questions de refutation cognitive |
-| `POST` | `/export_pdf` | Generation du rapport PDF |
-
-## Mode d'analyse
-
-L'analyse locale deterministe est la source de verite: elle calcule le score, les indicateurs et le rapport a partir de regles explicites. Une couche Gemini optionnelle peut etre activee pour enrichir le texte, sans remplacer les decisions locales:
-
-```bash
-export BEACON_ENABLE_GEMINI_ANALYSIS=true
-python app.py
 ```
 
-Cette option requiert la configuration des identifiants Gemini dans `backend/.env`. Sans cette variable, le fonctionnement local reste complet et ne depend d'aucune API externe.
-
-## Tests
-
-Depuis le dossier `backend`:
-
-```bash
-pytest tests/test_scoring.py -q
 ```
-
-La suite couvre les scores et indicateurs, les regles de prudence clinique, l'analyse locale, l'extraction de contenu et la generation d'un PDF valide.
-
-## Limites et responsabilite
-
-POLETHIC BEACON est un outil d'analyse de discours, d'education et de prevention. Il ne remplace pas un professionnel de sante, un psychologue, un juriste ou une autorite competente. Toute decision concernant un soin, une situation de danger ou une procedure doit etre prise avec les professionnels concernes.

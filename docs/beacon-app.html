@@ -604,7 +604,7 @@
     </div>
 
     <section class="drop-zone" id="drop-zone">
-      <textarea id="user-input" aria-label="Texto a analizar" placeholder="Collez du texte ou glissez-déposez un fichier PDF/Image ici..."></textarea>
+      <textarea id="user-input" aria-label="Texto a analizar" placeholder="Collez du texte ou une URL publique (https://...) ; vous pouvez aussi glisser un fichier PDF/Image ici..."></textarea>
       <div class="input-actions-bar">
         <label for="user-file" class="file-upload-btn">
            <span id="file-name-display">Joindre / Glisser un fichier</span>
@@ -647,16 +647,21 @@
     </div>
   </footer>
 
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const BEACON_API_URL = (() => {
-      const explicit = window.BEACON_API_URL || window.BEACON_BACKEND_URL || '';
-      if (explicit) return explicit.replace(/\/$/, '');
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        return 'http://127.0.0.1:5000';
-      }
+ <script>
+  const CODESPACES_BACKEND_URL = 'https://super-duper-enigma-6vvg7xx5j6gg254gq-5000.app.github.dev';
+  const BEACON_API_URL = (() => {
+    const explicit = window.BEACON_API_URL || window.BEACON_BACKEND_URL || '';
+    if (explicit) return explicit.replace(/\/$/, '');
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       return 'http://127.0.0.1:5000';
-    })();
+    }
+    return CODESPACES_BACKEND_URL.replace(/\/$/, '');
+  })();
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!BEACON_API_URL && window.location.protocol === 'https:') {
+      console.error('[BEACON] Configure CODESPACES_BACKEND_URL with the public HTTPS backend URL.');
+    }
 
       function isNetworkError(err) {
         return err instanceof TypeError || err.name === 'TypeError' || err.message?.includes('NetworkError');
@@ -689,6 +694,9 @@
       }
 
       async function beaconFetch(endpoint, options = {}) {
+  if (!BEACON_API_URL) {
+    throw new Error('Backend HTTPS non configuré. Remplacez CODESPACES_BACKEND_URL par l\'URL publique HTTPS de votre Codespace.');
+  }
   // Aseguramos que url use la variable global y el endpoint proporcionado
   const url = `${BEACON_API_URL}${endpoint}`;
   const controller = new AbortController();
@@ -793,7 +801,7 @@
     const langMap = {
       fr: {
         subtitle: "Moteur d'autodéfense cognitive & Analyse métacommunicationnelle",
-        placeholder: "Collez du texte ou glissez-déposez un fichier PDF/Image ici...",
+        placeholder: "Collez du texte ou une URL publique (https://...) ; vous pouvez aussi glisser un fichier PDF/Image ici...",
         fileBtn: "Joindre / Glisser un fichier",
         analyzeBtn: " BEACON-IZE",
         status: " MOTEUR PRÊT | SYSTEM ONLINE (2026)",
@@ -814,7 +822,7 @@
       },
       es: {
         subtitle: "Motor de autodefensa cognitiva y Análisis metacomunicacional",
-        placeholder: "Pegue texto o arrastre un archivo PDF/Imagen aquí...",
+        placeholder: "Pegue texto o una URL pública (https://...); también puede arrastrar un archivo PDF/Imagen aquí...",
         fileBtn: "Adjuntar / Arrastrar archivo",
         analyzeBtn: " BEACON-IZE",
         status: " MOTOR LISTO | SISTEMA EN LÍNEA (2026)",
@@ -835,7 +843,7 @@
       },
       en: {
         subtitle: "Cognitive self-defense engine & Metacommunicational analysis",
-        placeholder: "Paste text or drag and drop a PDF/Image file here...",
+        placeholder: "Paste text or a public URL (https://...); you can also drag and drop a PDF/Image file here...",
         fileBtn: "Attach / Drag file",
         analyzeBtn: " BEACON-IZE",
         status: " ENGINE READY | SYSTEM ONLINE (2026)",
@@ -1200,9 +1208,9 @@
         if (refutationText) {
           currentRefutationText = refutationText;
           const titleMap = {
-            fr: "DÉFI DU BIAIS (RÉFUTATION COGNITIVE)",
-            es: "DESAFÍO DEL SESGO (REFUTACIÓN COGNITIVA)",
-            en: "BIAS CHALLENGE (COGNITIVE REFUTATION)"
+            fr: "RÉFUTATION (DÉFI DU BIAIS)",
+            es: "REFUTACIÓN (DESAFÍO DEL SESGO)",
+            en: "REFUTATION (BIAS CHALLENGE)"
           };
 
           const updatedMarkdown = `${rawAnalysisMarkdown}\n\n## ${titleMap[currentLang] || titleMap.fr}\n\n${refutationText}`;
