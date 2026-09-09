@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 
 import requests
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request, send_file
+from flask import Flask, jsonify, render_template, request, send_file, send_from_directory
 from flask_cors import CORS
 from reportlab.lib import colors
 from reportlab.platypus import (
@@ -77,6 +77,24 @@ PUBLIC_TEMPLATES = {
 @app.route("/index.html")
 def index_page():
     return render_template("index.html")
+
+
+@app.route("/beacon-LAB.html")
+def beacon_lab_page():
+    docs_root = os.path.join(current_dir, "..", "docs")
+    return send_from_directory(docs_root, "beacon-LAB.html")
+
+
+@app.route("/beacon-science.html")
+def beacon_science_page():
+    docs_root = os.path.join(current_dir, "..", "docs")
+    return send_from_directory(docs_root, "beacon-science.html")
+
+
+@app.route("/css/<path:filename>")
+def docs_css(filename):
+    docs_css_root = os.path.join(current_dir, "..", "docs", "css")
+    return send_from_directory(docs_css_root, filename)
 
 
 @app.route("/<path:page>")

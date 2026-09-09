@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POLETHIC_FRA - Beacon Science</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, rgba(16, 185, 129, 0.18), transparent 30%), #07111d;
+    }
+
+    .science-hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .science-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #10b981;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.95;
+    }
+
+    .science-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin: 0.75rem 0 1rem;
+      color: var(--text-cream-bright);
+    }
+
+    .science-lead {
+      max-width: 780px;
+      margin: 0 auto;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .science-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.4rem;
+      margin-top: 2rem;
+    }
+
+    .science-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 12px;
+      padding: 1.4rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 24px rgba(16, 185, 129, 0.08);
+    }
+
+    .science-card h3 {
+      margin: 0 0 0.5rem;
+      color: var(--text-cream-bright);
+      font-size: 1rem;
+    }
+
+    .science-card p {
+      margin: 0;
+      color: var(--text-cream);
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    .science-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #10b981;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      margin-bottom: 0.8rem;
+    }
+
+    .science-panel {
+      margin-top: 2rem;
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .science-panel h2 {
+      margin-top: 0;
+      color: var(--text-cream-bright);
+      font-size: 1.15rem;
+    }
+
+    .science-panel ul {
+      margin: 0.8rem 0 0;
+      padding-left: 1.15rem;
+      color: var(--text-cream);
+      line-height: 1.8;
+    }
+
+    .btn-science {
+      display: inline-block;
+      margin-top: 1rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #10b981;
+      padding: 0.7rem 1.25rem;
+      text-decoration: none;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-science:hover {
+      background: #10b981;
+      color: #09131a;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.38);
+    }
+  </style>
+</head>
+<body>
+  <div id="stars-container"></div>
+
+  <header>
+    <div class="container header-layout">
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+
+      <nav class="nav-buttons">
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon-LAB.html" class="nav-btn active" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
+      </nav>
+
+      <div class="lang-selector">
+        <a href="#" class="lang-btn" id="btn-fr" onclick="setLanguage('fr'); return false;">FR</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-es" onclick="setLanguage('es'); return false;">ES</a>
+        <span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-en" onclick="setLanguage('en'); return false;">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="science-hero">
+      <span class="science-tag" data-key="science_tag">// OUTIL 6 : ÉPISTÉMIQUE TRACEABILITY</span>
+      <h1 class="science-title" data-key="science_title">POLETHIC SCIENCE</h1>
+      <p class="science-lead" data-key="science_desc">
+        Outil de vérification scientifique pour mesurer le niveau de rigueur d'une affirmation, repérer les biais et évaluer si une conclusion est réellement traçable à partir des données et des méthodes exposées.
+      </p>
+      <a href="beacon-LAB.html" class="btn-science" data-key="science_back">↩ RETOUR AU LAB</a>
+    </section>
+
+    <section class="science-grid">
+      <article class="science-card">
+        <div class="science-badge" data-key="card1_badge">01 // DESIGN</div>
+        <h3 data-key="card1_title">Rigueur du design</h3>
+        <p data-key="card1_desc">Analyse si l'étude ou la démonstration est structurée, reproductible et capable de tenir un test de cohérence interne.</p>
+      </article>
+
+      <article class="science-card">
+        <div class="science-badge" data-key="card2_badge">02 // ÉCHANTILLON</div>
+        <h3 data-key="card2_title">Taille et représentativité</h3>
+        <p data-key="card2_desc">Évalue si des conclusions générales reposent sur un échantillon suffisant et pertinent, sans extrapolation abusive.</p>
+      </article>
+
+      <article class="science-card">
+        <div class="science-badge" data-key="card3_badge">03 // BIAIS</div>
+        <h3 data-key="card3_title">Biais et corrélations</h3>
+        <p data-key="card3_desc">Distingue corrélation, causalité et overclaiming pour éviter de donner un statut scientifique à des liens non démontrés.</p>
+      </article>
+
+      <article class="science-card">
+        <div class="science-badge" data-key="card4_badge">04 // EVIDENCE</div>
+        <h3 data-key="card4_title">Evidence Drift</h3>
+        <p data-key="card4_desc">Mesure le degré de dérive entre les promesses, les données citées et la conclusion réellement soutenue par les preuves.</p>
+      </article>
+
+      <article class="science-card">
+        <div class="science-badge" data-key="card5_badge">05 // SOURCES</div>
+        <h3 data-key="card5_title">Traçabilité des sources</h3>
+        <p data-key="card5_desc">Vérifie si les références sont accessibles, crédibles, cohérentes et suffisamment explicites pour être vérifiées.</p>
+      </article>
+
+      <article class="science-card">
+        <div class="science-badge" data-key="card6_badge">06 // CONCLUSION</div>
+        <h3 data-key="card6_title">Audit de conclusion</h3>
+        <p data-key="card6_desc">S'assure que la synthèse finale ne dépasse pas les limites empiriques et qualifie le niveau de certitude avec prudence.</p>
+      </article>
+    </section>
+
+    <section class="science-panel">
+      <h2 data-key="panel_title">Ce que l'outil vise à faire</h2>
+      <ul data-key="panel_list">
+        <li>Repérer les promesses de science sans fondement réel.</li>
+        <li>Identifier les extrapolations, le science washing et les corrélations abusives.</li>
+        <li>Transformer un discours complexe en verdict clair, traçable et vérifiable.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-shield">
+        <div class="shield-badge">
+          <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span>
+        </div>
+        <p class="shield-disclaimer" data-key="footer_disc1">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer" data-key="footer_disc2">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
+          <span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a>
+          <span class="footer-sep">•</span>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const translations = {
+      fr: {
+        nav_home: 'ACCUEIL',
+        nav_obs: "L'OBSERVATOIRE",
+        nav_museum: 'PSICOMUSÉE',
+        nav_beacon: 'BEACON LAB',
+        nav_cap: 'NOTRE CAP',
+        nav_contact: 'CONTACT',
+
+        science_tag: '// OUTIL 6 : ÉPISTÉMIQUE TRACEABILITY',
+        science_title: 'POLETHIC SCIENCE',
+        science_desc: 'Outil de vérification scientifique pour mesurer le niveau de rigueur d’une affirmation, repérer les biais et évaluer si une conclusion est réellement traçable à partir des données et des méthodes exposées.',
+        science_back: '↩ RETOUR AU LAB',
+
+        card1_badge: '01 // DESIGN',
+        card1_title: 'Rigueur du design',
+        card1_desc: 'Analyse si l’étude ou la démonstration est structurée, reproductible et capable de tenir un test de cohérence interne.',
+
+        card2_badge: '02 // ÉCHANTILLON',
+        card2_title: 'Taille et représentativité',
+        card2_desc: 'Évalue si des conclusions générales reposent sur un échantillon suffisant et pertinent, sans extrapolation abusive.',
+
+        card3_badge: '03 // BIAIS',
+        card3_title: 'Biais et corrélations',
+        card3_desc: 'Distingue corrélation, causalité et overclaiming pour éviter de donner un statut scientifique à des liens non démontrés.',
+
+        card4_badge: '04 // EVIDENCE',
+        card4_title: 'Evidence Drift',
+        card4_desc: 'Mesure le degré de dérive entre les promesses, les données citées et la conclusion réellement soutenue par les preuves.',
+
+        card5_badge: '05 // SOURCES',
+        card5_title: 'Traçabilité des sources',
+        card5_desc: 'Vérifie si les références sont accessibles, crédibles, cohérentes et suffisamment explicites pour être vérifiées.',
+
+        card6_badge: '06 // CONCLUSION',
+        card6_title: 'Audit de conclusion',
+        card6_desc: 'S’assure que la synthèse finale ne dépasse pas les limites empiriques et qualifie le niveau de certitude avec prudence.',
+
+        panel_title: 'Ce que l’outil vise à faire',
+        panel_list: '<li>Repérer les promesses de science sans fondement réel.</li><li>Identifier les extrapolations, le science washing et les corrélations abusives.</li><li>Transformer un discours complexe en verdict clair, traçable et vérifiable.</li>',
+
+        footer_shield: 'Bouclier de Protection Professionnelle',
+        footer_disc1: 'Action exclusive de prévention primaire et de psychoéducation non clinique.',
+        footer_disc2: 'Aucun diagnostic ou thérapie médicale n’est pratiqué.',
+        footer_legal: 'Mentions Légales',
+        footer_privacy: 'Politique de Confidentialité',
+        footer_cookies: 'Gestion des Cookies'
+      },
+      es: {
+        nav_home: 'INICIO',
+        nav_obs: 'OBSERVATORIO',
+        nav_museum: 'PSICOMUSEO',
+        nav_beacon: 'BEACON LAB',
+        nav_cap: 'NUESTRO RUMBO',
+        nav_contact: 'CONTACTO',
+
+        science_tag: '// HERRAMIENTA 6: TRAZABILIDAD EPISTÉMICA',
+        science_title: 'POLETHIC SCIENCE',
+        science_desc: 'Herramienta de verificación científica para medir el rigor de una afirmación, detectar sesgos y evaluar si una conclusión es realmente trazable a partir de los datos y métodos expuestos.',
+        science_back: '↩ VOLVER AL LAB',
+
+        card1_badge: '01 // DISEÑO',
+        card1_title: 'Rigor del diseño',
+        card1_desc: 'Analiza si el estudio o la demostración está estructurado, es reproducible y puede resistir una prueba de coherencia interna.',
+
+        card2_badge: '02 // MUESTRA',
+        card2_title: 'Tamaño y representatividad',
+        card2_desc: 'Evalúa si las conclusiones generales se apoyan en una muestra suficiente y pertinente, sin extrapolación abusiva.',
+
+        card3_badge: '03 // SESGOS',
+        card3_title: 'Sesgos y correlaciones',
+        card3_desc: 'Distingue correlación, causalidad y overclaiming para evitar dar un estatus científico a vínculos no demostrados.',
+
+        card4_badge: '04 // EVIDENCIA',
+        card4_title: 'Evidence Drift',
+        card4_desc: 'Mide el grado de deriva entre promesas, datos citados y la conclusión realmente sostenida por las pruebas.',
+
+        card5_badge: '05 // FUENTES',
+        card5_title: 'Trazabilidad de fuentes',
+        card5_desc: 'Verifica si las referencias son accesibles, creíbles, coherentes y suficientemente explícitas para poder ser comprobadas.',
+
+        card6_badge: '06 // CONCLUSIÓN',
+        card6_title: 'Auditoría de conclusión',
+        card6_desc: 'Asegura que la síntesis final no excede los límites empíricos y cualifica el nivel de certeza con prudencia.',
+
+        panel_title: 'Lo que esta herramienta busca hacer',
+        panel_list: '<li>Detectar promesas de ciencia sin base real.</li><li>Identificar extrapolaciones, science washing y correlaciones abusivas.</li><li>Convertir un discurso complejo en un veredicto claro, trazable y verificable.</li>',
+
+        footer_shield: 'Escudo de Protección Profesional',
+        footer_disc1: 'Acción exclusiva de prevención primaria y psicoeducación no clínica.',
+        footer_disc2: 'No se realiza ningún diagnóstico ni terapia médica.',
+        footer_legal: 'Aviso Legal',
+        footer_privacy: 'Política de Privacidad',
+        footer_cookies: 'Gestión de Cookies'
+      },
+      en: {
+        nav_home: 'HOME',
+        nav_obs: 'OBSERVATORY',
+        nav_museum: 'PSYCHOMUSEUM',
+        nav_beacon: 'BEACON LAB',
+        nav_cap: 'OUR COURSE',
+        nav_contact: 'CONTACT',
+
+        science_tag: '// TOOL 6: EPISTEMIC TRACEABILITY',
+        science_title: 'POLETHIC SCIENCE',
+        science_desc: 'Scientific verification tool to measure the rigor of a claim, detect biases, and assess whether a conclusion is genuinely traceable from the data and methods disclosed.',
+        science_back: '↩ BACK TO LAB',
+
+        card1_badge: '01 // DESIGN',
+        card1_title: 'Study design rigor',
+        card1_desc: 'Analyzes whether the study or demonstration is structured, reproducible, and capable of withstanding an internal consistency test.',
+
+        card2_badge: '02 // SAMPLE',
+        card2_title: 'Sample size and representativeness',
+        card2_desc: 'Assesses whether broad conclusions rely on a sufficient and relevant sample, without abusive extrapolation.',
+
+        card3_badge: '03 // BIASES',
+        card3_title: 'Biases and correlations',
+        card3_desc: 'Distinguishes correlation, causation, and overclaiming to prevent non-demonstrated links from being presented as scientific.',
+
+        card4_badge: '04 // EVIDENCE',
+        card4_title: 'Evidence Drift',
+        card4_desc: 'Measures the degree of drift between promises, cited evidence, and the conclusion that the data actually supports.',
+
+        card5_badge: '05 // SOURCES',
+        card5_title: 'Source traceability',
+        card5_desc: 'Checks whether references are accessible, credible, coherent, and explicit enough to be independently verified.',
+
+        card6_badge: '06 // CONCLUSION',
+        card6_title: 'Conclusion audit',
+        card6_desc: 'Ensures the final synthesis does not exceed empirical limits and qualifies the level of certainty with caution.',
+
+        panel_title: 'What this tool aims to achieve',
+        panel_list: '<li>Spot scientific promises that have no real foundation.</li><li>Identify extrapolations, science washing, and abusive correlations.</li><li>Turn a complex discourse into a clear, traceable, and verifiable verdict.</li>',
+
+        footer_shield: 'Professional Protection Shield',
+        footer_disc1: 'Exclusive action for primary prevention and non-clinical psychoeducation.',
+        footer_disc2: 'No medical diagnosis or therapy is performed.',
+        footer_legal: 'Legal Notice',
+        footer_privacy: 'Privacy Policy',
+        footer_cookies: 'Cookie Management'
+      }
+    };
+
+    function setLanguage(lang) {
+      localStorage.setItem('preferred_lang', lang);
+
+      document.querySelectorAll('[data-key]').forEach(element => {
+        const key = element.getAttribute('data-key');
+        if (translations[lang] && translations[lang][key]) {
+          if (key === 'panel_list') {
+            element.innerHTML = translations[lang][key];
+          } else {
+            element.textContent = translations[lang][key];
+          }
+        }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const storedLang = localStorage.getItem('preferred_lang') || 'fr';
+      setLanguage(storedLang);
+      generateStars();
+    });
+
+    function generateStars() {
+      const container = document.getElementById('stars-container');
+      if (!container) return;
+      container.innerHTML = '';
+      for (let i = 0; i < 40; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.5 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        container.appendChild(star);
+      }
+    }
+  </script>
+</body>
+</html>

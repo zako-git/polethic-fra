@@ -45,8 +45,8 @@
       color: var(--text-muted);
     }
 
-    /* Grid de las 5 herramientas (Pentágono de la suite) */
-    .pentad-grid {
+    /* Grid de las 6 herramientas */
+    .hexagon-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.8rem;
@@ -71,10 +71,16 @@
       transform: translateY(-3px);
     }
 
-    /* Destacar la tarjeta principal de POLETHIC BEACON */
+    /* Destacar tarjeta principal POLETHIC BEACON */
     .window-card.featured-beacon {
       border: 1px solid rgba(0, 240, 255, 0.5);
       background: linear-gradient(135deg, var(--bg-card) 0%, rgba(0, 240, 255, 0.05) 100%);
+    }
+
+    /* Destacar tarjeta POLETHIC SCIENCE */
+    .window-card.featured-science {
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(16, 185, 129, 0.05) 100%);
     }
 
     .window-header {
@@ -89,6 +95,10 @@
       color: var(--cyan-neon);
       display: block;
       margin-bottom: 0.3rem;
+    }
+
+    .window-num.num-science {
+      color: #10b981;
     }
 
     .window-title {
@@ -113,11 +123,20 @@
       margin-top: 1rem;
     }
 
+    .highlight-box.science-box {
+      background: rgba(16, 185, 129, 0.04);
+      border-left-color: #10b981;
+    }
+
     .highlight-box h4 {
       margin: 0 0 0.3rem 0;
       font-size: 0.8rem;
       color: var(--cyan-neon);
       font-family: 'JetBrains Mono', monospace;
+    }
+
+    .highlight-box.science-box h4 {
+      color: #10b981;
     }
 
     .highlight-box p {
@@ -142,6 +161,25 @@
       color: var(--green-neon);
     }
 
+    .btn-green {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #10b981;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-green:hover {
+      background-color: #10b981;
+      color: #000;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
     .theory-banner-card {
       background: var(--bg-card);
       border: 1px solid rgba(0, 240, 255, 0.2);
@@ -160,10 +198,8 @@
   <!-- CABECERA DE NAVEGACIÓN -->
   <header>
     <div class="container header-layout">
-      <!-- LOGO -->
       <a href="index.html" class="logo-title">POLETHIC_FRA</a>
       
-      <!-- MENÚ -->
       <nav class="nav-buttons">
         <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
         <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
@@ -173,13 +209,12 @@
         <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
       </nav>
 
-      <!-- SELECTOR DE IDIOMAS -->
       <div class="lang-selector">
-        <a href="#" class="lang-btn active" id="btn-fr">FR</a>
+        <a href="#" class="lang-btn" id="btn-fr" onclick="setLanguage('fr'); return false;">FR</a>
         <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn" id="btn-es">ES</a>
+        <a href="#" class="lang-btn" id="btn-es" onclick="setLanguage('es'); return false;">ES</a>
         <span class="lang-separator">|</span>
-        <a href="#" class="lang-btn" id="btn-en">EN</a>
+        <a href="#" class="lang-btn" id="btn-en" onclick="setLanguage('en'); return false;">EN</a>
       </div>
     </div>
   </header>
@@ -239,10 +274,10 @@
       </div>
     </section>
 
-    <!-- GRID DE LAS 5 HERRAMIENTAS - BEACON LAB -->
-    <div class="pentad-grid">
+    <!-- GRID DE LAS 6 HERRAMIENTAS - BEACON LAB -->
+    <div class="hexagon-grid">
 
-      <!-- 1. POLETHIC BEACON (MÓDULO PRINCIPAL / AUDITORÍA) -->
+      <!-- 01. POLETHIC BEACON -->
       <article class="window-card featured-beacon">
         <div>
           <header class="window-header">
@@ -271,7 +306,7 @@
         </div>
       </article>
 
-      <!-- 2. POLETHIC CONTEXT -->
+      <!-- 02. POLETHIC CONTEXT -->
       <article class="window-card">
         <div>
           <header class="window-header">
@@ -281,7 +316,7 @@
 
           <div class="window-body">
             <p data-key="win2_desc">
-            Traduit le langage fléchii, ironies et sarcasmes pour fournir au cerveau les données nécessaires sans deviner les intenciones.
+              Traduit le langage fléchi, ironies et sarcasmes pour fournir au cerveau les données nécessaires sans deviner les intentions.
             </p>
             <div class="highlight-box">
               <h4 data-key="win2_trap_title">Piège résolu</h4>
@@ -300,7 +335,7 @@
         </div>
       </article>
 
-      <!-- 3. POLETHIC RELATION -->
+      <!-- 03. POLETHIC RELATION -->
       <article class="window-card">
         <div>
           <header class="window-header">
@@ -310,7 +345,7 @@
 
           <div class="window-body">
             <p data-key="win3_desc">
-            Sépare l'observation de la conduite des interprétations automatiques, restituant l'agentivité et le locus de control au présent.
+              Sépare l'observation de la conduite des interprétations automatiques, restituant l'agentivité et le locus de contrôle au présent.
             </p>
             <div class="highlight-box">
               <h4 data-key="win3_trap_title">Piège résolu</h4>
@@ -329,7 +364,7 @@
         </div>
       </article>
 
-      <!-- 4. POLETHIC MIRROR & SELF -->
+      <!-- 04. POLETHIC MIRROR & SELF -->
       <article class="window-card">
         <div>
           <header class="window-header">
@@ -358,7 +393,7 @@
         </div>
       </article>
 
-      <!-- 5. POLETHIC DIALOGUE & SIMULATION -->
+      <!-- 05. POLETHIC DIALOGUE & SIMULATION -->
       <article class="window-card">
         <div>
           <header class="window-header">
@@ -387,6 +422,35 @@
         </div>
       </article>
 
+      <!-- 06. POLETHIC SCIENCE (BOTÓN 6) -->
+      <article class="window-card featured-science">
+        <div>
+          <header class="window-header">
+            <span class="window-num num-science" data-key="win6_num">06 // TRAÇABILITÉ ÉPISTÉMIQUE</span>
+            <h2 class="window-title" data-key="win6_title">POLETHIC SCIENCE</h2>
+          </header>
+
+          <div class="window-body">
+            <p data-key="win6_desc">
+              Traduit la rigueur des études scientifiques. Évalue le design, la taille d'échantillon, les biais et calcule l'<strong>Evidence Drift</strong> pour garantir une conclusion 100% traçable.
+            </p>
+            <div class="highlight-box science-box">
+              <h4 data-key="win6_trap_title">Piège résolu</h4>
+              <p data-key="win6_trap_desc">Science washing, extrapolations in-vitro et corrélations abusives sur les réseaux.</p>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <a href="beacon-science.html" id="btn-sci-link" class="btn-green" data-key="win6_btn">
+                🧪 LANCER SCIENCE
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="status-bar">
+          <span data-key="win6_status">&gt; AUDIT D'ÉVIDENCE_</span>
+          <span class="status-active" style="color: #10b981;">● ONLINE</span>
+        </div>
+      </article>
+
     </div>
 
   </main>
@@ -394,8 +458,6 @@
   <!-- PIE DE PÁGINA -->
   <footer>
     <div class="container footer-content">
-      
-      <!-- ESCUDO DE PROTECCIÓN -->
       <div class="footer-shield">
         <div class="shield-badge">
           <svg class="shield-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -414,7 +476,6 @@
 
       <div class="footer-divider"></div>
 
-      <!-- ENLACES LEGALES Y COPYRIGHT -->
       <div class="footer-bottom">
         <div class="footer-links">
           <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a>
@@ -425,11 +486,10 @@
         </div>
         <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
       </div>
-
     </div>
   </footer>
 
-  <!-- SCRIPT TRILINGÜE DE TRADUCCIÓN Y NAVEGACIÓN -->
+  <!-- SCRIPT TRILINGÜE -->
   <script>
   const translations = {
       fr: {
@@ -492,6 +552,14 @@
           win5_trap_desc: "Procrastination par incertitude et peur du conflit.",
           win5_btn: "🗣️🎭 LANCER SIMULATION",
           win5_status: "> ENTRAÎNEMENT SÛR_",
+
+          win6_num: "06 // TRAÇABILITÉ ÉPISTÉMIQUE",
+          win6_title: "POLETHIC SCIENCE",
+          win6_desc: "Traduit la rigueur des études scientifiques. Évalue le design, la taille d'échantillon, les biais et calcule l'<strong>Evidence Drift</strong> pour garantir une conclusion 100% traçable.",
+          win6_trap_title: "Piège résolu",
+          win6_trap_desc: "Science washing, extrapolations in-vitro et corrélations abusives.",
+          win6_btn: "🧪 LANCER SCIENCE",
+          win6_status: "> AUDIT D'ÉVIDENCE_",
 
           footer_shield: "Bouclier de Protection Professionnelle",
           footer_disc1: "Action exclusive de prévention primaire et de psychoéducation non clinique.",
@@ -561,8 +629,16 @@
           win5_btn: "🗣️🎭 INICIAR SIMULACIÓN",
           win5_status: "> ENTRENAMIENTO SEGURO_",
 
+          win6_num: "06 // TRAZABILIDAD EPISTÉMICA",
+          win6_title: "POLETHIC SCIENCE",
+          win6_desc: "Traduce el rigor de los estudios científicos. Evalúa el diseño, muestra, sesgos y calcula el <strong>Evidence Drift</strong> para garantizar una conclusión 100% trazable.",
+          win6_trap_title: "Trampa resuelta",
+          win6_trap_desc: "Science washing, extrapolaciones in-vitro y correlaciones abusivas.",
+          win6_btn: "🧪 INICIAR SCIENCE",
+          win6_status: "> AUDITORÍA DE EVIDENCIA_",
+
           footer_shield: "Escudo de Protección Profesional",
-          footer_disc1: "Acción exclusiva de prévention primaire et de psychoéducation non clinique.",
+          footer_disc1: "Acción exclusiva de prevención primaria y psicoeducación no clínica.",
           footer_disc2: "No se realiza ningún diagnóstico ni terapia médica.",
           footer_legal: "Aviso Legal",
           footer_privacy: "Política de Privacidad",
@@ -623,11 +699,19 @@
 
           win5_num: "05 // PREPARE COMMUNICATION",
           win5_title: "POLETHIC DIALOGUE",
-          win5_desc: "Bypasses the Avoided Bridge. Simulates difficult conversations (mode 🎭 Simulation) generating <em>fictitious prediction error signals</em> to train the brain.",
+          win5_desc: "Simulates difficult conversations (mode 🎭 Simulation) generating <em>fictitious prediction error signals</em> to train the brain.",
           win5_trap_title: "Trap resolved",
           win5_trap_desc: "Procrastination due to uncertainty and fear of conflict.",
           win5_btn: "🗣️🎭 LAUNCH SIMULATION",
           win5_status: "> SAFE TRAINING_",
+
+          win6_num: "06 // EPISTEMIC TRACEABILITY",
+          win6_title: "POLETHIC SCIENCE",
+          win6_desc: "Translates scientific rigor. Evaluates study design, sample size, biases, and computes <strong>Evidence Drift</strong> for 100% traceable conclusions.",
+          win6_trap_title: "Trap resolved",
+          win6_trap_desc: "Science washing, in-vitro extrapolations, and unwarranted correlations.",
+          win6_btn: "🧪 LAUNCH SCIENCE",
+          win6_status: "> EVIDENCE AUDIT_",
 
           footer_shield: "Professional Protection Shield",
           footer_disc1: "Exclusive action for primary prevention and non-clinical psychoeducation.",
@@ -654,7 +738,6 @@
   function setLanguage(lang) {
       localStorage.setItem('preferred_lang', lang);
 
-      // Cambiar traducciones con soporte para innerHTML
       document.querySelectorAll('[data-key]').forEach(element => {
           const key = element.getAttribute('data-key');
           if (translations[lang] && translations[lang][key]) {
@@ -662,27 +745,19 @@
           }
       });
 
-      // Transferir idioma a los enlaces de las herramientas
-      const links = ['app', 'ctx', 'rel', 'ms', 'dia'];
-      const pages = ['beacon-app.html', 'beacon-context.html', 'beacon-relation.html', 'beacon-mirror-self.html', 'beacon-dialogue.html'];
+      const links = ['app', 'ctx', 'rel', 'ms', 'dia', 'sci'];
+      const pages = ['beacon-app.html', 'beacon-context.html', 'beacon-relation.html', 'beacon-mirror-self.html', 'beacon-dialogue.html', 'beacon-science.html'];
       
       links.forEach((id, index) => {
           const el = document.getElementById(`btn-${id}-link`);
           if (el) el.href = `${pages[index]}?lang=${lang}`;
       });
 
-      // Actualizar botón activo de idioma
       document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById(`btn-${lang}`);
       if (activeBtn) activeBtn.classList.add('active');
   }
 
-  // Event Listeners para el selector de idiomas
-  document.getElementById('btn-fr').addEventListener('click', (e) => { e.preventDefault(); setLanguage('fr'); });
-  document.getElementById('btn-es').addEventListener('click', (e) => { e.preventDefault(); setLanguage('es'); });
-  document.getElementById('btn-en').addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
-
-  // Carga inicial según preferencia o defecto en Francés
   document.addEventListener('DOMContentLoaded', () => {
       const savedLang = localStorage.getItem('preferred_lang') || 'fr';
       setLanguage(savedLang);
