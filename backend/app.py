@@ -14,18 +14,27 @@ from urllib.parse import urlparse
 import requests
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, send_file, send_from_directory
-from flask_cors import CORS
-from reportlab.lib import colors
-from reportlab.platypus import (
-    Paragraph,
-    SimpleDocTemplate,
-    Spacer,
-    Table,
-    TableStyle,
-    KeepTogether,
-    HRFlowable,
-)
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+try:
+    from flask_cors import CORS
+except ImportError:
+    CORS = None
+try:
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import letter
+    from reportlab.platypus import (
+        Paragraph,
+        SimpleDocTemplate,
+        Spacer,
+        Table,
+        TableStyle,
+        KeepTogether,
+        HRFlowable,
+    )
+    from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+    HAS_REPORTLAB = True
+except ImportError:
+    HAS_REPORTLAB = False
+    letter = (612, 792)
 
 try:
     from PIL import Image, ImageOps
@@ -59,8 +68,12 @@ ALLOWED_ORIGINS = [
     re.compile(r"http://localhost(?::\d+)?"),
     re.compile(r"http://127\.0\.0\.1(?::\d+)?"),
     re.compile(r"https://.*\.app\.github\.dev"),
+    re.compile(r"https://.*\.cloudshell\.dev"),
 ]
-CORS(app, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
+if CORS is not None:
+    CORS(app, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
+else:
+    print("Warning: 'flask_cors' package not found. Running without CORS middleware.")
 
 PUBLIC_TEMPLATES = {
     "index.html",
@@ -76,7 +89,8 @@ PUBLIC_TEMPLATES = {
 @app.route("/")
 @app.route("/index.html")
 def index_page():
-    return render_template("index.html")
+    docs_root = os.path.join(current_dir, "..", "docs")
+    return send_from_directory(docs_root, "index.html")
 
 
 @app.route("/beacon-LAB.html")
@@ -97,11 +111,18 @@ def docs_css(filename):
     return send_from_directory(docs_css_root, filename)
 
 
+@app.route("/js/<path:filename>")
+def docs_js(filename):
+    docs_js_root = os.path.join(current_dir, "..", "docs", "js")
+    return send_from_directory(docs_js_root, filename)
+
+
 @app.route("/<path:page>")
 def public_page(page):
     if page not in PUBLIC_TEMPLATES:
         return jsonify({"error": "Page introuvable"}), 404
-    return render_template(page)
+    docs_root = os.path.join(current_dir, "..", "docs")
+    return send_from_directory(docs_root, page)
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("HF_TOKEN")
 MODEL_CANDIDATES = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.0-flash-lite"]
@@ -158,6 +179,8 @@ def get_ethic_band(score):
 def get_grade_color(grade):
     """Devuelve el color ReportLab asociado a una clase ética."""
     grade = str(grade).upper().strip()
+    if not HAS_REPORTLAB:
+        return "#7F8C8D"
     color_map = {
         "A": colors.HexColor("#2ECC71"),
         "B": colors.HexColor("#27AE60"),
@@ -401,7 +424,7 @@ def force_structured_analysis(analysis_text, score, flags):
     text = str(analysis_text).strip()
     has_html_heading = re.search(r"<h[1-3][^>]*>", text, flags=re.IGNORECASE) is not None
     has_blockquote = re.search(r"<blockquote>", text, flags=re.IGNORECASE) is not None
-    if has_html_heading and has_blockquote:
+    if (has_html_heading and has_blockquote) or len(text) > 300:
         return text
 
     if not text:
@@ -538,6 +561,8 @@ def build_local_analysis_report(content, lang="fr"):
         "patients", "diagnostics", "hypothèses cliniques", "hypotheses cliniques",
         "dysfonctionnements métaboliques", "dysfonctionnements metaboliques",
         "corrélations entre les états émotionnels", "correlations entre les etats emotionnels",
+        "détection du tsa", "detection du tsa", "psychiatrie de l'addiction", "psychiatrie de l addiction",
+        "interactions médicamenteuses", "interactions medicamenteuses", "enjeux de sevrage", "benzodiazépines", "benzodiazepines", "tsa"
     ]
     unregulated_clinical_title_terms = [
         "analyste cognitivo-comportementale", "analyste cognitivo comportementale",
@@ -573,6 +598,8 @@ def build_local_analysis_report(content, lang="fr"):
         "tecnología de neurociencia", "tecnologia de neurociencia", "neurociencia",
         "frecuencias cerebrales", "ondas de frecuencias cerebrales", "optimizar nuestro cerebro",
         "armonizar las frecuencias cerebrales", "sueño de calidad", "reducir irritabilidad",
+        "neurobiologie avancée", "neurobiologie avancee", "pathologies neurodégénératives", "pathologies neurodegeneratives",
+        "neuro-anatomie neurotypique", "neuro anatomie neurotypique", "bases cérébrales", "bases cerebrales"
     ]
     neuroscience_wellness_signal = sum(
         keyword_matches(norm_text, token) for token in neuroscience_claim_terms
@@ -594,7 +621,7 @@ def build_local_analysis_report(content, lang="fr"):
         score = min(score, 18)
 
     if any(keyword_matches(norm_text, token) for token in scientific_terms) and not any(
-        keyword_matches(norm_text, token) for token in ["debes", "urgente", "urgence", "solo nosotros", "sin dudar", "milagro", "miracle", "te cura", "marketing", "consultor", "consultant", "consulting", "masterclass", "coaching", "développement personnel", "developpement personnel", "bien-être", "bien etre", "resultats perennes", "résultats pérennes", "transmuter les émotions limitantes", "décoder les dimensions invisibles de la psyché", "decoder les dimensions invisibles de la psyche", "système d'analyse", "systeme d analyse", "programme innovant"]
+        keyword_matches(norm_text, token) for token in ["debes", "urgente", "urgence", "solo nosotros", "sin dudar", "milagro", "miracle", "te cura", "marketing", "consultor", "consultant", "consulting", "masterclass", "coaching", "développement personnel", "developpement personnel", "bien-être", "bien etre", "resultats perennes", "résultats pérennes", "transmuter les émotions limitantes", "décoder les dimensions invisibles de la psyché", "decoder les dimensions invisibles de la psyche", "système d'analyse", "systeme d analyse", "programme innovant", "tsa", "thérapeute", "therapeute", "sevrage", "benzodiazépines", "benzodiazepines", "neurobiologie", "pathologies neurodégénératives", "pathologies neurodegeneratives"]
     ) and not any(has_negated_keyword(norm_text, token) for token in ["preuve", "evidence", "evidencia", "estudio", "research", "analisis"]):
         score = min(score, 15)
 
@@ -602,7 +629,7 @@ def build_local_analysis_report(content, lang="fr"):
         score = min(score, 18)
 
     if any(keyword_matches(norm_text, token) for token in scientific_terms) and not any(
-        keyword_matches(norm_text, token) for token in ["debes", "urgente", "urgence", "solo nosotros", "sin dudar", "milagro", "miracle", "te cura", "marketing", "consultor", "consultant", "consulting", "masterclass", "coaching", "développement personnel", "developpement personnel", "bien-être", "bien etre", "resultats perennes", "résultats pérennes", "transmuter les émotions limitantes", "décoder les dimensions invisibles de la psyché", "decoder les dimensions invisibles de la psyche", "système d'analyse", "systeme d analyse", "programme innovant"]
+        keyword_matches(norm_text, token) for token in ["debes", "urgente", "urgence", "solo nosotros", "sin dudar", "milagro", "miracle", "te cura", "marketing", "consultor", "consultant", "consulting", "masterclass", "coaching", "développement personnel", "developpement personnel", "bien-être", "bien etre", "resultats perennes", "résultats pérennes", "transmuter les émotions limitantes", "décoder les dimensions invisibles de la psyché", "decoder les dimensions invisibles de la psyche", "système d'analyse", "systeme d analyse", "programme innovant", "tsa", "thérapeute", "therapeute", "sevrage", "benzodiazépines", "benzodiazepines", "neurobiologie", "pathologies neurodégénératives", "pathologies neurodegeneratives"]
     ) and not any(has_negated_keyword(norm_text, token) for token in ["preuve", "evidence", "evidencia", "estudio", "research", "analisis"]):
         score = min(score, 15)
 
@@ -1408,11 +1435,6 @@ import re
 from io import BytesIO
 from datetime import datetime, timezone
 from flask import request, jsonify, send_file
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-
 def traducir_markdown_a_pdf(texto_bruto, styles, band_color):
     """
     Toma el texto Markdown crudo y genera elementos visuales limpios para ReportLab.
@@ -1488,6 +1510,8 @@ def traducir_markdown_a_pdf(texto_bruto, styles, band_color):
 def export_pdf():
     if request.method == "OPTIONS":
         return jsonify({"status": "ok"}), 200
+    if not HAS_REPORTLAB:
+        return jsonify({"error": "ReportLab package not found. PDF export is disabled."}), 500
 
     try:
         data = request.get_json(silent=True) or {}
@@ -2014,6 +2038,77 @@ def refute_endpoint():
             "language": lang,
             "questions": questions,
         }), 200
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+
+
+@app.route("/memes", methods=["POST", "OPTIONS"])
+def memes_endpoint():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
+    try:
+        data = request.get_json(silent=True) or {}
+        if not data and request.form:
+            data = request.form.to_dict(flat=True)
+
+        content = (data.get("text") or data.get("content") or "").strip()
+        lang = str(data.get("lang", "fr")).lower()
+
+        if not content:
+            return jsonify({"error": "Aucun contenu fourni"}), 400
+
+        use_gemini = os.environ.get("BEACON_ENABLE_GEMINI_ANALYSIS", "").lower() == "true"
+        if use_gemini and client is not None:
+            resolved_model = get_available_model()
+            if resolved_model:
+                prompt_sistema = """Vous êtes un générateur de mèmes et de punchlines sarcastiques, incisifs et spécialisé en autodéfense cognitive.
+Votre rôle est de lire le texte fourni et de générer 3 à 4 punchlines percutantes au style 'Meme' qui mettent en évidence l'ironie, le jargon excessif, le marketing abusif, la pseudo-science ou le manque de preuves du texte soumis.
+
+RÈGLES STRICTES DE FORMATAGE :
+1. Rédigez le contenu entièrement en français.
+2. Renvoyez UNIQUEMENT le tableau JSON brut. Ne l'enrobez PAS dans des balises de code Markdown comme ```json ... ```. Aucun texte explicatif avant ou après.
+
+Format de réponse spécifié (JSON brut) :
+[
+  {"concept": "Le mécanisme de persuasion ou biais identifié", "meme": "La punchline cinglante associée"},
+  {"concept": "...", "meme": "..."}
+]"""
+                config_memes = types.GenerateContentConfig(
+                    system_instruction=prompt_sistema,
+                    temperature=0.7,
+                    response_mime_type="application/json"
+                )
+                response = client.models.generate_content(
+                    model=resolved_model,
+                    contents=content[:10000],
+                    config=config_memes
+                )
+                import json
+                try:
+                    memes_json = json.loads(response.text.strip())
+                    return jsonify({"status": "success", "memes": memes_json}), 200
+                except Exception:
+                    pass
+
+        local_result = build_local_analysis_report(content, lang)
+        flags = local_result.get("flags", [])
+        fallback_memes = []
+        normalized_flags = {str(f).upper() for f in flags}
+
+        if "PROMESA_MILAGROSA" in normalized_flags:
+            fallback_memes.append({"concept": "Promesse Miracle", "meme": "On vous vend le passe-partout sans vous montrer la serrure : ça brille fort, mais rien ne prouve que ça ouvre quoi que ce soit."})
+        if "ACCOMPAGNEMENT_SANTE_NON_ETAYE" in normalized_flags:
+            fallback_memes.append({"concept": "Accompagnement Santé", "meme": "On emballe douleur et santé dans du coaching : sans limites claires ni règle d’orientation médicale, la boîte est vendue sans consigne de sécurité."})
+        if "REVENDICATION_NEUROSCIENTIFIQUE_NON_ETAYEE" in normalized_flags:
+            fallback_memes.append({"concept": "Neuro-washing", "meme": "Coller « neurosciences » sur l’étiquette sans méthode ni études, c’est vendre du vent en blouse blanche : ça impressionne, ça ne prouve rien."})
+        if "PERIMETRE_CLINIQUE_NON_ETAYE" in normalized_flags:
+            fallback_memes.append({"concept": "Périmètre Clinique", "meme": "Utiliser des mots de médecin pour vendre des masterclasses de coaching sans diplôme, c’est comme coller un badge d’hôpital sur une boîte de Lego."})
+
+        if not fallback_memes:
+            fallback_memes.append({"concept": "Rhétorique Générique", "meme": "Vitrine bien astiquée, fiche technique introuvable : avant de croire au discours, regardez ce qu’il y a vraiment dans la boîte."})
+
+        return jsonify({"status": "success", "memes": fallback_memes}), 200
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
 

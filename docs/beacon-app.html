@@ -655,6 +655,9 @@
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       return 'http://127.0.0.1:5000';
     }
+      if (window.location.hostname.includes('cloudshell.dev')) {
+        return window.location.origin;
+      }
     return CODESPACES_BACKEND_URL.replace(/\/$/, '');
   })();
 

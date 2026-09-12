@@ -446,3 +446,32 @@ def test_unregulated_clinical_title_with_masterclass_flags_scope():
         lang="fr",
     )
     assert "PERIMETRE_CLINIQUE_NON_ETAYE" in result["flags"]
+
+
+def test_analysis_endpoint_with_gemini_enabled(monkeypatch):
+    class FakeModels:
+        def generate_content(self, model, contents, config=None):
+            class FakeResponse:
+                text = (
+                    "<score>75</score>\n"
+                    "<flags>REVENDICATION_NEUROSCIENTIFIQUE_NON_ETAYEE, INJONCION</flags>\n"
+                    "<h3>Phase 1: Analysis</h3>\n"
+                    "<blockquote>This is an AI generated forensic analysis report that is longer than three hundred characters to ensure it passes the structure preservation check and does not get replaced by the fallback template. It contains detailed breakdowns of the persuasive mechanisms used in the text.</blockquote>"
+                )
+            return FakeResponse()
+
+    class FakeClient:
+        models = FakeModels()
+
+    monkeypatch.setattr(app_module, "client", FakeClient())
+    monkeypatch.setenv("BEACON_ENABLE_GEMINI_ANALYSIS", "true")
+    
+    response = app_module.app.test_client().post(
+        "/analyze",
+        json={"text": "Analyse de test pour l'IA", "lang": "fr"},
+    )
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["score"] == 75
+    assert "REVENDICATION_NEUROSCIENTIFIQUE_NON_ETAYEE" in data["flags"]
+    assert "Phase 1: Analysis" in data["analysis"]
