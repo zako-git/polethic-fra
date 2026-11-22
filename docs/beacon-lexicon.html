@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="POLETHIC LEXICON : un glossaire clair pour décoder les concepts et le vocabulaire complexe.">
+  <title>POLETHIC_FRA - Beacon Lexicon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body { background: radial-gradient(circle at top, rgba(168, 85, 247, 0.18), transparent 34%), #07111d; }
+    .lexicon-hero { text-align: center; margin: 2rem auto; }
+    .lexicon-tag { color: #c084fc; font: 0.8rem 'JetBrains Mono', monospace; letter-spacing: 2px; }
+    .lexicon-title { color: var(--text-cream-bright); font-size: 2.1rem; margin: 0.7rem 0; }
+    .lexicon-lead { max-width: 760px; margin: 0 auto; color: var(--text-muted); line-height: 1.7; }
+    .lexicon-controls { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1.5rem 0; }
+    .lexicon-controls input, .lexicon-controls select { flex: 1 1 220px; min-width: 0; padding: 0.8rem 1rem; color: var(--text-cream); background: rgba(11, 19, 43, 0.9); border: 1px solid rgba(192, 132, 252, 0.45); border-radius: 8px; font: inherit; }
+    .lexicon-controls input:focus, .lexicon-controls select:focus { outline: 2px solid #c084fc; outline-offset: 2px; }
+    .lexicon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem; }
+    .lexicon-card { padding: 1.35rem; background: var(--bg-card); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; backdrop-filter: blur(10px); }
+    .lexicon-card h2 { margin: 0 0 0.55rem; color: var(--text-cream-bright); font-size: 1.08rem; }
+    .lexicon-card p { color: var(--text-cream); font-size: 0.9rem; line-height: 1.6; }
+    .lexicon-category { display: inline-block; margin-bottom: 0.75rem; padding: 0.3rem 0.6rem; color: #c084fc; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 999px; font: 0.68rem 'JetBrains Mono', monospace; }
+    .lexicon-empty { grid-column: 1 / -1; padding: 1.5rem; color: var(--text-muted); text-align: center; }
+    .lexicon-back { display: inline-block; margin-top: 1.3rem; padding: 0.7rem 1.1rem; color: #c084fc; border: 1px solid #c084fc; border-radius: 6px; text-decoration: none; font: 0.82rem 'JetBrains Mono', monospace; }
+    .lexicon-back:hover { color: #07111d; background: #c084fc; }
+  </style>
+</head>
+<body>
+  <div id="stars-container" aria-hidden="true"></div>
+  <header>
+    <div class="container header-layout">
+      <a href="index.html" class="logo-title">POLETHIC_FRA</a>
+      <nav class="nav-buttons" aria-label="Main navigation">
+        <a href="index.html" class="nav-btn" data-key="nav_home">ACCUEIL</a>
+        <a href="observatoire.html" class="nav-btn" data-key="nav_obs">L'OBSERVATOIRE</a>
+        <a href="psicomusee.html" class="nav-btn" data-key="nav_museum">PSICOMUSÉE</a>
+        <a href="beacon-LAB.html" class="nav-btn active" data-key="nav_beacon">BEACON LAB</a>
+        <a href="notre-cap.html" class="nav-btn" data-key="nav_cap">NOTRE CAP</a>
+        <a href="contact.html" class="nav-btn" data-key="nav_contact">CONTACT</a>
+      </nav>
+      <div class="lang-selector" aria-label="Language">
+        <a href="#" class="lang-btn" id="btn-fr" onclick="setLanguage('fr'); return false;">FR</a><span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-es" onclick="setLanguage('es'); return false;">ES</a><span class="lang-separator">|</span>
+        <a href="#" class="lang-btn" id="btn-en" onclick="setLanguage('en'); return false;">EN</a>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <section class="lexicon-hero">
+      <span class="lexicon-tag" data-key="tag">// OUTIL 7 : CLARTÉ CONCEPTUELLE</span>
+      <h1 class="lexicon-title">POLETHIC LEXICON</h1>
+      <p class="lexicon-lead" data-key="intro">Un glossaire évolutif pour comprendre les termes spécialisés, distinguer les concepts proches et accéder à des définitions claires sans perdre les nuances.</p>
+      <a href="beacon-LAB.html" class="lexicon-back" data-key="back">↩ RETOUR AU LAB</a>
+    </section>
+
+    <section aria-label="Glossary">
+      <div class="lexicon-controls">
+        <input id="lexicon-search" type="search" data-key-placeholder="search" placeholder="Rechercher un terme…" aria-label="Search glossary">
+        <select id="lexicon-category" aria-label="Filter by category">
+          <option value="all" data-key="all">Toutes les catégories</option>
+          <option value="cognition" data-key="cognition">Cognition</option>
+          <option value="science" data-key="science">Science &amp; preuve</option>
+          <option value="communication" data-key="communication">Communication</option>
+        </select>
+      </div>
+      <div class="lexicon-grid" id="lexicon-grid" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-shield">
+        <div class="shield-badge"><span class="shield-title" data-key="footer_shield">Bouclier de Protection Professionnelle</span></div>
+        <p class="shield-disclaimer" data-key="footer_disc1">Action exclusive de prévention primaire et de psychoéducation non clinique.</p>
+        <p class="shield-disclaimer" data-key="footer_disc2">Aucun diagnostic ou thérapie médicale n'est pratiqué.</p>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a href="mentions-legales.html" data-key="footer_legal">Mentions Légales</a><span class="footer-sep">•</span>
+          <a href="politique-confidentialite.html" data-key="footer_privacy">Politique de Confidentialité</a><span class="footer-sep">•</span>
+          <a href="cookies.html" data-key="footer_cookies">Gestion des Cookies</a>
+        </div>
+        <p class="copyright">&copy; 2026 POLETHIC France. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const lexicon = {
+      fr: [
+        ['Allostasie', 'cognition', 'Processus par lequel l’organisme anticipe ses besoins et ajuste ses ressources pour maintenir un équilibre dynamique.'],
+        ['Biais cognitif', 'cognition', 'Tendance systématique qui peut influencer l’attention, l’interprétation ou le jugement. Un biais est un point de vigilance, pas une preuve d’erreur.'],
+        ['Métacognition', 'cognition', 'Capacité à observer et questionner ses propres processus de pensée et les limites de ses conclusions.'],
+        ['A priori (prior)', 'cognition', 'Attente ou hypothèse préalable qui contribue à interpréter une information nouvelle et peut être révisée face aux éléments disponibles.'],
+        ['Corrélation', 'science', 'Association statistique entre deux variables. À elle seule, elle ne démontre pas que l’une cause l’autre.'],
+        ['Causalité', 'science', 'Relation dans laquelle un facteur contribue à produire un effet, établie par des méthodes adaptées et non par une simple coïncidence.'],
+        ['Échantillon', 'science', 'Partie d’une population observée dans une étude. Sa taille, sa sélection et sa représentativité influencent la portée des résultats.'],
+        ['Traçabilité', 'science', 'Possibilité de retrouver les sources, les méthodes et les étapes qui soutiennent une affirmation ou une conclusion.'],
+        ['Ambiguïté', 'communication', 'Présence de plusieurs interprétations possibles dans un message. Le contexte peut aider, sans permettre toujours de connaître l’intention.'],
+        ['Inférence', 'communication', 'Conclusion tirée à partir d’indices. Il est utile de distinguer ce qui est observé de ce qui est interprété.']
+      ],
+      es: [
+        ['Alostasis', 'cognition', 'Proceso por el que el organismo anticipa sus necesidades y ajusta sus recursos para mantener un equilibrio dinámico.'],
+        ['Sesgo cognitivo', 'cognition', 'Tendencia sistemática que puede influir en la atención, la interpretación o el juicio. Es un punto de revisión, no una prueba de error.'],
+        ['Metacognición', 'cognition', 'Capacidad de observar y cuestionar los propios procesos de pensamiento y los límites de las conclusiones.'],
+        ['Prior (supuesto previo)', 'cognition', 'Expectativa o hipótesis previa que contribuye a interpretar información nueva y puede revisarse ante los datos disponibles.'],
+        ['Correlación', 'science', 'Asociación estadística entre dos variables. Por sí sola no demuestra que una cause la otra.'],
+        ['Causalidad', 'science', 'Relación en la que un factor contribuye a producir un efecto, establecida con métodos adecuados y no por una simple coincidencia.'],
+        ['Muestra', 'science', 'Parte de una población observada en un estudio. Su tamaño, selección y representatividad influyen en el alcance de los resultados.'],
+        ['Trazabilidad', 'science', 'Posibilidad de encontrar las fuentes, métodos y pasos que respaldan una afirmación o conclusión.'],
+        ['Ambigüedad', 'communication', 'Presencia de varias interpretaciones posibles en un mensaje. El contexto puede ayudar, pero no siempre revela la intención.'],
+        ['Inferencia', 'communication', 'Conclusión extraída a partir de indicios. Conviene distinguir lo observado de lo interpretado.']
+      ],
+      en: [
+        ['Allostasis', 'cognition', 'The process by which the body anticipates needs and adjusts resources to maintain a dynamic balance.'],
+        ['Cognitive bias', 'cognition', 'A systematic tendency that can influence attention, interpretation, or judgment. It is a prompt for review, not proof of error.'],
+        ['Metacognition', 'cognition', 'The ability to observe and question one’s own thinking processes and the limits of one’s conclusions.'],
+        ['Prior', 'cognition', 'A pre-existing expectation or hypothesis that helps interpret new information and can be revised as evidence becomes available.'],
+        ['Correlation', 'science', 'A statistical association between two variables. On its own, it does not show that one causes the other.'],
+        ['Causality', 'science', 'A relationship in which one factor contributes to an effect, established using suitable methods rather than coincidence alone.'],
+        ['Sample', 'science', 'A subset of a population observed in a study. Its size, selection, and representativeness affect how far results can be generalized.'],
+        ['Traceability', 'science', 'The ability to locate the sources, methods, and steps supporting a claim or conclusion.'],
+        ['Ambiguity', 'communication', 'The presence of multiple possible interpretations in a message. Context may help but cannot always reveal intent.'],
+        ['Inference', 'communication', 'A conclusion drawn from clues. It is useful to distinguish what is observed from what is interpreted.']
+      ]
+    };
+    const labels = {
+      fr: { tag: '// OUTIL 7 : CLARTÉ CONCEPTUELLE', intro: 'Un glossaire évolutif pour comprendre les termes spécialisés, distinguer les concepts proches et accéder à des définitions claires sans perdre les nuances.', back: '↩ RETOUR AU LAB', search: 'Rechercher un terme…', all: 'Toutes les catégories', cognition: 'Cognition', science: 'Science & preuve', communication: 'Communication', noResults: 'Aucun terme ne correspond à votre recherche.', categories: { cognition: 'COGNITION', science: 'SCIENCE & PREUVE', communication: 'COMMUNICATION' }, footer_shield: 'Bouclier de Protection Professionnelle', footer_disc1: 'Action exclusive de prévention primaire et de psychoéducation non clinique.', footer_disc2: 'Aucun diagnostic ou thérapie médicale n\'est pratiqué.', footer_legal: 'Mentions Légales', footer_privacy: 'Politique de Confidentialité', footer_cookies: 'Gestion des Cookies', nav_home: 'ACCUEIL', nav_obs: "L'OBSERVATOIRE", nav_museum: 'PSICOMUSÉE', nav_beacon: 'BEACON LAB', nav_cap: 'NOTRE CAP', nav_contact: 'CONTACT' },
+      es: { tag: '// HERRAMIENTA 7: CLARIDAD CONCEPTUAL', intro: 'Un glosario en evolución para comprender términos especializados, distinguir conceptos próximos y acceder a definiciones claras sin perder los matices.', back: '↩ VOLVER AL LAB', search: 'Buscar un término…', all: 'Todas las categorías', cognition: 'Cognición', science: 'Ciencia y evidencia', communication: 'Comunicación', noResults: 'Ningún término coincide con la búsqueda.', categories: { cognition: 'COGNICIÓN', science: 'CIENCIA Y EVIDENCIA', communication: 'COMUNICACIÓN' }, footer_shield: 'Escudo de Protección Profesional', footer_disc1: 'Acción exclusiva de prevención primaria y psicoeducación no clínica.', footer_disc2: 'No se realiza ningún diagnóstico ni terapia médica.', footer_legal: 'Aviso Legal', footer_privacy: 'Política de Privacidad', footer_cookies: 'Gestión de Cookies', nav_home: 'INICIO', nav_obs: 'OBSERVATORIO', nav_museum: 'PSICOMUSEO', nav_beacon: 'BEACON LAB', nav_cap: 'NUESTRO RUMBO', nav_contact: 'CONTACTO' },
+      en: { tag: '// TOOL 7: CONCEPTUAL CLARITY', intro: 'A growing glossary to explain specialist terms, distinguish related concepts, and offer clear definitions without losing nuance.', back: '↩ BACK TO THE LAB', search: 'Search for a term…', all: 'All categories', cognition: 'Cognition', science: 'Science & evidence', communication: 'Communication', noResults: 'No terms match your search.', categories: { cognition: 'COGNITION', science: 'SCIENCE & EVIDENCE', communication: 'COMMUNICATION' }, footer_shield: 'Professional Protection Shield', footer_disc1: 'Exclusive action for primary prevention and non-clinical psychoeducation.', footer_disc2: 'No medical diagnosis or therapy is performed.', footer_legal: 'Legal Notice', footer_privacy: 'Privacy Policy', footer_cookies: 'Cookie Management', nav_home: 'HOME', nav_obs: 'OBSERVATORY', nav_museum: 'PSYCHOMUSEUM', nav_beacon: 'BEACON LAB', nav_cap: 'OUR COURSE', nav_contact: 'CONTACT' }
+    };
+    let currentLang = 'fr';
+    function renderLexicon() {
+      const query = document.getElementById('lexicon-search').value.trim().toLocaleLowerCase(currentLang);
+      const category = document.getElementById('lexicon-category').value;
+      const entries = lexicon[currentLang].filter(([term, group, desc]) => (category === 'all' || group === category) && `${term} ${desc}`.toLocaleLowerCase(currentLang).includes(query));
+      const grid = document.getElementById('lexicon-grid');
+      grid.replaceChildren();
+      if (!entries.length) {
+        const empty = document.createElement('p'); empty.className = 'lexicon-empty'; empty.textContent = labels[currentLang].noResults; grid.appendChild(empty); return;
+      }
+      entries.forEach(([term, group, description]) => {
+        const card = document.createElement('article'); card.className = 'lexicon-card';
+        const badge = document.createElement('span'); badge.className = 'lexicon-category'; badge.textContent = labels[currentLang].categories[group];
+        const title = document.createElement('h2'); title.textContent = term;
+        const text = document.createElement('p'); text.textContent = description;
+        card.append(badge, title, text); grid.appendChild(card);
+      });
+    }
+    function setLanguage(lang) {
+      if (!labels[lang]) lang = 'fr';
+      currentLang = lang;
+      localStorage.setItem('preferred_lang', lang);
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-key]').forEach(element => { const value = labels[lang][element.dataset.key]; if (value) element.textContent = value; });
+      document.querySelectorAll('[data-key-placeholder]').forEach(element => { element.placeholder = labels[lang][element.dataset.keyPlaceholder]; });
+      document.querySelectorAll('.lang-btn').forEach(button => button.classList.toggle('active', button.id === `btn-${lang}`));
+      renderLexicon();
+    }
+    document.getElementById('lexicon-search').addEventListener('input', renderLexicon);
+    document.getElementById('lexicon-category').addEventListener('change', renderLexicon);
+    document.addEventListener('DOMContentLoaded', () => {
+      const requested = new URLSearchParams(location.search).get('lang');
+      setLanguage(requested || localStorage.getItem('preferred_lang') || 'fr');
+    });
+  </script>
+</body>
+</html>
